@@ -16,7 +16,7 @@ namespace values {}
 
 /// @cond INTERNAL_DOC
 
-/// @brief Contain stuff necessary for the library but that should not be exposed.
+/// @brief Contain internal stuff necessary for the library.
 namespace internal {}
 
 /// @brief Contain stuff necessary for the memory management.

@@ -1,6 +1,8 @@
 #ifndef _SDD_DD_OPERATIONS_FWD_HH_
 #define _SDD_DD_OPERATIONS_FWD_HH_
 
+/// @cond INTERNAL_DOC
+
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition_fwd.hh"
 #include "sdd/dd/nary_fwd.hh"
@@ -58,5 +60,7 @@ sum(context<C>&, const sum_builder<C, Values>&);
 /*-------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::dd
+
+/// @endcond
 
 #endif // _SDD_DD_OPERATIONS_FWD_HH_
