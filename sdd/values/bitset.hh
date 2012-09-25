@@ -10,80 +10,13 @@ namespace sdd { namespace values {
 
 /*-------------------------------------------------------------------------------------------*/
 
-template <std::size_t Size>
-class bitset;
-
-/*-------------------------------------------------------------------------------------------*/
-
-template <std::size_t Size>
-inline
-bitset<Size>
-sum(const bitset<Size>& lhs, const bitset<Size>& rhs)
-noexcept
-{
-  return bitset<Size>(lhs.content_ | rhs.content_);
-}
-
-/*-------------------------------------------------------------------------------------------*/
-
-template <std::size_t Size>
-inline
-bitset<Size>
-intersection(const bitset<Size>& lhs, const bitset<Size>& rhs)
-noexcept
-{
-  return bitset<Size>(lhs.content_ & rhs.content_);
-}
-
-/*-------------------------------------------------------------------------------------------*/
-
-template <std::size_t Size>
-inline
-bitset<Size>
-difference(const bitset<Size>& lhs, const bitset<Size>& rhs)
-noexcept
-{
-  return bitset<Size>(lhs.content_ & ~rhs.content_);
-}
-
-/*-------------------------------------------------------------------------------------------*/
-
-template <std::size_t Size>
-std::ostream&
-operator<<(std::ostream& os , const bitset<Size>& b)
-{
-  os << "{";
-  bool first = true;
-  for (std::size_t i = 0; i < Size; ++i)
-  {
-    if (b.content_.test(i))
-    {
-      if (not first)
-      {
-        os << ",";
-      }
-      else
-      {
-        first = false;
-      }
-      os << i;
-    }
-  }
-  return os << "}";
-}
-
-/*-------------------------------------------------------------------------------------------*/
-
+/// @brief Encode a set of values using bits.
 template <std::size_t Size>
 class bitset
 {
 private:
   
   friend struct std::hash<bitset<Size>>;
-  friend bitset sum<Size>(const bitset&, const bitset&) noexcept;
-  friend bitset intersection<Size>(const bitset&, const bitset&) noexcept;
-  friend bitset difference<Size>(const bitset&, const bitset&) noexcept;
-  friend std::ostream& operator<< <Size>(std::ostream& os, const bitset&);    
 
   std::bitset<Size> content_;
 
@@ -182,12 +115,80 @@ public:
   {
     return content_ >> n;
   }
+
+  std::bitset<Size>
+  content()
+  const noexcept
+  {
+    return content_;
+  }
 };
+
+/*-------------------------------------------------------------------------------------------*/
+
+template <std::size_t Size>
+inline
+bitset<Size>
+sum(const bitset<Size>& lhs, const bitset<Size>& rhs)
+noexcept
+{
+  return bitset<Size>(lhs.content() | rhs.content());
+}
+
+/*-------------------------------------------------------------------------------------------*/
+
+template <std::size_t Size>
+inline
+bitset<Size>
+intersection(const bitset<Size>& lhs, const bitset<Size>& rhs)
+noexcept
+{
+  return bitset<Size>(lhs.content() & rhs.content());
+}
+
+/*-------------------------------------------------------------------------------------------*/
+
+template <std::size_t Size>
+inline
+bitset<Size>
+difference(const bitset<Size>& lhs, const bitset<Size>& rhs)
+noexcept
+{
+  return bitset<Size>(lhs.content() & ~rhs.content());
+}
+
+/*-------------------------------------------------------------------------------------------*/
+
+template <std::size_t Size>
+std::ostream&
+operator<<(std::ostream& os , const bitset<Size>& b)
+{
+  os << "{";
+  bool first = true;
+  for (std::size_t i = 0; i < Size; ++i)
+  {
+    if (b.content().test(i))
+    {
+      if (not first)
+      {
+        os << ",";
+      }
+      else
+      {
+        first = false;
+      }
+      os << i;
+    }
+  }
+  return os << "}";
+}
+
+/*-------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::values
 
 namespace std {
-  
+
 /*-------------------------------------------------------------------------------------------*/
 
 /// @brief Hash specialization for sdd::values::bitset.
