@@ -1,5 +1,5 @@
-#ifndef _SDD_VALUES_BISizeSESize_HH_
-#define _SDD_VALUES_BISizeSESize_HH_
+#ifndef _SDD_VALUES_BISET_HH_
+#define _SDD_VALUES_BISET_HH_
 
 #include <bitset>
 #include <initializer_list>
@@ -206,4 +206,4 @@ struct hash<sdd::values::bitset<Size>>
   
 } // namespace std
 
-#endif // _SDD_VALUES_BISizeSESize_HH_
+#endif // _SDD_VALUES_BISET_HH_
