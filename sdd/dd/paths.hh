@@ -19,24 +19,24 @@ struct count_paths_visitor
 
   typedef std::size_t result_type;
 
-  /// @brief A cache is used to speedup computation.
+  /// @brief A cache is used to speed up the computation.
   ///
   /// We use the addresses of nodes as key. It's legit because nodes are unified.
   mutable std::unordered_map<const void*, result_type> cache_;
 
   /// @brief Error case.
   ///
-  /// We should not encouter any |0| as all SDD leading to |0| are reduced to |0| and as
+  /// We should not encounter any |0| as all SDD leading to |0| are reduced to |0| and as
   /// the |0| alone is treated in count_paths.
   result_type
   operator()(const zero_terminal<C>&)
   const noexcept
   {
-    assert(false && "Encounterd a |0| when counting paths.");
+    assert(false && "Encountered the |0| terminal when counting paths.");
     __builtin_unreachable();
   }
 
-  /// @brief Terminal case of the visitation.
+  /// @brief Terminal case of the recursion.
   constexpr
   result_type
   operator()(const one_terminal<C>&)
