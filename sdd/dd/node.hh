@@ -138,7 +138,7 @@ private:
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief   Equality of two node.
+/// @brief   Equality of two nodes.
 /// @related node
 ///
 /// O(1) if nodes don't have the same number of arcs; otherwise O(n) where n is the number of
