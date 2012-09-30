@@ -9,10 +9,10 @@
 namespace sdd
 {
 
-/// @brief Contain all stuff related to SDD: definition and operations.
+/// @brief Stuff related to SDD: definition and operations.
 namespace dd {}
 
-/// @brief Contain definition of values to be stored on arcs.
+/// @brief Definition of values to be stored on arcs.
 namespace values {}
 
 /// @cond INTERNAL_DOC
