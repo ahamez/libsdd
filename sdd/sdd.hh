@@ -1,6 +1,7 @@
 #ifndef _SDD_SDD_HH_
 #define _SDD_SDD_HH_
 
+#include "sdd/conf/default_configurations.hh"
 #include "sdd/dd/context.hh"
 #include "sdd/dd/definition.hh"
 
