@@ -66,13 +66,11 @@ public:
   {
   }
 
-  /// @brief Construct a context with already existing caches.
-  context( std::shared_ptr<difference_cache_type> diff
-         , std::shared_ptr<intersection_cache_type> inter
-         , std::shared_ptr<sum_cache_type> sum)
-    : difference_cache_(diff)
-    , intersection_cache_(inter)
-    , sum_cache_(sum)
+  /// @brief Copy constructor.
+  context(const context& other)
+    : difference_cache_(other.difference_cache_)
+    , intersection_cache_(other.intersection_cache_)
+    , sum_cache_(other.sum_cache_)
   {
   }
 
