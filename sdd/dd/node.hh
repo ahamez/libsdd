@@ -10,7 +10,7 @@
 #include "sdd/internal/util/hash.hh"
 #include "sdd/internal/util/packed.hh"
 
-namespace sdd { namespace dd {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -167,7 +167,7 @@ operator<<(std::ostream& os, const node<C, Valuation>& n)
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::dd
+} // namespace sdd
 
 /// @cond INTERNAL_DOC
 
@@ -175,12 +175,12 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief Hash specialization for sdd::dd::node
+/// @brief Hash specialization for sdd::node
 template <typename C, typename Valuation>
-struct hash<sdd::dd::node<C, Valuation>>
+struct hash<sdd::node<C, Valuation>>
 {
   std::size_t
-  operator()(const sdd::dd::node<C, Valuation>& n)
+  operator()(const sdd::node<C, Valuation>& n)
   const noexcept
   {
     std::size_t seed = 0;

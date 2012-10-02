@@ -9,7 +9,7 @@
 
 #include "sdd/dd/definition_fwd.hh"
 
-namespace sdd { namespace dd {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -162,6 +162,6 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::dd
+} // namespace sdd
 
 #endif // _SDD_DD_TOP_HH_

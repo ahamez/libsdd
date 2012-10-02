@@ -6,7 +6,7 @@
 ///
 /// It permits the recursive definition of an SDD.
 
-namespace sdd { namespace dd {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -15,6 +15,6 @@ class SDD;
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::dd
+} // namespace sdd
 
 #endif // _SDD_DD_DEFINITION_FWD_HH_

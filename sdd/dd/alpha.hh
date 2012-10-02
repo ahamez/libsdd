@@ -6,7 +6,7 @@
 #include "sdd/dd/definition_fwd.hh"
 #include "sdd/internal/util/hash.hh"
 
-namespace sdd { namespace dd {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -158,6 +158,6 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::dd
+} // namespace sdd
 
 #endif // _SDD_DD_ALPHA_HH_

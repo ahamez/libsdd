@@ -16,7 +16,7 @@
 #include "sdd/dd/square_union.hh"
 #include "sdd/internal/util/hash.hh"
 
-namespace sdd { namespace dd {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -326,7 +326,7 @@ SDD<C>
 inline
 sum(InputIterator begin, InputIterator end)
 {
-  dd::sum_builder<C, dd::SDD<C>> builder;
+  sum_builder<C, SDD<C>> builder;
   for (; begin != end; ++begin)
   {
     builder.add(*begin);
@@ -346,7 +346,7 @@ sum(std::initializer_list<SDD<C>> operands)
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::dd
+} // namespace sdd
 
 namespace std {
 
@@ -354,10 +354,10 @@ namespace std {
 
 /// @brief Hash specialization for sdd::dd::sum_op
 template <typename C>
-struct hash<sdd::dd::sum_op<C>>
+struct hash<sdd::sum_op<C>>
 {
   std::size_t
-  operator()(const sdd::dd::sum_op<C>& sum)
+  operator()(const sdd::sum_op<C>& sum)
   const noexcept
   {
     std::size_t seed = 0;

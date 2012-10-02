@@ -5,7 +5,7 @@
 #include "sdd/dd/definition.hh"
 
 using namespace sdd::internal::mem;
-using namespace sdd::dd;
+using namespace sdd;
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -13,10 +13,10 @@ struct difference_test
   : public testing::Test
 {
   typedef sdd::conf::conf0 conf;
-  typedef sdd::dd::SDD<conf> SDD;
+  typedef sdd::SDD<conf> SDD;
   context<conf> cxt;
-  const SDD zero = sdd::dd::zero<conf>();
-  const SDD one = sdd::dd::one<conf>();
+  const SDD zero = sdd::zero<conf>();
+  const SDD one = sdd::one<conf>();
 };
 
 /*-------------------------------------------------------------------------------------------*/

@@ -11,9 +11,9 @@ struct paths_test
   : public testing::Test
 {
   typedef sdd::conf::conf0 conf;
-  typedef sdd::dd::SDD<conf> SDD;
-  const SDD zero = sdd::dd::zero<conf>();
-  const SDD one = sdd::dd::one<conf>();
+  typedef sdd::SDD<conf> SDD;
+  const SDD zero = sdd::zero<conf>();
+  const SDD one = sdd::one<conf>();
 
   paths_test()
   {

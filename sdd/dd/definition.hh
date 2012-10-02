@@ -14,7 +14,7 @@
 #include "sdd/internal/mem/ref_counted.hh"
 #include "sdd/internal/mem/variant.hh"
 
-namespace sdd { namespace dd {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -448,7 +448,7 @@ noexcept
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::dd
+} // namespace sdd
 
 namespace std {
 
@@ -456,10 +456,10 @@ namespace std {
 
 /// @brief Hash specialization for sdd::dd::SDD.
 template <typename C>
-struct hash<sdd::dd::SDD<C>>
+struct hash<sdd::SDD<C>>
 {
   std::size_t
-  operator()(const sdd::dd::SDD<C>& x)
+  operator()(const sdd::SDD<C>& x)
   const noexcept
   {
     return std::hash<decltype(x.ptr())>()(x.ptr());

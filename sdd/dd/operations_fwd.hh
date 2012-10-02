@@ -12,7 +12,7 @@
 ///
 /// It permits operations to call each other recursively.
 
-namespace sdd { namespace dd {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -59,7 +59,7 @@ sum(context<C>&, const sum_builder<C, Values>&);
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::dd
+} // namespace sdd
 
 /// @endcond
 

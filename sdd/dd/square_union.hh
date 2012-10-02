@@ -8,7 +8,7 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/operations_fwd.hh"
 
-namespace sdd { namespace dd {
+namespace sdd {
   
 /*-------------------------------------------------------------------------------------------*/
 
@@ -93,6 +93,6 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
   
-}} // namespace sdd::dd
+} // namespace sdd
 
 #endif // _SDD_DD_SQUARE_UNION_HH_

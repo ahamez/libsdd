@@ -6,7 +6,7 @@
 ///
 /// Needed by operations.
 
-namespace sdd { namespace dd {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -19,6 +19,6 @@ initial_context() noexcept;
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::dd
+} // namespace sdd
 
 #endif // _SDD_DD_CONTEXT_FWD_HH_

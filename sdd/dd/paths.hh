@@ -6,7 +6,7 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/visit.hh"
 
-namespace sdd { namespace dd {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -98,6 +98,6 @@ noexcept
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::dd
+} // namespace sdd
 
 #endif // _SDD_DD_PATHS_HH_

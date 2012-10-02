@@ -3,7 +3,7 @@
 
 #include <iosfwd>
 
-namespace sdd { namespace dd {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -61,7 +61,7 @@ operator<<(std::ostream& os, const one_terminal<C>&)
   return os << "|1|";
 }
 
-}} // namespace sdd::dd
+} // namespace sdd
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -71,10 +71,10 @@ namespace std {
 
 /// @brief Hash specialization for sdd::dd::zero_terminal.
 template <typename C>
-struct hash<sdd::dd::zero_terminal<C>>
+struct hash<sdd::zero_terminal<C>>
 {
   std::size_t
-  operator()(const sdd::dd::zero_terminal<C>&)
+  operator()(const sdd::zero_terminal<C>&)
   const noexcept
   {
     return std::hash<unsigned int>()(0);
@@ -83,12 +83,12 @@ struct hash<sdd::dd::zero_terminal<C>>
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief Hash specialization for sdd::dd::one_terminal.
+/// @brief Hash specialization fdd::dd::or sone_terminal.
 template <typename C>
-struct hash<sdd::dd::one_terminal<C>>
+struct hash<sdd::one_terminal<C>>
 {
   std::size_t
-  operator()(const sdd::dd::one_terminal<C>&)
+  operator()(const sdd::one_terminal<C>&)
   const noexcept
   {
     return std::hash<unsigned int>()(1);

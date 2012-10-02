@@ -13,7 +13,7 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/top.hh"
 
-namespace sdd { namespace dd {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -307,7 +307,7 @@ struct _LIBSDD_ATTRIBUTE_PACKED nary_builder
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::dd
+} // namespace sdd
 
 /// @endcond
 

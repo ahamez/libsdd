@@ -3,7 +3,7 @@
 
 #include "sdd/dd/definition.hh"
 
-namespace sdd { namespace dd {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -18,6 +18,6 @@ visit(const Visitor& v, const SDD<C>& x)
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::dd
+} // namespace sdd
 
 #endif // SDD_DD_VISIT_HH_

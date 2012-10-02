@@ -10,7 +10,7 @@
 #include "sdd/dd/square_union.hh"
 #include "sdd/internal/util/hash.hh"
 
-namespace sdd { namespace dd {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -239,7 +239,7 @@ SDD<C>
 inline
 intersection(InputIterator begin, InputIterator end)
 {
-  dd::intersection_builder<C, dd::SDD<C>> builder;
+  intersection_builder<C, SDD<C>> builder;
   for (; begin != end; ++begin)
   {
     builder.add(*begin);
@@ -259,7 +259,7 @@ intersection(std::initializer_list<SDD<C>> operands)
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::dd
+} // namespace sdd
 
 namespace std {
 
@@ -269,10 +269,10 @@ namespace std {
 
 /// @brief Hash specialization for sdd::dd::intersection_op
 template <typename C>
-struct hash<sdd::dd::intersection_op<C>>
+struct hash<sdd::intersection_op<C>>
 {
   std::size_t
-  operator()(const sdd::dd::intersection_op<C>& inter)
+  operator()(const sdd::intersection_op<C>& inter)
   const noexcept
   {
     std::size_t seed = 0;

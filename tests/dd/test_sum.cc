@@ -12,12 +12,12 @@ struct sum_test
   : public testing::Test
 {
   typedef sdd::conf::conf0 conf;
-  typedef sdd::dd::SDD<conf> SDD;
-  sdd::dd::context<conf> cxt;
-  typedef sdd::dd::alpha_builder<conf, conf::Values> flat_alpha_builder;
-  typedef sdd::dd::alpha_builder<conf, SDD> hier_alpha_builder;
-  const SDD zero = sdd::dd::zero<conf>();
-  const SDD one = sdd::dd::one<conf>();
+  typedef sdd::SDD<conf> SDD;
+  sdd::context<conf> cxt;
+  typedef sdd::alpha_builder<conf, conf::Values> flat_alpha_builder;
+  typedef sdd::alpha_builder<conf, SDD> hier_alpha_builder;
+  const SDD zero = sdd::zero<conf>();
+  const SDD one = sdd::one<conf>();
 
   sum_test()
   {
@@ -209,7 +209,7 @@ TEST_F(sum_test, hierarchical_partition_changing)
 TEST_F(sum_test, values)
 {
   {
-    sdd::dd::sum_builder<conf, conf::Values> ops;
+    sdd::sum_builder<conf, conf::Values> ops;
     ASSERT_EQ(conf::Values(), sum(cxt, std::move(ops)));
   }
   {
@@ -217,7 +217,7 @@ TEST_F(sum_test, values)
     conf::Values val1 {1};
     conf::Values val2 {2};
     conf::Values ref {0,1,2};
-    sdd::dd::sum_builder<conf, conf::Values> ops {val0, val1, val2};
+    sdd::sum_builder<conf, conf::Values> ops {val0, val1, val2};
     ASSERT_EQ(ref, sum(cxt, std::move(ops)));
   }
 }
@@ -230,14 +230,14 @@ TEST_F(sum_test, iterable)
                        , SDD('a', {0,2}, one)
                        , SDD('a', {0,1}, one)
                        , SDD('a', {1,2}, one)};
-  ASSERT_EQ(SDD('a', {0,1,2}, one), sdd::dd::sum<conf>(vec.begin(), vec.end()));
+  ASSERT_EQ(SDD('a', {0,1,2}, one), sdd::sum<conf>(vec.begin(), vec.end()));
 }
 
 /*-------------------------------------------------------------------------------------------*/
 
 TEST_F(sum_test, initializer_list)
 {
-  ASSERT_EQ(SDD('a', {0,1,2}, one), sdd::dd::sum({ SDD('a', {0,1}, one)
+  ASSERT_EQ(SDD('a', {0,1,2}, one), sdd::sum({ SDD('a', {0,1}, one)
                                                  , SDD('a', {0,2}, one)
                                                  , SDD('a', {0,1}, one)
                                                  , SDD('a', {1,2}, one)}));

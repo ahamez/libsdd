@@ -13,7 +13,7 @@
 #include "sdd/dd/top.hh"
 #include "sdd/internal/mem/cache.hh"
 
-namespace sdd { namespace dd {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -125,7 +125,7 @@ noexcept
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::dd
+} // namespace sdd
 
 /// @endcond
 

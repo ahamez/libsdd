@@ -11,7 +11,7 @@
 #include "sdd/dd/top.hh"
 #include "sdd/internal/util/hash.hh"
 
-namespace sdd { namespace dd {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -243,7 +243,6 @@ inline
 SDD<C>&
 operator-=(SDD<C>& lhs, const SDD<C>& rhs)
 {
-  using dd::SDD;
   SDD<C> tmp = difference(initial_context<C>(), lhs, rhs);
   using std::swap;
   swap(tmp, lhs);
@@ -252,7 +251,7 @@ operator-=(SDD<C>& lhs, const SDD<C>& rhs)
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::dd
+} // namespace sdd
 
 namespace std {
 
@@ -262,10 +261,10 @@ namespace std {
 
 /// @brief Hash specialization for sdd::dd::difference_op
 template <typename C>
-struct hash<sdd::dd::difference_op<C>>
+struct hash<sdd::difference_op<C>>
 {
   std::size_t
-  operator()(const sdd::dd::difference_op<C>& op)
+  operator()(const sdd::difference_op<C>& op)
   const noexcept
   {
     std::size_t seed = 0;
