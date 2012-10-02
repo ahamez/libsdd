@@ -7,7 +7,6 @@
 
 #include "sdd/dd/alpha.hh"
 #include "sdd/dd/definition.hh"
-#include "sdd/dd/node_fwd.hh"
 #include "sdd/internal/util/hash.hh"
 #include "sdd/internal/util/packed.hh"
 

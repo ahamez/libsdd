@@ -8,7 +8,7 @@
 
 #include "sdd/dd/alpha.hh"
 #include "sdd/dd/definition_fwd.hh"
-#include "sdd/dd/node_fwd.hh" // node.hh included at the end of this file
+#include "sdd/dd/node.hh"
 #include "sdd/dd/terminal.hh"
 #include "sdd/internal/mem/ptr.hh"
 #include "sdd/internal/mem/ref_counted.hh"
@@ -469,7 +469,5 @@ struct hash<sdd::dd::SDD<C>>
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#include "sdd/dd/node.hh"
 
 #endif // _SDD_DD_DEFINITION_HH_
