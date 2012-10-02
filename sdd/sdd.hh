@@ -4,6 +4,9 @@
 #include "sdd/conf/default_configurations.hh"
 #include "sdd/dd/context.hh"
 #include "sdd/dd/definition.hh"
+#include "sdd/dd/paths.hh"
+#include "sdd/hom/context.hh"
+#include "sdd/hom/definition.hh"
 #include "sdd/order/utility.hh"
 
 /// @brief The main namespace for the library.
@@ -12,6 +15,9 @@ namespace sdd
 
 /// @brief Stuff related to SDD: definition and operations.
 namespace dd {}
+
+/// @brief Definition and evaluation of homomorphisms.
+namespace hom {}
 
 /// @brief Stuff necessary to describe and manipulate variable orders.
 namespace order {}

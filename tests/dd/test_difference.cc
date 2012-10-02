@@ -1,7 +1,8 @@
 #include "gtest/gtest.h"
 
-#include "sdd/sdd.hh"
 #include "sdd/conf/default_configurations.hh"
+#include "sdd/dd/context.hh"
+#include "sdd/dd/definition.hh"
 
 using namespace sdd::internal::mem;
 using namespace sdd::dd;
