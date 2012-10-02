@@ -178,6 +178,8 @@ noexcept
   return lhs.lhs_ == rhs.lhs_ and lhs.rhs_ == rhs.rhs_;
 }
 
+/*-------------------------------------------------------------------------------------------*/
+
 /// @related difference_op
 template <typename C>
 std::ostream&
