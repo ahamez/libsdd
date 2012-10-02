@@ -17,6 +17,13 @@ struct nil {};
 
 /*-------------------------------------------------------------------------------------------*/
 
+template <typename... Types>
+struct typelist
+{
+};
+
+/*-------------------------------------------------------------------------------------------*/
+
 template <typename T, typename... Types>
 struct index_of;
 
@@ -51,23 +58,6 @@ struct nth<Index, Head, Tail...>
 {
   typedef typename nth<Index - 1, Tail...>::type type;
 };  
-
-/*-------------------------------------------------------------------------------------------*/
-
-template <typename... Tail>
-struct nb_types;
-
-template <>
-struct nb_types<>
-{
-  static constexpr std::size_t value = 0;
-};
-
-template <typename Head, typename... Tail>
-struct nb_types<Head, Tail...>
-{
-  static constexpr std::size_t value = nb_types<Tail...>::value + 1;
-};
 
 /*-------------------------------------------------------------------------------------------*/  
 

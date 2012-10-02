@@ -43,14 +43,18 @@ class _LIBSDD_ATTRIBUTE_PACKED variant
 
 private:
 
-  static_assert( util::nb_types<Types...>::value >= 1
+  static_assert( sizeof...(Types) >= 1
                , "A variant should contain at least one type.");
 
-  static_assert( util::nb_types<Types...>::value <= UCHAR_MAX
+  static_assert( sizeof...(Types) <= UCHAR_MAX
                , "A variant can't hold more than UCHAR_MAX types.");
+
+public:
 
   /// @brief Index of the held type in the list of all possible types.
   const uint8_t index_;
+
+  typedef util::typelist<Types...> types;
 
   /// @brief A type large enough to contain all variant's types, with the correct alignement.
   typedef typename aligned_union<0, Types...>::type storage_type;
@@ -79,6 +83,8 @@ public:
   }
 
   /// @brief Get as type T.
+  ///
+  /// No verifications are done.
   template <typename T>
   const T&
   get()
@@ -97,18 +103,6 @@ public:
                    (v, storage_, index_);
   }
 
-
-  /// @brief Accept one visitor which will be dispatched on the currently held type by this
-  /// variant and the other visited variant.
-  template <typename Visitor>
-  typename Visitor::result_type
-  accept(const variant& other, const Visitor& v)
-  const
-  {
-    return dispatch_binary<Visitor, storage_type, 0, Types...>
-                          (v, storage_, index_, other.storage_, other.index_);
-  }
-
   /// @brief Return the position of the currently held type in the list of all possible types.
   uint8_t
   index()
@@ -121,13 +115,34 @@ public:
 /*-------------------------------------------------------------------------------------------*/
 
 /// @related variant
+template <typename Visitor, typename Variant>
+inline
+typename Visitor::result_type
+apply_visitor(const Visitor& v, const Variant& x)
+{
+  return x.accept(v);
+}
+
+/// @related variant
+template <typename Visitor, typename Variant1, typename Variant2>
+inline
+typename Visitor::result_type
+apply_visitor(const Visitor& v, const Variant1& x, const Variant2& y)
+{
+  return dispatch_binary<0>()( v
+                             , x.storage_, typename Variant1::types(), x.index()
+                             , y.storage_, typename Variant2::types(), y.index()
+                             );
+}
+
+/// @related variant
 template <typename... Types>
 inline
 bool
 operator==(const variant<Types...>& lhs, const variant<Types...>& rhs)
 noexcept
 {
-  return lhs.index() == rhs.index() and lhs.accept(rhs, eq_visitor());
+  return lhs.index() == rhs.index() and apply_visitor(eq_visitor(), lhs, rhs);
 }
 
 /// @related variant
@@ -138,24 +153,6 @@ variant_cast(const variant<Types...>& v)
 noexcept
 {
   return v.template get<T>();
-}
-
-/// @related variant
-template <typename Visitor, typename Variant>
-inline
-typename Visitor::result_type
-apply_visitor(const Visitor& v, const Variant& x)
-{
-  return x.accept(v);
-}
-
-/// @related variant
-template <typename Visitor, typename Variant>
-inline
-typename Visitor::result_type
-apply_visitor(const Visitor& v, const Variant& x, const Variant& y)
-{
-  return x.accept(y, v);
 }
 
 /*-------------------------------------------------------------------------------------------*/
