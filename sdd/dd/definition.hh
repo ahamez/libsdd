@@ -102,24 +102,24 @@ public:
   /// @brief Move constructor.
   ///
   /// O(1).
-  SDD(SDD&& other) noexcept = default;
+  SDD(SDD&&) noexcept = default;
 
   /// @brief Move operator.
   ///
   /// O(1).
   SDD&
-  operator=(SDD&& other) noexcept = default;
+  operator=(SDD&&) noexcept = default;
 
   /// @brief Copy constructor.
   ///
   /// O(1).
-  SDD(const SDD& other) noexcept = default;
+  SDD(const SDD&) noexcept = default;
 
   /// @brief Copy operator.
   ///
   /// O(1).
   SDD&
-  operator=(const SDD& other) noexcept = default;
+  operator=(const SDD&) noexcept = default;
 
   /// @brief  Construct a terminal.
   /// @param  terminal If true, create the |1| terminal; the |0| terminal otherwise.
