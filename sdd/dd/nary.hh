@@ -210,32 +210,45 @@ struct _LIBSDD_ATTRIBUTE_PACKED nary_builder
   typedef boost::container::flat_set<Valuation> set_type;
   typedef typename set_type::const_iterator const_iterator;
 
+  /// @brief The policy to add new operands.
   Builder builder_;
+
+  /// @brief Sorted container of operands.
   set_type set_;
 
+  /// @brief Default constructor.
   nary_builder()
     : builder_()
     , set_()
   {
   }
 
-  nary_builder(std::initializer_list<Valuation> operands)
+  /// @brief Construction with a reserve request.
+  nary_builder(std::size_t size)
     : builder_()
     , set_()
   {
-    set_.reserve(operands.size());
+    set_.reserve(size);
+  }
+
+  /// @brief Construction from a list of operands.
+  nary_builder(std::initializer_list<Valuation> operands)
+    : nary_builder(operands.size())
+  {
     for (const auto& op : operands)
     {
       add(op);
     }
   }
 
+  /// @brief Add a new operand.
   void
   add(Valuation&& operand)
   {
     builder_.add(set_, std::move(operand));
   }
 
+  /// @brief Add a new operand.
   void
   add(const Valuation& operand)
   {
