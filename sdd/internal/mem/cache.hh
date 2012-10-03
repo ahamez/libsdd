@@ -248,7 +248,7 @@ public:
   result_type
   operator()(Operation&& op)
   {
-    // Check if the current operation should be cached.
+    // Check if the current operation should not be cached.
     if (not apply_filters<Operation, Filters...>()(op))
     {
       ++stats_.rounds.front().filtered;
