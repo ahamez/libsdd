@@ -161,47 +161,47 @@ TEST(variant, binary_visitor)
   {
     variant_type v1((mem::construct<double>()));
     variant_type v2((mem::construct<double>()));
-    ASSERT_EQ(0, apply_visitor(visitor(), v1, v2));
+    ASSERT_EQ(0, apply_binary_visitor(visitor(), v1, v2));
   }
   {
     variant_type v1((mem::construct<double>()));
     variant_type v2((mem::construct<int>()));
-    ASSERT_EQ(1, apply_visitor(visitor(), v1, v2));
+    ASSERT_EQ(1, apply_binary_visitor(visitor(), v1, v2));
   }
   {
     variant_type v1((mem::construct<double>()));
     variant_type v2(mem::construct<foo>(), 42);
-    ASSERT_EQ(2, apply_visitor(visitor(), v1, v2));
+    ASSERT_EQ(2, apply_binary_visitor(visitor(), v1, v2));
   }
   {
     variant_type v1((mem::construct<int>()));
     variant_type v2((mem::construct<int>()));
-    ASSERT_EQ(3, apply_visitor(visitor(), v1, v2));
+    ASSERT_EQ(3, apply_binary_visitor(visitor(), v1, v2));
   }
   {
     variant_type v1((mem::construct<int>()));
     variant_type v2((mem::construct<double>()));
-    ASSERT_EQ(4, apply_visitor(visitor(), v1, v2));
+    ASSERT_EQ(4, apply_binary_visitor(visitor(), v1, v2));
   }
   {
     variant_type v1((mem::construct<int>()));
     variant_type v2(mem::construct<foo>(), 42);
-    ASSERT_EQ(5, apply_visitor(visitor(), v1, v2));
+    ASSERT_EQ(5, apply_binary_visitor(visitor(), v1, v2));
   }
   {
     variant_type v1(mem::construct<foo>(), 42);
     variant_type v2(mem::construct<foo>(), 33);
-    ASSERT_EQ(6, apply_visitor(visitor(), v1, v2));
+    ASSERT_EQ(6, apply_binary_visitor(visitor(), v1, v2));
   }
   {
     variant_type v1(mem::construct<foo>(), 42);
     variant_type v2((mem::construct<int>()));
-    ASSERT_EQ(7, apply_visitor(visitor(), v1, v2));
+    ASSERT_EQ(7, apply_binary_visitor(visitor(), v1, v2));
   }
   {
     variant_type v1(mem::construct<foo>(), 42);
     variant_type v2((mem::construct<double>()));
-    ASSERT_EQ(8, apply_visitor(visitor(), v1, v2));
+    ASSERT_EQ(8, apply_binary_visitor(visitor(), v1, v2));
   }
 }
 

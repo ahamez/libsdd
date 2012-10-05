@@ -25,6 +25,12 @@ struct construct {};
 
 /*-------------------------------------------------------------------------------------------*/
 
+template <typename Visitor, typename Variant, typename... Args>
+typename Visitor::result_type
+apply_visitor(const Visitor&, const Variant&, Args&&...);
+
+/*-------------------------------------------------------------------------------------------*/
+
 /// @brief  A union-like structure.
 /// @tparam Types The list of possible types.
 ///
@@ -49,12 +55,8 @@ private:
   static_assert( sizeof...(Types) <= UCHAR_MAX
                , "A variant can't hold more than UCHAR_MAX types.");
 
-public:
-
   /// @brief Index of the held type in the list of all possible types.
   const uint8_t index_;
-
-  typedef util::typelist<Types...> types;
 
   /// @brief A type large enough to contain all variant's types, with the correct alignement.
   typedef typename aligned_union<0, Types...>::type storage_type;
@@ -77,9 +79,10 @@ public:
     new (const_cast<storage_type*>(&storage_)) T(std::forward<Args>(args)...);
   }
 
+  /// @brief Destructor.
   ~variant()
   {
-    accept(dtor_visitor());
+    apply_visitor(dtor_visitor(), *this);
   }
 
   /// @brief Get as type T.
@@ -93,16 +96,6 @@ public:
     return *reinterpret_cast<const T*>(&storage_);
   }
 
-  /// @brief Accept one visitor which will be dispatched on the currently held type.
-  template <typename Visitor>
-  typename Visitor::result_type
-  accept(const Visitor& v)
-  const
-  {
-    return dispatch<Visitor, storage_type, 0, Types...>
-                   (v, storage_, index_);
-  }
-
   /// @brief Return the position of the currently held type in the list of all possible types.
   uint8_t
   index()
@@ -110,29 +103,46 @@ public:
   {
     return index_;
   }
+
+  /// @brief Return the raw storage.
+  const storage_type&
+  storage()
+  const noexcept
+  {
+    return storage_;
+  }
 };
 
 /*-------------------------------------------------------------------------------------------*/
 
 /// @related variant
-template <typename Visitor, typename Variant>
+template < typename Visitor
+         , typename... Types, template <typename...> class Variant
+         , typename... Args>
 inline
 typename Visitor::result_type
-apply_visitor(const Visitor& v, const Variant& x)
+apply_visitor(const Visitor& v, const Variant<Types...>& x, Args&&... args)
 {
-  return x.accept(v);
+  return dispatch<0>()( v
+                      , x.storage(), util::typelist<Types...>(), x.index()
+                      , std::forward<Args>(args)...);
 }
 
 /// @related variant
-template <typename Visitor, typename Variant1, typename Variant2>
+template < typename Visitor
+         , typename... Types1, template <typename...> class Variant1
+         , typename... Types2, template <typename...> class Variant2
+         , typename... Args>
 inline
 typename Visitor::result_type
-apply_visitor(const Visitor& v, const Variant1& x, const Variant2& y)
+apply_binary_visitor( const Visitor& v
+                    , const Variant1<Types1...>& x, const Variant2<Types2...>& y
+                    , Args&&... args)
 {
   return dispatch_binary<0>()( v
-                             , x.storage_, typename Variant1::types(), x.index()
-                             , y.storage_, typename Variant2::types(), y.index()
-                             );
+                             , x.storage(), util::typelist<Types1...>(), x.index()
+                             , y.storage(), util::typelist<Types2...>(), y.index()
+                             , std::forward<Args>(args)...);
 }
 
 /// @related variant
@@ -142,7 +152,7 @@ bool
 operator==(const variant<Types...>& lhs, const variant<Types...>& rhs)
 noexcept
 {
-  return lhs.index() == rhs.index() and apply_visitor(eq_visitor(), lhs, rhs);
+  return lhs.index() == rhs.index() and apply_binary_visitor(eq_visitor(), lhs, rhs);
 }
 
 /// @related variant

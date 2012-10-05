@@ -161,7 +161,8 @@ struct difference_op
   operator()()
   const
   {
-    return apply_visitor(difference_visitor<C>(cxt_, lhs_, rhs_), lhs_->data(), rhs_->data());
+    return apply_binary_visitor( difference_visitor<C>(cxt_, lhs_, rhs_)
+                               , lhs_->data(), rhs_->data());
   }
 };
 

@@ -24,40 +24,32 @@ struct check_visitor
 {
   typedef node_tag result_type;
 
-  const SDD<C> lhs_;
-  const SDD<C> rhs_;
-
-  check_visitor(const SDD<C>& lhs, const SDD<C>& rhs)
-  noexcept
-    : lhs_(lhs)
-    , rhs_(rhs)
-  {
-  }
-
   node_tag
-  operator()(const flat_node<C>& lhs, const flat_node<C>& rhs)
+  operator()( const flat_node<C>& lhs, const flat_node<C>& rhs
+            , const SDD<C>& sdd_lhs, const SDD<C>& sdd_rhs)
   const
   {
     if (not (lhs.variable() == rhs.variable()))
     {
-      throw top<C>(lhs_, rhs_);
+      throw top<C>(sdd_lhs, sdd_rhs);
     }
     return node_tag::flat;
   }
 
   node_tag
-  operator()(const hierarchical_node<C>& lhs, const hierarchical_node<C>& rhs)
+  operator()( const hierarchical_node<C>& lhs, const hierarchical_node<C>& rhs
+            , const SDD<C>& sdd_lhs, const SDD<C>& sdd_rhs)
   const
   {
     if (not (lhs.variable() == rhs.variable()))
     {
-      throw top<C>(lhs_, rhs_);
+      throw top<C>(sdd_lhs, sdd_rhs);
     }
     return node_tag::hierarchical;
   }
 
   node_tag
-  operator()(const one_terminal<C>&, const one_terminal<C>&)
+  operator()(const one_terminal<C>&, const one_terminal<C>&, const SDD<C>&, const SDD<C>&)
   const noexcept
   {
     assert(false && "More than one |1| in operands.");
@@ -67,10 +59,10 @@ struct check_visitor
   template <typename T, typename U>
   __attribute__((noreturn))
   node_tag
-  operator()(const T&, const U&)
+  operator()(const T&, const U&, const SDD<C>& sdd_lhs, const SDD<C>& sdd_rhs)
   const
   {
-    throw top<C>(lhs_, rhs_);
+    throw top<C>(sdd_lhs, sdd_rhs);
   }
 };
 
@@ -157,8 +149,9 @@ struct _LIBSDD_ATTRIBUTE_PACKED nary_base
     node_tag tag = node_tag::flat;
     for (; cit != last; ++cit)
     {
-      tag = apply_visitor( check_visitor<C>(*cit, *(cit + 1))
-                         , (*cit)->data(), (*(cit + 1))->data());
+      tag = apply_binary_visitor( check_visitor<C>()
+                                , (*cit)->data(), (*(cit + 1))->data()
+                                , *cit, *(cit + 1));
     }
     // Dispatch on the function that does the real work with the deduced type.
     const Operation* impl = static_cast<const Operation*>(this);
