@@ -12,6 +12,12 @@ set(SOURCES
     dd/test_paths.cc
     dd/test_sum.cc
     dd/test_top.cc
+    hom/test_hom_cons.cc
+    hom/test_hom_fixpoint.cc
+    hom/test_hom_identity.cc
+    hom/test_hom_inductive.cc
+    hom/test_hom_local.cc
+    hom/test_hom_sum.cc
     internal/mem/test_cache.cc
     internal/mem/test_ptr.cc
     internal/mem/test_unique_table.cc
