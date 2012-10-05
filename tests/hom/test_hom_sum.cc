@@ -35,6 +35,10 @@ TEST_F(hom_sum_test, evaluation)
     const hom h = sdd::hom::Sum({sdd::hom::Id<conf>()});
     ASSERT_EQ(one, h(one));
   }
+  {
+    const hom h = sdd::hom::Sum({sdd::hom::Id<conf>()});
+    ASSERT_EQ(zero, h(zero));
+  }
 }
 
 /*-------------------------------------------------------------------------------------------*/

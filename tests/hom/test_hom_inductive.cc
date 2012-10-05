@@ -14,7 +14,7 @@ typedef sdd::SDD<conf> SDD;
 typedef sdd::hom::homomorphism<conf> hom;
 const SDD zero = sdd::zero<conf>();
 const SDD one = sdd::one<conf>();
-
+const hom id = sdd::hom::Id<conf>();
 
 struct hom_inductive_test
   : public testing::Test
@@ -43,7 +43,7 @@ struct f0
   operator()(unsigned char var, const bitset& val)
   const
   {
-    return sdd::hom::Cons<conf>(var, val << 1);
+    return sdd::hom::Cons<conf>(var, val << 1, id);
   }
 
   SDD
@@ -59,7 +59,6 @@ struct f0
   {
     return true;
   }
-
 };
 
 struct f1
@@ -82,7 +81,7 @@ struct f1
   operator()(unsigned char var, const bitset& val)
   const
   {
-    return sdd::hom::Cons<conf>(var, val << 2);
+    return sdd::hom::Cons<conf>(var, val << 2, id);
   }
 
   SDD
@@ -98,7 +97,82 @@ struct f1
   {
     return true;
   }
-  
+};
+
+struct cut
+{
+  bool
+  skip(unsigned char var)
+  const noexcept
+  {
+    return false;
+  }
+
+  hom
+  operator()(unsigned char var, const SDD&)
+  const
+  {
+    return sdd::hom::Cons<conf>(var, zero, id);
+  }
+
+  hom
+  operator()(unsigned char var, const bitset&)
+  const
+  {
+    return sdd::hom::Cons<conf>(var, bitset {}, id);
+  }
+
+  SDD
+  operator()()
+  const noexcept
+  {
+    return zero;
+  }
+
+  bool
+  operator==(const cut&)
+  const noexcept
+  {
+    return true;
+  }
+};
+
+struct id_prime
+{
+  bool
+  skip(unsigned char var)
+  const noexcept
+  {
+    return false;
+  }
+
+  hom
+  operator()(unsigned char var, const SDD& x)
+  const
+  {
+    return sdd::hom::Cons<conf>(var, x, sdd::hom::Inductive<conf>(*this));
+  }
+
+  hom
+  operator()(unsigned char var, const bitset& val)
+  const
+  {
+    return sdd::hom::Cons<conf>(var, val, sdd::hom::Inductive<conf>(*this));
+  }
+
+  SDD
+  operator()()
+  const noexcept
+  {
+    return one;
+  }
+
+  bool
+  operator==(const id_prime&)
+  const noexcept
+  {
+    return true;
+  }
 };
 
 namespace std {
@@ -121,7 +195,29 @@ struct hash<f1>
   operator()(const f1&)
   const noexcept
   {
-    return 0;
+    return 1;
+  }
+};
+
+template <>
+struct hash<cut>
+{
+  std::size_t
+  operator()(const cut&)
+  const noexcept
+  {
+      return 2;
+  }
+};
+
+template <>
+struct hash<id_prime>
+{
+  std::size_t
+  operator()(const id_prime&)
+  const noexcept
+  {
+    return 3;
   }
 };
 
@@ -145,7 +241,7 @@ TEST_F(hom_inductive_test, construction)
 
 /*-------------------------------------------------------------------------------------------*/
 
-TEST_F(hom_inductive_test, evaluation)
+TEST_F(hom_inductive_test, evaluation_flat)
 {
   {
     const hom h1 = sdd::hom::Inductive<conf>(f0());
@@ -158,6 +254,59 @@ TEST_F(hom_inductive_test, evaluation)
              , h2(h1(SDD(0, {0,1,2}, SDD(1, {0,1,2}, one)))));
     ASSERT_EQ( SDD(0, {1,2,3}, SDD(1, {2,3,4}, one))
              , h1(h2(SDD(0, {0,1,2}, SDD(1, {0,1,2}, one)))));
+  }
+  {
+    const SDD s0 = SDD(0, {0}, SDD(1, {0}, one)) + SDD(0, {1}, SDD(1, {1}, one));
+    const SDD s1 = SDD(0, {1}, SDD(1, {0}, one)) + SDD(0, {2}, SDD(1, {1}, one));
+    const hom h1 = sdd::hom::Inductive<conf>(f0());
+    ASSERT_EQ(s1, h1(s0));
+  }
+  {
+    const hom h1 = sdd::hom::Inductive<conf>(id_prime());
+    ASSERT_EQ(SDD(0, {0,1,2}, one), h1(SDD(0, {0,1,2}, one)));
+  }
+}
+
+/*-------------------------------------------------------------------------------------------*/
+
+TEST_F(hom_inductive_test, evaluation_hierarchical)
+{
+  {
+    const hom h1 = sdd::hom::Inductive<conf>(f0());
+    ASSERT_EQ(SDD(0, {1,2,3}, one), h1(SDD(0, {0,1,2}, one)));
+  }
+  {
+    const hom h1 = sdd::hom::Inductive<conf>(f0());
+    const hom h2 = sdd::hom::Inductive<conf>(f1());
+    ASSERT_EQ( SDD(0, {1,2,3}, SDD(1, {2,3,4}, one))
+              , h2(h1(SDD(0, {0,1,2}, SDD(1, {0,1,2}, one)))));
+    ASSERT_EQ( SDD(0, {1,2,3}, SDD(1, {2,3,4}, one))
+              , h1(h2(SDD(0, {0,1,2}, SDD(1, {0,1,2}, one)))));
+  }
+  {
+    const SDD s0 = SDD(0, {0}, SDD(1, {0}, one)) + SDD(0, {1}, SDD(1, {1}, one));
+    const SDD s1 = SDD(0, {1}, SDD(1, {0}, one)) + SDD(0, {2}, SDD(1, {1}, one));
+    const hom h1 = sdd::hom::Inductive<conf>(f0());
+    ASSERT_EQ(s1, h1(s0));
+  }
+}
+
+
+/*-------------------------------------------------------------------------------------------*/
+
+TEST_F(hom_inductive_test, cut_path)
+{
+  {
+    const hom h0 = sdd::hom::Inductive<conf>(cut());
+    ASSERT_EQ(zero, h0(one));
+  }
+  {
+    const hom h0 = sdd::hom::Inductive<conf>(cut());
+    ASSERT_EQ(zero, h0(SDD(0, {0}, one)));
+  }
+  {
+    const hom h0 = sdd::hom::Inductive<conf>(cut());
+    ASSERT_EQ(zero, h0(SDD(0, one, one)));
   }
 }
 
