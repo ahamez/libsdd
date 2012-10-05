@@ -26,14 +26,18 @@ private:
   const variable_type variable_;
 
   /// @brief The valuation of the SDD to create.
-  const Valuation     valuation_;
+  const Valuation valuation_;
+
+  /// @brief The homomorphism to apply on successors.
+  const homomorphism<C> next_;
 
 public:
 
   /// @brief Constructor.
-  cons(const variable_type& var, const Valuation& val)
+  cons(const variable_type& var, const Valuation& val, const homomorphism<C>& h)
     : variable_(var)
     , valuation_(val)
+    , next_(h)
   {
   }
 
@@ -42,7 +46,7 @@ public:
   operator()(context<C>& cxt, const SDD<C>& x)
   const
   {
-    return SDD<C>(variable_, valuation_, x);
+    return SDD<C>(variable_, valuation_, next_(cxt, x));
   }
 
   /// @brief Skip variable predicate.
@@ -68,6 +72,14 @@ public:
   {
     return valuation_;
   }
+
+  /// @brief Return the homomorphism to apply on successors.
+  homomorphism<C>
+  next()
+  const noexcept
+  {
+    return next_;
+  }
 };
 
 /*-------------------------------------------------------------------------------------------*/
@@ -89,7 +101,8 @@ bool
 operator==(const cons<C, Valuation>& lhs, const cons<C, Valuation>& rhs)
 noexcept
 {
-  return lhs.variable() == rhs.variable() and lhs.valuation() == rhs.valuation();
+  return lhs.variable() == rhs.variable() and lhs.valuation() == rhs.valuation()
+     and lhs.next() == rhs.next();
 }
 
 /// @endcond
@@ -100,9 +113,9 @@ noexcept
 /// @related homomorphism
 template <typename C, typename Valuation>
 homomorphism<C>
-Cons(const typename C::Variable& var, const Valuation& val)
+Cons(const typename C::Variable& var, const Valuation& val, const homomorphism<C>& h)
 {
-  return homomorphism<C>::create(internal::mem::construct<cons<C, Valuation>>(), var, val);
+  return homomorphism<C>::create(internal::mem::construct<cons<C, Valuation>>(), var, val, h);
 }
 
 /*-------------------------------------------------------------------------------------------*/
@@ -126,6 +139,7 @@ struct hash<sdd::hom::cons<C, Valuation>>
     std::size_t seed = 0;
     sdd::internal::util::hash_combine(seed, h.variable());
     sdd::internal::util::hash_combine(seed, h.valuation());
+    sdd::internal::util::hash_combine(seed, h.next());
     return seed;
   }
 };
