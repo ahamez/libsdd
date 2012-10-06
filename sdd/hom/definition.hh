@@ -95,6 +95,26 @@ public:
 
 /// @cond INTERNAL_DOC
 
+  /// @brief Get the content of the homomorphism (an internal::mem::ref_counted).
+  ///
+  /// O(1).
+  const unique_type&
+  operator*()
+  const noexcept
+  {
+    return *ptr_;
+  }
+
+  /// @brief Get a pointer to the content of the homomorphism (an internal::mem::ref_counted).
+  ///
+  /// O(1).
+  const unique_type*
+  operator->()
+  const noexcept
+  {
+    return ptr_.operator->();
+  }
+
   /// @brief Get the real smart pointer of the unified data.
   ///
   /// O(1).
