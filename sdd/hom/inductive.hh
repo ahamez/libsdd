@@ -210,7 +210,7 @@ public:
   operator()(context<C>& cxt, const SDD<C>& x)
   const
   {
-    return apply_visitor(helper(), x.ptr()->data(), *hom_, cxt);
+    return apply_visitor(helper(), x->data(), *hom_, cxt);
   }
 
   /// @brief Skip variable predicate.

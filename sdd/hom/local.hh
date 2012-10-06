@@ -70,7 +70,7 @@ public:
   operator()(context<C>& cxt, const SDD<C>& x)
   const
   {
-    return apply_visitor(evaluation(), x.ptr()->data(), cxt, variable_, h_);
+    return apply_visitor(evaluation(), x->data(), cxt, variable_, h_);
   }
 
   /// @brief Skip variable predicate.

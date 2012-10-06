@@ -105,9 +105,7 @@ struct cached_homomorphism
   operator()()
   const
   {
-    return apply_binary_visitor( evaluation<C>()
-                               , h_.ptr()->data(), sdd_.ptr()->data()
-                               , sdd_, cxt_);
+    return apply_binary_visitor( evaluation<C>(), h_->data(), sdd_->data(), sdd_, cxt_);
   }
 };
 
@@ -146,7 +144,7 @@ struct should_cache
   operator()(const cached_homomorphism<C>& ch)
   const noexcept
   {
-    return apply_visitor(*this, ch.h_.ptr()->data());
+    return apply_visitor(*this, ch.h_->data());
   }
 };
 
