@@ -116,7 +116,7 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const local<C>& l)
 {
-  return os << "(" << l.variable() << " @ " << l.hom() << ")";
+  return os << "@(" << l.variable() << ", " << l.hom() << ")";
 }
 
 /// @endcond
