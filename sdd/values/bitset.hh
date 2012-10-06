@@ -2,7 +2,9 @@
 #define _SDD_VALUES_BISET_HH_
 
 #include <bitset>
+#include <functional> // hash
 #include <initializer_list>
+#include <iosfwd>
 #include <limits>
 #include <type_traits>
 
