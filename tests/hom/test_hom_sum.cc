@@ -134,6 +134,29 @@ TEST_F(hom_sum_test, construction)
                                  , Inductive<conf>(ind(2))});
     ASSERT_EQ(h4, h3);
   }
+  {
+    const hom l1 = sdd::hom::Local(0, Inductive<conf>(ind(0)));
+    const hom l2 = sdd::hom::Local(0, Inductive<conf>(ind(1)));
+    const hom s1 = sdd::hom::Sum({l1, l2});
+    const hom l3 = sdd::hom::Local(0, sdd::hom::Sum({ Inductive<conf>(ind(0))
+                                                    , Inductive<conf>(ind(1))}));
+    ASSERT_EQ(s1, l3);
+  }
+  {
+    const hom l1 = sdd::hom::Local(0, Inductive<conf>(ind(0)));
+    const hom l2 = sdd::hom::Local(0, Inductive<conf>(ind(1)));
+    const hom l3 = sdd::hom::Local(1, Inductive<conf>(ind(2)));
+    const hom s1 = sdd::hom::Sum({l1, l2, l3});
+    const hom s2 = sdd::hom::Sum({ sdd::hom::Local( 0
+                                                  , sdd::hom::Sum({ Inductive<conf>(ind(0))
+                                                                  , Inductive<conf>(ind(1))
+                                                                  })
+                                                  )
+                                 , sdd::hom::Local(1, Inductive<conf>(ind(2)))
+                                 });
+    ASSERT_EQ(s1, s2);
+  }
+
 }
 
 /*-------------------------------------------------------------------------------------------*/
