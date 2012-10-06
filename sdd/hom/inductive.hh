@@ -284,19 +284,7 @@ struct hash<sdd::hom::inductive<C>>
   operator()(const sdd::hom::inductive<C>& i)
   const noexcept
   {
-    return std::hash<sdd::hom::inductive_base<C>>()(i.hom());
-  }
-};
-
-/// @brief Hash specialization for sdd::hom::inductive_base.
-template <typename C>
-struct hash<sdd::hom::inductive_base<C>>
-{
-  std::size_t
-  operator()(const sdd::hom::inductive_base<C>& i)
-  const noexcept
-  {
-    return i.hash();
+    return i.hom().hash();
   }
 };
 
