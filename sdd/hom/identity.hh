@@ -2,6 +2,7 @@
 #define _SDD_HOM_ID_HH_
 
 #include <cassert>
+#include <iosfwd>
 
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
@@ -40,13 +41,22 @@ struct identity
 /*-------------------------------------------------------------------------------------------*/
 
 /// @brief Equality of two identity homomorphisms.
+/// @related identity
 template <typename C>
-constexpr
-bool
+inline
+constexpr bool
 operator==(const identity<C>&, const identity<C>&)
 noexcept
 {
   return true;
+}
+
+/// @related identity
+template <typename C>
+std::ostream&
+operator<<(std::ostream& os, const identity<C>&)
+{
+  return os << "Id";
 }
 
 /// @endcond

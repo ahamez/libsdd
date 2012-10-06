@@ -1,6 +1,8 @@
 #ifndef _SDD_HOM_LOCAL_HH_
 #define _SDD_HOM_LOCAL_HH_
 
+#include <iosfwd>
+
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
@@ -107,6 +109,14 @@ operator==(const local<C>& lhs, const local<C>& rhs)
 noexcept
 {
   return lhs.variable() == rhs.variable() and lhs.hom() == rhs.hom();
+}
+
+/// @related local
+template <typename C>
+std::ostream&
+operator<<(std::ostream& os, const local<C>& l)
+{
+  return os << "(" << l.variable() << " @ " << l.hom() << ")";
 }
 
 /// @endcond

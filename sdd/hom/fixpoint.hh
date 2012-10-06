@@ -2,6 +2,7 @@
 #define _SDD_HOM_FIXPOINT_HH_
 
 //#include <algorithm> // max
+#include <iosfwd>
 
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
@@ -79,6 +80,13 @@ noexcept
 }
 
 /// @endcond
+/// @related fixpoint
+template <typename C>
+std::ostream&
+operator<<(std::ostream& os, const fixpoint<C>& f)
+{
+  return os << "(" << f.hom() << ")*";
+}
 
 /*-------------------------------------------------------------------------------------------*/
 

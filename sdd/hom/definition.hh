@@ -1,6 +1,8 @@
 #ifndef _SDD_HOM_DEFINITION_HH_
 #define _SDD_HOM_DEFINITION_HH_
 
+#include <iosfwd>
+
 #include "sdd/dd/sum.hh"
 #include "sdd/hom/cons.hh"
 #include "sdd/hom/definition_fwd.hh"
@@ -216,6 +218,14 @@ operator<(const homomorphism<C>& lhs, const homomorphism<C>& rhs)
 noexcept
 {
   return lhs.ptr() < rhs.ptr();
+}
+
+/// @related homomorphism
+template <typename C>
+std::ostream&
+operator<<(std::ostream& os, const homomorphism<C>& h)
+{
+  return os << h->data();
 }
 
 /*-------------------------------------------------------------------------------------------*/

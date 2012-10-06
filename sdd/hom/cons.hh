@@ -1,6 +1,8 @@
 #ifndef _SDD_HOM_CONS_HH_
 #define _SDD_HOM_CONS_HH_
 
+#include <iosfwd>
+
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
@@ -103,6 +105,14 @@ noexcept
 {
   return lhs.variable() == rhs.variable() and lhs.valuation() == rhs.valuation()
      and lhs.next() == rhs.next();
+}
+
+/// @related cons
+template <typename C, typename Valuation>
+std::ostream&
+operator<<(std::ostream& os, const cons<C, Valuation>& c)
+{
+  return os << "Cons(" << c.variable() << ", " << c.valuation() << ", " << c.next() << ")";
 }
 
 /// @endcond

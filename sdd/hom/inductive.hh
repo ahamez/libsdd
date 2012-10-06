@@ -1,6 +1,7 @@
 #ifndef _SDD_HOM_INDUCTIVE_HH_
 #define _SDD_HOM_INDUCTIVE_HH_
 
+#include <iosfwd>
 #include <memory> // unique_ptr
 
 #include "sdd/dd/definition.hh"
@@ -56,6 +57,11 @@ public:
   virtual
   std::size_t
   hash() const noexcept = 0;
+
+  /// @brief Get the user's inductive textual representation.
+  virtual
+  void
+  print(std::ostream&) const = 0;
 };
 
 /*-------------------------------------------------------------------------------------------*/
@@ -129,12 +135,19 @@ public:
   }
 
   /// @brief Get the user's inductive hash value.
-  virtual
   std::size_t
   hash()
-  const noexcept final
+  const noexcept
   {
     return std::hash<User>()(h_);
+  }
+
+  /// @brief Get the user's inductive textual representation.
+  void
+  print(std::ostream& os)
+  const
+  {
+    os << h_;
   }
 };
 
@@ -228,6 +241,15 @@ operator==(const inductive<C>& lhs, const inductive<C>& rhs)
 noexcept
 {
   return lhs.hom() == rhs.hom();
+}
+
+/// @related inductive
+template <typename C>
+std::ostream&
+operator<<(std::ostream& os, const inductive<C>& i)
+{
+  i.hom().print(os);
+  return os;
 }
 
 /// @endcond
