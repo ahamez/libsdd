@@ -8,6 +8,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
+#include "sdd/hom/local.hh"
 
 namespace sdd { namespace hom {
 
@@ -79,7 +80,6 @@ noexcept
   return lhs.hom() == rhs.hom();
 }
 
-/// @endcond
 /// @related fixpoint
 template <typename C>
 std::ostream&
@@ -90,20 +90,58 @@ operator<<(std::ostream& os, const fixpoint<C>& f)
 
 /*-------------------------------------------------------------------------------------------*/
 
+// Forward declaration.
+template <typename C>
+homomorphism<C>
+Fixpoint(const homomorphism<C>&);
+
+/// @brief Concrete creation of Fixpoint.
+template <typename C>
+struct fixpoint_builder_helper
+{
+  typedef homomorphism<C> result_type;
+
+  homomorphism<C>
+  operator()(const identity<C>&, const homomorphism<C>& h)
+  const noexcept
+  {
+    return h;
+  }
+
+  homomorphism<C>
+  operator()(const fixpoint<C>& f, const homomorphism<C>&)
+  const noexcept
+  {
+    return f.hom();
+  }
+
+  homomorphism<C>
+  operator()(const local<C>& l, const homomorphism<C>&)
+  const noexcept
+  {
+    return Local<C>(l.variable(), Fixpoint<C>(l.hom()));
+  }
+
+  template <typename T>
+  homomorphism<C>
+  operator()(const T&, const homomorphism<C>& h)
+  const noexcept
+  {
+    return homomorphism<C>::create(internal::mem::construct<fixpoint<C>>(), h);
+  }
+};
+
+/// @endcond
+
+/*-------------------------------------------------------------------------------------------*/
+
 /// @brief Create the Fixpoint homomorphism.
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
 Fixpoint(const homomorphism<C>& h)
 {
-  if (h == Id<C>())
-  {
-    return h;
-  }
-  else
-  {
-    return homomorphism<C>::create(internal::mem::construct<fixpoint<C>>(), h);
-  }
+  return apply_visitor(fixpoint_builder_helper<C>(), h->data(), h);
 }
 
 /*-------------------------------------------------------------------------------------------*/
