@@ -12,6 +12,7 @@ set(SOURCES
     dd/test_paths.cc
     dd/test_sum.cc
     dd/test_top.cc
+    hom/common_inductives.cc
     hom/test_hom_cons.cc
     hom/test_hom_fixpoint.cc
     hom/test_hom_identity.cc

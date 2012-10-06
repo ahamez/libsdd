@@ -1,30 +1,19 @@
-#include <iostream>
 #include <vector>
 
 #include "gtest/gtest.h"
 
-#include "sdd/conf/default_configurations.hh"
-#include "sdd/dd/context.hh"
-#include "sdd/dd/definition.hh"
-#include "sdd/hom/context.hh"
-#include "sdd/hom/definition.hh"
+#include "tests/hom/common.hh"
 
 /*-------------------------------------------------------------------------------------------*/
+
+const SDD zero = sdd::zero<conf>();
+const SDD one = sdd::one<conf>();
+const hom id = sdd::hom::Id<conf>();
 
 struct hom_sum_test
   : public testing::Test
 {
 };
-
-typedef sdd::conf::conf0 conf;
-typedef sdd::SDD<conf> SDD;
-typedef sdd::hom::homomorphism<conf> hom;
-typedef sdd::values::bitset<64> bitset;
-const SDD zero = sdd::zero<conf>();
-const SDD one = sdd::one<conf>();
-const hom id = sdd::hom::Id<conf>();
-
-using sdd::hom::Inductive;
 
 /*-------------------------------------------------------------------------------------------*/
 

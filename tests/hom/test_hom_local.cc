@@ -1,31 +1,36 @@
 #include "gtest/gtest.h"
 
-#include "sdd/conf/default_configurations.hh"
-#include "sdd/dd/context.hh"
-#include "sdd/dd/definition.hh"
-#include "sdd/hom/context.hh"
-#include "sdd/hom/definition.hh"
+#include "tests/hom/common.hh"
+#include "tests/hom/common_inductives.hh"
 
 /*-------------------------------------------------------------------------------------------*/
+
+const SDD zero = sdd::zero<conf>();
+const SDD one = sdd::one<conf>();
+const hom id = sdd::hom::Id<conf>();
 
 struct hom_local_test
   : public testing::Test
 {
-  typedef sdd::conf::conf0 conf;
-  typedef sdd::SDD<conf> SDD;
-  typedef sdd::hom::homomorphism<conf> hom;
-  const SDD zero = sdd::zero<conf>();
-  const SDD one = sdd::one<conf>();
-
-  hom_local_test()
-  {
-  }
 };
 
 /*-------------------------------------------------------------------------------------------*/
 
 TEST_F(hom_local_test, construction)
 {
+  {
+    ASSERT_EQ(id, Local(0, id));
+  }
+  {
+    const hom h1 = Local(0, Inductive<conf>(incr(0,1)));
+    const hom h2 = Local(0, Inductive<conf>(incr(0,1)));
+    ASSERT_EQ(h1, h2);
+  }
+  {
+    const hom h1 = Local(0, Inductive<conf>(incr(0,1)));
+    const hom h2 = Local(0, Inductive<conf>(incr(0,2)));
+    ASSERT_NE(h1, h2);
+  }
 }
 
 /*-------------------------------------------------------------------------------------------*/

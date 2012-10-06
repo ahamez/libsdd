@@ -1,22 +1,16 @@
 #include "gtest/gtest.h"
 
-#include "sdd/conf/default_configurations.hh"
-#include "sdd/dd/context.hh"
-#include "sdd/dd/definition.hh"
-#include "sdd/hom/context.hh"
-#include "sdd/hom/definition.hh"
+#include "tests/hom/common.hh"
 
 /*-------------------------------------------------------------------------------------------*/
+
+const SDD zero = sdd::zero<conf>();
+const SDD one = sdd::one<conf>();
+const hom id = sdd::hom::Id<conf>();
 
 struct hom_id_test
   : public testing::Test
 {
-  typedef sdd::conf::conf0 conf;
-  typedef sdd::SDD<conf> SDD;
-  typedef sdd::hom::homomorphism<conf> hom;
-  const SDD zero = sdd::zero<conf>();
-  const SDD one = sdd::one<conf>();
-
   hom_id_test()
   {
   }
