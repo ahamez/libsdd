@@ -160,7 +160,7 @@ class inductive
 private:
 
   /// @brief Ownership of the user's inductive homomorphism.
-  const std::unique_ptr<const inductive_base<C>> hom_;
+  const std::unique_ptr<const inductive_base<C>> hom_ptr_;
 
   /// @brief Dispatch the inductive homomorphism evaluation.
   struct helper
@@ -201,7 +201,7 @@ public:
 
   /// @brief Constructor.
   inductive(const inductive_base<C>* i_ptr)
-    : hom_(i_ptr)
+    : hom_ptr_(i_ptr)
   {
   }
 
@@ -210,7 +210,7 @@ public:
   operator()(context<C>& cxt, const SDD<C>& x)
   const
   {
-    return apply_visitor(helper(), x->data(), *hom_, cxt);
+    return apply_visitor(helper(), x->data(), *hom_ptr_, cxt);
   }
 
   /// @brief Skip variable predicate.
@@ -218,7 +218,7 @@ public:
   skip(const typename C::Variable& var)
   const noexcept
   {
-    return hom_->skip(var);
+    return hom_ptr_->skip(var);
   }
 
   /// @brief Return the user's inductive homomorphism
@@ -226,7 +226,7 @@ public:
   hom()
   const noexcept
   {
-    return *hom_;
+    return *hom_ptr_;
   }
 };
 
