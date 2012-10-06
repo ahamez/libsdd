@@ -37,6 +37,13 @@ TEST_F(hom_local_test, construction)
 
 TEST_F(hom_local_test, evaluation)
 {
+  const SDD s0 = SDD(0, SDD('a', {0}, one), SDD(1, SDD('b', {1}, one), one));
+  const hom h1 = Local(0, Inductive<conf>(incr('a',1)));
+  ASSERT_EQ( SDD(0, SDD('a', {1}, one), SDD(1, SDD('b', {1}, one), one))
+           , h1(s0));
+  const hom h2 = Local(1, Inductive<conf>(incr('b',1)));
+  ASSERT_EQ( SDD(0, SDD('a', {0}, one), SDD(1, SDD('b', {2}, one), one))
+           , h2(s0));
 }
 
 /*-------------------------------------------------------------------------------------------*/
