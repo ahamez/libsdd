@@ -17,10 +17,6 @@ struct hom_cons_test
   const SDD zero = sdd::zero<conf>();
   const SDD one = sdd::one<conf>();
   const hom id = sdd::hom::Id<conf>();
-
-  hom_cons_test()
-  {
-  }
 };
 
 /*-------------------------------------------------------------------------------------------*/

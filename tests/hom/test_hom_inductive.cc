@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "gtest/gtest.h"
 
 #include "sdd/conf/default_configurations.hh"
@@ -61,6 +63,12 @@ struct f0
   }
 };
 
+std::ostream&
+operator<<(std::ostream& os, const f0&)
+{
+  return os << "f0";
+}
+
 struct f1
 {
   bool
@@ -98,6 +106,12 @@ struct f1
     return true;
   }
 };
+
+std::ostream&
+operator<<(std::ostream& os, const f1&)
+{
+  return os << "f1";
+}
 
 struct cut
 {
@@ -137,6 +151,12 @@ struct cut
   }
 };
 
+std::ostream&
+operator<<(std::ostream& os, const cut&)
+{
+  return os << "cut";
+}
+
 struct id_prime
 {
   bool
@@ -174,6 +194,56 @@ struct id_prime
     return true;
   }
 };
+
+std::ostream&
+operator<<(std::ostream& os, const id_prime&)
+{
+  return os << "id_prime";
+}
+
+struct consume
+{
+  bool
+  skip(unsigned char var)
+  const noexcept
+  {
+    return false;
+  }
+
+  hom
+  operator()(unsigned char var, const SDD&)
+  const
+  {
+    return sdd::hom::Inductive<conf>(*this);
+  }
+
+  hom
+  operator()(unsigned char var, const bitset& val)
+  const
+  {
+    return sdd::hom::Inductive<conf>(*this);
+  }
+
+  SDD
+  operator()()
+  const noexcept
+  {
+    return one;
+  }
+
+  bool
+  operator==(const consume&)
+  const noexcept
+  {
+    return true;
+  }
+};
+
+std::ostream&
+operator<<(std::ostream& os, const consume&)
+{
+  return os << "consume";
+}
 
 namespace std {
 
@@ -221,6 +291,17 @@ struct hash<id_prime>
   }
 };
 
+template <>
+struct hash<consume>
+{
+  std::size_t
+  operator()(const consume&)
+  const noexcept
+  {
+    return 4;
+  }
+};
+
 }
 
 /*-------------------------------------------------------------------------------------------*/
@@ -264,6 +345,10 @@ TEST_F(hom_inductive_test, evaluation_flat)
   {
     const hom h1 = sdd::hom::Inductive<conf>(id_prime());
     ASSERT_EQ(SDD(0, {0,1,2}, one), h1(SDD(0, {0,1,2}, one)));
+  }
+  {
+    const hom h1 = sdd::hom::Inductive<conf>(consume());
+    ASSERT_EQ(one, h1(SDD(0, {0,1,2}, SDD(1, one, one))));
   }
 }
 
