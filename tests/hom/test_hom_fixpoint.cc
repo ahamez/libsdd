@@ -36,6 +36,11 @@ TEST_F(hom_fixpoint_test, construction)
              , Fixpoint(Fixpoint(Inductive<conf>(incr(0,1))))
              );
   }
+  {
+    ASSERT_EQ( Fixpoint(Local<conf>(0, Inductive<conf>(incr(0,1))))
+             , Local<conf>(0, Fixpoint(Inductive<conf>(incr(0,1))))
+             );
+  }
 }
 
 /*-------------------------------------------------------------------------------------------*/
