@@ -1,8 +1,11 @@
 #ifndef _SDD_HOM_SUM_HH_
 #define _SDD_HOM_SUM_HH_
 
-#include <algorithm>  // all_of, equal
+#include <algorithm>  // all_of, copy, equal
 #include <initializer_list>
+#include <iosfwd>
+#include <unordered_map>
+#include <vector>
 
 #include <boost/container/flat_set.hpp>
 
@@ -10,6 +13,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
+#include "sdd/hom/local.hh"
 
 namespace sdd { namespace hom {
 
@@ -70,8 +74,8 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief Equality of two Sum homomorphisms.
-/// @related Sum
+/// @brief Equality of two sum.
+/// @related sum
 template <typename C>
 inline
 bool
@@ -81,6 +85,61 @@ noexcept
   return lhs.operands().size() == rhs.operands().size()
      and std::equal(lhs.operands().begin(), lhs.operands().end(), rhs.operands().begin());
 }
+
+/// @related sum
+template <typename C>
+std::ostream&
+operator<<(std::ostream& os, const sum<C>& s)
+{
+  os << "(";
+  std::copy( s.operands().begin(), std::prev(s.operands().end())
+           , std::ostream_iterator<homomorphism<C>>(os, " + "));
+  return os << *std::prev(s.operands().end()) << ")";
+}
+
+/*-------------------------------------------------------------------------------------------*/
+
+/// @brief Help optimize an union's operands.
+template <typename C>
+struct sum_builder_helper
+{
+  typedef void result_type;
+  typedef typename sum<C>::operands_type operands_type;
+  typedef std::vector<homomorphism<C>> hom_list_type;
+  typedef std::unordered_map<typename C::Variable, hom_list_type> locals_type;
+
+  /// @brief Flatten nested sums.
+  void
+  operator()( const sum<C>& s
+            , const homomorphism<C>& h, operands_type& operands, locals_type& locals)
+  const
+  {
+    for (const auto& op : s.operands())
+    {
+      apply_visitor(*this, op->data(), op, operands, locals);
+    }
+  }
+
+  /// @brief Regroup locals.
+  void
+  operator()( const local<C>& l
+            , const homomorphism<C>& h, operands_type& operands, locals_type& locals)
+  const
+  {
+    auto insertion = locals.emplace(l.variable(), hom_list_type());
+    insertion.first->second.emplace_back(l.hom());
+  }
+
+  /// @brief Insert normally all other operands.
+  template <typename T>
+  void
+  operator()(const T&, const homomorphism<C>& h, operands_type& operands, locals_type&)
+  const
+  {
+    operands.insert(h);
+  }
+
+};
 
 /// @endcond
 
@@ -102,9 +161,17 @@ Sum(InputIterator begin, InputIterator end)
   typename sum<C>::operands_type operands;
   operands.reserve(size);
 
+  sum_builder_helper<C> sbv;
+  typename sum_builder_helper<C>::locals_type locals;
   for (; begin != end; ++begin)
   {
-    operands.insert(*begin);
+    apply_visitor(sbv, (*begin)->data(), *begin, operands, locals);
+  }
+
+  // insert remaining locals
+  for (const auto& l : locals)
+  {
+    operands.insert(Local<C>(l.first, Sum<C>(l.second.begin(), l.second.end())));
   }
 
   if (operands.size() == 1)
@@ -113,6 +180,7 @@ Sum(InputIterator begin, InputIterator end)
   }
   else
   {
+    operands.shrink_to_fit();
     return homomorphism<C>::create(internal::mem::construct<sum<C>>(), std::move(operands));
   }
 }
