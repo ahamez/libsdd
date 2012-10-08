@@ -48,7 +48,7 @@ struct operation_wrapper
   /// @brief Return a textual description of the contained operation.
   std::string
   print()
-  const noexcept final
+  const noexcept
   {
     std::stringstream ss;
     ss << operation_;
@@ -82,7 +82,7 @@ private:
   /// @brief Flag to determine if the description has been built.
   mutable bool description_built_;
 
-  /// @Textual description of the error.
+  /// @brief Textual description of the error.
   mutable std::string description_;
 
 public:
@@ -107,22 +107,7 @@ public:
   what()
   const noexcept
   {
-    if (not description_built_)
-    {
-      std::stringstream ss;
-      ss << "Incompatible SDD: " << lhs_ << " and " << rhs_ << "."
-         << std::endl
-         << "The following operations led to this error (first to last): "
-         << std::endl;
-      std::size_t i = 1;
-      for (auto rcit = steps_.crbegin(); rcit != steps_.crend(); ++rcit, ++i)
-      {
-        ss << i << " : " << (*rcit)->print() << std::endl;
-      }
-      description_ = ss.str();
-      description_built_ = true;
-    }
-    return description_.c_str();
+    return description().c_str();
   }
 
   /// @brief Get the left incompatible operand.
@@ -155,6 +140,29 @@ public:
   add_step(Operation&& op)
   {
     steps_.emplace_back(std::make_shared<operation_wrapper<Operation>>(std::move(op)));
+  }
+
+  /// @brief Return a textual description.
+  std::string&
+  description()
+  const noexcept
+  {
+    if (not description_built_)
+    {
+      std::stringstream ss;
+      ss << "Incompatible SDD: " << lhs_ << " and " << rhs_ << "."
+         << std::endl
+         << "The following operations led to this error (first to last): "
+         << std::endl;
+      std::size_t i = 1;
+      for (auto rcit = steps_.crbegin(); rcit != steps_.crend(); ++rcit, ++i)
+      {
+        ss << i << " : " << (*rcit)->print() << std::endl;
+      }
+      description_ = ss.str();
+      description_built_ = true;
+    }
+    return description_;
   }
 
 /// @endcond

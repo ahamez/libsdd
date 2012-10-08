@@ -51,23 +51,48 @@ struct operation_wrapper
   const noexcept final
   {
     std::stringstream ss;
+    ss << operation_;
     return ss.str();
   }
 };
+
+/// @brief Specialization to contain a Top exception.
+template <typename C>
+struct operation_wrapper<top<C>>
+  : public operation_wrapper_base
+{
+  const top<C> top_;
+
+  /// @brief Constructor.
+  operation_wrapper(const top<C>& t)
+    : top_(t)
+  {
+  }
+
+  /// @brief Return a textual description of the contained Top.
+  std::string
+  print()
+  const noexcept
+  {
+    return top_.description();
+  }
+};
+
 
 /// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 
 /// @exception evaluation_error
-/// @brief The top terminal.
-///
-/// The top terminal is represented as an exception thrown when encoutering incompatible SDD.
+/// @brief Raised when an error is encountered by an evaluated homomorphism.
 template <typename C>
 class evaluation_error
   : public std::exception
 {
 private:
+
+  /// @brief The SDD operand.
+  const SDD<C> sdd_;
 
   /// @brief The sequence, in reverse order, of operations that led to the error.
   std::vector<std::shared_ptr<operation_wrapper_base>> steps_;
@@ -75,15 +100,16 @@ private:
   /// @brief Flag to determine if the description has been built.
   mutable bool description_built_;
 
-  /// @Textual description of the error.
+  /// @brief Textual description of the error.
   mutable std::string description_;
 
 public:
 
 /// @cond INTERNAL_DOC
 
-  evaluation_error()
-    : steps_()
+  evaluation_error(const SDD<C>& s)
+    : sdd_(s)
+    , steps_()
     , description_built_(false)
     , description_()
   {
@@ -98,26 +124,44 @@ public:
   what()
   const noexcept
   {
-    if (not description_built_)
-    {
-      std::stringstream ss;
-      ss << "TODO";
-      description_ = ss.str();
-      description_built_ = true;
-    }
-    return description_.c_str();
+    return description().c_str();
   }
 
 /// @cond INTERNAL_DOC
 
-  /// @brief Add an operation to the sequence of operations that lead to incompatible SDD.
-  ///
-  /// Called by internal::mem::cache.
+  /// @brief Add an operation to the sequence of operations that lead to an evaluation error.
   template <typename Operation>
   void
   add_step(Operation&& op)
   {
     steps_.emplace_back(std::make_shared<operation_wrapper<Operation>>(std::move(op)));
+  }
+
+  void
+  add_top(const top<C>& t)
+  {
+    steps_.emplace_back(std::make_shared<operation_wrapper<top<C>>>(t));
+  }
+
+  /// @brief Return a textual description.
+  std::string&
+  description()
+  const noexcept
+  {
+    if (not description_built_)
+    {
+      std::stringstream ss;
+      ss << "Application failed on " << sdd_ << std::endl;
+      ss << "The following operations led to this error:" << std::endl;
+      std::size_t i = 1;
+      for (auto rcit = steps_.crbegin(); rcit != steps_.crend(); ++rcit, ++i)
+      {
+        ss << i << " : " << (*rcit)->print() << std::endl;
+      }
+      description_ = ss.str();
+      description_built_ = true;
+    }
+    return description_;
   }
 
 /// @endcond
