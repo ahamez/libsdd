@@ -19,14 +19,11 @@ template <typename C>
 struct identity
 {
   /// @brief Evaluation.
-  ///
-  /// This is an error to arrive here as the identity is computed before calling the cache.
   SDD<C>
-  operator()(context<C>&, const SDD<C>&)
+  operator()(context<C>&, const SDD<C>& x)
   const noexcept
   {
-    assert(false);
-    __builtin_unreachable();
+    return x;
   }
 
   /// @brief Skip variable predicate.
@@ -44,6 +41,15 @@ struct identity
   {
     return true;
   }
+};
+
+/*-------------------------------------------------------------------------------------------*/
+
+/// @brief Describe Identity characteristics.
+template <typename C>
+struct homomorphism_traits<identity<C>>
+{
+  static constexpr bool should_cache = false;
 };
 
 /*-------------------------------------------------------------------------------------------*/

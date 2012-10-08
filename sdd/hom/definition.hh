@@ -157,10 +157,8 @@ public:
   operator()(context<C>& cxt, const SDD<C>& x)
   const
   {
-    // hard-wired cases:
-    // - if the current homomorphism is Id, then directly return the operand
-    // - if the current operand is |0|, then directly return it
-    if (*this == Id<C>() or x.empty())
+    // If the current operand is |0|, then directly return it
+    if (x.empty())
     {
       return x;
     }
