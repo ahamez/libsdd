@@ -227,9 +227,9 @@
 				2BC9F2B7161B3B78005B5CDE /* evaluation_error.hh */,
 				2BE71C67161CB5E700B22084 /* fixpoint.hh */,
 				2B1A26961619BDEC005D6BB0 /* identity.hh */,
+				2B5723E8161F0A3200F09892 /* inductive.hh */,
 				2BE71C6F161CD4A500B22084 /* local.hh */,
 				2B1A26971619BEF1005D6BB0 /* sum.hh */,
-				2B5723E8161F0A3200F09892 /* inductive.hh */,
 			);
 			path = hom;
 			sourceTree = "<group>";
