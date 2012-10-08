@@ -30,7 +30,7 @@ struct evaluation
   template <typename H>
   SDD<C>
   operator()(const H& h, const one_terminal<C>&, const SDD<C>& x, context<C>& cxt)
-  const noexcept
+  const
   {
     return h(cxt, x);
   }
