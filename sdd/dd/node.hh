@@ -71,7 +71,7 @@ public:
 
   /// @brief Destructor.
   ///
-  /// O(n) where n is the number of arcs in the builder.  
+  /// O(n) where n is the number of arcs in the node.
   ~node()
   {
     for (auto& arc : *this)
