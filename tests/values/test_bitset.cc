@@ -45,14 +45,14 @@ TEST(bitset_test, swap)
 
 /*-------------------------------------------------------------------------------------------*/
 
-TEST(bitset_test, left_shit)
+TEST(bitset_test, left_shift)
 {
   ASSERT_EQ(bitset({1,2,3}), bitset({0,1,2}).operator<<(1));
 }
 
 /*-------------------------------------------------------------------------------------------*/
 
-TEST(bitset_test, right_shit)
+TEST(bitset_test, right_shift)
 {
   ASSERT_EQ(bitset({0,1}), bitset({0,1,2}).operator>>(1));
 }
