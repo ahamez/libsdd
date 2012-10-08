@@ -46,7 +46,7 @@ public:
     SDD<C>
     operator()( const hierarchical_node<C>& n
               , context<C>& cxt, const variable_type& var, const homomorphism<C>& h
-              , const SDD<C>&)
+              , const SDD<C>& s)
     const
     {
       sum_builder<C, SDD<C>> sum_operands(n.size());
@@ -54,7 +54,17 @@ public:
       {
         sum_operands.add(SDD<C>(var, h(cxt, arc.valuation()), arc.successor()));
       }
-      return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+
+      try
+      {
+        return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+      }
+      catch (top<C>& t)
+      {
+        evaluation_error<C> e(s);
+        e.add_top(t);
+        throw e;
+      }
     }
 
     template <typename T>
