@@ -2,6 +2,7 @@
 #define _SDD_HOM_EVALUATION_HH_
 
 #include <cassert>
+#include <iosfwd>
 
 #include "sdd/hom/context_fwd.hh"
 
@@ -105,7 +106,7 @@ struct cached_homomorphism
   operator()()
   const
   {
-    return apply_binary_visitor( evaluation<C>(), h_->data(), sdd_->data(), sdd_, cxt_);
+    return apply_binary_visitor(evaluation<C>(), h_->data(), sdd_->data(), sdd_, cxt_);
   }
 };
 
@@ -119,6 +120,14 @@ operator==(const cached_homomorphism<C>& lhs, const cached_homomorphism<C>& rhs)
 noexcept
 {
   return lhs.h_ == rhs.h_ and lhs.sdd_ == rhs.sdd_;
+}
+
+/// @related cached_homomorphism
+template <typename C>
+std::ostream&
+operator<<(std::ostream& os, const cached_homomorphism<C>& ch)
+{
+  return os << ch.h_;
 }
 
 /*-------------------------------------------------------------------------------------------*/
