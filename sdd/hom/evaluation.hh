@@ -21,7 +21,8 @@ struct evaluation
 
   template <typename H>
   bool
-  operator()(const H& h, const zero_terminal<C>&, const SDD<C>&, context<C>&)
+  operator()( const H& h, const zero_terminal<C>&
+            , const SDD<C>&, context<C>&, const homomorphism<C>&)
   const noexcept
   {
     assert(false);
@@ -30,7 +31,8 @@ struct evaluation
 
   template <typename H>
   SDD<C>
-  operator()(const H& h, const one_terminal<C>&, const SDD<C>& x, context<C>& cxt)
+  operator()( const H& h, const one_terminal<C>&
+            , const SDD<C>& x, context<C>& cxt, const homomorphism<C>&)
   const
   {
     return h(cxt, x);
@@ -42,7 +44,8 @@ struct evaluation
   /// whenever possible.
   template <typename H, typename Node>
   SDD<C>
-  operator()(const H& h, const Node& node, const SDD<C>& x, context<C>& cxt)
+  operator()( const H& h, const Node& node
+            , const SDD<C>& x, context<C>& cxt, const homomorphism<C>& hom_proxy)
   const
   {
     if (h.skip(node.variable()))
@@ -51,7 +54,7 @@ struct evaluation
       su.reserve(node.size());
       for (const auto& arc : node)
       {
-        SDD<C> new_successor = h(cxt, arc.successor());
+        SDD<C> new_successor = hom_proxy(cxt, arc.successor());
         if (not new_successor.empty())
         {
           su.add(new_successor, arc.valuation());
@@ -106,7 +109,7 @@ struct cached_homomorphism
   operator()()
   const
   {
-    return apply_binary_visitor(evaluation<C>(), h_->data(), sdd_->data(), sdd_, cxt_);
+    return apply_binary_visitor(evaluation<C>(), h_->data(), sdd_->data(), sdd_, cxt_, h_);
   }
 };
 
