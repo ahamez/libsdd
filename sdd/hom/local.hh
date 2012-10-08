@@ -45,7 +45,8 @@ public:
 
     SDD<C>
     operator()( const hierarchical_node<C>& n
-              , context<C>& cxt, const variable_type& var, const homomorphism<C>& h)
+              , context<C>& cxt, const variable_type& var, const homomorphism<C>& h
+              , const SDD<C>&)
     const
     {
       sum_builder<C, SDD<C>> sum_operands(n.size());
@@ -58,19 +59,20 @@ public:
 
     template <typename T>
     SDD<C>
-    operator()(const T&, context<C>&, const variable_type&, const homomorphism<C>&)
+    operator()( const T&, context<C>&, const variable_type&, const homomorphism<C>&
+              , const SDD<C> s)
     const
     {
-      throw evaluation_error<C>();
+      throw evaluation_error<C>(s);
     }
   };
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const SDD<C>& x)
+  operator()(context<C>& cxt, const SDD<C>& s)
   const
   {
-    return apply_visitor(evaluation(), x->data(), cxt, variable_, h_);
+    return apply_visitor(evaluation(), s->data(), cxt, variable_, h_, s);
   }
 
   /// @brief Skip variable predicate.
