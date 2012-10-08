@@ -51,9 +51,11 @@ public:
 
   /// @brief Create a new empty context.
   context(std::size_t difference_size, std::size_t intersection_size, std::size_t sum_size)
-	 	: difference_cache_(std::make_shared<difference_cache_type>(difference_size))
-    , intersection_cache_(std::make_shared<intersection_cache_type>(intersection_size))
-    , sum_cache_(std::make_shared<sum_cache_type>(sum_size))
+	 	: difference_cache_(std::make_shared<difference_cache_type>( "sdd_difference_cache"
+                                                               , difference_size))
+    , intersection_cache_(std::make_shared<intersection_cache_type>( "sdd_intersection_cache"
+                                                                   , intersection_size))
+    , sum_cache_(std::make_shared<sum_cache_type>("sdd_sum_cache", sum_size))
   {
   }
 

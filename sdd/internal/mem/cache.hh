@@ -201,6 +201,9 @@ private:
     }
   };
 
+  /// @brief The cache name.
+  const std::string name_;
+
   /// @brief The maximum size this cache is authorized to grow to.
   const std::size_t max_size_;
 
@@ -229,8 +232,9 @@ public:
   /// When the maximal size is reached, a cleanup is launched: half of the cache is removed,
   /// using an LFU strategy. This cache will never perform a rehash, therefore it allocates
   /// all the memory it needs at its construction.
-  cache(std::size_t size)
-    : max_size_(set_type::suggested_upper_bucket_count(size))
+  cache(const std::string& name, std::size_t size)
+    : name_(name)
+    , max_size_(set_type::suggested_upper_bucket_count(size))
     , buckets_(new bucket_type[max_size_])
     , set_(new set_type(bucket_traits(buckets_, max_size_)))
     , stats_()
@@ -355,6 +359,14 @@ public:
   const noexcept
   {
     return stats_;
+  }
+
+  /// @brief Get this cache's name
+  const std::string&
+  name()
+  const noexcept
+  {
+    return name_;
   }
 };
 
