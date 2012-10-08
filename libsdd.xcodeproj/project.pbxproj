@@ -19,6 +19,7 @@
 		2B4BE59915C416670053346F /* test_definition.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B4BE59715C416670053346F /* test_definition.cc */; };
 		2B4BE59D15C431B10053346F /* test_unique_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B4BE59B15C431B10053346F /* test_unique_table.cc */; };
 		2B4C1C2116207349005E0690 /* common_inductives.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B4C1C1F16207348005E0690 /* common_inductives.cc */; };
+		2B4C609A16232ABB0065D7F3 /* test_hom_composition.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B4C609816232ABB0065D7F3 /* test_hom_composition.cc */; };
 		2B5723EC161F1C8F00F09892 /* test_hom_inductive.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B5723EA161F1C8F00F09892 /* test_hom_inductive.cc */; };
 		2B7D16B2161BDAFC00FD77F8 /* test_hom_sum.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B7D16B0161BDAFC00FD77F8 /* test_hom_sum.cc */; };
 		2B99C75B15AB2BE0007389B8 /* tests.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BD33B5514E660D0004A7657 /* tests.cc */; };
@@ -91,9 +92,11 @@
 		2B4C1C1F16207348005E0690 /* common_inductives.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common_inductives.cc; sourceTree = "<group>"; };
 		2B4C1C2016207349005E0690 /* common_inductives.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = common_inductives.hh; sourceTree = "<group>"; };
 		2B4C1C2316207503005E0690 /* common.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = common.hh; sourceTree = "<group>"; };
+		2B4C609816232ABB0065D7F3 /* test_hom_composition.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_composition.cc; sourceTree = "<group>"; };
 		2B54BE8815710F9E005D5D3B /* packed.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; path = packed.hh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		2B5723E8161F0A3200F09892 /* inductive.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = inductive.hh; sourceTree = "<group>"; };
 		2B5723EA161F1C8F00F09892 /* test_hom_inductive.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_inductive.cc; sourceTree = "<group>"; };
+		2B5F99771623149000BAA8D4 /* composition.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = composition.hh; sourceTree = "<group>"; };
 		2B6986191576A393001DC189 /* cache.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cache.hh; sourceTree = "<group>"; };
 		2B7D16B0161BDAFC00FD77F8 /* test_hom_sum.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_sum.cc; sourceTree = "<group>"; };
 		2B85630B15C9B1CC00085F5F /* default_configurations.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = default_configurations.hh; sourceTree = "<group>"; };
@@ -218,6 +221,7 @@
 		2B0EA134161638F90019EB04 /* hom */ = {
 			isa = PBXGroup;
 			children = (
+				2B5F99771623149000BAA8D4 /* composition.hh */,
 				2BE71C62161C2CBA00B22084 /* cons.hh */,
 				2B1A26981619D56A005D6BB0 /* context.hh */,
 				2B1A26991619D5DB005D6BB0 /* context_fwd.hh */,
@@ -248,6 +252,7 @@
 				2B4C1C2316207503005E0690 /* common.hh */,
 				2B4C1C2016207349005E0690 /* common_inductives.hh */,
 				2B4C1C1F16207348005E0690 /* common_inductives.cc */,
+				2B4C609816232ABB0065D7F3 /* test_hom_composition.cc */,
 				2BE71C64161C2FBB00B22084 /* test_hom_cons.cc */,
 				2BE71C6C161CBBC900B22084 /* test_hom_fixpoint.cc */,
 				2B1A269C1619EA87005D6BB0 /* test_hom_identity.cc */,
@@ -578,6 +583,7 @@
 				2BE71C72161CE08E00B22084 /* test_hom_local.cc in Sources */,
 				2B5723EC161F1C8F00F09892 /* test_hom_inductive.cc in Sources */,
 				2B4C1C2116207349005E0690 /* common_inductives.cc in Sources */,
+				2B4C609A16232ABB0065D7F3 /* test_hom_composition.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
