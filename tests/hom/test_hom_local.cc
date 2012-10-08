@@ -47,3 +47,22 @@ TEST_F(hom_local_test, evaluation)
 }
 
 /*-------------------------------------------------------------------------------------------*/
+
+TEST_F(hom_local_test, error)
+{
+  const SDD s0 = SDD('a', {0}, SDD('b', {1}, one));
+  const hom h1 = Local('c', Inductive<conf>(incr('x',1)));
+  ASSERT_THROW(h1(s0), sdd::hom::evaluation_error<conf>);
+  try
+  {
+    h1(s0);
+  }
+  catch (sdd::hom::evaluation_error<conf>& e)
+  {
+    ASSERT_EQ(one, e.operand());
+    ASSERT_NE(nullptr, e.what());
+  }
+}
+
+
+/*-------------------------------------------------------------------------------------------*/
