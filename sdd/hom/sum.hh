@@ -27,11 +27,12 @@ class sum
 {
 public:
 
-  /// @brief The set of homomorphism operands
+  /// @brief The type of the homomorphism operands' set.
   typedef boost::container::flat_set<homomorphism<C>> operands_type;
 
 private:
 
+  /// @brief The homomorphism operands' set.
   const operands_type operands_;
 
 public:
@@ -52,7 +53,16 @@ public:
     {
       sum_operands.add(op(cxt, x));
     }
-    return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+    try
+    {
+      return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+    }
+    catch (top<C>& t)
+    {
+      evaluation_error<C> e(x);
+      e.add_top(t);
+      throw e;
+    }
   }
 
   /// @brief Skip variable predicate.
