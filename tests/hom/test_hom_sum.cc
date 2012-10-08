@@ -153,13 +153,43 @@ TEST_F(hom_sum_test, construction)
 TEST_F(hom_sum_test, evaluation)
 {
   {
-    const hom h = sdd::hom::Sum({sdd::hom::Id<conf>()});
+    const hom h = Sum({id});
     ASSERT_EQ(one, h(one));
   }
   {
-    const hom h = sdd::hom::Sum({sdd::hom::Id<conf>()});
+    const hom h = Sum({id});
     ASSERT_EQ(zero, h(zero));
   }
+}
+
+/*-------------------------------------------------------------------------------------------*/
+
+TEST_F(hom_sum_test, error)
+{
+  hom h = Sum({Cons('a', bitset {0}, id), Cons('b', bitset {0}, id)});
+
+  ASSERT_THROW(h(one), sdd::hom::evaluation_error<conf>);
+  try
+  {
+    h(one);
+  }
+  catch(sdd::hom::evaluation_error<conf>& e)
+  {
+    ASSERT_EQ(one, e.operand());
+    ASSERT_NE(nullptr, e.what());
+  }
+
+  ASSERT_THROW(h(SDD('c', {0}, one)), sdd::hom::evaluation_error<conf>);
+  try
+  {
+    h(SDD('c', {0}, one));
+  }
+  catch(sdd::hom::evaluation_error<conf>& e)
+  {
+    ASSERT_EQ(SDD('c', {0}, one), e.operand());
+    ASSERT_NE(nullptr, e.what());
+  }
+
 }
 
 /*-------------------------------------------------------------------------------------------*/

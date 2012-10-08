@@ -164,6 +164,14 @@ public:
     return description_;
   }
 
+  /// @brief Get the operand.
+  SDD<C>
+  operand()
+  const noexcept
+  {
+    return sdd_;
+  }
+
 /// @endcond
 };
 
