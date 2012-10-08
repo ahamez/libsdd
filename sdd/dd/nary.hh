@@ -186,7 +186,7 @@ operator<<(std::ostream& os, const nary_base<C, Operation>& x)
 {
   os << Operation::symbol() << " (";
   std::copy(x.begin(), std::prev(x.end()), std::ostream_iterator<SDD<C>>(os, ", "));
-  return os << std::prev(x.end()) << ")";
+  return os << *std::prev(x.end()) << ")";
 }
 
 /*-------------------------------------------------------------------------------------------*/
