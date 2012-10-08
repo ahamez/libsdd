@@ -147,7 +147,7 @@ public:
 
   /// @brief Apply this homomorphism on an SDD, in a given context.
   SDD<C>
-  operator()(context<C>& c, const SDD<C>& x)
+  operator()(context<C>& cxt, const SDD<C>& x)
   const
   {
     // hard-wired cases:
@@ -157,7 +157,7 @@ public:
     {
       return x;
     }
-    return c.cache()(cached_homomorphism<C>(c, *this, x));
+    return cxt.cache()(cached_homomorphism<C>(cxt, *this, x));
   }
 
   /// @brief Create an homomorphism from a concrete type (e.g. Id, Cons, etc.).
