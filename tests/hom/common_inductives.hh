@@ -18,6 +18,10 @@ struct incr
   skip(unsigned char var)
   const noexcept;
 
+  bool
+  selector()
+  const noexcept;
+
   hom
   operator()(unsigned char var, const SDD& x)
   const;

@@ -59,6 +59,15 @@ public:
     return h_.skip(v);
   }
 
+  /// @brief Selector predicate
+  bool
+  selector()
+  const noexcept
+  {
+    return h_.selector();
+  }
+
+  /// @brief Get the homomorphism to apply within the fixpoint.
   homomorphism<C>
   hom()
   const noexcept

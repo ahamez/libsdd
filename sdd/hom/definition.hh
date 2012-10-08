@@ -94,6 +94,13 @@ public:
     return apply_visitor(skip_helper(), ptr()->data(), variable);
   }
 
+  /// @brief Tell if this homomorphism returns only subsets.
+  bool
+  selector()
+  const noexcept
+  {
+    return apply_visitor(selector_helper(), ptr()->data());
+  }
 
 /// @cond INTERNAL_DOC
 
@@ -184,6 +191,18 @@ public:
     }
   };
 
+  struct selector_helper
+  {
+    typedef bool result_type;
+
+    template <typename H>
+    bool
+    operator()(const H& h)
+    const noexcept
+    {
+      return h.selector();
+    }
+  };
 
 /// @endcond
 };

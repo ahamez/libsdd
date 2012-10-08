@@ -93,6 +93,14 @@ public:
     return v != variable_;
   }
 
+  /// @brief Selector predicate
+  bool
+  selector()
+  const noexcept
+  {
+    return h_.selector();
+  }
+
   /// @brief Return the target.
   const variable_type&
   variable()

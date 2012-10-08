@@ -33,6 +33,11 @@ public:
   bool
   skip(const variable_type&) const noexcept = 0;
 
+  /// @brief Tell if the user's inductive is a selector.
+  virtual
+  bool
+  selector() const noexcept = 0;
+
   /// @brief Get the next homomorphism to apply from the user.
   virtual
   homomorphism<C>
@@ -93,6 +98,14 @@ public:
   const noexcept
   {
     return h_.skip(var);
+  }
+
+  /// @brief Tell if the user's inductive is a selector.
+  bool
+  selector()
+  const noexcept
+  {
+    return h_.selector();
   }
 
   /// @brief Get the next homomorphism to apply from the user.
@@ -219,6 +232,14 @@ public:
   const noexcept
   {
     return hom_ptr_->skip(var);
+  }
+
+  /// @brief Selector predicate
+  bool
+  selector()
+  const noexcept
+  {
+    return hom_ptr_->selector();
   }
 
   /// @brief Return the user's inductive homomorphism

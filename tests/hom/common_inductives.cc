@@ -20,6 +20,13 @@ const noexcept
   return var != var_;
 }
 
+bool
+incr::selector()
+const noexcept
+{
+  return false;
+}
+
 hom
 incr::operator()(unsigned char var, const SDD& x)
 const

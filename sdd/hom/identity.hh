@@ -36,6 +36,14 @@ struct identity
   {
     return true;
   }
+
+  /// @brief Selector predicate
+  constexpr bool
+  selector()
+  const noexcept
+  {
+    return true;
+  }
 };
 
 /*-------------------------------------------------------------------------------------------*/

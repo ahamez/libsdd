@@ -24,6 +24,13 @@ struct f0
     return var != 0;
   }
 
+  bool
+  selector()
+  const noexcept
+  {
+    return false;
+  }
+
   hom
   operator()(unsigned char var, const SDD&)
   const
@@ -68,6 +75,13 @@ struct f1
     return var != 1;
   }
 
+  bool
+  selector()
+  const noexcept
+  {
+    return false;
+  }
+
   hom
   operator()(unsigned char var, const SDD&)
   const
@@ -107,6 +121,13 @@ struct cut
 {
   bool
   skip(unsigned char var)
+  const noexcept
+  {
+    return false;
+  }
+
+  bool
+  selector()
   const noexcept
   {
     return false;
@@ -156,6 +177,13 @@ struct id_prime
     return false;
   }
 
+  bool
+  selector()
+  const noexcept
+  {
+    return true;
+  }
+
   hom
   operator()(unsigned char var, const SDD& x)
   const
@@ -195,6 +223,13 @@ struct consume
 {
   bool
   skip(unsigned char var)
+  const noexcept
+  {
+    return false;
+  }
+
+  bool
+  selector()
   const noexcept
   {
     return false;

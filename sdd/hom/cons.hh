@@ -59,6 +59,14 @@ public:
     return false;
   }
 
+  /// @brief Selector predicate
+  constexpr bool
+  selector()
+  const noexcept
+  {
+    return false;
+  }
+
   /// @brief Return the variable of the SDD to create.
   const variable_type&
   variable()

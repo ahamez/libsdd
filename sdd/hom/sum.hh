@@ -74,6 +74,15 @@ public:
                       , [&](const homomorphism<C>& h){return h.skip(v);});
   }
 
+  /// @brief Selector predicate
+  bool
+  selector()
+  const noexcept
+  {
+    return std::all_of( operands_.begin(), operands_.end()
+                      , [&](const homomorphism<C>& h){return h.selector();});
+  }
+
   const operands_type&
   operands()
   const noexcept

@@ -33,6 +33,13 @@ struct ind
     return var != var_;
   }
 
+  bool
+  selector()
+  const noexcept
+  {
+    return false;
+  }
+
   hom
   operator()(unsigned char var, const SDD&)
   const
