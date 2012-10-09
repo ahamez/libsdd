@@ -4,6 +4,7 @@
 #include <algorithm>  // all_of, copy
 #include <initializer_list>
 #include <iosfwd>
+#include <stdexcept>  //invalid_argument
 #include <unordered_map>
 #include <vector>
 
@@ -173,7 +174,7 @@ Sum(InputIterator begin, InputIterator end)
 
   if (size == 0)
   {
-    return Id<C>();
+    throw std::invalid_argument("Empty operands at Sum construction.");
   }
 
   typename sum<C>::operands_type operands;

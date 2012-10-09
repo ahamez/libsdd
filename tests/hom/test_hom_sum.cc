@@ -105,8 +105,7 @@ TEST_F(hom_sum_test, construction)
   }
   {
     std::vector<hom> empty;
-    const hom h1 = sdd::hom::Sum<conf>(empty.begin(), empty.end());
-    ASSERT_EQ(id, h1);
+    ASSERT_THROW(sdd::hom::Sum<conf>(empty.begin(), empty.end()), std::invalid_argument);
   }
   {
     const hom h1 = sdd::hom::Sum({sdd::hom::Cons(0, bitset {0,1}, id)});
