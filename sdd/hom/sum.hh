@@ -1,7 +1,7 @@
 #ifndef _SDD_HOM_SUM_HH_
 #define _SDD_HOM_SUM_HH_
 
-#include <algorithm>  // all_of, copy, equal
+#include <algorithm>  // all_of, copy
 #include <initializer_list>
 #include <iosfwd>
 #include <unordered_map>
@@ -101,8 +101,7 @@ bool
 operator==(const sum<C>& lhs, const sum<C>& rhs)
 noexcept
 {
-  return lhs.operands().size() == rhs.operands().size()
-     and std::equal(lhs.operands().begin(), lhs.operands().end(), rhs.operands().begin());
+  return lhs.operands() == rhs.operands();
 }
 
 /// @related sum
