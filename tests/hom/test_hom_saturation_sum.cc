@@ -49,24 +49,6 @@ TEST_F(hom_saturation_sum_test, evaluation)
             + SDD('a', {0}, SDD('b', {0}, SDD('c', {1}, one)));
     ASSERT_EQ(ref, h(s0));
   }
-  {
-    SDD s0('a', {0}, SDD('b', {0}, SDD('c', {0}, one)));
-    std::vector<hom> g {id, Inductive<conf>(incr(1))};
-    const hom s = SaturationSum<conf>( 'c', Inductive<conf>(incr(1))
-                                     , g.begin(), g.end(), optional());
-    std::vector<hom> g {Inductive<conf>(incr(1))};
-    const hom h = SaturationSum<conf>('b', s, g.begin(), g.end(), optional());
-    SDD ref = SDD('a', {0}, SDD('b', {1}, SDD('c', {0}, one)))
-    + SDD('a', {0}, SDD('b', {0}, SDD('c', {1}, one)));
-    ASSERT_EQ(ref, h(s0));
-  }
-
-}
-
-/*-------------------------------------------------------------------------------------------*/
-
-TEST_F(hom_saturation_sum_test, error)
-{
 }
 
 /*-------------------------------------------------------------------------------------------*/

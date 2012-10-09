@@ -158,27 +158,10 @@ bool
 operator==(const saturation_sum<C>& lhs, const saturation_sum<C>& rhs)
 noexcept
 {
-  if (lhs.variable() != rhs.variable())
-  {
-    return false;
-  }
-  else if (lhs.F() and rhs.F() and *lhs.F() != *rhs.F())
-  {
-    return false;
-  }
-  else if ((lhs.F() and not rhs.F()) or (not lhs.F() and rhs.F()))
-  {
-    return false;
-  }
-  else if (lhs.L() and rhs.L() and *lhs.L() != *rhs.L())
-  {
-    return false;
-  }
-  else if ((lhs.L() and not rhs.L()) or (not lhs.L() and rhs.L()))
-  {
-    return false;
-  }
-  return lhs.G() == rhs.G();
+  return lhs.variable() == rhs.variable()
+     and lhs.F() == rhs.F()
+     and lhs.L() == rhs.L()
+     and lhs.G() == rhs.G();
 }
 
 /// @related sum
@@ -196,7 +179,7 @@ operator<<(std::ostream& os, const saturation_sum<C>& s)
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief Create the Sum homomorphism.
+/// @brief Create the Saturation Sum homomorphism.
 /// @related homomorphism
 ///
 /// We suppose that a saturation sum is created in the rewriting process. Thus, we assume that
@@ -263,6 +246,5 @@ struct hash<sdd::hom::saturation_sum<C>>
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
 
 #endif // _SDD_HOM_SATURATION_SUM_HH_
