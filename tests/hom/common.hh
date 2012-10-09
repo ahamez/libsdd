@@ -21,6 +21,7 @@ using sdd::hom::Cons;
 using sdd::hom::Fixpoint;
 using sdd::hom::Inductive;
 using sdd::hom::Local;
+using sdd::hom::SaturationSum;
 using sdd::hom::Sum;
 
 /*-------------------------------------------------------------------------------------------*/

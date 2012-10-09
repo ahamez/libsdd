@@ -12,6 +12,7 @@
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/inductive.hh"
 #include "sdd/hom/local.hh"
+#include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
 #include "sdd/internal/mem/ptr.hh"
 #include "sdd/internal/mem/ref_counted.hh"
@@ -35,6 +36,7 @@ private:
                                 , const identity<C>
                                 , const inductive<C>
                                 , const local<C>
+                                , const saturation_sum<C>
                                 , const sum<C>
                                 >
           data_type;
