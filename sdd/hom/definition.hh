@@ -12,6 +12,7 @@
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/inductive.hh"
 #include "sdd/hom/local.hh"
+#include "sdd/hom/saturation_fixpoint.hh"
 #include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
 #include "sdd/internal/mem/ptr.hh"
@@ -36,6 +37,7 @@ private:
                                 , const identity<C>
                                 , const inductive<C>
                                 , const local<C>
+                                , const saturation_fixpoint<C>
                                 , const saturation_sum<C>
                                 , const sum<C>
                                 >
