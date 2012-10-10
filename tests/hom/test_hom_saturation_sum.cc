@@ -33,7 +33,6 @@ TEST_F(hom_saturation_sum_test, construction)
   }
 }
 
-
 /*-------------------------------------------------------------------------------------------*/
 
 TEST_F(hom_saturation_sum_test, evaluation)
@@ -41,9 +40,9 @@ TEST_F(hom_saturation_sum_test, evaluation)
   {
     SDD s0('a', {0}, SDD('b', {0}, SDD('c', {0}, one)));
     std::vector<hom> empty_g;
-    const hom s = SaturationSum<conf>( 'c', Inductive<conf>(incr(1))
+    const hom s = SaturationSum<conf>( 'c', Inductive<conf>(targeted_incr('c', 1))
                                      , empty_g.begin(), empty_g.end(), optional());
-    std::vector<hom> g {Inductive<conf>(incr(1))};
+    std::vector<hom> g {Inductive<conf>(targeted_incr('b', 1))};
     const hom h = SaturationSum<conf>('b', s, g.begin(), g.end(), optional());
     SDD ref = SDD('a', {0}, SDD('b', {1}, SDD('c', {0}, one)))
             + SDD('a', {0}, SDD('b', {0}, SDD('c', {1}, one)));
