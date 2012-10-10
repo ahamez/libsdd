@@ -109,8 +109,8 @@ public:
   selector()
   const noexcept
   {
-    return F_->selector()
-       and L_->selector()
+    return F_.selector()
+       and L_.selector()
        and std::all_of( G_.begin(), G_.end()
                       , [](const homomorphism<C>& h){return h.selector();});
   }
