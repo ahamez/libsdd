@@ -213,11 +213,6 @@ SaturationSum( const typename C::Variable& var
     return *f;
   }
 
-  if (not f and g_size > 1 and not l)
-  {
-    return Sum<C>(gbegin, gend);
-  }
-
   if (not f and g_size == 0 and l)
   {
     return *l;
