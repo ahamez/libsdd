@@ -184,6 +184,7 @@ public:
     return homomorphism(internal::mem::unify(u));
   }
 
+  /// @brief Dispatch the skip predicate call to concrete homomorphisms.
   struct skip_helper
   {
     typedef bool result_type;
@@ -197,6 +198,7 @@ public:
     }
   };
 
+  /// @brief Dispatch the selector predicate call to concrete homomorphisms.
   struct selector_helper
   {
     typedef bool result_type;
