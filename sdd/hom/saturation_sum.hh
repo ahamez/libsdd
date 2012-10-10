@@ -14,6 +14,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
+#include "sdd/hom/sum.hh"
 
 namespace sdd { namespace hom {
 
@@ -207,9 +208,19 @@ SaturationSum( const typename C::Variable& var
 {
   const std::size_t g_size = std::distance(gbegin, gend);
 
-  if (not f and not l and g_size == 0)
+  if (f and g_size == 0 and not l)
   {
-    throw std::invalid_argument("Empty operands at SaturationSum construction.");
+    return *f;
+  }
+
+  if (not f and g_size > 1 and not l)
+  {
+    return Sum<C>(gbegin, gend);
+  }
+
+  if (not f and g_size == 0 and l)
+  {
+    return *l;
   }
 
   return homomorphism<C>::create( internal::mem::construct<saturation_sum<C>>()
