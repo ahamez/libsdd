@@ -7,6 +7,7 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
+#include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
 
@@ -20,15 +21,15 @@ struct identity
 {
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>&, const SDD<C>& x)
+  operator()(context<C>&, const order::order<C>&, const SDD<C>& x)
   const noexcept
   {
     return x;
   }
 
-  /// @brief Skip variable predicate.
+  /// @brief Skip predicate.
   constexpr bool
-  skip(const typename C::Variable& v)
+  skip(const typename C::Identifier&)
   const noexcept
   {
     return true;

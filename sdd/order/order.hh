@@ -74,6 +74,14 @@ struct node
 template <typename C>
 class order
 {
+public:
+
+  /// @brief The type of a variable.
+  typedef typename C::Variable variable_type;
+
+  /// @brief The type of an identifier.
+  typedef typename C::Identifier identifier_type;
+
 /// @cond INTERNAL_DOC
 private:
 
@@ -82,11 +90,13 @@ private:
 
 public:
 
+  /// @brief Constructor.
   order(const order_ptr_type<C>& ptr)
     : order_ptr(ptr)
   {
   }
 
+  /// @brief Get the concrete order.
   const order_ptr_type<C>&
   ptr()
   const noexcept
@@ -114,7 +124,7 @@ public:
   }
 
   /// @brief Get the variable of this order's head.
-  const typename C::Variable&
+  const variable_type&
   variable()
   const noexcept
   {
@@ -122,7 +132,7 @@ public:
   }
 
   /// @brief Get the idetifier of this order's head.
-  const typename C::Identifier&
+  const identifier_type&
   identifier()
   const noexcept
   {
@@ -143,6 +153,14 @@ public:
   const noexcept
   {
     return order(order_ptr->nested_);
+  }
+
+  /// @brief Get the variable of an identifier
+  const variable_type&
+  identifier_variable(const identifier_type& id)
+  const
+  {
+    return variable_type();
   }
 };
 

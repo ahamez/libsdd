@@ -62,6 +62,9 @@ public:
   /// @brief The variable type.
   typedef typename C::Variable variable_type;
 
+  /// @brief The identifier type.
+  typedef typename C::Identifier identifier_type;
+
   /// @brief Move constructor.
   ///
   /// O(1).
@@ -86,18 +89,26 @@ public:
 
   /// @brief Apply this homomorphism on an SDD.
   SDD<C>
-  operator()(const SDD<C>& x)
+  operator()(const order::order<C>& o, const SDD<C>& x)
   const
   {
-    return (*this)(initial_context<C>(), x);
+    return (*this)(initial_context<C>(), o, x);
   }
 
   /// @brief Tell if this homomorphism skips a given variable.
+//  bool
+//  skip(const variable_type& variable)
+//  const noexcept
+//  {
+//    return apply_visitor(skip_helper(), ptr()->data(), variable);
+//  }
+
+  /// @brief Tell if this homomorphism skips a given identifier.
   bool
-  skip(const variable_type& variable)
+  skip(const order::order<C>& o)
   const noexcept
   {
-    return apply_visitor(skip_helper(), ptr()->data(), variable);
+    return apply_visitor(skip_helper(), ptr()->data(), o);
   }
 
   /// @brief Tell if this homomorphism returns only subsets.
@@ -160,7 +171,7 @@ public:
 
   /// @brief Apply this homomorphism on an SDD, in a given context.
   SDD<C>
-  operator()(context<C>& cxt, const SDD<C>& x)
+  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
   const
   {
     // If the current operand is |0|, then directly return it

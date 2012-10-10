@@ -7,6 +7,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
+#include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
 
@@ -23,6 +24,9 @@ private:
   /// @brief The variable type.
   typedef typename C::Variable variable_type;
 
+  /// @brief The identifier type.
+  typedef typename C::Identifier identifier_type;
+
   /// @brief The hierarchical node where the nested homomorphism will be carried to.
   const variable_type variable_;
 
@@ -38,6 +42,12 @@ public:
   {
   }
 
+  /// @brief Constructor from an identifier.
+  local(const identifier_type& id, const order::order<C>& o, const homomorphism<C>& h)
+    : local(o.identifier_variable(id), h)
+  {
+  }
+
   /// @brief Local's evaluation implementation.
   struct evaluation
   {
@@ -45,14 +55,14 @@ public:
 
     SDD<C>
     operator()( const hierarchical_node<C>& n
-              , context<C>& cxt, const variable_type& var, const homomorphism<C>& h
-              , const SDD<C>& s)
+              , context<C>& cxt, const order::order<C>& o, const variable_type& var
+              , const homomorphism<C>& h, const SDD<C>& s)
     const
     {
       sum_builder<C, SDD<C>> sum_operands(n.size());
       for (const auto& arc : n)
       {
-        sum_operands.add(SDD<C>(var, h(cxt, arc.valuation()), arc.successor()));
+        sum_operands.add(SDD<C>(var, h(cxt, o.nested(), arc.valuation()), arc.successor()));
       }
 
       try
@@ -69,8 +79,8 @@ public:
 
     template <typename T>
     SDD<C>
-    operator()( const T&, context<C>&, const variable_type&, const homomorphism<C>&
-              , const SDD<C> s)
+    operator()( const T&, context<C>&, const order::order<C>&, const variable_type&
+              , const homomorphism<C>&, const SDD<C> s)
     const
     {
       throw evaluation_error<C>(s);
@@ -79,18 +89,26 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const SDD<C>& s)
+  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& s)
   const
   {
-    return apply_visitor(evaluation(), s->data(), cxt, variable_, h_, s);
+    return apply_visitor(evaluation(), s->data(), cxt, o, variable_, h_, s);
   }
 
-  /// @brief Skip variable predicate.
+//  /// @brief Skip variable predicate.
+//  bool
+//  skip(const variable_type& v)
+//  const noexcept
+//  {
+//    return v != variable_;
+//  }
+
+  /// @brief Skip predicate.
   bool
-  skip(const variable_type& v)
+  skip(const order::order<C>& o)
   const noexcept
   {
-    return v != variable_;
+    return o.variable() != variable_;
   }
 
   /// @brief Selector predicate

@@ -6,6 +6,7 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
+#include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
 
@@ -22,6 +23,9 @@ public:
   /// @brief The variable type.
   typedef typename C::Variable variable_type;
 
+  /// @brief The identifier type.
+  typedef typename C::Identifier identifier_type;
+
 private:
 
   /// @brief The variable of the SDD to create.
@@ -36,24 +40,39 @@ private:
 public:
 
   /// @brief Constructor.
-  cons(const variable_type& var, const Valuation& val, const homomorphism<C>& h)
-    : variable_(var)
-    , valuation_(val)
-    , next_(h)
+//  cons(const variable_type& var, const Valuation& val, const homomorphism<C>& h)
+//    : variable_(var)
+//    , valuation_(val)
+//    , next_(h)
+//  {
+//  }
+
+  /// @brief Constructor with an identifier.
+  cons( const identifier_type& id, const order::order<C>& o
+      , const Valuation& val, const homomorphism<C>& h)
+    : cons(o.identifier_variable(id), val, h)
   {
   }
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const SDD<C>& x)
+  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
   const
   {
-    return SDD<C>(variable_, valuation_, next_(cxt, x));
+    return SDD<C>(variable_, valuation_, next_(cxt, o.next(), x));
   }
 
-  /// @brief Skip variable predicate.
+//  /// @brief Skip variable predicate.
+//  constexpr bool
+//  skip(const variable_type&)
+//  const noexcept
+//  {
+//    return false;
+//  }
+
+  /// @brief Skip predicate.
   constexpr bool
-  skip(const variable_type&)
+  skip(const order::order<C>&)
   const noexcept
   {
     return false;

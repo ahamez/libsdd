@@ -1,7 +1,6 @@
 #ifndef _SDD_HOM_FIXPOINT_HH_
 #define _SDD_HOM_FIXPOINT_HH_
 
-//#include <algorithm> // max
 #include <iosfwd>
 
 #include "sdd/dd/definition.hh"
@@ -9,6 +8,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
+#include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
 
@@ -35,28 +35,33 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const SDD<C>& x)
+  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
   const
   {
     SDD<C> x1 = x;
     SDD<C> x2 = x1;
-//    const std::size_t size = cxt.size() - (cxt.size() / 8);
-//    context<C> fixpoint_context(std::max(size, 100), cxt.sdd_context());
     do
     {
       x2 = x1;
-//      x1 = h_(fixpoint_context, x1);
-      x1 = h_(cxt, x1);
+      x1 = h_(cxt, o, x1);
     } while (x1 != x2);
     return x1;
   }
 
+//  /// @brief Skip variable predicate.
+//  bool
+//  skip(const typename C::Variable& v)
+//  const noexcept
+//  {
+//    return h_.skip(v);
+//  }
+
   /// @brief Skip variable predicate.
   bool
-  skip(const typename C::Variable& v)
+  skip(const order::order<C>& o)
   const noexcept
   {
-    return h_.skip(v);
+    return h_.skip(o);
   }
 
   /// @brief Selector predicate

@@ -15,6 +15,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
+#include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
 
@@ -46,13 +47,13 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const SDD<C>& x)
+  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
   const
   {
     sum_builder<C, SDD<C>> sum_operands(operands_.size());
     for (const auto& op : operands_)
     {
-      sum_operands.add(op(cxt, x));
+      sum_operands.add(op(cxt, o, x));
     }
     try
     {
@@ -66,14 +67,24 @@ public:
     }
   }
 
+//  /// @brief Skip variable predicate.
+//  bool
+//  skip(const typename C::Variable& v)
+//  const noexcept
+//  {
+//    return std::all_of( operands_.begin(), operands_.end()
+//                      , [&v](const homomorphism<C>& h){return h.skip(v);});
+//  }
+
   /// @brief Skip variable predicate.
   bool
-  skip(const typename C::Variable& v)
+  skip(const order::order<C>& o)
   const noexcept
   {
     return std::all_of( operands_.begin(), operands_.end()
-                      , [&v](const homomorphism<C>& h){return h.skip(v);});
+                      , [&o](const homomorphism<C>& h){return h.skip(o.variable());});
   }
+
 
   /// @brief Selector predicate
   bool

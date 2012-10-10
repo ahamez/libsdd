@@ -3,7 +3,6 @@
 
 #include <algorithm>  // all_of, copy
 #include <iosfwd>
-#include <stdexcept>  //invalid_argument
 #include <vector>
 
 #include <boost/container/flat_set.hpp>
@@ -13,6 +12,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
+#include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
 
@@ -60,7 +60,7 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const SDD<C>& s)
+  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& s)
   const
   {
     SDD<C> s1 = s;
@@ -70,8 +70,8 @@ public:
     {
       s1 = s2;
 
-      s2 = F_(cxt, s2); // apply (F + Id)*
-      s2 = L_(cxt, s2); // apply (L + Id)*
+      s2 = F_(cxt, o, s2); // apply (F + Id)*
+      s2 = L_(cxt, o, s2); // apply (L + Id)*
 
       for (const auto& g : G_)
       {
@@ -81,7 +81,7 @@ public:
         try
         {
           // chain applications of G
-          s2 = sdd::sum(cxt.sdd_context(), {s2, g(cxt, s2)});
+          s2 = sdd::sum(cxt.sdd_context(), {s2, g(cxt, o, s2)});
         }
         catch (top<C>& t)
         {
@@ -96,12 +96,20 @@ public:
     return s1;
   }
 
-  /// @brief Skip variable predicate.
+//  /// @brief Skip variable predicate.
+//  bool
+//  skip(const typename C::Variable& v)
+//  const noexcept
+//  {
+//    return variable_ != v;
+//  }
+
+  /// @brief Skip predicate.
   bool
-  skip(const typename C::Variable& v)
+  skip(const order::order<C>& o)
   const noexcept
   {
-    return variable_ != v;
+    return variable_ != o.variable();
   }
 
   /// @brief Selector predicate.
