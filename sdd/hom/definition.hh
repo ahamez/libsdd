@@ -174,8 +174,10 @@ public:
   operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
   const
   {
-    // If the current operand is |0|, then directly return it
-    if (x.empty())
+    // hard-wired cases:
+    // - if the current homomorphism is Id, then directly return the operand
+    // - if the current operand is |0|, then directly return it
+    if (*this == Id<C>() or x.empty())
     {
       return x;
     }
@@ -193,6 +195,7 @@ public:
     return homomorphism(internal::mem::unify(u));
   }
 
+  /// @brief Dispatch the skip predicate call to concrete homomorphisms.
   struct skip_helper
   {
     typedef bool result_type;
@@ -206,6 +209,7 @@ public:
     }
   };
 
+  /// @brief Dispatch the selector predicate call to concrete homomorphisms.
   struct selector_helper
   {
     typedef bool result_type;
