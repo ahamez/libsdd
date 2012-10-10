@@ -196,6 +196,18 @@ SaturationFixpoint( const typename C::Variable& var
                   , InputIterator gbegin, InputIterator gend
                   , const homomorphism<C>& l)
 {
+  const std::size_t gsize = std::distance(gbegin, gend);
+
+  if (f != Id<C>() and gsize == 0 and l == Id<C>())
+  {
+    return f;
+  }
+
+  if (f == Id<C>() and gsize == 0 and l != Id<C>())
+  {
+    return l;
+  }
+
   return homomorphism<C>::create( internal::mem::construct<saturation_fixpoint<C>>()
                                 , var
                                 , f
