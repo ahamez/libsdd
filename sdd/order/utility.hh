@@ -16,20 +16,19 @@ template <typename C, typename Initializer>
 SDD<C>
 sdd(const order<C>& o, const Initializer& init)
 {
-  if (not o)
+  if (o.empty())
   {
     return one<C>();
   }
-  // hierarchical
-  else if (o->nested_)
-  {
-    return SDD<C>(o->variable_, sdd(o->nested_, init), sdd(o->next_, init));
-  }
   // flat
+  else if (o.nested().empty())
+  {
+    return SDD<C>(o.variable(), init(o.identifier()), sdd(o.next(), init));
+  }
+  // hierarchical
   else
   {
-    assert(o->identifier_ && "Artificial flat node.");
-    return SDD<C>(o->variable_, init(*o->identifier_), sdd(o->next_, init));
+    return SDD<C>(o.variable(), sdd(o.nested(), init), sdd(o.next(), init));
   }
 }
 

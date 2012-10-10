@@ -113,7 +113,7 @@ struct rewriter
   operator()(const sum<C>& s, const homomorphism<C>& h, const order::order<C>& o)
   const
   {
-    auto&& p = partition(o->variable_, s.operands().begin(), s.operands().end());
+    auto&& p = partition(o.variable(), s.operands().begin(), s.operands().end());
     auto& F = std::get<0>(p);
     auto& G = std::get<1>(p);
     auto& L = std::get<2>(p);
@@ -130,13 +130,13 @@ struct rewriter
     }
 
     typedef typename saturation_sum<C>::optional_type optional;
-    return SaturationSum<C>( o->variable_
-                           , F.size() > 0 ? rewrite(Sum<C>(F.begin(), F.end()), o->next_)
+    return SaturationSum<C>( o.variable()
+                           , F.size() > 0 ? rewrite(Sum<C>(F.begin(), F.end()), o.next())
                                           : optional()
                            , G.begin(), G.end()
-                           , L.size() > 0 ? Local( o->variable_
+                           , L.size() > 0 ? Local( o.variable()
                                                  , rewrite( Sum<C>(L.begin(), L.end())
-                                                          , o->nested_))
+                                                          , o.nested()))
                                           : optional());
   }
 
@@ -152,7 +152,7 @@ struct rewriter
 
     const sum<C>& s = internal::mem::variant_cast<const sum<C>>(f.hom()->data());
 
-    auto&& p = partition(o->variable_, s.operands().begin(), s.operands().end());
+    auto&& p = partition(o.variable(), s.operands().begin(), s.operands().end());
     auto& F = std::get<0>(p);
     auto& G = std::get<1>(p);
     auto& L = std::get<2>(p);
@@ -176,11 +176,11 @@ struct rewriter
     // evaluation.
     std::partition( G.begin(), G.end(), [](const homomorphism<C>& g){return g.selector();});
 
-    return SaturationFixpoint( o->variable_
-                             , rewrite(Fixpoint(Sum<C>(F.begin(), F.end())), o->next_)
+    return SaturationFixpoint( o.variable()
+                             , rewrite(Fixpoint(Sum<C>(F.begin(), F.end())), o.next())
                              , G.begin(), G.end()
-                             , Local( o->variable_
-                                    , rewrite(Fixpoint(Sum<C>(F.begin(), F.end())), o->nested_)
+                             , Local( o.variable()
+                                    , rewrite(Fixpoint(Sum<C>(F.begin(), F.end())), o.nested())
                                     )
                              );
   }
@@ -203,7 +203,7 @@ template <typename C>
 homomorphism<C>
 rewrite(const homomorphism<C>& h, const order::order<C>& o)
 {
-  if (o)
+  if (not o.empty())
   {
     return apply_visitor(rewriter<C>(), h->data(), h, o);
   }

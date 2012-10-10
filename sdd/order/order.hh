@@ -7,9 +7,21 @@
 
 namespace sdd { namespace order {
 
+/// @cond INTERNAL_DOC
+
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
+// Forward declaration of an order's node.
+template <typename C>
+struct node;
+
+/*-------------------------------------------------------------------------------------------*/
+
+/// @brief Represent an order of identifiers.
+template <typename C>
+using order_ptr_type = std::shared_ptr<node<C>>;
+
+/*-------------------------------------------------------------------------------------------*/
 
 /// @brief An element of a linked list of nodes, associating a (library) variable to an (user)
 /// identifier.
@@ -37,15 +49,15 @@ struct node
 
   /// @brief The nested order.
   ///
-  /// If nullptr, the node is a flat node.
-  const std::shared_ptr<node<C>> nested_;
+  /// If empty, the node is a flat node.
+  const order_ptr_type<C> nested_;
 
   /// @brief The node's next variable.
-  const std::shared_ptr<node<C>> next_;
+  const order_ptr_type<C> next_;
 
   /// @brief Constructor.
   node( const variable_type& var, std::unique_ptr<identifier_type>&& id
-      , std::shared_ptr<node> nested, std::shared_ptr<node> next)
+      , order_ptr_type<C> nested, order_ptr_type<C> next)
     : variable_(var)
     , identifier_(std::move(id))
     , nested_(nested)
@@ -60,7 +72,79 @@ struct node
 
 /// @brief Represent an order of identifiers.
 template <typename C>
-using order = std::shared_ptr<node<C>>;
+class order
+{
+/// @cond INTERNAL_DOC
+private:
+
+  /// @brief The concrete order.
+  order_ptr_type<C> order_ptr;
+
+public:
+
+  order(const order_ptr_type<C>& ptr)
+    : order_ptr(ptr)
+  {
+  }
+
+  const order_ptr_type<C>&
+  ptr()
+  const noexcept
+  {
+    return order_ptr;
+  }
+
+/// @endcond
+
+  order&
+  operator=(const order& other)
+  {
+    order_ptr = other.order_ptr;
+    return *this;
+  }
+
+  /// @brief Tell if this order is empty.
+  ///
+  /// It's unsafe to call any other method if this order is empty.
+  bool
+  empty()
+  const noexcept
+  {
+    return not order_ptr;
+  }
+
+  /// @brief Get the variable of this order's head.
+  const typename C::Variable&
+  variable()
+  const noexcept
+  {
+    return order_ptr->variable_;
+  }
+
+  /// @brief Get the idetifier of this order's head.
+  const typename C::Identifier&
+  identifier()
+  const noexcept
+  {
+    return *order_ptr->identifier_;
+  }
+
+  /// @brief Get this order's head's next order.
+  order
+  next()
+  const noexcept
+  {
+    return order(order_ptr->next_);
+  }
+
+  /// @brief Get this order's head's nested order.
+  order
+  nested()
+  const noexcept
+  {
+    return order(order_ptr->nested_);
+  }
+};
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -69,7 +153,7 @@ template <typename C>
 order<C>
 empty_order()
 {
-  return nullptr;
+  return order<C>(nullptr);
 }
 
 /*-------------------------------------------------------------------------------------------*/
@@ -82,10 +166,15 @@ add_identifier(const typename C::Identifier& id, const order<C>& o)
   typedef typename C::Variable variable_type;
   typedef typename C::Identifier id_type;
   typedef std::unique_ptr<id_type> optional_id_type;
-  const variable_type var = o // empty order or not?
-                          ? conf::variable_traits<variable_type>::next(o->variable_)
+
+  const variable_type var = not o.empty()
+                          ? conf::variable_traits<variable_type>::next(o.variable())
                           : conf::variable_traits<variable_type>::first();
-  return order<C>(new node<C>(var, optional_id_type(new id_type(id)), nullptr, o));
+
+  return order<C>(std::make_shared<node<C>>( var
+                                           , optional_id_type(new id_type(id))
+                                           , nullptr
+                                           , o.ptr()));
 }
 
 /*-------------------------------------------------------------------------------------------*/
@@ -95,7 +184,7 @@ template <typename C>
 order<C>
 add_identifier(const typename C::Identifier& id, const order<C>& o, const order<C>& nested_o)
 {
-  if (not nested_o)
+  if (nested_o.empty())
   {
     return add_identifier(id, o);
   }
@@ -103,10 +192,15 @@ add_identifier(const typename C::Identifier& id, const order<C>& o, const order<
   typedef typename C::Variable variable_type;
   typedef typename C::Identifier id_type;
   typedef std::unique_ptr<id_type> optional_id_type;
-  const variable_type var = o // empty order or not?
-                          ? conf::variable_traits<variable_type>::next(o->variable_)
+
+  const variable_type var = not o.empty()
+                          ? conf::variable_traits<variable_type>::next(o.variable())
                           : conf::variable_traits<variable_type>::first();
-  return order<C>(new node<C>(var, optional_id_type(new id_type(id)), nested_o, o));
+
+  return order<C>(std::make_shared<node<C>>( var
+                                           , optional_id_type(new id_type(id))
+                                           , nested_o.ptr()
+                                           , o.ptr()));
 }
 
 /*-------------------------------------------------------------------------------------------*/
