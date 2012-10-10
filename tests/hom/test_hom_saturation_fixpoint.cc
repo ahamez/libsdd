@@ -51,6 +51,20 @@ TEST_F(hom_saturation_fixpoint_test, evaluation)
     ASSERT_EQ( SDD('a', {0}, SDD('b', {0,2}, SDD('c', {0,1,2}, one)))
              , h(s0));
   }
+  {
+    SDD s0('a', {0}, SDD('b', SDD('x', {0}, one), SDD('c', {0}, one)));
+
+    const hom f = Fixpoint(Sum<conf>({Inductive<conf>(targeted_incr('c', 1)), id}));
+    const std::vector<hom> g{};
+    const hom l = Local('b', Sum<conf>({Inductive<conf>(targeted_incr('x', 2)), id}));
+    const hom h = SaturationFixpoint('b', f, g.begin(), g.end(), l);
+
+    const hom r = Fixpoint(Sum<conf>({ Inductive<conf>(targeted_incr('c', 1))
+                                     , Local('b', Inductive<conf>(targeted_incr('x', 2)))
+                                     , id}));
+
+    ASSERT_EQ(r(s0), h(s0));
+  }
 }
 
 /*-------------------------------------------------------------------------------------------*/
