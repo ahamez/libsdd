@@ -7,6 +7,7 @@
 #include "sdd/dd/paths.hh"
 #include "sdd/hom/context.hh"
 #include "sdd/hom/definition.hh"
+#include "sdd/hom/rewriting.hh"
 #include "sdd/order/utility.hh"
 
 /// @brief The main namespace for the library.
