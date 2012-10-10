@@ -72,7 +72,7 @@ public:
   const noexcept
   {
     return std::all_of( operands_.begin(), operands_.end()
-                      , [&](const homomorphism<C>& h){return h.skip(v);});
+                      , [&v](const homomorphism<C>& h){return h.skip(v);});
   }
 
   /// @brief Selector predicate
@@ -81,7 +81,7 @@ public:
   const noexcept
   {
     return std::all_of( operands_.begin(), operands_.end()
-                      , [&](const homomorphism<C>& h){return h.selector();});
+                      , [](const homomorphism<C>& h){return h.selector();});
   }
 
   const operands_type&

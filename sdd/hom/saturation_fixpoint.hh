@@ -112,7 +112,7 @@ public:
     return F_->selector()
        and L_->selector()
        and std::all_of( G_.begin(), G_.end()
-                      , [&](const homomorphism<C>& h){return h.selector();});
+                      , [](const homomorphism<C>& h){return h.selector();});
   }
 
   /// @brief Get the targeted variable.
