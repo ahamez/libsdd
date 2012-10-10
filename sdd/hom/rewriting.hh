@@ -190,7 +190,7 @@ struct rewriter
   /// Any other homomorphism is not rewritten.
   template <typename T>
   homomorphism<C>
-  operator()(const T& x, const homomorphism<C>& h, const order::order<C>&)
+  operator()(const T&, const homomorphism<C>& h, const order::order<C>&)
   const
   {
     return h;
