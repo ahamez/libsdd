@@ -169,10 +169,15 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const saturation_fixpoint<C>& s)
 {
-  os << "Sat(@" << s.variable() << ",  " << s.F() << " + " << s.L() << " + ";
-  std::copy( s.G().begin(), std::prev(s.G().end())
-           , std::ostream_iterator<homomorphism<C>>(os, " + "));
-  return os << *std::prev(s.G().end()) << ")*";
+  os << "Sat(@" << s.variable() << ",  " << s.F() << " + " << s.L();
+  if (not s.G().empty())
+  {
+    os << " + ";
+    std::copy( s.G().begin(), std::prev(s.G().end())
+             , std::ostream_iterator<homomorphism<C>>(os, " + "));
+    os << *std::prev(s.G().end()) << ")*";
+  }
+  return os;
 }
 
 /// @endcond
