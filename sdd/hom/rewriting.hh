@@ -1,6 +1,7 @@
 #ifndef _SDD_HOM_REWRITING_HH_
 #define _SDD_HOM_REWRITING_HH_
 
+#include <algorithm> // partition
 #include <tuple>
 #include <vector>
 
@@ -29,7 +30,7 @@ struct rewriter
   typedef typename C::Variable variable_type;
 
   /// @brief The type of a list of homomorphisms.
-  typedef std::vector<const homomorphism<C>> hom_list_type;
+  typedef std::vector<homomorphism<C>> hom_list_type;
 
   /// @brief Tell if an homomorphism is Local.
   struct is_local
@@ -51,6 +52,28 @@ struct rewriter
       return false;
     }
   };
+
+  /// @brief Tell if an homomorphism is Sum.
+  struct is_sum
+  {
+    typedef bool result_type;
+
+    constexpr bool
+    operator()(const sum<C>&)
+    const
+    {
+      return true;
+    }
+
+    template <typename T>
+    constexpr bool
+    operator()(const T&)
+    const
+    {
+      return false;
+    }
+  };
+
 
   /// @brief Get the F, G and L parts of a set of homomorphisms.
   template <typename InputIterator>
@@ -115,6 +138,51 @@ struct rewriter
                                                  , rewrite( Sum<C>(L.begin(), L.end())
                                                           , o->nested_))
                                           : optional());
+  }
+
+  /// @brief Rewrite a Fixpoint into a Saturation Fixpoint, if possible.
+  homomorphism<C>
+  operator()(const fixpoint<C>& f, const homomorphism<C>& h, const order::order<C>& o)
+  const
+  {
+    if (not apply_visitor(is_sum(), f.hom()->data()))
+    {
+      return h;
+    }
+
+    const sum<C>& s = internal::mem::variant_cast<const sum<C>>(f.hom()->data());
+
+    auto&& p = partition(o->variable_, s.operands().begin(), s.operands().end());
+    auto& F = std::get<0>(p);
+    auto& G = std::get<1>(p);
+    auto& L = std::get<2>(p);
+    const bool has_id = std::get<3>(p);
+
+    if (not has_id)
+    {
+      return h;
+    }
+
+    if (F.empty() and L.empty())
+    {
+      return h;
+    }
+
+    // Don't forget to add id to F and L parts!.
+    F.push_back(Id<C>());
+    L.push_back(Id<C>());
+
+    // Put selectors in front. It might help cut paths sooner in the Saturation Fixpoint's
+    // evaluation.
+    std::partition( G.begin(), G.end(), [](const homomorphism<C>& g){return g.selector();});
+
+    return SaturationFixpoint( o->variable_
+                             , rewrite(Fixpoint(Sum<C>(F.begin(), F.end())), o->next_)
+                             , G.begin(), G.end()
+                             , Local( o->variable_
+                                    , rewrite(Fixpoint(Sum<C>(F.begin(), F.end())), o->nested_)
+                                    )
+                             );
   }
 
   /// @brief General case.
