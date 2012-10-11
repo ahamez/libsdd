@@ -81,12 +81,13 @@ TEST_F(order_utility_test, hierarchical)
     ASSERT_EQ(SDD(0, SDD(1, {0}, SDD(0, {0}, one)), one), sdd::order::sdd(p, initializer()));
   }
   {
+    order<conf> nested_a {"a"};
+    order<conf> nested_b {"b"};
     order<conf> o;
-    o.add("foo");
-    order<conf> p;
-    p.add("bar1").add("bar2");
+    o.add("y", nested_b);
+    o.add("x", nested_a);
     ASSERT_EQ( SDD(1, SDD(0, {0}, one), SDD(0, SDD(0, {0}, one), one))
-             , sdd::order::sdd(p, initializer()));
+             , sdd::order::sdd(o, initializer()));
   }
 }
 
