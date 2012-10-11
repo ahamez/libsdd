@@ -17,29 +17,30 @@ struct hom_cons_test
 
 TEST_F(hom_cons_test, construction)
 {
+  order<conf> o {"0"};
   {
-    const hom h1 = sdd::hom::Cons<conf>("0", order<conf>(), conf::Values {0,1,2}, id);
-    const hom h2 = sdd::hom::Cons<conf>("0", order<conf>(), conf::Values {0,1,2}, id);
+    const hom h1 = sdd::hom::Cons<conf>("0", o, conf::Values {0,1,2}, id);
+    const hom h2 = sdd::hom::Cons<conf>("0", o, conf::Values {0,1,2}, id);
     ASSERT_EQ(h1, h2);
   }
   {
-    const hom h1 = sdd::hom::Cons<conf>("0", order<conf>(), one, id);
-    const hom h2 = sdd::hom::Cons<conf>("0", order<conf>(), one, id);
+    const hom h1 = sdd::hom::Cons<conf>("0", o, one, id);
+    const hom h2 = sdd::hom::Cons<conf>("0", o, one, id);
     ASSERT_EQ(h1, h2);
   }
   {
-    const hom h1 = sdd::hom::Cons<conf>("0", order<conf>(), conf::Values {0,1,3}, id);
-    const hom h2 = sdd::hom::Cons<conf>("0", order<conf>(), conf::Values {0,1,2}, id);
+    const hom h1 = sdd::hom::Cons<conf>("0", o, conf::Values {0,1,3}, id);
+    const hom h2 = sdd::hom::Cons<conf>("0", o, conf::Values {0,1,2}, id);
     ASSERT_NE(h1, h2);
   }
   {
-    const hom h1 = sdd::hom::Cons<conf>("0", order<conf>(), one, id);
-    const hom h2 = sdd::hom::Cons<conf>("0", order<conf>(), zero, id);
+    const hom h1 = sdd::hom::Cons<conf>("0", o, one, id);
+    const hom h2 = sdd::hom::Cons<conf>("0", o, zero, id);
     ASSERT_NE(h1, h2);
   }
   {
-    const hom h1 = sdd::hom::Cons<conf>("0", order<conf>(), one, id);
-    const hom h2 = sdd::hom::Cons<conf>("0", order<conf>(), conf::Values {0,1,2}, id);
+    const hom h1 = sdd::hom::Cons<conf>("0", o, one, id);
+    const hom h2 = sdd::hom::Cons<conf>("0", o, conf::Values {0,1,2}, id);
     ASSERT_NE(h1, h2);
   }
 }
