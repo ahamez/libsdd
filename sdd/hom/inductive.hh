@@ -29,11 +29,6 @@ public:
   {
   }
 
-//  /// @brief Tell if the user's inductive skip the current variable.
-//  virtual
-//  bool
-//  skip(const variable_type&) const noexcept = 0;
-
   /// @brief Tell if the user's inductive skip the current variable.
   virtual
   bool
@@ -47,12 +42,12 @@ public:
   /// @brief Get the next homomorphism to apply from the user.
   virtual
   homomorphism<C>
-  operator()(const variable_type&, const SDD<C>&) const = 0;
+  operator()(const order::order<C>&, const SDD<C>&) const = 0;
 
   /// @brief Get the next homomorphism to apply from the user.
   virtual
   homomorphism<C>
-  operator()(const variable_type&, const values_type&) const = 0;
+  operator()(const order::order<C>&, const values_type&) const = 0;
 
   /// @brief Get the terminal case from the user.
   virtual
@@ -98,14 +93,6 @@ public:
   {
   }
 
-//  /// @brief Tell if the user's inductive skip the current variable.
-//  bool
-//  skip(const variable_type& var)
-//  const noexcept
-//  {
-//    return h_.skip(var);
-//  }
-
   /// @brief Tell if the user's inductive skip the current variable.
   bool
   skip(const order::order<C>& o)
@@ -123,33 +110,19 @@ public:
   }
 
   /// @brief Get the next homomorphism to apply from the user.
-//  homomorphism<C>
-//  operator()(const variable_type& var, const SDD<C>& x)
-//  const
-//  {
-//    return h_(var, x);
-//  }
   homomorphism<C>
   operator()(const order::order<C>& o, const SDD<C>& x)
   const
   {
-    return h_(o.identifier(), x);
+    return h_(o, x);
   }
-
-//  /// @brief Get the next homomorphism to apply from the user.
-//  homomorphism<C>
-//  operator()(const variable_type& var, const values_type& val)
-//  const
-//  {
-//    return h_(var, val);
-//  }
 
   /// @brief Get the next homomorphism to apply from the user.
   homomorphism<C>
   operator()(const order::order<C>& o, const values_type& val)
   const
   {
-    return h_(o.identifier(), val);
+    return h_(o, val);
   }
 
   /// @brief Get the terminal case from the user.
@@ -235,7 +208,7 @@ private:
       for (const auto& arc : node)
       {
 //        const homomorphism<C> next_hom = i(node.variable(), arc.valuation());
-        const homomorphism<C> next_hom = i(o.identifier(), arc.valuation());
+        const homomorphism<C> next_hom = i(o, arc.valuation());
         sum_operands.add(next_hom(cxt, o, arc.successor()));
       }
       return sdd::sum(cxt.sdd_context(), std::move(sum_operands));

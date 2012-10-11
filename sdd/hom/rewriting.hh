@@ -79,7 +79,7 @@ struct rewriter
   template <typename InputIterator>
   static
   std::tuple<hom_list_type, hom_list_type, hom_list_type, bool>
-  partition(const variable_type& v, InputIterator begin, InputIterator end)
+  partition(const order::order<C>& o, InputIterator begin, InputIterator end)
   {
     bool has_id = false;
     hom_list_type F;
@@ -91,7 +91,7 @@ struct rewriter
       {
         has_id = true;
       }
-      else if (begin->skip(v))
+      else if (begin->skip(o))
       {
         F.push_back(*begin);
       }
@@ -113,7 +113,7 @@ struct rewriter
   operator()(const sum<C>& s, const homomorphism<C>& h, const order::order<C>& o)
   const
   {
-    auto&& p = partition(o.variable(), s.operands().begin(), s.operands().end());
+    auto&& p = partition(o, s.operands().begin(), s.operands().end());
     auto& F = std::get<0>(p);
     auto& G = std::get<1>(p);
     auto& L = std::get<2>(p);
@@ -131,11 +131,12 @@ struct rewriter
 
     typedef typename saturation_sum<C>::optional_type optional;
     return SaturationSum<C>( o.variable()
-                           , F.size() > 0 ? rewrite(Sum<C>(F.begin(), F.end()), o.next())
+                           , F.size() > 0 ? rewrite(Sum<C>(o.next(), F.begin(), F.end()), o.next())
                                           : optional()
                            , G.begin(), G.end()
-                           , L.size() > 0 ? Local( o.variable()
-                                                 , rewrite( Sum<C>(L.begin(), L.end())
+                           , L.size() > 0 ? Local( o.identifier()
+                                                 , o
+                                                 , rewrite( Sum<C>(o.nested(), L.begin(), L.end())
                                                           , o.nested()))
                                           : optional());
   }
@@ -152,7 +153,7 @@ struct rewriter
 
     const sum<C>& s = internal::mem::variant_cast<const sum<C>>(f.hom()->data());
 
-    auto&& p = partition(o.variable(), s.operands().begin(), s.operands().end());
+    auto&& p = partition(o, s.operands().begin(), s.operands().end());
     auto& F = std::get<0>(p);
     auto& G = std::get<1>(p);
     auto& L = std::get<2>(p);
@@ -177,10 +178,11 @@ struct rewriter
     std::partition( G.begin(), G.end(), [](const homomorphism<C>& g){return g.selector();});
 
     return SaturationFixpoint( o.variable()
-                             , rewrite(Fixpoint(Sum<C>(F.begin(), F.end())), o.next())
+                             , rewrite(Fixpoint(Sum<C>(o.next(), F.begin(), F.end())), o.next())
                              , G.begin(), G.end()
-                             , Local( o.variable()
-                                    , rewrite(Fixpoint(Sum<C>(F.begin(), F.end())), o.nested())
+                             , Local( o.identifier()
+                                    , o
+                                    , rewrite(Fixpoint(Sum<C>(o.nested(), F.begin(), F.end())), o.nested())
                                     )
                              );
   }
@@ -203,13 +205,13 @@ template <typename C>
 homomorphism<C>
 rewrite(const homomorphism<C>& h, const order::order<C>& o)
 {
-  if (not o.empty())
+  if (o.empty())
   {
-    return apply_visitor(rewriter<C>(), h->data(), h, o);
+    return h;
   }
   else
   {
-    return h;
+    return apply_visitor(rewriter<C>(), h->data(), h, o);
   }
 }
 

@@ -160,13 +160,14 @@ TEST_F(hom_sum_test, evaluation)
 {
   {
     const hom h = Sum({id});
-    ASSERT_EQ(one, h(one));
+    ASSERT_EQ(one, h(empty_order<conf>(), one));
   }
   {
     const hom h = Sum({id});
-    ASSERT_EQ(zero, h(zero));
+    ASSERT_EQ(zero, h(empty_order<conf>(), zero));
   }
   {
+    auto o = (, empty_order<conf>());
     hom h = Sum({Cons('a', bitset {0}, id), Cons('a', bitset {1}, id)});
     ASSERT_EQ(SDD('a', {0,1}, one), h(one));
     ASSERT_EQ(SDD('a', {0,1}, SDD('b', {0}, one)), h(SDD('b', {0}, one)));

@@ -95,14 +95,6 @@ public:
     return (*this)(initial_context<C>(), o, x);
   }
 
-  /// @brief Tell if this homomorphism skips a given variable.
-//  bool
-//  skip(const variable_type& variable)
-//  const noexcept
-//  {
-//    return apply_visitor(skip_helper(), ptr()->data(), variable);
-//  }
-
   /// @brief Tell if this homomorphism skips a given identifier.
   bool
   skip(const order::order<C>& o)
@@ -181,7 +173,7 @@ public:
     {
       return x;
     }
-    return cxt.cache()(cached_homomorphism<C>(cxt, *this, x));
+    return cxt.cache()(cached_homomorphism<C>(cxt, o, *this, x));
   }
 
   /// @brief Create an homomorphism from a concrete type (e.g. Id, Cons, etc.).
@@ -202,10 +194,10 @@ public:
 
     template <typename H>
     bool
-    operator()(const H& h, const variable_type& v)
+    operator()(const H& h, const order::order<C>& o)
     const noexcept
     {
-      return h.skip(v);
+      return h.skip(o);
     }
   };
 

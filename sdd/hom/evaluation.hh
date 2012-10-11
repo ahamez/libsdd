@@ -51,7 +51,7 @@ struct evaluation
             , const homomorphism<C>& hom_proxy)
   const
   {
-    if (h.skip(node.variable()))
+    if (h.skip(o))
     {
       square_union<C, typename Node::valuation_type> su;
       su.reserve(node.size());

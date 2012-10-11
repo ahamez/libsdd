@@ -48,15 +48,7 @@ public:
     return x1;
   }
 
-//  /// @brief Skip variable predicate.
-//  bool
-//  skip(const typename C::Variable& v)
-//  const noexcept
-//  {
-//    return h_.skip(v);
-//  }
-
-  /// @brief Skip variable predicate.
+  /// @brief Skip predicate.
   bool
   skip(const order::order<C>& o)
   const noexcept
@@ -127,13 +119,6 @@ struct fixpoint_builder_helper
   const noexcept
   {
     return h;
-  }
-
-  homomorphism<C>
-  operator()(const local<C>& l, const homomorphism<C>&)
-  const noexcept
-  {
-    return Local<C>(l.variable(), Fixpoint<C>(l.hom()));
   }
 
   template <typename T>

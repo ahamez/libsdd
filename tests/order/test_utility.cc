@@ -19,6 +19,8 @@ struct order_utility_test
   }
 };
 
+using sdd::order::order;
+
 /*-------------------------------------------------------------------------------------------*/
 
 struct initializer
@@ -35,7 +37,7 @@ struct initializer
 
 TEST_F(order_utility_test, empty)
 {
-  auto o = sdd::order::empty_order<conf>();
+  auto o = order<conf>();
   ASSERT_EQ(one, sdd::order::sdd(o, initializer()));
 }
 
@@ -44,20 +46,18 @@ TEST_F(order_utility_test, empty)
 TEST_F(order_utility_test, flat)
 {
   {
-    auto o = sdd::order::empty_order<conf>();
-    o = add_identifier("foo", o);
+    order<conf> o;
+    o.add("foo");
     ASSERT_EQ(SDD(0, {0}, one), sdd::order::sdd(o, initializer()));
   }
   {
-    auto o = sdd::order::empty_order<conf>();
-    auto p = sdd::order::empty_order<conf>();
-    p = add_identifier("foo", p, o);
-    ASSERT_EQ(SDD(0, {0}, one), sdd::order::sdd(p, initializer()));
+    order<conf> o;
+    o.add("foo", order<conf>());
+    ASSERT_EQ(SDD(0, {0}, one), sdd::order::sdd(o, initializer()));
   }
   {
-    auto o = sdd::order::empty_order<conf>();
-    o = add_identifier("foo1", o);
-    o = add_identifier("foo2", o);
+    order<conf> o;
+    o.add("foo1").add("foo2");
     ASSERT_EQ(SDD(1, {0}, SDD(0, {0}, one)), sdd::order::sdd(o, initializer()));
   }
 }
@@ -67,26 +67,24 @@ TEST_F(order_utility_test, flat)
 TEST_F(order_utility_test, hierarchical)
 {
   {
-    auto o = sdd::order::empty_order<conf>();
-    o = add_identifier("foo", o);
-    auto p = sdd::order::empty_order<conf>();
-    p = add_identifier("bar", p, o);
+    order<conf> o;
+    o.add("foo");
+    order<conf> p;
+    p.add("bar", o);
     ASSERT_EQ(SDD(0, SDD(0, {0}, one), one), sdd::order::sdd(p, initializer()));
   }
   {
-    auto o = sdd::order::empty_order<conf>();
-    o = add_identifier("foo1", o);
-    o = add_identifier("foo2", o);
-    auto p = sdd::order::empty_order<conf>();
-    p = add_identifier("bar", p, o);
+    order<conf> o;
+    o.add("foo1").add("foo2");
+    order<conf> p;
+    p.add("bar", o);
     ASSERT_EQ(SDD(0, SDD(1, {0}, SDD(0, {0}, one)), one), sdd::order::sdd(p, initializer()));
   }
   {
-    auto o = sdd::order::empty_order<conf>();
-    o = add_identifier("foo", o);
-    auto p = sdd::order::empty_order<conf>();
-    p = add_identifier("bar1", p, o);
-    p = add_identifier("bar2", p, o);
+    order<conf> o;
+    o.add("foo");
+    order<conf> p;
+    p.add("bar1").add("bar2");
     ASSERT_EQ( SDD(1, SDD(0, {0}, one), SDD(0, SDD(0, {0}, one), one))
              , sdd::order::sdd(p, initializer()));
   }

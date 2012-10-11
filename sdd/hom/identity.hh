@@ -32,7 +32,7 @@ struct identity
 
   /// @brief Skip predicate.
   constexpr bool
-  skip(const typename C::Identifier&)
+  skip(const order::order<C>&)
   const noexcept
   {
     return true;

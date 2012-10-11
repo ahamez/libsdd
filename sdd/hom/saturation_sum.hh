@@ -97,14 +97,6 @@ public:
     }
   }
 
-//  /// @brief Skip variable predicate.
-//  bool
-//  skip(const typename C::Variable& v)
-//  const noexcept
-//  {
-//    return variable_ != v;
-//  }
-
   /// @brief Skip variable predicate.
   bool
   skip(const order::order<C>& o)

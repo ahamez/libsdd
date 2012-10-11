@@ -75,9 +75,6 @@ public:
 
       for (const auto& g : G_)
       {
-//        sum_builder<C, SDD<C>> sum_operands(2);
-//        sum_operands.add(s2);
-//        sum_operands.add(g(cxt, s2));
         try
         {
           // chain applications of G
@@ -95,14 +92,6 @@ public:
 
     return s1;
   }
-
-//  /// @brief Skip variable predicate.
-//  bool
-//  skip(const typename C::Variable& v)
-//  const noexcept
-//  {
-//    return variable_ != v;
-//  }
 
   /// @brief Skip predicate.
   bool

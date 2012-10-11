@@ -40,17 +40,11 @@ private:
 public:
 
   /// @brief Constructor.
-//  cons(const variable_type& var, const Valuation& val, const homomorphism<C>& h)
-//    : variable_(var)
-//    , valuation_(val)
-//    , next_(h)
-//  {
-//  }
-
-  /// @brief Constructor with an identifier.
   cons( const identifier_type& id, const order::order<C>& o
       , const Valuation& val, const homomorphism<C>& h)
-    : cons(o.identifier_variable(id), val, h)
+    : variable_(o.identifier_variable(id))
+    , valuation_(val)
+    , next_(h)
   {
   }
 
@@ -61,14 +55,6 @@ public:
   {
     return SDD<C>(variable_, valuation_, next_(cxt, o.next(), x));
   }
-
-//  /// @brief Skip variable predicate.
-//  constexpr bool
-//  skip(const variable_type&)
-//  const noexcept
-//  {
-//    return false;
-//  }
 
   /// @brief Skip predicate.
   constexpr bool
@@ -150,9 +136,11 @@ operator<<(std::ostream& os, const cons<C, Valuation>& c)
 /// @related homomorphism
 template <typename C, typename Valuation>
 homomorphism<C>
-Cons(const typename C::Variable& var, const Valuation& val, const homomorphism<C>& h)
+Cons( const typename C::Identifier& id, const order::order<C> o, const Valuation& val
+    , const homomorphism<C>& h)
 {
-  return homomorphism<C>::create(internal::mem::construct<cons<C, Valuation>>(), var, val, h);
+  return homomorphism<C>::create( internal::mem::construct<cons<C, Valuation>>()
+                                , id, o, val, h);
 }
 
 /*-------------------------------------------------------------------------------------------*/

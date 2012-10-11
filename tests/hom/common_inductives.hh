@@ -2,6 +2,7 @@
 #define _SDD_COMMON_INDUCTIVES_HH_
 
 #include <functional> // hash
+#include <string>
 
 #include "tests/hom/common.hh"
 
@@ -9,13 +10,13 @@
 
 struct targeted_incr
 {
-  const unsigned char var_;
+  const std::string var_;
   const unsigned int value_;
 
-  targeted_incr(unsigned char var, unsigned int val);
+  targeted_incr(const std::string&, unsigned int);
 
   bool
-  skip(unsigned char var)
+  skip(const std::string&)
   const noexcept;
 
   bool
@@ -23,11 +24,11 @@ struct targeted_incr
   const noexcept;
 
   hom
-  operator()(unsigned char var, const SDD& x)
+  operator()(const order<conf>&, const SDD& x)
   const;
 
   hom
-  operator()(unsigned char var, const bitset& val)
+  operator()(const order<conf>&, const bitset& val)
   const;
 
   SDD
@@ -48,10 +49,10 @@ struct incr
 {
   const unsigned int value_;
 
-  incr(unsigned int val);
+  incr(unsigned int);
 
   bool
-  skip(unsigned char var)
+  skip(const std::string&)
   const noexcept;
 
   bool
@@ -59,11 +60,11 @@ struct incr
   const noexcept;
 
   hom
-  operator()(unsigned char var, const SDD& x)
+  operator()(const order<conf>&, const SDD& x)
   const;
 
   hom
-  operator()(unsigned char var, const bitset& val)
+  operator()(const order<conf>&, const bitset& val)
   const;
 
   SDD
@@ -82,12 +83,12 @@ operator<<(std::ostream&, const incr&);
 
 struct targeted_noop
 {
-  const unsigned char var_;
+  const std::string var_;
 
-  targeted_noop(unsigned char v);
+  targeted_noop(const std::string&);
 
   bool
-  skip(unsigned char var)
+  skip(const std::string&)
   const noexcept;
 
   bool
@@ -95,11 +96,11 @@ struct targeted_noop
   const noexcept;
 
   hom
-  operator()(unsigned char var, const SDD& val)
+  operator()(const order<conf>&, const SDD& val)
   const;
 
   hom
-  operator()(unsigned char var, const bitset& val)
+  operator()(const order<conf>&, const bitset& val)
   const;
 
   SDD

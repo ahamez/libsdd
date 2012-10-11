@@ -30,21 +30,19 @@ private:
   /// @brief The hierarchical node where the nested homomorphism will be carried to.
   const variable_type variable_;
 
+  ///
+  const identifier_type identifier_;
+
   /// @brief The nested homomorphism to apply in a nested level.
   const homomorphism<C> h_;
 
 public:
 
   /// @brief Constructor.
-  local(const variable_type& var, const homomorphism<C>& h)
-    : variable_(var)
-    , h_(h)
-  {
-  }
-
-  /// @brief Constructor from an identifier.
   local(const identifier_type& id, const order::order<C>& o, const homomorphism<C>& h)
-    : local(o.identifier_variable(id), h)
+    : variable_(o.identifier_variable(id))
+    , identifier_(id)
+    , h_(h)
   {
   }
 
@@ -95,14 +93,6 @@ public:
     return apply_visitor(evaluation(), s->data(), cxt, o, variable_, h_, s);
   }
 
-//  /// @brief Skip variable predicate.
-//  bool
-//  skip(const variable_type& v)
-//  const noexcept
-//  {
-//    return v != variable_;
-//  }
-
   /// @brief Skip predicate.
   bool
   skip(const order::order<C>& o)
@@ -125,6 +115,14 @@ public:
   const noexcept
   {
     return variable_;
+  }
+
+  /// @brief Return the target.
+  const identifier_type&
+  identifier()
+  const noexcept
+  {
+    return identifier_;
   }
 
   /// @brief Return the carried homomorphism.
@@ -165,7 +163,7 @@ operator<<(std::ostream& os, const local<C>& l)
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-Local(const typename C::Variable& var, const homomorphism<C>& h)
+Local(const typename C::Identifier& id, const order::order<C>& o, const homomorphism<C>& h)
 {
   if (h == Id<C>())
   {
@@ -173,7 +171,7 @@ Local(const typename C::Variable& var, const homomorphism<C>& h)
   }
   else
   {
-    return homomorphism<C>::create(internal::mem::construct<local<C>>(), var, h);
+    return homomorphism<C>::create(internal::mem::construct<local<C>>(), id, o, h);
   }
 }
 
