@@ -37,17 +37,20 @@ TEST_F(hom_local_test, construction)
 
 TEST_F(hom_local_test, evaluation)
 {
-  order<conf> p {"a"};
-  order<conf> q {"b"};
   order<conf> o;
+  order<conf> q {"b"};
   o.add("y", q);
+  order<conf> p {"a"};
   o.add("x", p);
-  const SDD s0 = SDD(0, SDD(0, {0}, one), SDD(1, SDD(0, {1}, one), one));
+
+  const SDD s0 = SDD(1, SDD(0, {0}, one), SDD(0, SDD(0, {1}, one), one));
+
   const hom h1 = Local("x", o, Inductive<conf>(targeted_incr("a",1)));
   ASSERT_EQ( SDD(1, SDD(0, {1}, one), SDD(0, SDD(0, {1}, one), one))
            , h1(o, s0));
+
   const hom h2 = Local("y", o, Inductive<conf>(targeted_incr("b",1)));
-  ASSERT_EQ( SDD(0, SDD(0, {0}, one), SDD(1, SDD(0, {2}, one), one))
+  ASSERT_EQ( SDD(1, SDD(0, {0}, one), SDD(0, SDD(0, {2}, one), one))
            , h2(o, s0));
 }
 
