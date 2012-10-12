@@ -49,63 +49,61 @@ TEST_F(rewriting_test, sum)
                              });
 
     const std::size_t size = cxt.rewrite_cache().size();
-    const hom h1 = sdd::hom::rewrite(cxt, h0, 0);
+    const hom h1 = sdd::hom::rewrite(cxt, h0, 1);
     ASSERT_EQ(size + 1, cxt.rewrite_cache().size());
     ASSERT_NE(h0, h1);
 
     SDD s0(1, SDD(0, {0}, one), SDD(0, {0}, one));
     ASSERT_EQ(h0(s0), h1(s0));
   }
-//  {
-//    const hom h0 = Sum<conf>({ id
-//                             , Inductive<conf>(targeted_incr('1', 0))
-//                             , Inductive<conf>(targeted_incr('0', 0))
-//                             , Local(1, Inductive<conf>(targeted_incr('0', 0)))
-//                             });
-//    const hom h1 = sdd::hom::rewrite(cxt, h0, o);
-//
-//    SDD s0(1, SDD(0, {0}, one), SDD(0, {0}, one));
-//    ASSERT_EQ(h0(s0), h1(s0));
-//  }
+  {
+    const hom h0 = Sum<conf>({ id
+                             , Inductive<conf>(targeted_incr('1', 0))
+                             , Inductive<conf>(targeted_incr('0', 0))
+                             , Local(1, Inductive<conf>(targeted_incr('0', 0)))
+                             });
+
+    const std::size_t size = cxt.rewrite_cache().size();
+    const hom h1 = sdd::hom::rewrite(cxt, h0, 1);
+    ASSERT_EQ(size + 1, cxt.rewrite_cache().size());
+    ASSERT_NE(h0, h1);
+
+    SDD s0(1, SDD(0, {0}, one), SDD(0, {0}, one));
+    ASSERT_EQ(h0(s0), h1(s0));
+  }
 }
 
 /*-------------------------------------------------------------------------------------------*/
 
-//TEST_F(rewriting_test, fixpoint)
-//{
-//  {
-//    auto o = sdd::order::empty_order<conf>();
-//    o = add_identifier("b", o);
-//    auto nested_o = sdd::order::empty_order<conf>();
-//    nested_o = add_identifier("x", nested_o);
-//    o = add_identifier("a", o, nested_o);
-//    const hom h0 = Fixpoint(Sum<conf>({ id
-//                                      , Inductive<conf>(targeted_incr(1, 0))
-//                                      , Inductive<conf>(targeted_incr(0, 0))
-//                                      , Local(1, Inductive<conf>(targeted_incr(0, 0)))
-//                                      }));
-//    const hom h1 = sdd::hom::rewrite(h0, o);
-//
-//    ASSERT_NE(h1, h0);
-//
-//    SDD s0(1, SDD(0, {0}, one), SDD(0, {0}, one));
-//    ASSERT_EQ(h0(s0), h1(s0));
-//  }
-//
-//  {
-//    auto o = sdd::order::empty_order<conf>();
-//    o = add_identifier("b", o);
-//    auto nested_o = sdd::order::empty_order<conf>();
-//    nested_o = add_identifier("x", nested_o);
-//    o = add_identifier("a", o, nested_o);
-//    const hom h0 = Fixpoint(Sum<conf>({ Inductive<conf>(targeted_incr(1, 0))
-//                                      , Inductive<conf>(targeted_incr(0, 0))
-//                                      , Local(1, Inductive<conf>(targeted_incr(0, 0)))
-//                                      }));
-//    const hom h1 = sdd::hom::rewrite(h0, o);
-//
-//    ASSERT_EQ(h1, h0);
-//  }
-//}
+TEST_F(rewriting_test, fixpoint)
+{
+  {
+    const hom h0 = Fixpoint(Sum<conf>({ id
+                                      , Inductive<conf>(targeted_incr(1, 0))
+                                      , Inductive<conf>(targeted_incr(0, 0))
+                                      , Local(1, Inductive<conf>(targeted_incr(0, 0)))
+                                      }));
+
+    const std::size_t size = cxt.rewrite_cache().size();
+    const hom h1 = sdd::hom::rewrite(cxt, h0, 1);
+    ASSERT_EQ(size + 1, cxt.rewrite_cache().size());
+    ASSERT_NE(h1, h0);
+
+    SDD s0(1, SDD(0, {0}, one), SDD(0, {0}, one));
+    ASSERT_EQ(h0(s0), h1(s0));
+  }
+
+  {
+    const hom h0 = Fixpoint(Sum<conf>({ Inductive<conf>(targeted_incr(1, 0))
+                                      , Inductive<conf>(targeted_incr(0, 0))
+                                      , Local(1, Inductive<conf>(targeted_incr(0, 0)))
+                                      }));
+
+    const std::size_t size = cxt.rewrite_cache().size();
+    const hom h1 = sdd::hom::rewrite(cxt, h0, 1);
+    ASSERT_EQ(size + 1, cxt.rewrite_cache().size());
+    ASSERT_EQ(h1, h0);
+  }
+}
 
 /*-------------------------------------------------------------------------------------------*/
