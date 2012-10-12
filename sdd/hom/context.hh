@@ -10,8 +10,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation.hh"
 #include "sdd/hom/evaluation_error.hh"
-#include "sdd/hom/rewriting.hh"
-//#include "sdd/hom/rewrite_error.hh"
+#include "sdd/hom/rewrite.hh"
 #include "sdd/internal/mem/cache.hh"
 
 namespace sdd { namespace hom {

@@ -5,7 +5,7 @@
 #include <iosfwd>
 
 #include "sdd/hom/context_fwd.hh"
-#include "sdd/hom/rewriting.hh"
+#include "sdd/hom/rewrite.hh"
 
 /// @cond INTERNAL_DOC
 
