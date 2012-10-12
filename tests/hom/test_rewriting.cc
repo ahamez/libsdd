@@ -4,7 +4,7 @@
 
 #include "tests/hom/common.hh"
 #include "tests/hom/common_inductives.hh"
-#include "sdd/hom/rewriting.hh"
+#include "sdd/hom/rewrite.hh"
 
 /*-------------------------------------------------------------------------------------------*/
 
