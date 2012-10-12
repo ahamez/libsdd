@@ -83,7 +83,10 @@ private:
 
 public:
 
+  /// @brief The type of a variable.
   typedef typename C::Variable  variable_type;
+
+  /// @brief The type of a set of values.
   typedef typename C::Values    values_type;
 
   /// @brief Constructor.
