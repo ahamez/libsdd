@@ -252,7 +252,6 @@ rewrite(context<C>& cxt, const homomorphism<C>& h, const typename C::Variable& v
   return cxt.rewrite_cache()(cached_rewrite<C>(h, var));
 }
 
-
 /*-------------------------------------------------------------------------------------------*/
 
 

@@ -65,9 +65,26 @@ struct evaluation
     }
     else
     {
-      return rewrite(cxt, hom_proxy, node.variable())(cxt, x);
+      return apply_visitor( dispatch_eval(), rewrite(cxt, hom_proxy, node.variable())->data()
+                          , cxt, x);
     }
   }
+
+  /// @brief Dispatch to concrete evaluation.
+  ///
+  /// Avoid infinite recursion.
+  struct dispatch_eval
+  {
+    typedef SDD<C> result_type;
+
+    template <typename H>
+    SDD<C>
+    operator()(const H& h, context<C>& cxt, const SDD<C>& s)
+    const
+    {
+      return h(cxt, s);
+    }
+  };
 };
 
 /*-------------------------------------------------------------------------------------------*/
