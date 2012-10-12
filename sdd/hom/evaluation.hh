@@ -5,10 +5,11 @@
 #include <iosfwd>
 
 #include "sdd/hom/context_fwd.hh"
-
-namespace sdd { namespace hom {
+#include "sdd/hom/rewriting.hh"
 
 /// @cond INTERNAL_DOC
+
+namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -64,7 +65,7 @@ struct evaluation
     }
     else
     {
-      return h(cxt, x);
+      return rewrite(cxt, hom_proxy, node.variable())(cxt, x);
     }
   }
 };
@@ -183,10 +184,10 @@ struct hash<sdd::hom::cached_homomorphism<C>>
   }
 };
 
-/// @endcond
-
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace std
+
+/// @endcond
 
 #endif // _SDD_HOM_EVALUATION_HH_

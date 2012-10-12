@@ -10,6 +10,8 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation.hh"
 #include "sdd/hom/evaluation_error.hh"
+#include "sdd/hom/rewriting.hh"
+//#include "sdd/hom/rewrite_error.hh"
 #include "sdd/internal/mem/cache.hh"
 
 namespace sdd { namespace hom {
@@ -25,17 +27,24 @@ class context
 {
 public:
 
-  /// @brief Cache type.
+  /// @brief Homomorphism evaluation cache type.
   typedef internal::mem::cache<cached_homomorphism<C>, evaluation_error<C>, should_cache<C>>
           cache_type;
+
+  /// @brief Homomorphism rewriting cache type.
+  typedef internal::mem::cache<cached_rewrite<C>, evaluation_error<C>>
+          rewrite_cache_type;
 
   /// @brief SDD operation context type.
   typedef sdd::context<C> sdd_context_type;
 
 private:
 
-  /// @brief Cache of union homomorphisms.
+  /// @brief Cache of homomorphism evaluation.
   std::shared_ptr<cache_type> cache_;
+
+  /// @brief Cache of homomorphism rewriting.
+  std::shared_ptr<rewrite_cache_type> rewrite_cache_;
 
   /// @brief Context of SDD operations.
   ///
@@ -50,6 +59,7 @@ public:
   /// @brief Construct a new context.
   context(std::size_t size, sdd_context_type& sdd_cxt)
    	: cache_(std::make_shared<cache_type>("homomorphism_cache", size))
+    , rewrite_cache_(std::make_shared<rewrite_cache_type>("rewrite_cache", 10000))
     , sdd_context_(sdd_cxt)
     , size_(size)
   {
@@ -57,13 +67,13 @@ public:
 
   /// @brief Default constructor.
   context()
-	  : context(10000, sdd::initial_context<C>())
+	  : context(100000, sdd::initial_context<C>())
   {
   }
 
   /// @brief Construct a context with an existing SDD context.
   context(sdd_context_type& sdd_cxt)
-    : context(10000, sdd_cxt)
+    : context(100000, sdd_cxt)
   {
   }
 
@@ -76,6 +86,14 @@ public:
   noexcept
   {
     return *cache_;
+  }
+
+  /// @brief Return the cache of homomorphism evaluation.
+  rewrite_cache_type&
+  rewrite_cache()
+  noexcept
+  {
+    return *rewrite_cache_;
   }
 
   /// @brief Return the context of SDD operations.

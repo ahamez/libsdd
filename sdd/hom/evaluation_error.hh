@@ -7,8 +7,6 @@
 #include <string>
 #include <vector>
 
-#include "sdd/hom/definition_fwd.hh"
-
 namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
