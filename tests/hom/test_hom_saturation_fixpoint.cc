@@ -46,7 +46,6 @@ TEST_F(hom_saturation_fixpoint_test, evaluation)
     const hom r = Fixpoint(Sum<conf>({ Inductive<conf>(targeted_incr('c', 1))
                                      , Inductive<conf>(targeted_incr('b', 2))
                                      , id}));
-
     ASSERT_EQ(r(s0), h(s0));
     ASSERT_EQ( SDD('a', {0}, SDD('b', {0,2}, SDD('c', {0,1,2}, one)))
              , h(s0));
@@ -62,7 +61,6 @@ TEST_F(hom_saturation_fixpoint_test, evaluation)
     const hom r = Fixpoint(Sum<conf>({ Inductive<conf>(targeted_incr('c', 1))
                                      , Local('b', Inductive<conf>(targeted_incr('x', 2)))
                                      , id}));
-
     ASSERT_EQ(r(s0), h(s0));
   }
 }

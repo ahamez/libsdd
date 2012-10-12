@@ -175,7 +175,7 @@ struct rewriter
     return SaturationFixpoint( var
                              , Fixpoint(Sum<C>(F.begin(), F.end()))
                              , G.begin(), G.end()
-                             , Local(var, Fixpoint(Sum<C>(F.begin(), F.end())))
+                             , Local(var, Fixpoint(Sum<C>(L.begin(), L.end())))
                              );
   }
 
