@@ -20,13 +20,6 @@ const noexcept
   return var != var_;
 }
 
-bool
-targeted_incr::selector()
-const noexcept
-{
-  return false;
-}
-
 hom
 targeted_incr::operator()(unsigned char var, const SDD& x)
 const

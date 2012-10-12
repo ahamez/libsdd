@@ -100,7 +100,7 @@ public:
   skip(const variable_type& var)
   const noexcept
   {
-    return h_.skip(var);
+    return skip_impl(h_, var, 0);
   }
 
   /// @brief Tell if the user's inductive is a selector.
@@ -108,7 +108,7 @@ public:
   selector()
   const noexcept
   {
-    return h_.selector();
+    return selector_impl(h_, 0);
   }
 
   /// @brief Get the next homomorphism to apply from the user.
@@ -164,6 +164,56 @@ public:
   const
   {
     os << h_;
+  }
+
+private:
+
+  /// @brief Called when the user's inductive has skip().
+  ///
+  /// Compile-time dispatch.
+  template <typename T>
+  static auto
+  skip_impl(const T& x, const variable_type& v, int)
+  noexcept
+  -> decltype(x.skip(v))
+  {
+    return x.skip(v);
+  }
+
+  /// @brief Called when the user's inductive doesn't have skip().
+  ///
+  /// Compile-time dispatch.
+  template <typename T>
+  static auto
+  skip_impl(const T&, const variable_type&, long)
+  noexcept
+  -> decltype(false)
+  {
+    return false;
+  }
+
+  /// @brief Called when the user's inductive has selector().
+  ///
+  /// Compile-time dispatch.
+  template <typename T>
+  static auto
+  selector_impl(const T& x, int)
+  noexcept
+  -> decltype(x.selector())
+  {
+    return x.selector();
+  }
+
+  /// @brief Called when the user's inductive doesn't have selector().
+  ///
+  /// Compile-time dispatch.
+  template <typename T>
+  static auto
+  selector_impl(const T&, long)
+  noexcept
+  -> decltype(false)
+  {
+    return false;
   }
 };
 
