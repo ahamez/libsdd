@@ -45,26 +45,43 @@ public:
     typedef SDD<C> result_type;
 
     SDD<C>
-    operator()( const hierarchical_node<C>& n
+    operator()( const hierarchical_node<C>& node
               , context<C>& cxt, const variable_type& var, const homomorphism<C>& h
               , const SDD<C>& s)
     const
     {
-      sum_builder<C, SDD<C>> sum_operands(n.size());
-      for (const auto& arc : n)
+      if (h.selector()) // partition won't change
       {
-        sum_operands.add(SDD<C>(var, h(cxt, arc.valuation()), arc.successor()));
+        square_union<C, SDD<C>> su;
+        su.reserve(node.size());
+        for (const auto& arc : node)
+        {
+          SDD<C> new_valuation = h(cxt, arc.valuation());
+          if (not new_valuation.empty())
+          {
+            su.add(arc.successor(), new_valuation);
+          }
+        }
+        return SDD<C>(node.variable(), su(cxt.sdd_context()));
       }
+      else
+      {
+        sum_builder<C, SDD<C>> sum_operands(node.size());
+        for (const auto& arc : node)
+        {
+          sum_operands.add(SDD<C>(var, h(cxt, arc.valuation()), arc.successor()));
+        }
 
-      try
-      {
-        return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
-      }
-      catch (top<C>& t)
-      {
-        evaluation_error<C> e(s);
-        e.add_top(t);
-        throw e;
+        try
+        {
+          return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+        }
+        catch (top<C>& t)
+        {
+          evaluation_error<C> e(s);
+          e.add_top(t);
+          throw e;
+        }
       }
     }
 
