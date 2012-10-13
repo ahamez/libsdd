@@ -121,7 +121,7 @@
 		2B4C609816232ABB0065D7F3 /* test_hom_composition.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_composition.cc; sourceTree = "<group>"; };
 		2B4C609C16232FBA0065D7F3 /* saturation_sum.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = saturation_sum.hh; sourceTree = "<group>"; };
 		2B4C609D162341E60065D7F3 /* test_hom_saturation_sum.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_saturation_sum.cc; sourceTree = "<group>"; };
-		2B4C60A0162372630065D7F3 /* rewriting.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = rewriting.hh; sourceTree = "<group>"; };
+		2B4C60A0162372630065D7F3 /* rewrite.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = rewrite.hh; sourceTree = "<group>"; };
 		2B4C60A11624676B0065D7F3 /* saturation_fixpoint.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = saturation_fixpoint.hh; sourceTree = "<group>"; };
 		2B4C60A6162474550065D7F3 /* test_hom_saturation_fixpoint.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_saturation_fixpoint.cc; sourceTree = "<group>"; };
 		2B4C60A916256E440065D7F3 /* test_rewriting.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_rewriting.cc; sourceTree = "<group>"; };
@@ -274,7 +274,7 @@
 				2B1A26961619BDEC005D6BB0 /* identity.hh */,
 				2B5723E8161F0A3200F09892 /* inductive.hh */,
 				2BE71C6F161CD4A500B22084 /* local.hh */,
-				2B4C60A0162372630065D7F3 /* rewriting.hh */,
+				2B4C60A0162372630065D7F3 /* rewrite.hh */,
 				2B4C60A11624676B0065D7F3 /* saturation_fixpoint.hh */,
 				2B4C609C16232FBA0065D7F3 /* saturation_sum.hh */,
 				2B1A26971619BEF1005D6BB0 /* sum.hh */,

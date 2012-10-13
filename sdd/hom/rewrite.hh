@@ -5,17 +5,16 @@
 #include <tuple>
 #include <vector>
 
+#include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
+#include "sdd/hom/fixpoint.hh"
+#include "sdd/hom/local.hh"
+#include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
-#include "sdd/order/order.hh"
+
+/// @cond INTERNAL_DOC
 
 namespace sdd { namespace hom {
-
-/*-------------------------------------------------------------------------------------------*/
-
-template <typename C>
-homomorphism<C>
-rewrite(const homomorphism<C>&, const order::order<C>&);
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -74,7 +73,6 @@ struct rewriter
     }
   };
 
-
   /// @brief Get the F, G and L parts of a set of homomorphisms.
   template <typename InputIterator>
   static
@@ -110,7 +108,7 @@ struct rewriter
 
   /// @brief Rewrite Sum into a Saturation Sum, if possible.
   homomorphism<C>
-  operator()(const sum<C>& s, const homomorphism<C>& h, const order::order<C>& o)
+  operator()(const sum<C>& s, const homomorphism<C>& h, const variable_type& var)
   const
   {
     auto&& p = partition(o, s.operands().begin(), s.operands().end());
@@ -124,7 +122,7 @@ struct rewriter
       return h;
     }
 
-    if (has_id) // has_id
+    if (has_id)
     {
       F.push_back(Id<C>());
     }
@@ -138,12 +136,11 @@ struct rewriter
                                                  , o
                                                  , rewrite( Sum<C>(o.nested(), L.begin(), L.end())
                                                           , o.nested()))
-                                          : optional());
   }
 
   /// @brief Rewrite a Fixpoint into a Saturation Fixpoint, if possible.
   homomorphism<C>
-  operator()(const fixpoint<C>& f, const homomorphism<C>& h, const order::order<C>& o)
+  operator()(const fixpoint<C>& f, const homomorphism<C>& h, const variable_type& var)
   const
   {
     if (not apply_visitor(is_sum(), f.hom()->data()))
@@ -175,7 +172,7 @@ struct rewriter
 
     // Put selectors in front. It might help cut paths sooner in the Saturation Fixpoint's
     // evaluation.
-    std::partition( G.begin(), G.end(), [](const homomorphism<C>& g){return g.selector();});
+    std::partition(G.begin(), G.end(), [](const homomorphism<C>& g){return g.selector();});
 
     return SaturationFixpoint( o.variable()
                              , rewrite(Fixpoint(Sum<C>(o.next(), F.begin(), F.end())), o.next())
@@ -184,7 +181,6 @@ struct rewriter
                                     , o
                                     , rewrite(Fixpoint(Sum<C>(o.nested(), F.begin(), F.end())), o.nested())
                                     )
-                             );
   }
 
   /// @brief General case.
@@ -192,7 +188,7 @@ struct rewriter
   /// Any other homomorphism is not rewritten.
   template <typename T>
   homomorphism<C>
-  operator()(const T&, const homomorphism<C>& h, const order::order<C>&)
+  operator()(const T&, const homomorphism<C>& h, const variable_type&)
   const
   {
     return h;
@@ -203,7 +199,7 @@ struct rewriter
 
 template <typename C>
 homomorphism<C>
-rewrite(const homomorphism<C>& h, const order::order<C>& o)
+rewrite(context<C>& cxt, const homomorphism<C>& h, const order::order<C>& o)
 {
   if (o.empty())
   {
@@ -218,5 +214,7 @@ rewrite(const homomorphism<C>& h, const order::order<C>& o)
 /*-------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::hom
+
+/// @endcond
 
 #endif // _SDD_HOM_REWRITING_HH_

@@ -4,7 +4,7 @@
 
 #include "tests/hom/common.hh"
 #include "tests/hom/common_inductives.hh"
-#include "sdd/hom/rewriting.hh"
+#include "sdd/hom/rewrite.hh"
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -15,6 +15,7 @@ const hom id = sdd::hom::Id<conf>();
 struct rewriting_test
   : public testing::Test
 {
+  sdd::hom::context<conf> cxt;
 };
 
 /*-------------------------------------------------------------------------------------------*/

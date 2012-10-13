@@ -19,10 +19,6 @@ struct targeted_incr
   skip(const std::string&)
   const noexcept;
 
-  bool
-  selector()
-  const noexcept;
-
   hom
   operator()(const order<conf>&, const SDD& x)
   const;

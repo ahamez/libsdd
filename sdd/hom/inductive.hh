@@ -7,6 +7,7 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
+#include "sdd/hom/evaluation_error.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
@@ -84,7 +85,10 @@ private:
 
 public:
 
+  /// @brief The type of a variable.
   typedef typename C::Variable  variable_type;
+
+  /// @brief The type of a set of values.
   typedef typename C::Values    values_type;
 
   /// @brief Constructor.
@@ -106,7 +110,7 @@ public:
   selector()
   const noexcept
   {
-    return h_.selector();
+    return selector_impl(h_, 0);
   }
 
   /// @brief Get the next homomorphism to apply from the user.
@@ -163,6 +167,56 @@ public:
   {
     os << h_;
   }
+
+private:
+
+  /// @brief Called when the user's inductive has skip().
+  ///
+  /// Compile-time dispatch.
+  template <typename T>
+  static auto
+  skip_impl(const T& x, const variable_type& v, int)
+  noexcept
+  -> decltype(x.skip(v))
+  {
+    return x.skip(v);
+  }
+
+  /// @brief Called when the user's inductive doesn't have skip().
+  ///
+  /// Compile-time dispatch.
+  template <typename T>
+  static auto
+  skip_impl(const T&, const variable_type&, long)
+  noexcept
+  -> decltype(false)
+  {
+    return false;
+  }
+
+  /// @brief Called when the user's inductive has selector().
+  ///
+  /// Compile-time dispatch.
+  template <typename T>
+  static auto
+  selector_impl(const T& x, int)
+  noexcept
+  -> decltype(x.selector())
+  {
+    return x.selector();
+  }
+
+  /// @brief Called when the user's inductive doesn't have selector().
+  ///
+  /// Compile-time dispatch.
+  template <typename T>
+  static auto
+  selector_impl(const T&, long)
+  noexcept
+  -> decltype(false)
+  {
+    return false;
+  }
 };
 
 /*-------------------------------------------------------------------------------------------*/
@@ -182,8 +236,8 @@ private:
     typedef SDD<C> result_type;
 
     SDD<C>
-    operator()( const zero_terminal<C>&, const inductive_base<C>&, context<C>&
-              , const order::order<C>&)
+    operator()( const zero_terminal<C>&
+              , const inductive_base<C>&, context<C>&, const SDD<C>&, const order::order<C>&)
     const noexcept
     {
       assert(false);
@@ -191,8 +245,8 @@ private:
     }
 
     SDD<C>
-    operator()( const one_terminal<C>& one, const inductive_base<C>& i, context<C>&
-              , const order::order<C>&)
+    operator()( const one_terminal<C>& one
+              , const inductive_base<C>& i, context<C>&, const SDD<C>&, const order::order<C>&)
     const
     {
       return i(one);
@@ -200,18 +254,28 @@ private:
 
     template <typename Node>
     SDD<C>
-    operator()( const Node& node, const inductive_base<C>& i, context<C>& cxt
+    operator()( const Node& node
+              , const inductive_base<C>& i, context<C>& cxt, const SDD<C>& s
               , const order::order<C>& o)
     const
     {
       sum_builder<C, SDD<C>> sum_operands(node.size());
       for (const auto& arc : node)
       {
-//        const homomorphism<C> next_hom = i(node.variable(), arc.valuation());
         const homomorphism<C> next_hom = i(o, arc.valuation());
         sum_operands.add(next_hom(cxt, o, arc.successor()));
       }
-      return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+
+      try
+      {
+        return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+      }
+      catch (top<C>& t)
+      {
+        evaluation_error<C> e(s);
+        e.add_top(t);
+        throw e;
+      }
     }
   };
 
@@ -228,7 +292,7 @@ public:
   operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
   const
   {
-    return apply_visitor(helper(), x->data(), *hom_ptr_, cxt, o);
+    return apply_visitor(helper(), x->data(), *hom_ptr_, cxt, x, o);
   }
 
 //  /// @brief Skip variable predicate.

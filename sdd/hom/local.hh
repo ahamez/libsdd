@@ -6,6 +6,7 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
+#include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/order/order.hh"
 
@@ -57,21 +58,38 @@ public:
               , const homomorphism<C>& h, const SDD<C>& s)
     const
     {
-      sum_builder<C, SDD<C>> sum_operands(n.size());
-      for (const auto& arc : n)
+      if (h.selector()) // partition won't change
       {
-        sum_operands.add(SDD<C>(var, h(cxt, o.nested(), arc.valuation()), arc.successor()));
+        square_union<C, SDD<C>> su;
+        su.reserve(node.size());
+        for (const auto& arc : node)
+        {
+          SDD<C> new_valuation = h(cxt, o.nested(), arc.valuation());
+          if (not new_valuation.empty())
+          {
+            su.add(arc.successor(), new_valuation);
+          }
+        }
+        return SDD<C>(node.variable(), su(cxt.sdd_context()));
       }
+      else
+      {
+        sum_builder<C, SDD<C>> sum_operands(node.size());
+        for (const auto& arc : node)
+        {
+          sum_operands.add(SDD<C>(var, h(cxt, o.nested(), arc.valuation()), arc.successor()));
+        }
 
-      try
-      {
-        return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
-      }
-      catch (top<C>& t)
-      {
-        evaluation_error<C> e(s);
-        e.add_top(t);
-        throw e;
+        try
+        {
+          return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+        }
+        catch (top<C>& t)
+        {
+          evaluation_error<C> e(s);
+          e.add_top(t);
+          throw e;
+        }
       }
     }
 
