@@ -257,7 +257,7 @@ private:
       for (const auto& arc : node)
       {
         const homomorphism<C> next_hom = i(node.variable(), arc.valuation());
-        sum_operands.add(next_hom(arc.successor()));
+        sum_operands.add(next_hom(cxt, arc.successor()));
       }
       return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
     }
