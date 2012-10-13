@@ -7,6 +7,7 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
+#include "sdd/hom/evaluation_error.hh"
 
 namespace sdd { namespace hom {
 
@@ -234,7 +235,8 @@ private:
     typedef SDD<C> result_type;
 
     SDD<C>
-    operator()(const zero_terminal<C>&, const inductive_base<C>&, context<C>&)
+    operator()( const zero_terminal<C>&
+              , const inductive_base<C>&, context<C>&, const SDD<C>&)
     const noexcept
     {
       assert(false);
@@ -242,7 +244,8 @@ private:
     }
 
     SDD<C>
-    operator()(const one_terminal<C>& one, const inductive_base<C>& i, context<C>&)
+    operator()( const one_terminal<C>& one
+              , const inductive_base<C>& i, context<C>&, const SDD<C>&)
     const
     {
       return i(one);
@@ -250,7 +253,8 @@ private:
 
     template <typename Node>
     SDD<C>
-    operator()(const Node& node, const inductive_base<C>& i, context<C>& cxt)
+    operator()( const Node& node
+              , const inductive_base<C>& i, context<C>& cxt, const SDD<C>& s)
     const
     {
       sum_builder<C, SDD<C>> sum_operands(node.size());
@@ -259,7 +263,17 @@ private:
         const homomorphism<C> next_hom = i(node.variable(), arc.valuation());
         sum_operands.add(next_hom(cxt, arc.successor()));
       }
-      return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+
+      try
+      {
+        return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+      }
+      catch (top<C>& t)
+      {
+        evaluation_error<C> e(s);
+        e.add_top(t);
+        throw e;
+      }
     }
   };
 
@@ -276,7 +290,7 @@ public:
   operator()(context<C>& cxt, const SDD<C>& x)
   const
   {
-    return apply_visitor(helper(), x->data(), *hom_ptr_, cxt);
+    return apply_visitor(helper(), x->data(), *hom_ptr_, cxt, x);
   }
 
   /// @brief Skip variable predicate.
