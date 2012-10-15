@@ -6,6 +6,7 @@
 #include "sdd/dd/sum.hh"
 #include "sdd/hom/composition.hh"
 #include "sdd/hom/cons.hh"
+#include "sdd/hom/constant.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation.hh"
 #include "sdd/hom/fixpoint.hh"
@@ -33,6 +34,7 @@ private:
   typedef internal::mem::variant< const composition<C>
                                 , const cons<C, SDD<C>>
                                 , const cons<C, typename C::Values>
+                                , const constant<C>
                                 , const fixpoint<C>
                                 , const identity<C>
                                 , const inductive<C>

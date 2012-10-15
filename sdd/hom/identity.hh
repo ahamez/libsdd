@@ -111,5 +111,4 @@ struct hash<sdd::hom::identity<C>>
 
 } // namespace std
 
-
 #endif // _SDD_HOM_ID_HH_
