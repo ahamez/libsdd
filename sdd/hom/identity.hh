@@ -31,7 +31,7 @@ struct identity
 
   /// @brief Skip variable predicate.
   constexpr bool
-  skip(const typename C::Variable& v)
+  skip(const typename C::Variable&)
   const noexcept
   {
     return true;
@@ -109,6 +109,5 @@ struct hash<sdd::hom::identity<C>>
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
 
 #endif // _SDD_HOM_ID_HH_
