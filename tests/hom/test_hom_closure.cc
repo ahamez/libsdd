@@ -1,0 +1,249 @@
+#include "gtest/gtest.h"
+
+#include "tests/hom/common.hh"
+#include "tests/hom/common_inductives.hh"
+
+/*-------------------------------------------------------------------------------------------*/
+
+const SDD one = sdd::one<conf>();
+const hom id = sdd::hom::Id<conf>();
+
+struct hom_closure_test
+  : public testing::Test
+{
+};
+
+/*-------------------------------------------------------------------------------------------*/
+
+TEST_F(hom_closure_test, construction)
+{
+  {
+    const auto h0 = Closure<conf>({0,1,2});
+    const auto h1 = Closure<conf>({0,1,2});
+    ASSERT_EQ(h0, h1);
+  }
+  {
+    const auto h0 = Closure<conf>({0,1,2});
+    const auto h1 = Closure<conf>({0,1,3});
+    ASSERT_NE(h0, h1);
+  }
+}
+
+/*-------------------------------------------------------------------------------------------*/
+
+TEST_F(hom_closure_test, evaluation_flat)
+{
+  {
+    const SDD s0('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)));
+    const auto h0 = Closure<conf>({'a', 'b', 'c'});
+    ASSERT_EQ(s0, h0(s0));
+  }
+  {
+    const SDD s0('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)));
+    const SDD s1('a', {0,1}, SDD('c', {0,1}, one));
+    const auto h0 = Closure<conf>({'a', 'c'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)));
+    const SDD s1('b', {0,1}, SDD('c', {0,1}, one));
+    const auto h0 = Closure<conf>({'b', 'c'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)));
+    const SDD s1('a', {0,1}, SDD('b', {0,1}, one));
+    const auto h0 = Closure<conf>({'a', 'b'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)));
+    const SDD s1('a', {0,1}, one);
+    const auto h0 = Closure<conf>({'a'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)));
+    const SDD s1('b', {0,1}, one);
+    const auto h0 = Closure<conf>({'b'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)));
+    const SDD s1('c', {0,1}, one);
+    const auto h0 = Closure<conf>({'c'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)));
+    const auto h0 = Closure<conf>({'d'});
+    ASSERT_EQ(one, h0(s0));
+  }
+
+  {
+    const SDD s0 = SDD('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)))
+                 + SDD('a', {0,1}, SDD('b', {2,3}, SDD('c', {2,3}, one)));
+    const auto h0 = Closure<conf>({'a', 'b', 'c'});
+    ASSERT_EQ(s0, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)))
+                 + SDD('a', {0,1}, SDD('b', {2,3}, SDD('c', {2,3}, one)));
+    const SDD s1 = SDD('a', {0,1}, SDD('c', {0,1,2,3}, one));
+    const auto h0 = Closure<conf>({'a', 'c'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)))
+                 + SDD('a', {0,1}, SDD('b', {2,3}, SDD('c', {2,3}, one)));
+    const SDD s1 = SDD('b', {0,1,2,3}, one);
+    const auto h0 = Closure<conf>({'b'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)))
+                 + SDD('a', {0,1}, SDD('b', {2,3}, SDD('c', {2,3}, one)));
+    const SDD s1 = SDD('a', {0,1}, one);
+    const auto h0 = Closure<conf>({'a'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)))
+                 + SDD('a', {0,1}, SDD('b', {2,3}, SDD('c', {2,3}, one)));
+    const SDD s1 = SDD('c', {0,1,2,3}, one);
+    const auto h0 = Closure<conf>({'c'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+}
+
+/*-------------------------------------------------------------------------------------------*/
+
+TEST_F(hom_closure_test, evaluation_hierarchical)
+{
+  {
+    const SDD s0('a', {0,1}, SDD('x', SDD('b', {0,1}, one), SDD('c', {0,1}, one)));
+    const SDD s1('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)));
+    const auto h0 = Closure<conf>({'a', 'b', 'c'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0('a', {0,1}, SDD('x', SDD('b', {0,1}, one), SDD('c', {0,1}, one)));
+    const SDD s1('b', {0,1}, one);
+    const auto h0 = Closure<conf>({'b'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0('a', {0,1}
+        , SDD('x', SDD('b', {0,1}, one)
+        , SDD('y', SDD('c', {0,1}, one), one)));
+    const SDD s1('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)));
+    const auto h0 = Closure<conf>({'a', 'b', 'c'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0('a', {0,1}
+        , SDD('x', SDD('b', {0,1}, one)
+        , SDD('y', SDD('c', {0,1}, one), one)));
+    const auto h0 = Closure<conf>({'d'});
+    ASSERT_EQ(one, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {0,1}
+                 , SDD('x', SDD('b', {0,1}, one)
+                 , SDD('y', SDD('c', {0,1}, one), one)))
+
+                 + SDD('a', {0,1}
+                 , SDD('x', SDD('b', {2,3}, one)
+                 , SDD('y', SDD('c', {2,3}, one), one)));
+
+    const SDD s1 = SDD('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)))
+                 + SDD('a', {0,1}, SDD('b', {2,3}, SDD('c', {2,3}, one)));
+
+    const auto h0 = Closure<conf>({'a', 'b', 'c'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {0,1}
+                 , SDD('x', SDD('b', {0,1}, one)
+                 , SDD('y', SDD('c', {0,1}, one), one)))
+
+                 + SDD('a', {0,1}
+                 , SDD('x', SDD('b', {2,3}, one)
+                 , SDD('y', SDD('c', {2,3}, one), one)))
+
+                 + SDD('a', {0,1}
+                 , SDD('x', SDD('b', {4,5}, one)
+                 , SDD('y', SDD('c', {4,5}, one), one)));
+
+
+    const SDD s1 = SDD('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)))
+                 + SDD('a', {0,1}, SDD('b', {2,3}, SDD('c', {2,3}, one)))
+                 + SDD('a', {0,1}, SDD('b', {4,5}, SDD('c', {4,5}, one)));
+
+    const auto h0 = Closure<conf>({'a', 'b', 'c'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {0,1}
+                 , SDD('x', SDD('b', {0,1}, one)
+                 , SDD('y', SDD('c', {0,1}, one), one)))
+
+                 + SDD('a', {0,1}
+                 , SDD('x', SDD('b', {2,3}, one)
+                 , SDD('y', SDD('c', {2,3}, one), one)))
+
+                 + SDD('a', {0,1}
+                 , SDD('x', SDD('b', {4,5}, one)
+                 , SDD('y', SDD('c', {4,5}, one), one)));
+
+
+    const SDD s1 = SDD('a', {0,1}, SDD('c', {0,1,2,3,4,5}, one));
+
+    const auto h0 = Closure<conf>({'a', 'c'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {0,1}
+                 , SDD('x', SDD('b', {0,1}, one)
+                 , SDD('y', SDD('c', {0,1}, one), one)))
+
+                 + SDD('a', {0,1}
+                 , SDD('x', SDD('b', {2,3}, one)
+                 , SDD('y', SDD('c', {2,3}, one), one)))
+
+                 + SDD('a', {0,1}
+                 , SDD('x', SDD('b', {4,5}, one)
+                 , SDD('y', SDD('c', {4,5}, one), one)));
+
+
+    const SDD s1 = SDD('b', {0,1}, SDD('c', {0,1}, one))
+                 + SDD('b', {2,3}, SDD('c', {2,3}, one))
+                 + SDD('b', {4,5}, SDD('c', {4,5}, one));
+
+    const auto h0 = Closure<conf>({'b', 'c'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {0,1}
+                 , SDD('x', SDD('z', SDD('b', {0,1}, one), one)
+                 , SDD('y', SDD('c', {0,1}, one), one)))
+
+                 + SDD('a', {0,1}
+                 , SDD('x', SDD('z', SDD('b', {2,3}, one), one)
+                 , SDD('y', SDD('c', {2,3}, one), one)))
+
+                 + SDD('a', {0,1}
+                 , SDD('x', SDD('z', SDD('b', {4,5}, one), one)
+                 , SDD('y', SDD('c', {4,5}, one), one)));
+
+
+    const SDD s1 = SDD('b', {0,1}, SDD('c', {0,1}, one))
+                 + SDD('b', {2,3}, SDD('c', {2,3}, one))
+                 + SDD('b', {4,5}, SDD('c', {4,5}, one));
+
+    const auto h0 = Closure<conf>({'b', 'c'});
+    ASSERT_EQ(s1, h0(s0));
+  }
+}
+
+/*-------------------------------------------------------------------------------------------*/

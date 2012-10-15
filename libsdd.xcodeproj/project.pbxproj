@@ -24,6 +24,7 @@
 		2B4C60AB16256E440065D7F3 /* test_rewriting.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B4C60A916256E440065D7F3 /* test_rewriting.cc */; };
 		2B5723EC161F1C8F00F09892 /* test_hom_inductive.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B5723EA161F1C8F00F09892 /* test_hom_inductive.cc */; };
 		2B7D16B2161BDAFC00FD77F8 /* test_hom_sum.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B7D16B0161BDAFC00FD77F8 /* test_hom_sum.cc */; };
+		2B86F64A162C4BE90026412E /* test_hom_closure.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B86F648162C4BE90026412E /* test_hom_closure.cc */; };
 		2B99C75B15AB2BE0007389B8 /* tests.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BD33B5514E660D0004A7657 /* tests.cc */; };
 		2BC472A215BF1B9300A8D442 /* test_difference.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC4729F15BF1B9300A8D442 /* test_difference.cc */; };
 		2BC472A315BF1B9300A8D442 /* test_intersection.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC472A015BF1B9300A8D442 /* test_intersection.cc */; };
@@ -106,6 +107,8 @@
 		2B6986191576A393001DC189 /* cache.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cache.hh; sourceTree = "<group>"; };
 		2B7D16B0161BDAFC00FD77F8 /* test_hom_sum.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_sum.cc; sourceTree = "<group>"; };
 		2B85630B15C9B1CC00085F5F /* default_configurations.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = default_configurations.hh; sourceTree = "<group>"; };
+		2B86F646162C3BDC0026412E /* closure.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = closure.hh; sourceTree = "<group>"; };
+		2B86F648162C4BE90026412E /* test_hom_closure.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_closure.cc; sourceTree = "<group>"; };
 		2BB1A99A14E07D38007921F2 /* ptr.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ptr.hh; sourceTree = "<group>"; };
 		2BB1A99B14E07D38007921F2 /* ref_counted.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; path = ref_counted.hh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		2BB1A99C14E07D38007921F2 /* unique_table.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = unique_table.hh; sourceTree = "<group>"; };
@@ -218,6 +221,7 @@
 		2B0EA134161638F90019EB04 /* hom */ = {
 			isa = PBXGroup;
 			children = (
+				2B86F646162C3BDC0026412E /* closure.hh */,
 				2B5F99771623149000BAA8D4 /* composition.hh */,
 				2BE71C62161C2CBA00B22084 /* cons.hh */,
 				2B454E8F162C2BE50086989F /* constant.hh */,
@@ -245,6 +249,7 @@
 				2B4C1C2316207503005E0690 /* common.hh */,
 				2B4C1C2016207349005E0690 /* common_inductives.hh */,
 				2B4C1C1F16207348005E0690 /* common_inductives.cc */,
+				2B86F648162C4BE90026412E /* test_hom_closure.cc */,
 				2B4C609816232ABB0065D7F3 /* test_hom_composition.cc */,
 				2BE71C64161C2FBB00B22084 /* test_hom_cons.cc */,
 				2BE71C6C161CBBC900B22084 /* test_hom_fixpoint.cc */,
@@ -580,6 +585,7 @@
 				2B4C609F162341E60065D7F3 /* test_hom_saturation_sum.cc in Sources */,
 				2B4C60A8162474550065D7F3 /* test_hom_saturation_fixpoint.cc in Sources */,
 				2B4C60AB16256E440065D7F3 /* test_rewriting.cc in Sources */,
+				2B86F64A162C4BE90026412E /* test_hom_closure.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
