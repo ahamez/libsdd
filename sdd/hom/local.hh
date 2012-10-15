@@ -53,7 +53,7 @@ public:
     typedef SDD<C> result_type;
 
     SDD<C>
-    operator()( const hierarchical_node<C>& n
+    operator()( const hierarchical_node<C>& node
               , context<C>& cxt, const order::order<C>& o, const variable_type& var
               , const homomorphism<C>& h, const SDD<C>& s)
     const
