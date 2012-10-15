@@ -10,6 +10,7 @@
 #include "sdd/hom/constant.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation.hh"
+#include "sdd/hom/expression.hh"
 #include "sdd/hom/fixpoint.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/inductive.hh"
@@ -37,6 +38,7 @@ private:
                                 , const cons<C, SDD<C>>
                                 , const cons<C, typename C::Values>
                                 , const constant<C>
+                                , const expression<C>
                                 , const fixpoint<C>
                                 , const identity<C>
                                 , const inductive<C>
