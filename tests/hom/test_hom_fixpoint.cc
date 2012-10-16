@@ -36,8 +36,9 @@ TEST_F(hom_fixpoint_test, construction)
              );
   }
   {
-    ASSERT_EQ( Fixpoint(Local<conf>(0, Inductive<conf>(targeted_incr(0,1))))
-             , Local<conf>(0, Fixpoint(Inductive<conf>(targeted_incr(0,1))))
+    order<conf> o;
+    ASSERT_EQ( Fixpoint(Local<conf>("0", o, Inductive<conf>(targeted_incr("0",1))))
+             , Local<conf>("0", o, Fixpoint(Inductive<conf>(targeted_incr("0",1))))
              );
   }
 }
@@ -46,9 +47,10 @@ TEST_F(hom_fixpoint_test, construction)
 
 TEST_F(hom_fixpoint_test, evaluation)
 {
+  order<conf> o {"0"};
   SDD s0(0, {0}, one);
-  hom h0 = Fixpoint(Sum({Inductive<conf>(targeted_incr(0, 1)), id}));
-  ASSERT_EQ(SDD(0, {0,1,2}, one), h0(s0));
+  hom h0 = Fixpoint(Sum(o, {Inductive<conf>(targeted_incr("0", 1)), id}));
+  ASSERT_EQ(SDD(0, {0,1,2}, one), h0(o, s0));
 }
 
 /*-------------------------------------------------------------------------------------------*/
