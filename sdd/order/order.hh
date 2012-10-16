@@ -238,6 +238,17 @@ public:
     return add(id, nested.order_ptr_);
   }
 
+  void
+  concat(const order& next)
+  {
+    order_ptr_type<C> current = order_ptr_;
+    while (current->next)
+    {
+      current = current->next;
+    }
+    current->next = next.order_ptr_;
+  }
+
 private:
 
   order&
