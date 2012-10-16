@@ -18,10 +18,10 @@ struct hom_inductive_test
 struct f0
 {
   bool
-  skip(unsigned char var)
+  skip(const std::string& var)
   const noexcept
   {
-    return var != 0;
+    return var != "0";
   }
 
   bool
@@ -32,17 +32,17 @@ struct f0
   }
 
   hom
-  operator()(unsigned char var, const SDD&)
+  operator()(const order<conf>&, const SDD&)
   const
   {
     return sdd::hom::Id<conf>();
   }
 
   hom
-  operator()(unsigned char var, const bitset& val)
+  operator()(const order<conf>& o, const bitset& val)
   const
   {
-    return sdd::hom::Cons<conf>(var, val << 1, id);
+    return sdd::hom::Cons<conf>("0", o, val << 1, id);
   }
 
   SDD
@@ -69,10 +69,10 @@ operator<<(std::ostream& os, const f0&)
 struct f1
 {
   bool
-  skip(unsigned char var)
+  skip(const std::string& var)
   const noexcept
   {
-    return var != 1;
+    return var != "1";
   }
 
   bool
@@ -83,17 +83,17 @@ struct f1
   }
 
   hom
-  operator()(unsigned char var, const SDD&)
+  operator()(const order<conf>&, const SDD&)
   const
   {
     return sdd::hom::Id<conf>();
   }
 
   hom
-  operator()(unsigned char var, const bitset& val)
+  operator()(const order<conf>& o, const bitset& val)
   const
   {
-    return sdd::hom::Cons<conf>(var, val << 2, id);
+    return sdd::hom::Cons<conf>("1", o, val << 2, id);
   }
 
   SDD
@@ -120,7 +120,7 @@ operator<<(std::ostream& os, const f1&)
 struct cut
 {
   bool
-  skip(unsigned char var)
+  skip(const std::string&)
   const noexcept
   {
     return false;
@@ -134,17 +134,17 @@ struct cut
   }
 
   hom
-  operator()(unsigned char var, const SDD&)
+  operator()(const order<conf>& o, const SDD&)
   const
   {
-    return sdd::hom::Cons<conf>(var, zero, id);
+    return sdd::hom::Cons<conf>(o.identifier(), o, zero, id);
   }
 
   hom
-  operator()(unsigned char var, const bitset&)
+  operator()(const order<conf>& o, const bitset&)
   const
   {
-    return sdd::hom::Cons<conf>(var, bitset {}, id);
+    return sdd::hom::Cons<conf>(o.identifier(), o, bitset {}, id);
   }
 
   SDD
@@ -171,7 +171,7 @@ operator<<(std::ostream& os, const cut&)
 struct id_prime
 {
   bool
-  skip(unsigned char var)
+  skip(const std::string&)
   const noexcept
   {
     return false;
@@ -185,17 +185,17 @@ struct id_prime
   }
 
   hom
-  operator()(unsigned char var, const SDD& x)
+  operator()(const order<conf>& o, const SDD& x)
   const
   {
-    return sdd::hom::Cons<conf>(var, x, sdd::hom::Inductive<conf>(*this));
+    return sdd::hom::Cons<conf>(o.identifier(), o, x, sdd::hom::Inductive<conf>(*this));
   }
 
   hom
-  operator()(unsigned char var, const bitset& val)
+  operator()(const order<conf>& o, const bitset& val)
   const
   {
-    return sdd::hom::Cons<conf>(var, val, sdd::hom::Inductive<conf>(*this));
+    return sdd::hom::Cons<conf>(o.identifier(), o, val, sdd::hom::Inductive<conf>(*this));
   }
 
   SDD
@@ -222,7 +222,7 @@ operator<<(std::ostream& os, const id_prime&)
 struct consume
 {
   bool
-  skip(unsigned char var)
+  skip(const std::string&)
   const noexcept
   {
     return false;
@@ -236,14 +236,14 @@ struct consume
   }
 
   hom
-  operator()(unsigned char var, const SDD&)
+  operator()(const order<conf>&, const SDD&)
   const
   {
     return sdd::hom::Inductive<conf>(*this);
   }
 
   hom
-  operator()(unsigned char var, const bitset& val)
+  operator()(const order<conf>&, const bitset& val)
   const
   {
     return sdd::hom::Inductive<conf>(*this);
@@ -350,30 +350,35 @@ TEST_F(hom_inductive_test, construction)
 TEST_F(hom_inductive_test, evaluation_flat)
 {
   {
+    order<conf> o {"0"};
     const hom h1 = sdd::hom::Inductive<conf>(f0());
-    ASSERT_EQ(SDD(0, {1,2,3}, one), h1(SDD(0, {0,1,2}, one)));
+    ASSERT_EQ(SDD(0, {1,2,3}, one), h1(o, SDD(0, {0,1,2}, one)));
   }
   {
+    order<conf> o {"0", "1"};
     const hom h1 = sdd::hom::Inductive<conf>(f0());
     const hom h2 = sdd::hom::Inductive<conf>(f1());
-    ASSERT_EQ( SDD(0, {1,2,3}, SDD(1, {2,3,4}, one))
-             , h2(h1(SDD(0, {0,1,2}, SDD(1, {0,1,2}, one)))));
-    ASSERT_EQ( SDD(0, {1,2,3}, SDD(1, {2,3,4}, one))
-             , h1(h2(SDD(0, {0,1,2}, SDD(1, {0,1,2}, one)))));
+    ASSERT_EQ( SDD(1, {1,2,3}, SDD(0, {2,3,4}, one))
+             , h2(o, h1(o, SDD(1, {0,1,2}, SDD(0, {0,1,2}, one)))));
+    ASSERT_EQ( SDD(1, {1,2,3}, SDD(0, {2,3,4}, one))
+             , h1(o, h2(o, SDD(1, {0,1,2}, SDD(0, {0,1,2}, one)))));
   }
   {
-    const SDD s0 = SDD(0, {0}, SDD(1, {0}, one)) + SDD(0, {1}, SDD(1, {1}, one));
-    const SDD s1 = SDD(0, {1}, SDD(1, {0}, one)) + SDD(0, {2}, SDD(1, {1}, one));
+    order<conf> o {"0", "1"};
+    const SDD s0 = SDD(1, {0}, SDD(0, {0}, one)) + SDD(1, {1}, SDD(0, {1}, one));
+    const SDD s1 = SDD(1, {1}, SDD(0, {0}, one)) + SDD(1, {2}, SDD(0, {1}, one));
     const hom h1 = sdd::hom::Inductive<conf>(f0());
-    ASSERT_EQ(s1, h1(s0));
+    ASSERT_EQ(s1, h1(o, s0));
   }
   {
+    order<conf> o {"0"};
     const hom h1 = sdd::hom::Inductive<conf>(id_prime());
-    ASSERT_EQ(SDD(0, {0,1,2}, one), h1(SDD(0, {0,1,2}, one)));
+    ASSERT_EQ(SDD(0, {0,1,2}, one), h1(o, SDD(0, {0,1,2}, one)));
   }
   {
+    order<conf> o {"1", "0"};
     const hom h1 = sdd::hom::Inductive<conf>(consume());
-    ASSERT_EQ(one, h1(SDD(0, {0,1,2}, SDD(1, one, one))));
+    ASSERT_EQ(one, h1(o, SDD(1, {0,1,2}, SDD(0, one, one))));
   }
 }
 
@@ -382,25 +387,27 @@ TEST_F(hom_inductive_test, evaluation_flat)
 TEST_F(hom_inductive_test, evaluation_hierarchical)
 {
   {
+    order<conf> o {"0"};
     const hom h1 = sdd::hom::Inductive<conf>(f0());
-    ASSERT_EQ(SDD(0, {1,2,3}, one), h1(SDD(0, {0,1,2}, one)));
+    ASSERT_EQ(SDD(0, {1,2,3}, one), h1(o, SDD(0, {0,1,2}, one)));
   }
   {
+    order<conf> o {"1", "0"};
     const hom h1 = sdd::hom::Inductive<conf>(f0());
     const hom h2 = sdd::hom::Inductive<conf>(f1());
-    ASSERT_EQ( SDD(0, {1,2,3}, SDD(1, {2,3,4}, one))
-              , h2(h1(SDD(0, {0,1,2}, SDD(1, {0,1,2}, one)))));
-    ASSERT_EQ( SDD(0, {1,2,3}, SDD(1, {2,3,4}, one))
-              , h1(h2(SDD(0, {0,1,2}, SDD(1, {0,1,2}, one)))));
+    ASSERT_EQ( SDD(1, {1,2,3}, SDD(0, {2,3,4}, one))
+              , h2(o, h1(o, SDD(1, {0,1,2}, SDD(0, {0,1,2}, one)))));
+    ASSERT_EQ( SDD(1, {1,2,3}, SDD(0, {2,3,4}, one))
+              , h1(o, h2(o, SDD(1, {0,1,2}, SDD(0, {0,1,2}, one)))));
   }
   {
-    const SDD s0 = SDD(0, {0}, SDD(1, {0}, one)) + SDD(0, {1}, SDD(1, {1}, one));
-    const SDD s1 = SDD(0, {1}, SDD(1, {0}, one)) + SDD(0, {2}, SDD(1, {1}, one));
+    order<conf> o = {"0", "1"};
+    const SDD s0 = SDD(1, {0}, SDD(0, {0}, one)) + SDD(1, {1}, SDD(0, {1}, one));
+    const SDD s1 = SDD(1, {1}, SDD(0, {0}, one)) + SDD(1, {2}, SDD(0, {1}, one));
     const hom h1 = sdd::hom::Inductive<conf>(f0());
-    ASSERT_EQ(s1, h1(s0));
+    ASSERT_EQ(s1, h1(o, s0));
   }
 }
-
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -408,31 +415,16 @@ TEST_F(hom_inductive_test, cut_path)
 {
   {
     const hom h0 = sdd::hom::Inductive<conf>(cut());
-    ASSERT_EQ(zero, h0(one));
+    ASSERT_EQ(zero, h0(order<conf>(), one));
   }
   {
     const hom h0 = sdd::hom::Inductive<conf>(cut());
-    ASSERT_EQ(zero, h0(SDD(0, {0}, one)));
+    ASSERT_EQ(zero, h0(order<conf>({"a"}), SDD(0, {0}, one)));
   }
   {
     const hom h0 = sdd::hom::Inductive<conf>(cut());
-    ASSERT_EQ(zero, h0(SDD(0, one, one)));
+    ASSERT_EQ(zero, h0(order<conf>({"a"}), SDD(0, one, one)));
   }
 }
-
-/*-------------------------------------------------------------------------------------------*/
-
-TEST_F(hom_inductive_test, skip_variable)
-{
-  {
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
-    ASSERT_EQ(SDD(1, {0,1,2}, one), h1(SDD(1, {0,1,2}, one)));
-  }
-  {
-    const hom h1 = sdd::hom::Inductive<conf>(f1());
-    ASSERT_EQ(SDD(0, {0,1,2}, one), h1(SDD(0, {0,1,2}, one)));
-  }
-}
-
 
 /*-------------------------------------------------------------------------------------------*/

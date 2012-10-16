@@ -19,15 +19,15 @@ struct hom_sum_test
 
 struct ind
 {
-  const unsigned char var_;
+  const std::string var_;
 
-  ind(unsigned char v)
+  ind(const std::string& v)
     : var_(v)
   {
   }
 
   bool
-  skip(unsigned char var)
+  skip(const std::string& var)
   const noexcept
   {
     return var != var_;
@@ -41,14 +41,14 @@ struct ind
   }
 
   hom
-  operator()(unsigned char var, const SDD&)
+  operator()(const order<conf>&, const SDD&)
   const
   {
     return sdd::hom::Id<conf>();
   }
 
   hom
-  operator()(unsigned char var, const bitset& val)
+  operator()(const order<conf>&, const bitset& val)
   const
   {
     return sdd::hom::Id<conf>();
@@ -72,7 +72,7 @@ struct ind
 std::ostream&
 operator<<(std::ostream& os, const ind& i)
 {
-  return os << "ind(" << static_cast<unsigned int>(i.var_) << ")";
+  return os << "ind(" << i.var_ << ")";
 }
 
 namespace std {
@@ -84,7 +84,7 @@ struct hash<ind>
   operator()(const ind& i)
   const noexcept
   {
-    return std::hash<unsigned char>()(i.var_);
+    return std::hash<std::string>()(i.var_);
   }
 };
 
@@ -95,59 +95,68 @@ struct hash<ind>
 TEST_F(hom_sum_test, construction)
 {
   {
-    const hom h1 = sdd::hom::Sum({id});
-    const hom h2 = sdd::hom::Sum({id});
+    order<conf> o;
+    const hom h1 = sdd::hom::Sum(o, {id});
+    const hom h2 = sdd::hom::Sum(o, {id});
     ASSERT_EQ(h1, h2);
   }
   {
-    const hom h1 = sdd::hom::Sum({id});
+    order<conf> o;
+    const hom h1 = sdd::hom::Sum(o, {id});
     ASSERT_EQ(id, h1);
   }
   {
+    order<conf> o;
     std::vector<hom> empty;
-    ASSERT_THROW(sdd::hom::Sum<conf>(empty.begin(), empty.end()), std::invalid_argument);
+    ASSERT_THROW(sdd::hom::Sum<conf>(o, empty.begin(), empty.end()), std::invalid_argument);
   }
   {
-    const hom h1 = sdd::hom::Sum({sdd::hom::Cons(0, bitset {0,1}, id)});
-    ASSERT_EQ(sdd::hom::Cons(0, bitset {0,1}, id), h1);
+    order<conf> o {"0"};
+    const hom h1 = sdd::hom::Sum(o, {sdd::hom::Cons("0", o, bitset {0,1}, id)});
+    ASSERT_EQ(sdd::hom::Cons("0", o, bitset {0,1}, id), h1);
   }
   {
-    const hom h1 = sdd::hom::Sum({id});
-    const hom h2 = sdd::hom::Sum({id, id});
+    order<conf> o;
+    const hom h1 = sdd::hom::Sum(o, {id});
+    const hom h2 = sdd::hom::Sum(o, {id, id});
     ASSERT_EQ(h1, h2);
   }
   {
-    const hom h1 = sdd::hom::Sum({id, sdd::hom::Cons(0, bitset {0,1}, id)});
-    const hom h2 = sdd::hom::Sum({id, sdd::hom::Cons(0, bitset {0,2}, id)});
+    order<conf> o {"0"};
+    const hom h1 = sdd::hom::Sum(o, {id, sdd::hom::Cons("0", o, bitset {0,1}, id)});
+    const hom h2 = sdd::hom::Sum(o, {id, sdd::hom::Cons("0", o, bitset {0,2}, id)});
     ASSERT_NE(h1, h2);
   }
   {
-    const hom h1 = sdd::hom::Sum({id, Inductive<conf>(ind(0)), id});
-    const hom h2 = sdd::hom::Sum({Inductive<conf>(ind(1)), Inductive<conf>(ind(2))});
-    const hom h3 = sdd::hom::Sum({h1, h2, id});
-    const hom h4 = sdd::hom::Sum({ id, Inductive<conf>(ind(0)), Inductive<conf>(ind(1))
-                                 , Inductive<conf>(ind(2))});
+    order<conf> o {"0", "1", "2"};
+    const hom h1 = sdd::hom::Sum(o, {id, Inductive<conf>(ind("0")), id});
+    const hom h2 = sdd::hom::Sum(o, {Inductive<conf>(ind("1")), Inductive<conf>(ind("2"))});
+    const hom h3 = sdd::hom::Sum(o, {h1, h2, id});
+    const hom h4 = sdd::hom::Sum(o, { id, Inductive<conf>(ind("0")), Inductive<conf>(ind("1"))
+                                    , Inductive<conf>(ind("2"))});
     ASSERT_EQ(h4, h3);
   }
   {
-    const hom l1 = sdd::hom::Local(0, Inductive<conf>(ind(0)));
-    const hom l2 = sdd::hom::Local(0, Inductive<conf>(ind(1)));
-    const hom s1 = sdd::hom::Sum({l1, l2});
-    const hom l3 = sdd::hom::Local(0, sdd::hom::Sum({ Inductive<conf>(ind(0))
-                                                    , Inductive<conf>(ind(1))}));
+    order<conf> o {"0", "1", "2"};
+    const hom l1 = sdd::hom::Local("0", o, Inductive<conf>(ind("0")));
+    const hom l2 = sdd::hom::Local("0", o, Inductive<conf>(ind("1")));
+    const hom s1 = sdd::hom::Sum(o, {l1, l2});
+    const hom l3 = sdd::hom::Local("0", o, sdd::hom::Sum(o, { Inductive<conf>(ind("0"))
+                                                            , Inductive<conf>(ind("1"))}));
     ASSERT_EQ(s1, l3);
   }
   {
-    const hom l1 = sdd::hom::Local(0, Inductive<conf>(ind(0)));
-    const hom l2 = sdd::hom::Local(0, Inductive<conf>(ind(1)));
-    const hom l3 = sdd::hom::Local(1, Inductive<conf>(ind(2)));
-    const hom s1 = sdd::hom::Sum({l1, l2, l3});
-    const hom s2 = sdd::hom::Sum({ sdd::hom::Local( 0
-                                                  , sdd::hom::Sum({ Inductive<conf>(ind(0))
-                                                                  , Inductive<conf>(ind(1))
-                                                                  })
-                                                  )
-                                 , sdd::hom::Local(1, Inductive<conf>(ind(2)))
+    order<conf> o {"0", "1", "2"};
+    const hom l1 = sdd::hom::Local("0", o, Inductive<conf>(ind("0")));
+    const hom l2 = sdd::hom::Local("0", o, Inductive<conf>(ind("1")));
+    const hom l3 = sdd::hom::Local("1", o, Inductive<conf>(ind("2")));
+    const hom s1 = sdd::hom::Sum(o, {l1, l2, l3});
+    const hom s2 = sdd::hom::Sum(o, { sdd::hom::Local( "0", o
+                                                     , sdd::hom::Sum(o, { Inductive<conf>(ind("0"))
+                                                                        , Inductive<conf>(ind("1"))
+                                                                        })
+                                                     )
+                                 , sdd::hom::Local("1", o, Inductive<conf>(ind("2")))
                                  });
     ASSERT_EQ(s1, s2);
   }
@@ -159,18 +168,18 @@ TEST_F(hom_sum_test, construction)
 TEST_F(hom_sum_test, evaluation)
 {
   {
-    const hom h = Sum({id});
-    ASSERT_EQ(one, h(empty_order<conf>(), one));
+    const hom h = Sum(order<conf>(), {id});
+    ASSERT_EQ(one, h(order<conf>(), one));
   }
   {
-    const hom h = Sum({id});
-    ASSERT_EQ(zero, h(empty_order<conf>(), zero));
+    const hom h = Sum(order<conf>(), {id});
+    ASSERT_EQ(zero, h(order<conf>(), zero));
   }
   {
-    auto o = (, empty_order<conf>());
-    hom h = Sum({Cons('a', bitset {0}, id), Cons('a', bitset {1}, id)});
-    ASSERT_EQ(SDD('a', {0,1}, one), h(one));
-    ASSERT_EQ(SDD('a', {0,1}, SDD('b', {0}, one)), h(SDD('b', {0}, one)));
+    order<conf> o {"a", "b"};
+    hom h = Sum(o, {Cons("a", o, bitset {0}, id), Cons("a", o, bitset {1}, id)});
+    ASSERT_EQ(SDD(1, {0,1}, one), h(o, one));
+    ASSERT_EQ(SDD(1, {0,1}, SDD(0, {0}, one)), h(o, SDD(0, {0}, one)));
   }
 }
 
@@ -178,12 +187,13 @@ TEST_F(hom_sum_test, evaluation)
 
 TEST_F(hom_sum_test, error)
 {
-  hom h = Sum({Cons('a', bitset {0}, id), Cons('b', bitset {0}, id)});
+  order<conf> o {"a", "b", "c"};
+  hom h = Sum(o, {Cons("a", o, bitset {0}, id), Cons("b", o, bitset {0}, id)});
 
-  ASSERT_THROW(h(one), sdd::hom::evaluation_error<conf>);
+  ASSERT_THROW(h(o, one), sdd::hom::evaluation_error<conf>);
   try
   {
-    h(one);
+    h(o, one);
   }
   catch(sdd::hom::evaluation_error<conf>& e)
   {
@@ -191,17 +201,16 @@ TEST_F(hom_sum_test, error)
     ASSERT_NE(nullptr, e.what());
   }
 
-  ASSERT_THROW(h(SDD('c', {0}, one)), sdd::hom::evaluation_error<conf>);
+  ASSERT_THROW(h(o, SDD(0, {0}, one)), sdd::hom::evaluation_error<conf>);
   try
   {
-    h(SDD('c', {0}, one));
+    h(o, SDD(0, {0}, one));
   }
   catch(sdd::hom::evaluation_error<conf>& e)
   {
-    ASSERT_EQ(SDD('c', {0}, one), e.operand());
+    ASSERT_EQ(SDD(0, {0}, one), e.operand());
     ASSERT_NE(nullptr, e.what());
   }
-
 }
 
 /*-------------------------------------------------------------------------------------------*/
