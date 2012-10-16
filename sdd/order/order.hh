@@ -257,6 +257,28 @@ private:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @related order
+template <typename C>
+std::ostream&
+operator<<(std::ostream& os, const order<C>& o)
+{
+  if (not o.empty())
+  {
+    os << o.identifier();
+    if (not o.nested().empty())
+    {
+      os << " | (" << o.nested() << ")";
+    }
+    if (not o.next().empty())
+    {
+      os << " >> " << o.next();
+    }
+  }
+  return os;
+}
+
+/*-------------------------------------------------------------------------------------------*/
+
 }} // namespace sdd::order
 
 #endif // _SDD_ORDER_ORDER_HH_
