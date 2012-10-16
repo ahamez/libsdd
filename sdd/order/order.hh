@@ -2,7 +2,8 @@
 #define _SDD_ORDER_ORDER_HH_
 
 #include <initializer_list>
-#include <memory>
+#include <iostream>
+#include <memory> // shared_ptr, unique_ptr
 #include <vector>
 
 #include <boost/optional.hpp>
@@ -53,10 +54,12 @@ struct node
 
   /// @brief The nested order.
   ///
-  /// If empty, the node is a flat node.
+  /// If nullptr, this node is a flat node.
   const order_ptr_type<C> nested;
 
   /// @brief The node's next variable.
+  ///
+  /// If nullptr, this node is the last one.
   const order_ptr_type<C> next;
 
   /// @brief Constructor.
@@ -133,7 +136,6 @@ public:
     : order(list.begin(), list.end())
   {
   }
-
 
   /// @brief Copy operator.
   order&
