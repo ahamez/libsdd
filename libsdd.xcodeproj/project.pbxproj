@@ -188,7 +188,7 @@
 		2BD0DA91157A99A6005BC59A /* test_ptr.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_ptr.cc; sourceTree = "<group>"; };
 		2BD33B5514E660D0004A7657 /* tests.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tests.cc; sourceTree = "<group>"; };
 		2BD545BC15702831006B51B3 /* hash.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = hash.hh; sourceTree = "<group>"; };
-		2BDA775F1625F0E70037E6D9 /* tests copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "tests copy"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2BDA775F1625F0E70037E6D9 /* tests copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = "tests copy"; path = "/Users/hal/code/libsdd/build/Release/tests copy"; sourceTree = "<absolute>"; };
 		2BE71C62161C2CBA00B22084 /* cons.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cons.hh; sourceTree = "<group>"; };
 		2BE71C64161C2FBB00B22084 /* test_hom_cons.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_cons.cc; sourceTree = "<group>"; };
 		2BE71C67161CB5E700B22084 /* fixpoint.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = fixpoint.hh; sourceTree = "<group>"; };
@@ -320,7 +320,6 @@
 				2BC6106914E59FA00081D743 /* binaries */,
 				2BB1A99414E07D38007921F2 /* sdd */,
 				2BB1A9AE14E086E3007921F2 /* tests */,
-				2BDA775F1625F0E70037E6D9 /* tests copy */,
 			);
 			sourceTree = "<group>";
 		};
