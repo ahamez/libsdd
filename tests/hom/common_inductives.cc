@@ -186,14 +186,14 @@ std::size_t
 hash<targeted_incr>::operator()(const targeted_incr& i)
 const noexcept
 {
-  return std::hash<std::string>()(i.var_) xor std::hash<unsigned char>()(i.value_);
+  return std::hash<std::string>()(i.var_) xor std::hash<unsigned int>()(i.value_);
 }
 
 std::size_t
 hash<incr>::operator()(const incr& i)
 const noexcept
 {
-  return std::hash<unsigned char>()(i.value_);
+  return std::hash<unsigned int>()(i.value_);
 }
 
 std::size_t
