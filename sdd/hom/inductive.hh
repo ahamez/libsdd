@@ -295,14 +295,6 @@ public:
     return apply_visitor(helper(), x->data(), *hom_ptr_, cxt, x, o);
   }
 
-//  /// @brief Skip variable predicate.
-//  bool
-//  skip(const typename C::Variable& var)
-//  const noexcept
-//  {
-//    return hom_ptr_->skip(var);
-//  }
-
   /// @brief Skip predicate.
   bool
   skip(const order::order<C>& o)
