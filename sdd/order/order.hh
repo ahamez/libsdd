@@ -188,7 +188,7 @@ public:
   }
 
   /// @brief Get the variable of an identifier
-  const variable_type&
+  variable_type
   identifier_variable(const identifier_type& id)
   const
   {
