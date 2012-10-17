@@ -179,15 +179,15 @@ struct _LIBSDD_ATTRIBUTE_PACKED sum_op
           save.emplace_back(std::move(current_val), std::move(succs));
         }
 
+        // Both arcs had the same valuation.
+        equality:;
+
         // Reinject all parts that were removed in (F).
         for (auto& rem : remainder)
         {
           res.emplace(std::move(rem.first), std::move(rem.second));
         }
         remainder.clear();
-
-      // Both arcs had the same valuation: we just go to the next arc of the current operand.
-      equality:;
 
       } // For each arc of the current operand.
 
