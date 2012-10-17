@@ -18,6 +18,12 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
+template <typename C>
+homomorphism<C>
+rewrite(const homomorphism<C>&, const order::order<C>&);
+
+/*-------------------------------------------------------------------------------------------*/
+
 /// @brief Concrete implementation of the rewriting process.
 template <typename C>
 struct rewriter
@@ -108,7 +114,8 @@ struct rewriter
 
   /// @brief Rewrite Sum into a Saturation Sum, if possible.
   homomorphism<C>
-  operator()(const sum<C>& s, const homomorphism<C>& h, const variable_type& var)
+  operator()( const sum<C>& s
+            , const homomorphism<C>& h, const order::order<C>& o)
   const
   {
     auto&& p = partition(o, s.operands().begin(), s.operands().end());
@@ -136,11 +143,14 @@ struct rewriter
                                                  , o
                                                  , rewrite( Sum<C>(o.nested(), L.begin(), L.end())
                                                           , o.nested()))
+                                          : optional()
+                           );
   }
 
   /// @brief Rewrite a Fixpoint into a Saturation Fixpoint, if possible.
   homomorphism<C>
-  operator()(const fixpoint<C>& f, const homomorphism<C>& h, const variable_type& var)
+  operator()( const fixpoint<C>& f
+            , const homomorphism<C>& h, const order::order<C>& o)
   const
   {
     if (not apply_visitor(is_sum(), f.hom()->data()))
@@ -181,6 +191,7 @@ struct rewriter
                                     , o
                                     , rewrite(Fixpoint(Sum<C>(o.nested(), F.begin(), F.end())), o.nested())
                                     )
+                             );
   }
 
   /// @brief General case.
@@ -188,7 +199,7 @@ struct rewriter
   /// Any other homomorphism is not rewritten.
   template <typename T>
   homomorphism<C>
-  operator()(const T&, const homomorphism<C>& h, const variable_type&)
+  operator()(const T&, const homomorphism<C>& h, const order::order<C>&)
   const
   {
     return h;
@@ -199,7 +210,7 @@ struct rewriter
 
 template <typename C>
 homomorphism<C>
-rewrite(context<C>& cxt, const homomorphism<C>& h, const order::order<C>& o)
+rewrite(const homomorphism<C>& h, const order::order<C>& o)
 {
   if (o.empty())
   {
