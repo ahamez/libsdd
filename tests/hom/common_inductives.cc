@@ -7,37 +7,37 @@ const hom id = sdd::hom::Id<conf>();
 
 /*-------------------------------------------------------------------------------------------*/
 
-targeted_incr::targeted_incr(unsigned char var, unsigned int val)
+targeted_incr::targeted_incr(const std::string& var, unsigned int val)
   : var_(var)
   , value_(val)
 {
 }
 
 bool
-targeted_incr::skip(unsigned char var)
+targeted_incr::skip(const std::string& var)
 const noexcept
 {
   return var != var_;
 }
 
 hom
-targeted_incr::operator()(unsigned char var, const SDD& x)
+targeted_incr::operator()(const order<conf>& o, const SDD& x)
 const
 {
-  return Cons(var, x, Inductive<conf>(*this));
+  return Cons(o.identifier(), o, x, Inductive<conf>(*this));
 }
 
 hom
-targeted_incr::operator()(unsigned char var, const bitset& val)
+targeted_incr::operator()(const order<conf>& o, const bitset& val)
 const
 {
   if (val.content().test(2))
   {
-    return Cons(var, val, id);
+    return Cons(o.identifier(), o, val, id);
   }
   else
   {
-    return Cons(var, val << value_, id);
+    return Cons(o.identifier(), o, val << value_, id);
   }
 }
 
@@ -58,7 +58,7 @@ const noexcept
 std::ostream&
 operator<<(std::ostream& os, const targeted_incr& i)
 {
-  return os << "target_incr(" << static_cast<unsigned int>(i.var_) << ", " << i.value_ << ")";
+  return os << "target_incr(" << i.var_ << ", " << i.value_ << ")";
 }
 
 /*-------------------------------------------------------------------------------------------*/
@@ -69,7 +69,7 @@ incr::incr(unsigned int val)
 }
 
 bool
-incr::skip(unsigned char var)
+incr::skip(const std::string&)
 const noexcept
 {
   return false;
@@ -83,23 +83,23 @@ const noexcept
 }
 
 hom
-incr::operator()(unsigned char var, const SDD& x)
+incr::operator()(const order<conf>& o, const SDD& x)
 const
 {
-  return Cons(var, x, Inductive<conf>(*this));
+  return Cons(o.identifier(), o, x, Inductive<conf>(*this));
 }
 
 hom
-incr::operator()(unsigned char var, const bitset& val)
+incr::operator()(const order<conf>& o, const bitset& val)
 const
 {
   if (val.content().test(2))
   {
-    return Cons(var, val, id);
+    return Cons(o.identifier(), o, val, id);
   }
   else
   {
-    return Cons(var, val << value_, id);
+    return Cons(o.identifier(), o, val << value_, id);
   }
 }
 
@@ -125,13 +125,13 @@ operator<<(std::ostream& os, const incr& i)
 
 /*-------------------------------------------------------------------------------------------*/
 
-targeted_noop::targeted_noop(unsigned char v)
+targeted_noop::targeted_noop(const std::string& v)
   : var_(v)
 {
 }
 
 bool
-targeted_noop::skip(unsigned char var)
+targeted_noop::skip(const std::string& var)
 const noexcept
 {
   return var != var_;
@@ -145,17 +145,17 @@ const noexcept
 }
 
 hom
-targeted_noop::operator()(unsigned char var, const SDD& val)
+targeted_noop::operator()(const order<conf>& o, const SDD& val)
 const
 {
-  return Cons(var, val, id);
+  return Cons(o.identifier(), o, val, id);
 }
 
 hom
-targeted_noop::operator()(unsigned char var, const bitset& val)
+targeted_noop::operator()(const order<conf>& o, const bitset& val)
 const
 {
-  return Cons(var, val, id);
+  return Cons(o.identifier(), o, val, id);
 }
 
 SDD
@@ -175,7 +175,7 @@ const noexcept
 std::ostream&
 operator<<(std::ostream& os, const targeted_noop& i)
 {
-  return os << "targeted_noop(" << static_cast<unsigned int>(i.var_) << ")";
+  return os << "targeted_noop(" << i.var_ << ")";
 }
 
 /*-------------------------------------------------------------------------------------------*/
@@ -186,21 +186,21 @@ std::size_t
 hash<targeted_incr>::operator()(const targeted_incr& i)
 const noexcept
 {
-  return std::hash<unsigned char>()(i.var_) xor std::hash<unsigned char>()(i.value_);
+  return std::hash<std::string>()(i.var_) xor std::hash<unsigned int>()(i.value_);
 }
 
 std::size_t
 hash<incr>::operator()(const incr& i)
 const noexcept
 {
-  return std::hash<unsigned char>()(i.value_);
+  return std::hash<unsigned int>()(i.value_);
 }
 
 std::size_t
 hash<targeted_noop>::operator()(const targeted_noop& i)
 const noexcept
 {
-  return std::hash<unsigned char>()(i.var_);
+  return std::hash<std::string>()(i.var_);
 }
 
 

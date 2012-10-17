@@ -7,6 +7,7 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
+#include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
 
@@ -22,16 +23,16 @@ struct identity
   ///
   /// This is an error to arrive here as the identity is computed before calling the cache.
   SDD<C>
-  operator()(context<C>&, const SDD<C>&)
+  operator()(context<C>&, const order::order<C>&, const SDD<C>&)
   const noexcept
   {
     assert(false);
     __builtin_unreachable();
   }
 
-  /// @brief Skip variable predicate.
+  /// @brief Skip predicate.
   constexpr bool
-  skip(const typename C::Variable&)
+  skip(const order::order<C>&)
   const noexcept
   {
     return true;

@@ -7,6 +7,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
+#include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
 
@@ -42,18 +43,26 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const SDD<C>& x)
+  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
   const
   {
-    return left_(cxt, right_(cxt, x));
+    return left_(cxt, o, right_(cxt, o, x));
   }
 
-  /// @brief Skip variable predicate.
+//  /// @brief Skip variable predicate.
+//  bool
+//  skip(const variable_type& var)
+//  const noexcept
+//  {
+//    return left_.skip(var) and right_.skip(var);
+//  }
+
+  /// @brief Skip predicate.
   bool
-  skip(const variable_type& var)
+  skip(const order::order<C>& o)
   const noexcept
   {
-    return left_.skip(var) and right_.skip(var);
+    return left_.skip(o) and right_.skip(o);
   }
 
   /// @brief Selector predicate

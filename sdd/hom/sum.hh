@@ -16,6 +16,7 @@
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
+#include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
 
@@ -47,13 +48,13 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const SDD<C>& x)
+  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
   const
   {
     sum_builder<C, SDD<C>> sum_operands(operands_.size());
     for (const auto& op : operands_)
     {
-      sum_operands.add(op(cxt, x));
+      sum_operands.add(op(cxt, o, x));
     }
     try
     {
@@ -69,12 +70,13 @@ public:
 
   /// @brief Skip variable predicate.
   bool
-  skip(const typename C::Variable& v)
+  skip(const order::order<C>& o)
   const noexcept
   {
     return std::all_of( operands_.begin(), operands_.end()
-                      , [&v](const homomorphism<C>& h){return h.skip(v);});
+                      , [&o](const homomorphism<C>& h){return h.skip(o);});
   }
+
 
   /// @brief Selector predicate
   bool
@@ -126,7 +128,7 @@ struct sum_builder_helper
   typedef void result_type;
   typedef typename sum<C>::operands_type operands_type;
   typedef std::vector<homomorphism<C>> hom_list_type;
-  typedef std::unordered_map<typename C::Variable, hom_list_type> locals_type;
+  typedef std::unordered_map<typename C::Identifier, hom_list_type> locals_type;
 
   /// @brief Flatten nested sums.
   void
@@ -146,7 +148,7 @@ struct sum_builder_helper
             , const homomorphism<C>& h, operands_type& operands, locals_type& locals)
   const
   {
-    auto insertion = locals.emplace(l.variable(), hom_list_type());
+    auto insertion = locals.emplace(l.identifier(), hom_list_type());
     insertion.first->second.emplace_back(l.hom());
   }
 
@@ -169,7 +171,7 @@ struct sum_builder_helper
 /// @related homomorphism
 template <typename C, typename InputIterator>
 homomorphism<C>
-Sum(InputIterator begin, InputIterator end)
+Sum(const order::order<C>& o, InputIterator begin, InputIterator end)
 {
   const std::size_t size = std::distance(begin, end);
 
@@ -191,7 +193,7 @@ Sum(InputIterator begin, InputIterator end)
   // insert remaining locals
   for (const auto& l : locals)
   {
-    operands.insert(Local<C>(l.first, Sum<C>(l.second.begin(), l.second.end())));
+    operands.insert(Local<C>(l.first, o, Sum<C>(o, l.second.begin(), l.second.end())));
   }
 
   if (operands.size() == 1)
@@ -211,9 +213,9 @@ Sum(InputIterator begin, InputIterator end)
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-Sum(std::initializer_list<homomorphism<C>> operands)
+Sum(const order::order<C>& o, std::initializer_list<homomorphism<C>> operands)
 {
-  return Sum<C>(operands.begin(), operands.end());
+  return Sum<C>(o, operands.begin(), operands.end());
 }
 
 /*-------------------------------------------------------------------------------------------*/

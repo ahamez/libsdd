@@ -8,6 +8,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
+#include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
 
@@ -24,8 +25,14 @@ private:
   /// @brief The variable type.
   typedef typename C::Variable variable_type;
 
+  /// @brief The identifier type.
+  typedef typename C::Identifier identifier_type;
+
   /// @brief The hierarchical node where the nested homomorphism will be carried to.
   const variable_type variable_;
+
+  ///
+  const identifier_type identifier_;
 
   /// @brief The nested homomorphism to apply in a nested level.
   const homomorphism<C> h_;
@@ -33,8 +40,9 @@ private:
 public:
 
   /// @brief Constructor.
-  local(const variable_type& var, const homomorphism<C>& h)
-    : variable_(var)
+  local(const identifier_type& id, const order::order<C>& o, const homomorphism<C>& h)
+    : variable_(o.identifier_variable(id))
+    , identifier_(id)
     , h_(h)
   {
   }
@@ -46,8 +54,8 @@ public:
 
     SDD<C>
     operator()( const hierarchical_node<C>& node
-              , context<C>& cxt, const variable_type& var, const homomorphism<C>& h
-              , const SDD<C>& s)
+              , context<C>& cxt, const order::order<C>& o, const variable_type& var
+              , const homomorphism<C>& h, const SDD<C>& s)
     const
     {
       if (h.selector()) // partition won't change
@@ -56,7 +64,7 @@ public:
         su.reserve(node.size());
         for (const auto& arc : node)
         {
-          SDD<C> new_valuation = h(cxt, arc.valuation());
+          SDD<C> new_valuation = h(cxt, o.nested(), arc.valuation());
           if (not new_valuation.empty())
           {
             su.add(arc.successor(), new_valuation);
@@ -69,7 +77,7 @@ public:
         sum_builder<C, SDD<C>> sum_operands(node.size());
         for (const auto& arc : node)
         {
-          sum_operands.add(SDD<C>(var, h(cxt, arc.valuation()), arc.successor()));
+          sum_operands.add(SDD<C>(var, h(cxt, o.nested(), arc.valuation()), arc.successor()));
         }
 
         try
@@ -87,8 +95,8 @@ public:
 
     template <typename T>
     SDD<C>
-    operator()( const T&, context<C>&, const variable_type&, const homomorphism<C>&
-              , const SDD<C> s)
+    operator()( const T&, context<C>&, const order::order<C>&, const variable_type&
+              , const homomorphism<C>&, const SDD<C> s)
     const
     {
       throw evaluation_error<C>(s);
@@ -97,18 +105,18 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const SDD<C>& s)
+  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& s)
   const
   {
-    return apply_visitor(evaluation(), s->data(), cxt, variable_, h_, s);
+    return apply_visitor(evaluation(), s->data(), cxt, o, variable_, h_, s);
   }
 
-  /// @brief Skip variable predicate.
+  /// @brief Skip predicate.
   bool
-  skip(const variable_type& v)
+  skip(const order::order<C>& o)
   const noexcept
   {
-    return v != variable_;
+    return o.variable() != variable_;
   }
 
   /// @brief Selector predicate
@@ -125,6 +133,14 @@ public:
   const noexcept
   {
     return variable_;
+  }
+
+  /// @brief Return the target.
+  const identifier_type&
+  identifier()
+  const noexcept
+  {
+    return identifier_;
   }
 
   /// @brief Return the carried homomorphism.
@@ -165,7 +181,7 @@ operator<<(std::ostream& os, const local<C>& l)
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-Local(const typename C::Variable& var, const homomorphism<C>& h)
+Local(const typename C::Identifier& id, const order::order<C>& o, const homomorphism<C>& h)
 {
   if (h == Id<C>())
   {
@@ -173,7 +189,7 @@ Local(const typename C::Variable& var, const homomorphism<C>& h)
   }
   else
   {
-    return homomorphism<C>::create(internal::mem::construct<local<C>>(), var, h);
+    return homomorphism<C>::create(internal::mem::construct<local<C>>(), id, o, h);
   }
 }
 

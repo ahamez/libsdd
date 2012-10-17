@@ -68,6 +68,9 @@ public:
   /// @brief The variable type.
   typedef typename C::Variable variable_type;
 
+  /// @brief The identifier type.
+  typedef typename C::Identifier identifier_type;
+
   /// @brief Move constructor.
   ///
   /// O(1).
@@ -92,18 +95,18 @@ public:
 
   /// @brief Apply this homomorphism on an SDD.
   SDD<C>
-  operator()(const SDD<C>& x)
+  operator()(const order::order<C>& o, const SDD<C>& x)
   const
   {
-    return (*this)(initial_context<C>(), x);
+    return (*this)(initial_context<C>(), o, x);
   }
 
-  /// @brief Tell if this homomorphism skips a given variable.
+  /// @brief Tell if this homomorphism skips a given identifier.
   bool
-  skip(const variable_type& variable)
+  skip(const order::order<C>& o)
   const noexcept
   {
-    return apply_visitor(skip_helper(), ptr()->data(), variable);
+    return apply_visitor(skip_helper(), ptr()->data(), o);
   }
 
   /// @brief Tell if this homomorphism returns only subsets.
@@ -166,7 +169,7 @@ public:
 
   /// @brief Apply this homomorphism on an SDD, in a given context.
   SDD<C>
-  operator()(context<C>& cxt, const SDD<C>& x)
+  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
   const
   {
     // hard-wired cases:
@@ -176,7 +179,7 @@ public:
     {
       return x;
     }
-    return cxt.cache()(cached_homomorphism<C>(cxt, *this, x));
+    return cxt.cache()(cached_homomorphism<C>(cxt, o, *this, x));
   }
 
   /// @brief Create an homomorphism from a concrete type (e.g. Id, Cons, etc.).
@@ -197,10 +200,10 @@ public:
 
     template <typename H>
     bool
-    operator()(const H& h, const variable_type& v)
+    operator()(const H& h, const order::order<C>& o)
     const noexcept
     {
-      return h.skip(v);
+      return h.skip(o);
     }
   };
 

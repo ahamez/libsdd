@@ -18,6 +18,12 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
+template <typename C>
+homomorphism<C>
+rewrite(const homomorphism<C>&, const order::order<C>&);
+
+/*-------------------------------------------------------------------------------------------*/
+
 /// @brief Concrete implementation of the rewriting process.
 template <typename C>
 struct rewriter
@@ -77,7 +83,7 @@ struct rewriter
   template <typename InputIterator>
   static
   std::tuple<hom_list_type, hom_list_type, hom_list_type, bool>
-  partition(const variable_type& v, InputIterator begin, InputIterator end)
+  partition(const order::order<C>& o, InputIterator begin, InputIterator end)
   {
     bool has_id = false;
     hom_list_type F;
@@ -89,7 +95,7 @@ struct rewriter
       {
         has_id = true;
       }
-      else if (begin->skip(v))
+      else if (begin->skip(o))
       {
         F.push_back(*begin);
       }
@@ -108,10 +114,11 @@ struct rewriter
 
   /// @brief Rewrite Sum into a Saturation Sum, if possible.
   homomorphism<C>
-  operator()(const sum<C>& s, const homomorphism<C>& h, const variable_type& var)
+  operator()( const sum<C>& s
+            , const homomorphism<C>& h, const order::order<C>& o)
   const
   {
-    auto&& p = partition(var, s.operands().begin(), s.operands().end());
+    auto&& p = partition(o, s.operands().begin(), s.operands().end());
     auto& F = std::get<0>(p);
     auto& G = std::get<1>(p);
     auto& L = std::get<2>(p);
@@ -128,17 +135,22 @@ struct rewriter
     }
 
     typedef typename saturation_sum<C>::optional_type optional;
-    return SaturationSum<C>( var
-                           , F.size() > 0 ? Sum<C>(F.begin(), F.end())
+    return SaturationSum<C>( o.variable()
+                           , F.size() > 0 ? rewrite(Sum<C>(o.next(), F.begin(), F.end()), o.next())
                                           : optional()
                            , G.begin(), G.end()
-                           , L.size() > 0 ? Local(var, Sum<C>(L.begin(), L.end()))
-                                          : optional());
+                           , L.size() > 0 ? Local( o.identifier()
+                                                 , o
+                                                 , rewrite( Sum<C>(o.nested(), L.begin(), L.end())
+                                                          , o.nested()))
+                                          : optional()
+                           );
   }
 
   /// @brief Rewrite a Fixpoint into a Saturation Fixpoint, if possible.
   homomorphism<C>
-  operator()(const fixpoint<C>& f, const homomorphism<C>& h, const variable_type& var)
+  operator()( const fixpoint<C>& f
+            , const homomorphism<C>& h, const order::order<C>& o)
   const
   {
     if (not apply_visitor(is_sum(), f.hom()->data()))
@@ -148,7 +160,7 @@ struct rewriter
 
     const sum<C>& s = internal::mem::variant_cast<const sum<C>>(f.hom()->data());
 
-    auto&& p = partition(var, s.operands().begin(), s.operands().end());
+    auto&& p = partition(o, s.operands().begin(), s.operands().end());
     auto& F = std::get<0>(p);
     auto& G = std::get<1>(p);
     auto& L = std::get<2>(p);
@@ -172,10 +184,13 @@ struct rewriter
     // evaluation.
     std::partition(G.begin(), G.end(), [](const homomorphism<C>& g){return g.selector();});
 
-    return SaturationFixpoint( var
-                             , Fixpoint(Sum<C>(F.begin(), F.end()))
+    return SaturationFixpoint( o.variable()
+                             , rewrite(Fixpoint(Sum<C>(o.next(), F.begin(), F.end())), o.next())
                              , G.begin(), G.end()
-                             , Local(var, Fixpoint(Sum<C>(L.begin(), L.end())))
+                             , Local( o.identifier()
+                                    , o
+                                    , rewrite(Fixpoint(Sum<C>(o.nested(), F.begin(), F.end())), o.nested())
+                                    )
                              );
   }
 
@@ -184,7 +199,7 @@ struct rewriter
   /// Any other homomorphism is not rewritten.
   template <typename T>
   homomorphism<C>
-  operator()(const T&, const homomorphism<C>& h, const variable_type&)
+  operator()(const T&, const homomorphism<C>& h, const order::order<C>&)
   const
   {
     return h;
@@ -193,90 +208,23 @@ struct rewriter
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief The evaluation of a rewriting rule in the cache.
-template <typename C>
-struct cached_rewrite
-{
-  /// @brief Needed by the cache
-  typedef homomorphism<C> result_type;
-
-  /// @brief A variable type.
-  typedef typename C::Variable variable_type;
-
-  /// @brief The homomorphism to rewrite.
-  const homomorphism<C> h_;
-
-  /// @brief The variable to rewrite the homomorphism for.
-  const variable_type var_;
-
-  /// @brief Constructor.
-  cached_rewrite(const homomorphism<C>& h, const variable_type& v)
-    : h_(h)
-    , var_(v)
-  {
-  }
-
-  /// @brief Launch the evaluation.
-  homomorphism<C>
-  operator()()
-  const
-  {
-    return apply_visitor(rewriter<C>(), h_->data(), h_, var_);
-  }
-};
-
-/*-------------------------------------------------------------------------------------------*/
-
-/// @related cached_rewrite
-template <typename C>
-bool
-operator==(const cached_rewrite<C>& lhs, const cached_rewrite<C>& rhs)
-{
-  return lhs.h_ == rhs.h_ and lhs.var_ == rhs.var_;
-}
-
-/// @related cached_rewrite
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const cached_rewrite<C>& op)
-{
-  return os << "rewrite " << op.h_ << " for " << op.var_;
-}
-
-/*-------------------------------------------------------------------------------------------*/
-
 template <typename C>
 homomorphism<C>
-rewrite(context<C>& cxt, const homomorphism<C>& h, const typename C::Variable& var)
+rewrite(const homomorphism<C>& h, const order::order<C>& o)
 {
-  return cxt.rewrite_cache()(cached_rewrite<C>(h, var));
+  if (o.empty())
+  {
+    return h;
+  }
+  else
+  {
+    return apply_visitor(rewriter<C>(), h->data(), h, o);
+  }
 }
 
 /*-------------------------------------------------------------------------------------------*/
 
-
 }} // namespace sdd::hom
-
-namespace std {
-
-/// @brief Hash specialization for sdd::hom::cached_rewrite
-template <typename C>
-struct hash<sdd::hom::cached_rewrite<C>>
-{
-  std::size_t
-  operator()(const sdd::hom::cached_rewrite<C>& op)
-  const noexcept
-  {
-    std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, op.h_);
-    sdd::internal::util::hash_combine(seed, op.var_);
-    return seed;
-  }
-};
-
-/*-------------------------------------------------------------------------------------------*/
-
-} // namespace std
 
 /// @endcond
 

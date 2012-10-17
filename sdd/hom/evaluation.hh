@@ -5,11 +5,11 @@
 #include <iosfwd>
 
 #include "sdd/hom/context_fwd.hh"
-#include "sdd/hom/rewrite.hh"
-
-/// @cond INTERNAL_DOC
+#include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
+
+/// @cond INTERNAL_DOC
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -23,7 +23,7 @@ struct evaluation
   template <typename H>
   bool
   operator()( const H& h, const zero_terminal<C>&
-            , const SDD<C>&, context<C>&, const homomorphism<C>&)
+            , const SDD<C>&, context<C>&, const order::order<C>& o, const homomorphism<C>&)
   const noexcept
   {
     assert(false);
@@ -33,10 +33,11 @@ struct evaluation
   template <typename H>
   SDD<C>
   operator()( const H& h, const one_terminal<C>&
-            , const SDD<C>& x, context<C>& cxt, const homomorphism<C>&)
+            , const SDD<C>& x, context<C>& cxt, const order::order<C>& o
+            , const homomorphism<C>&)
   const
   {
-    return h(cxt, x);
+    return h(cxt, o, x);
   }
 
   /// @brief Dispatch evaluation to the concrete homomorphism.
@@ -46,16 +47,17 @@ struct evaluation
   template <typename H, typename Node>
   SDD<C>
   operator()( const H& h, const Node& node
-            , const SDD<C>& x, context<C>& cxt, const homomorphism<C>& hom_proxy)
+            , const SDD<C>& x, context<C>& cxt, const order::order<C>& o
+            , const homomorphism<C>& hom_proxy)
   const
   {
-    if (h.skip(node.variable()))
+    if (h.skip(o))
     {
       square_union<C, typename Node::valuation_type> su;
       su.reserve(node.size());
       for (const auto& arc : node)
       {
-        SDD<C> new_successor = hom_proxy(cxt, arc.successor());
+        SDD<C> new_successor = hom_proxy(cxt, o.next(), arc.successor());
         if (not new_successor.empty())
         {
           su.add(new_successor, arc.valuation());
@@ -65,26 +67,9 @@ struct evaluation
     }
     else
     {
-      return apply_visitor( dispatch_eval(), rewrite(cxt, hom_proxy, node.variable())->data()
-                          , cxt, x);
+      return h(cxt, o, x);
     }
   }
-
-  /// @brief Dispatch to concrete evaluation.
-  ///
-  /// Avoid infinite recursion.
-  struct dispatch_eval
-  {
-    typedef SDD<C> result_type;
-
-    template <typename H>
-    SDD<C>
-    operator()(const H& h, context<C>& cxt, const SDD<C>& s)
-    const
-    {
-      return h(cxt, s);
-    }
-  };
 };
 
 /*-------------------------------------------------------------------------------------------*/
@@ -108,6 +93,9 @@ struct cached_homomorphism
   /// @brief The evaluation context.
   context<C>& cxt_;
 
+  /// @brief The current order position.
+  const order::order<C>& order_;
+
   /// @brief The homomorphism to evaluate.
   const homomorphism<C> h_;
 
@@ -115,8 +103,10 @@ struct cached_homomorphism
   const SDD<C> sdd_;
 
   /// @brief Constructor.
-  cached_homomorphism(context<C>& cxt, const homomorphism<C>& h, const SDD<C>& s)
+  cached_homomorphism( context<C>& cxt, const order::order<C>& o, const homomorphism<C>& h
+                     , const SDD<C>& s)
     : cxt_(cxt)
+    , order_(o)
     , h_(h)
     , sdd_(s)
   {
@@ -127,7 +117,8 @@ struct cached_homomorphism
   operator()()
   const
   {
-    return apply_binary_visitor(evaluation<C>(), h_->data(), sdd_->data(), sdd_, cxt_, h_);
+    return apply_binary_visitor( evaluation<C>(), h_->data(), sdd_->data()
+                               , sdd_, cxt_, order_, h_);
   }
 };
 
@@ -201,10 +192,10 @@ struct hash<sdd::hom::cached_homomorphism<C>>
   }
 };
 
+/// @endcond
+
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-/// @endcond
 
 #endif // _SDD_HOM_EVALUATION_HH_

@@ -20,6 +20,7 @@ struct default_parameters
 struct conf0
   : public default_parameters
 {
+  typedef std::string        Identifier;
   typedef unsigned char      Variable;
   typedef values::bitset<64> Values;
 };

@@ -3,7 +3,6 @@
 
 #include <algorithm>  // all_of, copy
 #include <iosfwd>
-#include <stdexcept>  //invalid_argument
 #include <vector>
 
 #include <boost/container/flat_set.hpp>
@@ -16,6 +15,7 @@
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/hom/sum.hh"
+#include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
 
@@ -66,24 +66,24 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const SDD<C>& s)
+  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& s)
   const
   {
     sum_builder<C, SDD<C>> sum_operands(G_.size() + 2);
 
     if (F_)
     {
-      sum_operands.add((*F_)(cxt, s));
+      sum_operands.add((*F_)(cxt, o, s));
     }
 
     for (const auto& g : G_)
     {
-      sum_operands.add(g(cxt, s));
+      sum_operands.add(g(cxt, o, s));
     }
 
     if (L_)
     {
-      sum_operands.add((*L_)(cxt, s));
+      sum_operands.add((*L_)(cxt, o, s));
     }
 
     try
@@ -100,10 +100,10 @@ public:
 
   /// @brief Skip variable predicate.
   bool
-  skip(const typename C::Variable& v)
+  skip(const order::order<C>& o)
   const noexcept
   {
-    return variable_ != v;
+    return variable_ != o.variable();
   }
 
   /// @brief Selector predicate.

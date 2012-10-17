@@ -8,6 +8,7 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context.hh"
 #include "sdd/hom/definition.hh"
+#include "sdd/order/order.hh"
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -25,6 +26,8 @@ using sdd::hom::Local;
 using sdd::hom::SaturationFixpoint;
 using sdd::hom::SaturationSum;
 using sdd::hom::Sum;
+
+using sdd::order::order;
 
 /*-------------------------------------------------------------------------------------------*/
 
