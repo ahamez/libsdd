@@ -149,6 +149,13 @@ TEST_F(sum_test, flat_no_successors)
     ASSERT_EQ( SDD(0, std::move(builder))
              , sum(cxt, {SDD(0, {0,1}, one), SDD(0, {0,1}, one)}));
   }
+  {
+    // Force creation order.
+    SDD a0(0, {0,1,2}, one);
+    SDD a1(0, {1,2}, one);
+    SDD a2(0, {0,1}, one);
+    ASSERT_EQ(SDD(0, {0,1,2}, one), sum(cxt, {a0, a1, a2}));
+  }
 }
 
 /*-------------------------------------------------------------------------------------------*/
