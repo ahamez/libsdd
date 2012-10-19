@@ -20,11 +20,11 @@ struct targeted_incr
   const noexcept;
 
   hom
-  operator()(const order<conf>&, const SDD& x)
+  operator()(const order&, const SDD& x)
   const;
 
   hom
-  operator()(const order<conf>&, const bitset& val)
+  operator()(const order&, const bitset& val)
   const;
 
   SDD
@@ -56,11 +56,11 @@ struct incr
   const noexcept;
 
   hom
-  operator()(const order<conf>&, const SDD& x)
+  operator()(const order&, const SDD& x)
   const;
 
   hom
-  operator()(const order<conf>&, const bitset& val)
+  operator()(const order&, const bitset& val)
   const;
 
   SDD
@@ -92,11 +92,11 @@ struct targeted_noop
   const noexcept;
 
   hom
-  operator()(const order<conf>&, const SDD& val)
+  operator()(const order&, const SDD& val)
   const;
 
   hom
-  operator()(const order<conf>&, const bitset& val)
+  operator()(const order&, const bitset& val)
   const;
 
   SDD

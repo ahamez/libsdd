@@ -1,12 +1,11 @@
 #ifndef _SDD_HOM_CLOSURE_HH_
 #define _SDD_HOM_CLOSURE_HH_
 
-#include <algorithm> // copy
+#include <algorithm> // any_of, copy, sort
 #include <cassert>
 #include <initializer_list>
 #include <iosfwd>
-
-#include <boost/container/flat_set.hpp>
+#include <vector>
 
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
@@ -19,9 +18,19 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
-template <typename C, typename InputIterator>
+template <typename C>
+using identifiers_type = std::vector<typename C::Identifier>;
+
+template <typename C>
+using identifiers_iterator_type = typename identifiers_type<C>::const_iterator;
+
+template <typename C>
+using identifiers_ptr_type = std::shared_ptr<identifiers_type<C>>;
+
+template <typename C>
 homomorphism<C>
-Closure(InputIterator, InputIterator, const SDD<C>&);
+Closure( const order::order<C>&, const identifiers_ptr_type<C>&
+       , identifiers_iterator_type<C>, const SDD<C>&);
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -34,37 +43,51 @@ public:
   /// @brief The variable type.
   typedef typename C::Variable variable_type;
 
+  /// @brief The identifier type.
+  typedef typename C::Identifier identifier_type;
+
   /// @brief The type of a set of values.
   typedef typename C::Values values_type;
 
-  /// @brief The type of a set of variables.
-  typedef boost::container::flat_set<variable_type> variables_type;
+  /// @brief The type of a set of identifiers.
+//  typedef std::vector<identifier_type> identifiers_type;
+
+  /// @brief The type of a pointer to a set of identifiers.
+//  typedef std::shared_ptr<identifiers_type> identifiers_ptr_type;
+
+  /// @brief The type of an iterator to a set of identifiers.
+//  typedef typename identifiers_type::const_iterator identifiers_iterator_type;
 
   /// @brief We re-use this homomorphism as a visitor.
   typedef SDD<C> result_type;
 
-
 private:
 
   /// @brief The set of variables to capture.
-  const variables_type variables_;
+  ///
+  /// It's shared amongst all closures capturing this same set of variables.
+  const identifiers_ptr_type<C> identifiers_ptr_;
 
-  /// brief
+  /// @brief Mark the beginning of the set of variables this closure is really interested in.
+  const identifiers_iterator_type<C> begin_;
+
+  /// @brief What to concatenate when this closure arrives at the end of a path.
   const SDD<C> successor_;
-
 
 public:
 
   /// @brief Constructor.
-  closure(const variables_type& variables, const SDD<C>& successor)
-    : variables_(variables)
+  closure( const identifiers_ptr_type<C>& ptr, identifiers_iterator_type<C> begin
+         , const SDD<C>& successor)
+    : identifiers_ptr_(ptr)
+    , begin_(begin)
     , successor_(successor)
   {
   }
 
   /// @brief Skip predicate.
   constexpr bool
-  skip(const variable_type& var)
+  skip(const order::order<C>& o)
   const noexcept
   {
     return false;
@@ -80,143 +103,144 @@ public:
 
   /// @brief Evaluation on hierarchical nodes.
   SDD<C>
-  operator()(const hierarchical_node<C>& node, context<C>& cxt, const SDD<C>& s)
+  operator()( const hierarchical_node<C>& node
+            , context<C>& cxt, const order::order<C>& o, const SDD<C>& s)
   const
   {
-    const auto next_closure = Closure(variables_.begin(), variables_.end(), successor_);
+    assert(false);
+    assert(not o.nested().empty() && "Empty hierarchical order in a hierarchical_node.");
 
-    square_union<C, values_type> su;
-    su.reserve(node.size());
+//    std::any_of( begin_, identifiers_ptr_->end()
+//                , [&o](const identifier_type& id)
+//                {
+//                  return o.contains(id);
+//                });
 
-    auto cit = node.begin();
-
-    const SDD<C> first_succ = next_closure(cxt, cit->successor());
-    const auto first_nested_closure = Closure( variables_.begin(), variables_.end()
-                                             , first_succ);
-    const SDD<C> first_val = first_nested_closure(cxt, cit->valuation());
-
-    if (first_val == one<C>()) // All applications on nested will return |1|.
-    {
-      if (first_succ == one<C>())
-      {
-        // no variables of the requested closure were found
-        return one<C>();
-      }
-      else
-      {
-        const flat_node<C>* f = &internal::mem::variant_cast<flat_node<C>>(first_succ->data());
-        const variable_type& var = f->variable();
-        for (const auto& f_arc : *f)
-        {
-          // add arcs of the first result
-          su.add(f_arc.successor(), f_arc.valuation());
-        }
-
-        for (++cit; cit != node.end(); ++cit)
-        {
-          // apply the closure on successors
-          const SDD<C> succ = next_closure(cxt, cit->successor());
-          f = &internal::mem::variant_cast<flat_node<C>>(succ->data());
-          for (const auto& f_arc : *f)
-          {
-            // add arcs of the result
-            su.add(f_arc.successor(), f_arc.valuation());
-          }
-        }
-        return SDD<C>(var, su(cxt.sdd_context()));
-      }
-    }
-    else
-    {
-      const flat_node<C>* fv = &internal::mem::variant_cast<flat_node<C>>(first_val->data());
-      const variable_type& var = fv->variable();
-
-      for (const auto& fv_arc : *fv)
-      {
-        // add the arcs of the first result
-        su.add(fv_arc.successor(), fv_arc.valuation());
-      }
-
-      for (++cit; cit != node.end(); ++cit)
-      {
-        const SDD<C> succ = next_closure(cxt, cit->successor());
-        const auto nested_closure = Closure(variables_.begin(), variables_.end(), succ);
-        const SDD<C> val = nested_closure(cxt, cit->valuation());
-
-        fv = &internal::mem::variant_cast<flat_node<C>>(val->data());
-        for (const auto& fv_arc : *fv)
-        {
-        // add the arcs of the result
-          su.add(fv_arc.successor(), fv_arc.valuation());
-        }
-      }
-      return SDD<C>(var, su(cxt.sdd_context()));
-    }
+//    square_union<C, values_type> su;
+//    su.reserve(node.size());
+//
+//    for (const auto& arc : node)
+//    {
+//      // First, get the new successor
+//      const auto next_closure = Closure( o.next(), identifiers_ptr_, std::next(begin_)
+//                                       , successor_);
+//      SDD<C> new_successor = next_closure(cxt, o.next(), arc.successor());
+//
+//      // Then, transmit it to the nested closure.
+//      const auto nested_closure = Closure( o.nested(), identifiers_ptr_, begin_
+//                                         , new_successor);
+//      SDD<C> new_valuation = nested_closure(cxt, o.nested(), arc.valuation());
+//
+//      // Finally, add the new arc to square union operands.
+//      su.add(new_successor, new_valuation);
+//    }
+//
+//    return SDD<C>(o.identifier_variable(*begin_), su(cxt.sdd_context()));
   }
 
   /// @brief Evaluation on flat nodes.
   SDD<C>
-  operator()(const flat_node<C>& node, context<C>& cxt, const SDD<C>& s)
+  operator()( const flat_node<C>& node
+            , context<C>& cxt, const order::order<C>& o, const SDD<C>& s)
   const
   {
-    const auto next_closure = Closure(variables_.begin(), variables_.end(), successor_);
+    assert(o.nested().empty() && "Hierarchical order in a flat_node.");
 
-    if (variables_.find(node.variable()) != variables_.end())
+//    if (begin_ == identifiers_ptr_->begin())
+//    {
+//      return successor_;
+//    }
+
+    const bool remove_current_level = *begin_ != o.identifier();
+//      std::find(begin_, identifiers_ptr->end(), o.identifier()) == identifiers_ptr_->end();
+
+    const auto next_begin = std::next(begin_);
+
+//    const auto next_closure = Closure(o.next(), identifiers_ptr_, next_begin, successor_);
+
+    square_union<C, values_type> su;
+    su.reserve(node.size());
+
+    if (remove_current_level)
     {
-      square_union<C, values_type> su;
-      su.reserve(node.size());
-      for (const auto& arc : node)
+//      auto arc_cit = node.begin();
+//      const SDD<C> first_successor = next_closure(cxt, o.next(), arc_cit->successor());
+//
+//      if (first_succ == one<C>())
+//      {
+//        return one<C>();
+//      }
+//      else
+//      {
+//        const flat_node& fn = internal::mem::variant_cast<const flat_node>(first_succ->data());
+//        for (const auto& arc : fn)
+//        {
+//          su.add(arc.successor(), arc.valuation());
+//        }
+//
+//        for (++arc_cit; arc_cit != node.end(); ++arc_cit)
+//        {
+//          const SDD<C> succ = next_closure(cxt, o.next(), arc_cit->successor());
+//          const flat_node& n = internal::mem::variant_cast<const flat_node>(succ->data());
+//          for (const auto& arc : n)
+//          {
+//            su.add(arc.successor(), arc.valuation());
+//          }
+//        }
+//      }
+      if (o.next().empty() or next_begin == identifiers_ptr_->end())
       {
-        SDD<C> new_successor = next_closure(cxt, arc.successor());
-        su.add(new_successor, arc.valuation());
+        return successor_;
       }
-      return SDD<C>(node.variable(), su(cxt.sdd_context()));
+      else
+      {
+        const auto next_closure = Closure(o.next(), identifiers_ptr_, next_begin, successor_);
+        for (const auto& arc : node)
+        {
+          const SDD<C> succ = next_closure(cxt, o.next(), arc.successor());
+          const flat_node<C>& n
+            = internal::mem::variant_cast<const flat_node<C>>(succ->data());
+          for (const auto& succ_arc : n)
+          {
+            su.add(succ_arc.successor(), succ_arc.valuation());
+          }
+        }
+      }
     }
     else
     {
-      square_union<C, values_type> su;
-      su.reserve(node.size());
-
-      auto cit = node.begin();
-      SDD<C> first = next_closure(cxt, cit->successor());
-
-      if (first == one<C>())
+      if (next_begin == identifiers_ptr_->end())
       {
-        // All applications on successors will return |1|.
-        // OK, there we make a strong assumption. We suppose the order is the same on every
-        // path (is it really a strong assumption?). Otherwise, it would be quite difficult
-        // to make a closure...
-        return one<C>();
-      }
-
-      const flat_node<C>& f = internal::mem::variant_cast<flat_node<C>>(first->data());
-      for (const auto& f_arc : f)
-      {
-        su.add(f_arc.successor(), f_arc.valuation());
-      }
-
-      for (++cit; cit != node.end(); ++cit)
-      {
-        SDD<C> succ = next_closure(cxt, cit->successor());
-        const flat_node<C>& ns = internal::mem::variant_cast<flat_node<C>>(succ->data());
-        for (const auto& ns_arc : ns)
+        for (const auto& arc : node)
         {
-          su.add(ns_arc.successor(), ns_arc.valuation());
+          su.add(successor_, arc.valuation());
         }
       }
-      return SDD<C>(f.variable(), su(cxt.sdd_context()));
+      else
+      {
+        const auto next_closure = Closure(o.next(), identifiers_ptr_, next_begin, successor_);
+        for (const auto& arc : node)
+        {
+          SDD<C> new_successor = next_closure(cxt, o.next(), arc.successor());
+          su.add(new_successor, arc.valuation());
+        }
+      }
     }
+
+    return SDD<C>(o.identifier_variable(*begin_), su(cxt.sdd_context()));
   }
 
   SDD<C>
-  operator()(const one_terminal<C>&, context<C>&, const SDD<C>&)
+  operator()( const one_terminal<C>&
+            , context<C>&, const order::order<C>&, const SDD<C>&)
   const noexcept
   {
     return successor_;
   }
   
   SDD<C>
-  operator()(const zero_terminal<C>&, context<C>&, const SDD<C>&)
+  operator()( const zero_terminal<C>&
+            , context<C>&, const order::order<C>&, const SDD<C>&)
   const noexcept
   {
     assert(false);
@@ -225,17 +249,17 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const SDD<C>& x)
+  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
   const
   {
-    return apply_visitor(*this, x->data(), cxt, x);
+    return apply_visitor(*this, x->data(), cxt, o, x);
   }
 
-  const variables_type&
-  variables()
+  const identifiers_type<C>&
+  identifiers()
   const noexcept
   {
-    return variables_;
+    return *identifiers_ptr_;
   }
 
   SDD<C>
@@ -256,7 +280,7 @@ bool
 operator==(const closure<C>& lhs, const closure<C>& rhs)
 noexcept
 {
-  return lhs.variables() == rhs.variables() and lhs.successor() == rhs.successor();
+  return lhs.identifiers() == rhs.identifiers() and lhs.successor() == rhs.successor();
 }
 
 /// @related closure
@@ -265,9 +289,9 @@ std::ostream&
 operator<<(std::ostream& os, const closure<C>& c)
 {
   return os << "Closure(";
-  std::copy( c.variables().begin(), std::prev(c.variables().end())
-           , std::ostream_iterator<typename C::Variable>(os, ", "));
-  return os << *std::prev(c.variables().end()) << ")";
+  std::copy( c.identifiers().begin(), std::prev(c.identifiers().end())
+           , std::ostream_iterator<typename C::Identifier>(os, ", "));
+  return os << *std::prev(c.identifiers().end()) << ")";
 }
 
 /// @endcond
@@ -278,17 +302,12 @@ operator<<(std::ostream& os, const closure<C>& c)
 
 /// @brief Create the Closure homomorphism.
 /// @related homomorphism
-template <typename C, typename InputIterator>
+template <typename C>
 homomorphism<C>
-Closure(InputIterator begin, InputIterator end, const SDD<C>& succ)
+Closure( const order::order<C>& o, const identifiers_ptr_type<C>& ptr
+       , identifiers_iterator_type<C> begin, const SDD<C>& succ)
 {
-  if (std::distance(begin, end) == 0)
-  {
-    throw std::invalid_argument("Empty set of variables at Closure construction.");
-  }
-
-  return homomorphism<C>::create( internal::mem::construct<closure<C>>()
-                                , typename closure<C>::variables_type(begin, end), succ);
+  return homomorphism<C>::create(internal::mem::construct<closure<C>>(), ptr, begin, succ);
 }
 
 /// @endcond
@@ -297,18 +316,33 @@ Closure(InputIterator begin, InputIterator end, const SDD<C>& succ)
 /// @related homomorphism
 template <typename C, typename InputIterator>
 homomorphism<C>
-Closure(InputIterator begin, InputIterator end)
+Closure(const order::order<C>& o, InputIterator begin, InputIterator end)
 {
-  return Closure<C>(begin, end, one<C>());
+  if (std::distance(begin, end) == 0)
+  {
+    throw std::invalid_argument("Empty set of variables at Closure construction.");
+  }
+
+  auto ptr = std::make_shared<identifiers_type<C>>(begin, end);
+
+  typedef typename C::Identifier identifier_type;
+  std::sort( ptr->begin(), ptr->end()
+           , [&o](const identifier_type& lhs, const identifier_type& rhs)
+                 {
+                   return o.compare(lhs, rhs);
+                 }
+           );
+
+  return Closure(o, ptr, ptr->begin(), one<C>());
 }
 
 /// @brief Create the Closure homomorphism.
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-Closure(std::initializer_list<typename C::Variable> list)
+Closure(const order::order<C>& o, std::initializer_list<typename C::Identifier> list)
 {
-  return Closure<C>(list.begin(), list.end());
+  return Closure<C>(o, list.begin(), list.end());
 }
 
 /*-------------------------------------------------------------------------------------------*/
@@ -330,9 +364,9 @@ struct hash<sdd::hom::closure<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    for (const auto& v : c.variables())
+    for (const auto& i : c.identifiers())
     {
-      sdd::internal::util::hash_combine(seed, v);
+      sdd::internal::util::hash_combine(seed, i);
     }
     sdd::internal::util::hash_combine(seed, c.successor());
     return seed;

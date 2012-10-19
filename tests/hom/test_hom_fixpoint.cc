@@ -45,7 +45,7 @@ TEST_F(hom_fixpoint_test, construction)
 TEST_F(hom_fixpoint_test, evaluatione)
 {
   {
-    order<conf> o {"0"};
+    order o(order_builder {"0"});
     SDD s0(0, {0}, one);
     hom h0 = Fixpoint(Sum(o, {Inductive<conf>(targeted_incr("0", 1)), id}));
     ASSERT_EQ(SDD(0, {0,1,2}, one), h0(o, s0));

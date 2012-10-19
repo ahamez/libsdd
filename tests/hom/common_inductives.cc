@@ -21,14 +21,14 @@ const noexcept
 }
 
 hom
-targeted_incr::operator()(const order<conf>& o, const SDD& x)
+targeted_incr::operator()(const order& o, const SDD& x)
 const
 {
   return Cons(o.identifier(), o, x, Inductive<conf>(*this));
 }
 
 hom
-targeted_incr::operator()(const order<conf>& o, const bitset& val)
+targeted_incr::operator()(const order& o, const bitset& val)
 const
 {
   if (val.content().test(2))
@@ -83,14 +83,14 @@ const noexcept
 }
 
 hom
-incr::operator()(const order<conf>& o, const SDD& x)
+incr::operator()(const order& o, const SDD& x)
 const
 {
   return Cons(o.identifier(), o, x, Inductive<conf>(*this));
 }
 
 hom
-incr::operator()(const order<conf>& o, const bitset& val)
+incr::operator()(const order& o, const bitset& val)
 const
 {
   if (val.content().test(2))
@@ -145,14 +145,14 @@ const noexcept
 }
 
 hom
-targeted_noop::operator()(const order<conf>& o, const SDD& val)
+targeted_noop::operator()(const order& o, const SDD& val)
 const
 {
   return Cons(o.identifier(), o, val, id);
 }
 
 hom
-targeted_noop::operator()(const order<conf>& o, const bitset& val)
+targeted_noop::operator()(const order& o, const bitset& val)
 const
 {
   return Cons(o.identifier(), o, val, id);

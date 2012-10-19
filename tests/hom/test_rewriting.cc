@@ -23,7 +23,7 @@ struct rewriting_test
 TEST_F(rewriting_test, partition)
 {
   {
-    order<conf> o {"a"};
+    const order o(order_builder {"a"});
     std::vector<hom> homs { id
                           , Inductive<conf>(targeted_incr("a", 0))
                           , Inductive<conf>(targeted_incr("b", 0))
@@ -43,10 +43,7 @@ TEST_F(rewriting_test, partition)
 TEST_F(rewriting_test, sum)
 {
   {
-    order<conf> o;
-    order<conf> nested_o {"x"};
-    o.add("b");
-    o.add("a", nested_o);
+    order o(order_builder().add("b").add("a", order_builder {"x"}));
     const hom h0 = Sum<conf>( o
                             , { id
                               , Inductive<conf>(targeted_incr("b", 0))

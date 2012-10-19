@@ -17,7 +17,7 @@ struct hom_local_test
 
 TEST_F(hom_local_test, construction)
 {
-  order<conf> o {"0"};
+  order o(order_builder {"0"});;
   {
     ASSERT_EQ(id, Local("0", o, id));
   }
@@ -37,11 +37,13 @@ TEST_F(hom_local_test, construction)
 
 TEST_F(hom_local_test, evaluation)
 {
-  order<conf> o;
-  order<conf> q {"b"};
-  o.add("y", q);
-  order<conf> p {"a"};
-  o.add("x", p);
+  order_builder ob;
+  order_builder q {"a"};
+  ob.add("y", q);
+  order_builder p {"a"};
+  ob.add("x", p);
+
+  order o(ob);
 
   const SDD s0 = SDD(1, SDD(0, {0}, one), SDD(0, SDD(0, {1}, one), one));
 

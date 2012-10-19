@@ -30,7 +30,7 @@ TEST_F(hom_id_test, construction)
 TEST_F(hom_id_test, evaluation)
 {
   hom h = sdd::hom::Id<conf>();
-  ASSERT_EQ(one, h(order<conf>(), one));
+  ASSERT_EQ(one, h(order(order_builder()), one));
 }
 
 /*-------------------------------------------------------------------------------------------*/
@@ -40,7 +40,7 @@ TEST_F(hom_id_test, no_cache)
   hom h = sdd::hom::Id<conf>();
   sdd::hom::context<conf> cxt;
   ASSERT_EQ(0, cxt.cache().size());
-  ASSERT_EQ(one, h(cxt, order<conf>(), one));
+  ASSERT_EQ(one, h(cxt, order(order_builder()), one));
   ASSERT_EQ(0, cxt.cache().size());
 }
 

@@ -17,7 +17,8 @@ struct hom_cons_test
 
 TEST_F(hom_cons_test, construction)
 {
-  order<conf> o {"0"};
+  order_builder ob {"0"};
+  order o(ob);
   {
     const hom h1 = sdd::hom::Cons<conf>("0", o, conf::Values {0,1,2}, id);
     const hom h2 = sdd::hom::Cons<conf>("0", o, conf::Values {0,1,2}, id);
@@ -50,20 +51,17 @@ TEST_F(hom_cons_test, construction)
 TEST_F(hom_cons_test, evaluation)
 {
   {
-    order<conf> o;
-    o.add("a");
+    order o(order_builder {"a"});
     const hom h = sdd::hom::Cons<conf>("a", o, conf::Values {0,1,2}, id);
     ASSERT_EQ(SDD(0, {0,1,2}, one), h(o, one));
   }
   {
-    order<conf> o;
-    o.add("a");
+    order o(order_builder {"a"});
     const hom h = sdd::hom::Cons<conf>("a", o, conf::Values {}, id);
     ASSERT_EQ(zero, h(o, one));
   }
   {
-    order<conf> o;
-    o.add("a");
+    order o(order_builder {"a"});
     const hom h = sdd::hom::Cons<conf>("a",o,  one, id);
     ASSERT_EQ(SDD(0, one, one), h(o, one));
   }
@@ -73,8 +71,7 @@ TEST_F(hom_cons_test, evaluation)
 
 TEST_F(hom_cons_test, no_cache)
 {
-  order<conf> o;
-  o.add("a");
+  order o(order_builder {"a"});
   const hom h = sdd::hom::Cons<conf>("a", o, conf::Values {0,1,2}, id);
   sdd::hom::context<conf> cxt;
   ASSERT_EQ(0, cxt.cache().size());

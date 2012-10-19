@@ -39,7 +39,7 @@ TEST_F(hom_composition_test, construction)
 TEST_F(hom_composition_test, evaluation)
 {
   {
-    const order<conf> o {"a"};
+    const order o(order_builder {"a"});
     const hom h1 = Inductive<conf>(targeted_incr("a",1));
     const hom h2 = Inductive<conf>(targeted_incr("a",1));
     const hom c0 = Composition(h1, h2);

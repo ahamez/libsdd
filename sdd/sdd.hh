@@ -8,6 +8,7 @@
 #include "sdd/hom/context.hh"
 #include "sdd/hom/definition.hh"
 #include "sdd/hom/rewrite.hh"
+#include "sdd/order/utility.hh"
 
 /// @brief The main namespace for the library.
 namespace sdd
@@ -21,6 +22,9 @@ namespace hom {}
 
 /// @brief Definition of values to be stored on arcs.
 namespace values {}
+
+/// @brief Stuff necessary to describe and manipulate variable orders.
+namespace order {}
 
 /// @cond INTERNAL_DOC
 

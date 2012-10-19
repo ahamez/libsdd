@@ -1,7 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "sdd/conf/default_configurations.hh"
-#include "sdd/dd/definition.hh"
+#include "tests/hom/common.hh"
 #include "sdd/order/utility.hh"
 
 /*-------------------------------------------------------------------------------------------*/
@@ -19,8 +18,6 @@ struct order_utility_test
   }
 };
 
-using sdd::order::order;
-
 /*-------------------------------------------------------------------------------------------*/
 
 struct initializer
@@ -37,7 +34,7 @@ struct initializer
 
 TEST_F(order_utility_test, empty)
 {
-  auto o = order<conf>();
+  auto o = order(order_builder());
   ASSERT_EQ(one, sdd::order::sdd(o, initializer()));
 }
 
@@ -46,19 +43,19 @@ TEST_F(order_utility_test, empty)
 TEST_F(order_utility_test, flat)
 {
   {
-    order<conf> o;
-    o.add("foo");
-    ASSERT_EQ(SDD(0, {0}, one), sdd::order::sdd(o, initializer()));
+    order_builder ob;
+    ob.add("foo");
+    ASSERT_EQ(SDD(0, {0}, one), sdd::order::sdd(order(ob), initializer()));
   }
   {
-    order<conf> o;
-    o.add("foo", order<conf>());
-    ASSERT_EQ(SDD(0, {0}, one), sdd::order::sdd(o, initializer()));
+    order_builder ob;
+    ob.add("foo", order_builder());
+    ASSERT_EQ(SDD(0, {0}, one), sdd::order::sdd(order(ob), initializer()));
   }
   {
-    order<conf> o;
-    o.add("foo1").add("foo2");
-    ASSERT_EQ(SDD(1, {0}, SDD(0, {0}, one)), sdd::order::sdd(o, initializer()));
+    order_builder ob;
+    ob.add("foo1").add("foo2");
+    ASSERT_EQ(SDD(1, {0}, SDD(0, {0}, one)), sdd::order::sdd(order(ob), initializer()));
   }
 }
 
@@ -67,27 +64,28 @@ TEST_F(order_utility_test, flat)
 TEST_F(order_utility_test, hierarchical)
 {
   {
-    order<conf> o;
-    o.add("foo");
-    order<conf> p;
-    p.add("bar", o);
-    ASSERT_EQ(SDD(0, SDD(0, {0}, one), one), sdd::order::sdd(p, initializer()));
+    order_builder ob0;
+    ob0.add("foo");
+    order_builder ob1;
+    ob1.add("bar", ob0);
+    ASSERT_EQ(SDD(0, SDD(0, {0}, one), one), sdd::order::sdd(order(ob1), initializer()));
   }
   {
-    order<conf> o;
-    o.add("foo1").add("foo2");
-    order<conf> p;
-    p.add("bar", o);
-    ASSERT_EQ(SDD(0, SDD(1, {0}, SDD(0, {0}, one)), one), sdd::order::sdd(p, initializer()));
+    order_builder ob0;
+    ob0.add("foo1").add("foo2");
+    order_builder ob1;
+    ob1.add("bar", ob0);
+    ASSERT_EQ( SDD(0, SDD(1, {0}, SDD(0, {0}, one)), one)
+             , sdd::order::sdd(order(ob1), initializer()));
   }
   {
-    order<conf> nested_a {"a"};
-    order<conf> nested_b {"b"};
-    order<conf> o;
-    o.add("y", nested_b);
-    o.add("x", nested_a);
+    order_builder nested_a {"a"};
+    order_builder nested_b {"b"};
+    order_builder ob;
+    ob.add("y", nested_b);
+    ob.add("x", nested_a);
     ASSERT_EQ( SDD(1, SDD(0, {0}, one), SDD(0, SDD(0, {0}, one), one))
-             , sdd::order::sdd(o, initializer()));
+             , sdd::order::sdd(order(ob), initializer()));
   }
 }
 

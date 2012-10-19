@@ -27,7 +27,8 @@ using sdd::hom::SaturationFixpoint;
 using sdd::hom::SaturationSum;
 using sdd::hom::Sum;
 
-using sdd::order::order;
+typedef sdd::order::order_builder<conf> order_builder;
+typedef sdd::order::order<conf> order;
 
 /*-------------------------------------------------------------------------------------------*/
 

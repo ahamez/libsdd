@@ -38,7 +38,7 @@ TEST_F(hom_saturation_sum_test, construction)
 TEST_F(hom_saturation_sum_test, evaluation)
 {
   {
-    const order<conf> o {"a", "b", "c"};
+    const order o(order_builder {"a", "b", "c"});
     SDD s0(2, {0}, SDD(1, {0}, SDD(0, {0}, one)));
     std::vector<hom> empty_g;
     const hom s = SaturationSum<conf>( 0, Inductive<conf>(targeted_incr("c", 1))

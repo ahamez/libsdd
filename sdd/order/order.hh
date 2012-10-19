@@ -18,13 +18,13 @@ namespace sdd { namespace order {
 
 // Forward declaration of an order's node.
 template <typename C>
-struct node;
+struct order_builder_node;
 
 /*-------------------------------------------------------------------------------------------*/
 
 /// @brief Represent an order of identifiers.
 template <typename C>
-using order_ptr_type = std::shared_ptr<node<C>>;
+using order_builder_ptr_type = std::shared_ptr<order_builder_node<C>>;
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -34,7 +34,7 @@ using order_ptr_type = std::shared_ptr<node<C>>;
 /// We create our own type rather than using std::list. This is beacause we don't want the user
 /// to add identifier to an order which has already been added as a nested order.
 template <typename C>
-struct node
+struct order_builder_node
 {
   /// @brief A variable type.
   typedef typename C::Variable variable_type;
@@ -55,16 +55,16 @@ struct node
   /// @brief The nested order.
   ///
   /// If nullptr, this node is a flat node.
-  const order_ptr_type<C> nested;
+  const order_builder_ptr_type<C> nested;
 
   /// @brief The node's next variable.
   ///
   /// If nullptr, this node is the last one.
-  const order_ptr_type<C> next;
+  const order_builder_ptr_type<C> next;
 
   /// @brief Constructor.
-  node( const variable_type& var, std::unique_ptr<identifier_type>&& id
-      , order_ptr_type<C> nst, order_ptr_type<C> nxt)
+  order_builder_node( const variable_type& var, std::unique_ptr<identifier_type>&& id
+                    , order_builder_ptr_type<C> nst, order_builder_ptr_type<C> nxt)
     : variable(var)
     , identifier(std::move(id))
     , nested(nst)
@@ -77,9 +77,9 @@ struct node
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief Represent an order of identifiers.
+/// @brief
 template <typename C>
-class order
+class order_builder
 {
 public:
 
@@ -93,18 +93,18 @@ public:
 private:
 
   /// @brief The concrete order.
-  order_ptr_type<C> order_ptr_;
+  order_builder_ptr_type<C> order_ptr_;
 
 public:
 
   /// @brief Constructor.
-  order(const order_ptr_type<C>& ptr)
+  order_builder(const order_builder_ptr_type<C>& ptr)
     : order_ptr_(ptr)
   {
   }
 
   /// @brief Get the concrete order.
-  const order_ptr_type<C>&
+  const order_builder_ptr_type<C>&
   ptr()
   const noexcept
   {
@@ -114,15 +114,15 @@ public:
 /// @endcond
 
   /// @brief Default constructor.
-  order()
+  order_builder()
     : order_ptr_(nullptr)
   {
   }
 
   /// @brief Constructor from a list of identifiers.
   template <typename InputIterator>
-  order(InputIterator begin, InputIterator end)
-    : order()
+  order_builder(InputIterator begin, InputIterator end)
+    : order_builder()
   {
     std::vector<identifier_type> tmp(begin, end);
     for (auto rcit = tmp.crbegin(); rcit != tmp.crend(); ++rcit)
@@ -132,14 +132,14 @@ public:
   }
 
   /// @brief Constructor from a list of identifiers.
-  order(std::initializer_list<identifier_type> list)
-    : order(list.begin(), list.end())
+  order_builder(std::initializer_list<identifier_type> list)
+    : order_builder(list.begin(), list.end())
   {
   }
 
   /// @brief Copy operator.
-  order&
-  operator=(const order& other)
+  order_builder&
+  operator=(const order_builder& other)
   {
     order_ptr_ = other.order_ptr_;
     return *this;
@@ -172,76 +172,91 @@ public:
   }
 
   /// @brief Get this order's head's next order.
-  order
+  order_builder
   next()
   const noexcept
   {
-    return order(order_ptr_->next);
+    return order_builder(order_ptr_->next);
   }
 
   /// @brief Get this order's head's nested order.
-  order
+  order_builder
   nested()
   const noexcept
   {
-    return order(order_ptr_->nested);
+    return order_builder(order_ptr_->nested);
   }
 
-  /// @brief Get the variable of an identifier
-  variable_type
-  identifier_variable(const identifier_type& id)
-  const
-  {
-    std::function<boost::optional<variable_type>(const order_ptr_type<C>&)> helper;
-    helper = [&helper, &id](const order_ptr_type<C>& ptr)
-    -> boost::optional<variable_type>
-    {
-      if (not ptr)
-      {
-        return boost::optional<variable_type>();
-      }
-      if (ptr->identifier and id == *ptr->identifier)
-      {
-        return ptr->variable;
-      }
-      if (ptr->nested)
-      {
-        const auto res = helper(ptr->nested);
-        if (res)
-        {
-          return res;
-        }
-      }
-      return helper(ptr->next);
-    };
+//  /// @brief Get the variable of an identifier
+//  variable_type
+//  identifier_variable(const identifier_type& id)
+//  const
+//  {
+//    /// TODO: implement using an index
+//    std::function<boost::optional<variable_type>(const order_ptr_type<C>&)> helper;
+//    helper = [&helper, &id](const order_ptr_type<C>& ptr)
+//    -> boost::optional<variable_type>
+//    {
+//      if (not ptr)
+//      {
+//        return boost::optional<variable_type>();
+//      }
+//      if (ptr->identifier and id == *ptr->identifier)
+//      {
+//        return ptr->variable;
+//      }
+//      if (ptr->nested)
+//      {
+//        const auto res = helper(ptr->nested);
+//        if (res)
+//        {
+//          return res;
+//        }
+//      }
+//      return helper(ptr->next);
+//    };
+//
+//    const auto res = helper(order_ptr_);
+//    if (res)
+//    {
+//      return *res;
+//    }
+//    else
+//    {
+//      throw std::runtime_error("Identifier not found.");
+//    }
+//  }
 
-    const auto res = helper(order_ptr_);
-    if (res)
-    {
-      return *res;
-    }
-    else
-    {
-      throw std::runtime_error("Identifier not found.");
-    }
-  }
-
-  order&
+  order_builder&
   add(const identifier_type& id)
   {
     return add(id, nullptr);
   }
 
-  order&
-  add(const identifier_type& id, const order& nested)
+  order_builder&
+  add(const identifier_type& id, const order_builder& nested)
   {
     return add(id, nested.order_ptr_);
   }
 
-  void
-  concat(const order& next)
+  order_builder&
+  radd(const identifier_type& id)
   {
-    order_ptr_type<C> current = order_ptr_;
+    // add à la fin de l'ordre
+    // utiliser concat?
+  }
+
+  order_builder&
+  radd(const identifier_type& id, const order_builder& nested)
+  {
+    // add à la fin de l'ordre
+    // utiliser concat?
+  }
+
+  void
+  concat(const order_builder& next)
+  {
+    order_builder_ptr_type<C> current = order_ptr_;
     while (current->next)
     {
       current = current->next;
@@ -251,8 +266,8 @@ public:
 
 private:
 
-  order&
-  add(const identifier_type& id, order_ptr_type<C> nested_ptr)
+  order_builder&
+  add(const identifier_type& id, order_builder_ptr_type<C> nested_ptr)
   {
     const variable_type var = empty()
                             ? conf::variable_traits<variable_type>::first()
@@ -260,35 +275,178 @@ private:
 
     typedef std::unique_ptr<identifier_type> optional_id_type;
 
-    order_ptr_ = std::make_shared<node<C>>( var
-                                          , optional_id_type(new identifier_type(id))
-                                          , nested_ptr
-                                          , order_ptr_);
+    order_ptr_ =
+      std::make_shared<order_builder_node<C>>( var
+                                             , optional_id_type(new identifier_type(id))
+                                             , nested_ptr
+                                             , order_ptr_);
     return *this;
   }
 };
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @related order
+/// @related order_builder
+//template <typename C>
+//std::ostream&
+//operator<<(std::ostream& os, const order_builder<C>& o)
+//{
+//  if (not o.empty())
+//  {
+//    os << o.identifier();
+//    if (not o.nested().empty())
+//    {
+//      os << " | (" << o.nested() << ")";
+//    }
+//    if (not o.next().empty())
+//    {
+//      os << " >> " << o.next();
+//    }
+//  }
+//  return os;
+//}
+
+/*-------------------------------------------------------------------------------------------*/
+
+//template <typename C>
+//class order;
+//
+//template <typename C>
+//using order_ptr_type = std::shared_ptr<order<C>>;
+//
+//template <typename C>
+//struct order_node
+//{
+//  /// @brief
+//  typedef typename C::Identifier identifier_type;
+//
+//  /// @brief
+//  typedef typename C::Variable variable_type;
+//  
+//  /// @brief
+//  const identifier_type identifier_;
+//
+//  /// @brief
+//  const variable_type variable_;
+//
+//  /// @brief Absolute position, when seeing the order as flatten.
+//  ///
+//  /// Used to establish a total order on identifiers.
+//  const std::size_t pos_;
+//
+//  /// @brief The set of identifiers containing this identifier.
+//  const std::vector<identifier_type> parents_
+//
+//  /// @brief The nested order, if any, at this identifier.
+//  const order_ptr_type nested_;
+//};
+
+/*-------------------------------------------------------------------------------------------*/
+
+/// @brief
 template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const order<C>& o)
+class order
 {
-  if (not o.empty())
+public:
+
+  /// @brief
+  typedef typename C::Identifier identifier_type;
+
+  /// @brief
+  typedef typename C::Variable variable_type;
+
+private:
+
+  /// @brief
+//  typedef std::vector<order_node<C>> node_vec_type;
+
+  /// @brief
+//  typedef std::shared_ptr<node_vec_type> node_vec_ptr_type;
+
+  /// @brief
+//  typedef std::unordered_map<identifier_type, const order_node*> index_type;
+
+  /// @brief
+//  typedef std::shared_ptr<index_type> index_ptr_type;
+
+public:
+
+  order(const order_builder<C>& builder)
+//    : order_ptr_(construct_order_ptr(builder))
+//    , index_ptr_(construct_indexptr(order_ptr_))
   {
-    os << o.identifier();
-    if (not o.nested().empty())
-    {
-      os << " | (" << o.nested() << ")";
-    }
-    if (not o.next().empty())
-    {
-      os << " >> " << o.next();
-    }
   }
-  return os;
-}
+
+  bool
+  compare(const identifier_type& lhs, const identifier_type& rhs)
+  const
+  {
+
+  }
+
+  bool
+  contains(const identifier_type& upper, const identifier_type& nested)
+  const
+  {
+  }
+
+  /// @brief Get the variable of an identifier
+  variable_type
+  identifier_variable(const identifier_type& id)
+  const
+  {
+
+  }
+
+  const variable_type&
+  variable()
+  const noexcept
+  {
+  }
+
+  const identifier_type&
+  identifier()
+  const noexcept
+  {
+  }
+
+  order
+  next()
+  const noexcept
+  {
+
+  }
+
+  order
+  nested()
+  const noexcept
+  {
+    
+  }
+
+  bool
+  empty()
+  const noexcept
+  {
+    
+  }
+
+private:
+
+//  static
+//  order_ptr_type<C>
+//  construct_order_ptr(const order_builder& ob)
+//  {
+//
+//  }
+//
+//  static
+//  std::unordered_map<identifier_type, const order_node*>
+//  construct_index(const order_ptr_type<C>& o_ptr)
+//  {
+//
+//  }
+};
 
 /*-------------------------------------------------------------------------------------------*/
 
