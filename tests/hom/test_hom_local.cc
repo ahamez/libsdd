@@ -38,7 +38,7 @@ TEST_F(hom_local_test, construction)
 TEST_F(hom_local_test, evaluation)
 {
   order_builder ob;
-  order_builder q {"a"};
+  order_builder q {"b"};
   ob.add("y", q);
   order_builder p {"a"};
   ob.add("x", p);
