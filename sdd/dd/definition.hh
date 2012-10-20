@@ -127,7 +127,6 @@ public:
   ///
   /// O(1).
   SDD(bool terminal)
-  noexcept
     : ptr_(terminal ? one_ptr() : zero_ptr())
   {
   }
