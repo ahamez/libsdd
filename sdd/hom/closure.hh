@@ -268,6 +268,13 @@ public:
   {
     return successor_;
   }
+
+  const identifier_type&
+  head()
+  const noexcept
+  {
+    return *begin_;
+  }
 };
 
 /*-------------------------------------------------------------------------------------------*/
@@ -280,7 +287,9 @@ bool
 operator==(const closure<C>& lhs, const closure<C>& rhs)
 noexcept
 {
-  return lhs.identifiers() == rhs.identifiers() and lhs.successor() == rhs.successor();
+  return lhs.identifiers() == rhs.identifiers()
+     and lhs.head() == rhs.head()
+     and lhs.successor() == rhs.successor();
 }
 
 /// @related closure
@@ -369,6 +378,7 @@ struct hash<sdd::hom::closure<C>>
       sdd::internal::util::hash_combine(seed, i);
     }
     sdd::internal::util::hash_combine(seed, c.successor());
+    sdd::internal::util::hash_combine(seed, c.head());
     return seed;
   }
 };
