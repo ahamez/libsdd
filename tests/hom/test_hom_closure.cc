@@ -18,13 +18,13 @@ struct hom_closure_test
 TEST_F(hom_closure_test, construction)
 {
   {
-    const auto h0 = Closure<conf>(order(order_builder()), {"0","1","2"});
-    const auto h1 = Closure<conf>(order(order_builder()), {"0","1","2"});
+    const auto h0 = Closure<conf>(order(order_builder {"0","1","2"}), {"0","1","2"});
+    const auto h1 = Closure<conf>(order(order_builder {"0","1","2"}), {"0","1","2"});
     ASSERT_EQ(h0, h1);
   }
   {
-    const auto h0 = Closure<conf>(order(order_builder()), {"0","1","2"});
-    const auto h1 = Closure<conf>(order(order_builder()), {"0","1","3"});
+    const auto h0 = Closure<conf>(order(order_builder {"0","1","2"}), {"0","1","2"});
+    const auto h1 = Closure<conf>(order(order_builder {"0","1","3"}), {"0","1","3"});
     ASSERT_NE(h0, h1);
   }
 }
