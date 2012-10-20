@@ -27,6 +27,10 @@ TEST_F(hom_closure_test, construction)
     const auto h1 = Closure<conf>(order(order_builder {"0","1","3"}), {"0","1","3"});
     ASSERT_NE(h0, h1);
   }
+  {
+    order o(order_builder {"a", "b", "c"});
+    ASSERT_THROW(Closure<conf>(o, {"d","a"}), std::runtime_error);
+  }
 }
 
 /*-------------------------------------------------------------------------------------------*/
@@ -41,8 +45,8 @@ TEST_F(hom_closure_test, evaluation_flat)
   }
   {
     order o(order_builder {"a", "b", "c"});
-    const SDD s0(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)));
-    const SDD s1(2, {0,1}, SDD(0, {0,1}, one));
+    const SDD s0(2, {0,1}, SDD(1, {2,3}, SDD(0, {4,5}, one)));
+    const SDD s1(2, {0,1}, SDD(0, {4,5}, one));
     const auto h0 = Closure<conf>(o, {"a", "c"});
     ASSERT_EQ(s1, h0(o, s0));
   }
@@ -78,16 +82,15 @@ TEST_F(hom_closure_test, evaluation_flat)
     order o(order_builder {"a", "b", "c"});
     const SDD s0(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)));
     const SDD s1(0, {0,1}, one);
-    const auto h0 = Closure<conf>(o, {0});
+    const auto h0 = Closure<conf>(o, {"c"});
     ASSERT_EQ(s1, h0(o, s0));
   }
   {
     order o(order_builder {"a", "b", "c"});
     const SDD s0(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)));
     const auto h0 = Closure<conf>(o, {"d"});
-    ASSERT_EQ(one, h0(o, s0));
+    ASSERT_THROW(h0(o, s0), std::runtime_error);
   }
-
   {
     order o(order_builder {"a", "b", "c"});
     const SDD s0 = SDD(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)))

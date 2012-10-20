@@ -83,6 +83,7 @@ public:
     , begin_(begin)
     , successor_(successor)
   {
+    assert(begin_ != identifiers_ptr_->end() && "Empty set of identifiers to capture.");
   }
 
   /// @brief Skip predicate.
@@ -107,7 +108,6 @@ public:
             , context<C>& cxt, const order::order<C>& o, const SDD<C>& s)
   const
   {
-    assert(false);
     assert(not o.nested().empty() && "Empty hierarchical order in a hierarchical_node.");
 
 //    std::any_of( begin_, identifiers_ptr_->end()
@@ -146,55 +146,18 @@ public:
   {
     assert(o.nested().empty() && "Hierarchical order in a flat_node.");
 
-//    if (begin_ == identifiers_ptr_->begin())
-//    {
-//      return successor_;
-//    }
-
-    const bool remove_current_level = *begin_ != o.identifier();
-//      std::find(begin_, identifiers_ptr->end(), o.identifier()) == identifiers_ptr_->end();
-
-    const auto next_begin = std::next(begin_);
-
-//    const auto next_closure = Closure(o.next(), identifiers_ptr_, next_begin, successor_);
-
-    square_union<C, values_type> su;
-    su.reserve(node.size());
-
-    if (remove_current_level)
+    if (*begin_ != o.identifier()) // remove current level
     {
-//      auto arc_cit = node.begin();
-//      const SDD<C> first_successor = next_closure(cxt, o.next(), arc_cit->successor());
-//
-//      if (first_succ == one<C>())
-//      {
-//        return one<C>();
-//      }
-//      else
-//      {
-//        const flat_node& fn = internal::mem::variant_cast<const flat_node>(first_succ->data());
-//        for (const auto& arc : fn)
-//        {
-//          su.add(arc.successor(), arc.valuation());
-//        }
-//
-//        for (++arc_cit; arc_cit != node.end(); ++arc_cit)
-//        {
-//          const SDD<C> succ = next_closure(cxt, o.next(), arc_cit->successor());
-//          const flat_node& n = internal::mem::variant_cast<const flat_node>(succ->data());
-//          for (const auto& arc : n)
-//          {
-//            su.add(arc.successor(), arc.valuation());
-//          }
-//        }
-//      }
-      if (o.next().empty() or next_begin == identifiers_ptr_->end())
+      if (o.next().empty())
       {
         return successor_;
       }
       else
       {
-        const auto next_closure = Closure(o.next(), identifiers_ptr_, next_begin, successor_);
+        square_union<C, values_type> su;
+        su.reserve(node.size());
+
+        const auto next_closure = Closure(o.next(), identifiers_ptr_, begin_, successor_);
         for (const auto& arc : node)
         {
           const SDD<C> succ = next_closure(cxt, o.next(), arc.successor());
@@ -205,11 +168,18 @@ public:
             su.add(succ_arc.successor(), succ_arc.valuation());
           }
         }
+
+        return SDD<C>(o.identifier_variable(*begin_), su(cxt.sdd_context()));
       }
     }
-    else
+    else // keep current level
     {
-      if (next_begin == identifiers_ptr_->end())
+      const auto next_begin = std::next(begin_);
+
+      square_union<C, values_type> su;
+      su.reserve(node.size());
+
+      if (next_begin == identifiers_ptr_->end()) // avoid useless homomorphism application
       {
         for (const auto& arc : node)
         {
@@ -225,9 +195,9 @@ public:
           su.add(new_successor, arc.valuation());
         }
       }
-    }
 
-    return SDD<C>(o.identifier_variable(*begin_), su(cxt.sdd_context()));
+      return SDD<C>(o.identifier_variable(*begin_), su(cxt.sdd_context()));
+    }
   }
 
   SDD<C>
