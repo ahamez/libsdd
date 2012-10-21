@@ -110,32 +110,72 @@ public:
   {
     assert(not o.nested().empty() && "Empty hierarchical order in a hierarchical_node.");
 
-//    std::any_of( begin_, identifiers_ptr_->end()
-//                , [&o](const identifier_type& id)
-//                {
-//                  return o.contains(id);
-//                });
+    const bool remove_level = not std::any_of( begin_, identifiers_ptr_->cend()
+                                             , [&o](const identifier_type& id)
+                                                   {
+                                                     return o.contains(o.identifier(), id);
+                                                   });
 
-//    square_union<C, values_type> su;
-//    su.reserve(node.size());
-//
-//    for (const auto& arc : node)
-//    {
-//      // First, get the new successor
-//      const auto next_closure = Closure( o.next(), identifiers_ptr_, std::next(begin_)
-//                                       , successor_);
-//      SDD<C> new_successor = next_closure(cxt, o.next(), arc.successor());
-//
-//      // Then, transmit it to the nested closure.
-//      const auto nested_closure = Closure( o.nested(), identifiers_ptr_, begin_
-//                                         , new_successor);
-//      SDD<C> new_valuation = nested_closure(cxt, o.nested(), arc.valuation());
-//
-//      // Finally, add the new arc to square union operands.
-//      su.add(new_successor, new_valuation);
-//    }
-//
-//    return SDD<C>(o.identifier_variable(*begin_), su(cxt.sdd_context()));
+    if (remove_level)
+    {
+      if (o.next().empty())
+      {
+        return successor_;
+      }
+      else
+      {
+        square_union<C, values_type> su;
+        su.reserve(node.size());
+
+        const auto next_closure = Closure(o.next(), identifiers_ptr_, begin_, successor_);
+        for (const auto& arc : node)
+        {
+          const SDD<C> succ = next_closure(cxt, o.next(), arc.successor());
+          const flat_node<C>& n
+            = internal::mem::variant_cast<const flat_node<C>>(succ->data());
+          for (const auto& succ_arc : n)
+          {
+            su.add(succ_arc.successor(), succ_arc.valuation());
+          }
+        }
+
+        return SDD<C>(o.identifier_variable(*begin_), su(cxt.sdd_context()));
+      }
+    }
+    else // this level contains some identifiers we are interested in.
+    {
+      square_union<C, values_type> su;
+      su.reserve(node.size());
+
+      const auto next_begin = std::next(begin_);
+
+      for (const auto& arc : node)
+      {
+        // First, get the new successor
+        SDD<C> new_successor = successor_;
+        if (next_begin != identifiers_ptr_->end()) // propagate only if necessary
+        {
+          const auto next_closure = Closure( o.next(), identifiers_ptr_, std::next(begin_)
+                                           , successor_);
+          new_successor = next_closure(cxt, o.next(), arc.successor());
+        }
+
+        // Then, transmit it to the nested closure.
+        const auto nested_closure = Closure( o.nested(), identifiers_ptr_, begin_
+                                           , new_successor);
+        SDD<C> new_valuation = nested_closure(cxt, o.nested(), arc.valuation());
+        const flat_node<C>& n
+          = internal::mem::variant_cast<const flat_node<C>>(new_valuation->data());
+
+        // Finally, add the new arcs to square union operands.
+        for (const auto& narc : n)
+        {
+          su.add(narc.successor(), narc.valuation());
+        }
+      }
+
+      return SDD<C>(o.identifier_variable(*begin_), su(cxt.sdd_context()));
+    }
   }
 
   /// @brief Evaluation on flat nodes.
@@ -207,7 +247,7 @@ public:
   {
     return successor_;
   }
-  
+
   SDD<C>
   operator()( const zero_terminal<C>&
             , context<C>&, const order::order<C>&, const SDD<C>&)

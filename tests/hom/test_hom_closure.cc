@@ -130,136 +130,173 @@ TEST_F(hom_closure_test, evaluation_flat)
     const auto h0 = Closure<conf>(o, {"c"});
     ASSERT_EQ(s1, h0(o, s0));
   }
+  {
+    order o(order_builder {"a", "b", "c"});
+    const SDD s0 = SDD(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)))
+                 + SDD(2, {2,3}, SDD(1, {2,3}, SDD(0, {2,3}, one)));
+    const SDD s1 = SDD(2, {0,1}, SDD(0, {0,1}, one))
+                 + SDD(2, {2,3}, SDD(0, {2,3}, one));
+    const auto h0 = Closure<conf>(o, {"a", "c"});
+    ASSERT_EQ(s1, h0(o, s0));
+  }
+  {
+    order o(order_builder {"a", "b", "c"});
+    const auto h0 = Closure<conf>(o, {"a", "c"});
+    ASSERT_EQ(one, h0(o, one));
+  }
 }
 
 /*-------------------------------------------------------------------------------------------*/
 
-//TEST_F(hom_closure_test, evaluation_hierarchical)
-//{
-//  {
-//    const SDD s0('a', {0,1}, SDD('x', SDD('b', {0,1}, one), SDD('c', {0,1}, one)));
-//    const SDD s1('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)));
-//    const auto h0 = Closure<conf>({'a', 'b', 'c'});
-//    ASSERT_EQ(s1, h0(s0));
-//  }
-//  {
-//    const SDD s0('a', {0,1}, SDD('x', SDD('b', {0,1}, one), SDD('c', {0,1}, one)));
-//    const SDD s1('b', {0,1}, one);
-//    const auto h0 = Closure<conf>({'b'});
-//    ASSERT_EQ(s1, h0(s0));
-//  }
-//  {
-//    const SDD s0('a', {0,1}
-//        , SDD('x', SDD('b', {0,1}, one)
-//        , SDD('y', SDD('c', {0,1}, one), one)));
-//    const SDD s1('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)));
-//    const auto h0 = Closure<conf>({'a', 'b', 'c'});
-//    ASSERT_EQ(s1, h0(s0));
-//  }
-//  {
-//    const SDD s0('a', {0,1}
-//        , SDD('x', SDD('b', {0,1}, one)
-//        , SDD('y', SDD('c', {0,1}, one), one)));
-//    const auto h0 = Closure<conf>({'d'});
-//    ASSERT_EQ(one, h0(s0));
-//  }
-//  {
-//    const SDD s0 = SDD('a', {0,1}
-//                 , SDD('x', SDD('b', {0,1}, one)
-//                 , SDD('y', SDD('c', {0,1}, one), one)))
-//
-//                 + SDD('a', {0,1}
-//                 , SDD('x', SDD('b', {2,3}, one)
-//                 , SDD('y', SDD('c', {2,3}, one), one)));
-//
-//    const SDD s1 = SDD('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)))
-//                 + SDD('a', {0,1}, SDD('b', {2,3}, SDD('c', {2,3}, one)));
-//
-//    const auto h0 = Closure<conf>({'a', 'b', 'c'});
-//    ASSERT_EQ(s1, h0(s0));
-//  }
-//  {
-//    const SDD s0 = SDD('a', {0,1}
-//                 , SDD('x', SDD('b', {0,1}, one)
-//                 , SDD('y', SDD('c', {0,1}, one), one)))
-//
-//                 + SDD('a', {0,1}
-//                 , SDD('x', SDD('b', {2,3}, one)
-//                 , SDD('y', SDD('c', {2,3}, one), one)))
-//
-//                 + SDD('a', {0,1}
-//                 , SDD('x', SDD('b', {4,5}, one)
-//                 , SDD('y', SDD('c', {4,5}, one), one)));
-//
-//
-//    const SDD s1 = SDD('a', {0,1}, SDD('b', {0,1}, SDD('c', {0,1}, one)))
-//                 + SDD('a', {0,1}, SDD('b', {2,3}, SDD('c', {2,3}, one)))
-//                 + SDD('a', {0,1}, SDD('b', {4,5}, SDD('c', {4,5}, one)));
-//
-//    const auto h0 = Closure<conf>({'a', 'b', 'c'});
-//    ASSERT_EQ(s1, h0(s0));
-//  }
-//  {
-//    const SDD s0 = SDD('a', {0,1}
-//                 , SDD('x', SDD('b', {0,1}, one)
-//                 , SDD('y', SDD('c', {0,1}, one), one)))
-//
-//                 + SDD('a', {0,1}
-//                 , SDD('x', SDD('b', {2,3}, one)
-//                 , SDD('y', SDD('c', {2,3}, one), one)))
-//
-//                 + SDD('a', {0,1}
-//                 , SDD('x', SDD('b', {4,5}, one)
-//                 , SDD('y', SDD('c', {4,5}, one), one)));
-//
-//
-//    const SDD s1 = SDD('a', {0,1}, SDD('c', {0,1,2,3,4,5}, one));
-//
-//    const auto h0 = Closure<conf>({'a', 'c'});
-//    ASSERT_EQ(s1, h0(s0));
-//  }
-//  {
-//    const SDD s0 = SDD('a', {0,1}
-//                 , SDD('x', SDD('b', {0,1}, one)
-//                 , SDD('y', SDD('c', {0,1}, one), one)))
-//
-//                 + SDD('a', {0,1}
-//                 , SDD('x', SDD('b', {2,3}, one)
-//                 , SDD('y', SDD('c', {2,3}, one), one)))
-//
-//                 + SDD('a', {0,1}
-//                 , SDD('x', SDD('b', {4,5}, one)
-//                 , SDD('y', SDD('c', {4,5}, one), one)));
-//
-//
-//    const SDD s1 = SDD('b', {0,1}, SDD('c', {0,1}, one))
-//                 + SDD('b', {2,3}, SDD('c', {2,3}, one))
-//                 + SDD('b', {4,5}, SDD('c', {4,5}, one));
-//
-//    const auto h0 = Closure<conf>({'b', 'c'});
-//    ASSERT_EQ(s1, h0(s0));
-//  }
-//  {
-//    const SDD s0 = SDD('a', {0,1}
-//                 , SDD('x', SDD('z', SDD('b', {0,1}, one), one)
-//                 , SDD('y', SDD('c', {0,1}, one), one)))
-//
-//                 + SDD('a', {0,1}
-//                 , SDD('x', SDD('z', SDD('b', {2,3}, one), one)
-//                 , SDD('y', SDD('c', {2,3}, one), one)))
-//
-//                 + SDD('a', {0,1}
-//                 , SDD('x', SDD('z', SDD('b', {4,5}, one), one)
-//                 , SDD('y', SDD('c', {4,5}, one), one)));
-//
-//
-//    const SDD s1 = SDD('b', {0,1}, SDD('c', {0,1}, one))
-//                 + SDD('b', {2,3}, SDD('c', {2,3}, one))
-//                 + SDD('b', {4,5}, SDD('c', {4,5}, one));
-//
-//    const auto h0 = Closure<conf>({'b', 'c'});
-//    ASSERT_EQ(s1, h0(s0));
-//  }
-//}
+TEST_F(hom_closure_test, evaluation_hierarchical)
+{
+  {
+    order o(order_builder().add("c").add("x", order_builder {"b"}).add("a"));
+    const SDD s0(2, {0,1}, SDD(1, SDD(0, {0,1}, one), SDD(0, {0,1}, one)));
+    const SDD s1(2, {0,1}, SDD(0, {0,1}, SDD(0, {0,1}, one)));
+    const auto h0 = Closure<conf>(o, {"a", "b", "c"});
+    ASSERT_EQ(s1, h0(o, s0));
+  }
+  {
+    order o(order_builder().add("c").add("x", order_builder {"b"}).add("a"));
+    const SDD s0(2, {0,1}, SDD(1, SDD(0, {0,1}, one), SDD(0, {0,1}, one)));
+    const SDD s1(2, {0,1}, SDD(0, {0,1}, SDD(0, {0,1}, one)));
+    const auto h0 = Closure<conf>(o, {"c", "b", "a"});
+    ASSERT_EQ(s1, h0(o, s0));
+  }
+  {
+    order o(order_builder().add("c").add("x", order_builder {"b"}).add("a"));
+    const SDD s0(2, {0,1}, SDD(1, SDD(0, {0,1}, one), SDD(0, {0,1}, one)));
+    const SDD s1(2, {0,1}, SDD(0, {0,1}, SDD(0, {0,1}, one)));
+    const auto h0 = Closure<conf>(o, {"b", "c", "a"});
+    ASSERT_EQ(s1, h0(o, s0));
+  }
+  {
+    order o(order_builder().add("c").add("x", order_builder {"b"}).add("a"));
+    const SDD s0(2, {0,1}, SDD(1, SDD(0, {2,3}, one), SDD(0, {4,5}, one)));
+    const SDD s1(0, {2,3}, one);
+    const auto h0 = Closure<conf>(o, {"b"});
+    ASSERT_EQ(s1, h0(o, s0));
+  }
+  {
+    order o(order_builder().add("y", order_builder {"c"}).add("x", order_builder {"b"}).add("a"));
+    const SDD s0(2, {0,1}
+        , SDD(1, SDD(0, {0,1}, one)
+        , SDD(0, SDD(0, {0,1}, one), one)));
+    const SDD s1(2, {0,1}, SDD(0, {0,1}, SDD(0, {0,1}, one)));
+    const auto h0 = Closure<conf>(o, {"a", "b", "c"});
+    ASSERT_EQ(s1, h0(o, s0));
+  }
+  {
+    order o(order_builder().add("y", order_builder {"c"}).add("x", order_builder {"b"}).add("a"));
+    const SDD s0(2, {0,1}
+        , SDD(1, SDD(0, {0,1}, one)
+        , SDD(0, SDD(0, {0,1}, one), one)));
+    const auto h0 = Closure<conf>(o, {"d"});
+    ASSERT_THROW(h0(o, s0), std::runtime_error);
+  }
+  {
+    order o(order_builder().add("y", order_builder {"c"}).add("x", order_builder {"b"}).add("a"));
+    const SDD s0 = SDD(2, {0,1}
+                 , SDD(1, SDD(0, {0,1}, one)
+                 , SDD(0, SDD(0, {0,1}, one), one)))
+
+                 + SDD(2, {0,1}
+                 , SDD(1, SDD(0, {2,3}, one)
+                 , SDD(0, SDD(0, {2,3}, one), one)));
+
+    const SDD s1 = SDD(2, {0,1}, SDD(0, {0,1}, SDD(0, {0,1}, one)))
+                 + SDD(2, {0,1}, SDD(0, {2,3}, SDD(0, {2,3}, one)));
+
+    const auto h0 = Closure<conf>(o, {"a", "b", "c"});
+    ASSERT_EQ(s1, h0(o, s0));
+  }
+  {
+    order o(order_builder().add("y", order_builder {"c"}).add("x", order_builder {"b"}).add("a"));
+    const SDD s0 = SDD(2, {0,1}
+                 , SDD(1, SDD(0, {0,1}, one)
+                 , SDD(0, SDD(0, {0,1}, one), one)))
+
+                 + SDD(2, {0,1}
+                 , SDD(1, SDD(0, {2,3}, one)
+                 , SDD(0, SDD(0, {2,3}, one), one)))
+
+                 + SDD(2, {0,1}
+                 , SDD(1, SDD(0, {4,5}, one)
+                 , SDD(0, SDD(0, {4,5}, one), one)));
+
+
+    const SDD s1 = SDD(2, {0,1}, SDD(0, {0,1}, SDD(0, {0,1}, one)))
+                 + SDD(2, {0,1}, SDD(0, {2,3}, SDD(0, {2,3}, one)))
+                 + SDD(2, {0,1}, SDD(0, {4,5}, SDD(0, {4,5}, one)));
+
+    const auto h0 = Closure<conf>(o, {"a", "c", "b"});
+    ASSERT_EQ(s1, h0(o, s0));
+  }
+  {
+    order o(order_builder().add("y", order_builder {"c"}).add("x", order_builder {"b"}).add("a"));
+    const SDD s0 = SDD(2, {0,1}
+                 , SDD(1, SDD(0, {0,1}, one)
+                 , SDD(0, SDD(0, {0,1}, one), one)))
+
+                 + SDD(2, {0,1}
+                 , SDD(1, SDD(0, {2,3}, one)
+                 , SDD(0, SDD(0, {2,3}, one), one)))
+
+                 + SDD(2, {0,1}
+                 , SDD(1, SDD(0, {4,5}, one)
+                 , SDD(0, SDD(0, {4,5}, one), one)));
+
+
+    const SDD s1 = SDD(2, {0,1}, SDD(0, {0,1,2,3,4,5}, one));
+
+    const auto h0 = Closure<conf>(o, {"a", "c"});
+    ASSERT_EQ(s1, h0(o, s0));
+  }
+  {
+    order o(order_builder().add("y", order_builder {"c"}).add("x", order_builder {"b"}).add("a"));
+    const SDD s0 = SDD(2, {0,1}
+                 , SDD(1, SDD(0, {0,1}, one)
+                 , SDD(0, SDD(0, {0,1}, one), one)))
+
+                 + SDD(2, {0,1}
+                 , SDD(1, SDD(0, {2,3}, one)
+                 , SDD(0, SDD(0, {2,3}, one), one)))
+
+                 + SDD(2, {0,1}
+                 , SDD(1, SDD(0, {4,5}, one)
+                 , SDD(0, SDD(0, {4,5}, one), one)));
+
+    const SDD s1 = SDD(0, {0,1}, SDD(0, {0,1}, one))
+                 + SDD(0, {2,3}, SDD(0, {2,3}, one))
+                 + SDD(0, {4,5}, SDD(0, {4,5}, one));
+
+    const auto h0 = Closure<conf>(o, {"b", "c"});
+    ASSERT_EQ(s1, h0(o, s0));
+  }
+  {
+    order o(order_builder().add("y", order_builder {"c"}).add("x", order_builder().add("z", order_builder {"b"})).add("a"));
+
+    const SDD s0 = SDD(2, {0,1}
+                 , SDD(1, SDD(0, SDD(0, {0,1}, one), one)
+                 , SDD(0, SDD(0, {0,1}, one), one)))
+
+                 + SDD(2, {0,1}
+                 , SDD(1, SDD(0, SDD(0, {2,3}, one), one)
+                 , SDD(0, SDD(0, {2,3}, one), one)))
+
+                 + SDD(2, {0,1}
+                 , SDD(1, SDD(0, SDD(0, {4,5}, one), one)
+                 , SDD(0, SDD(0, {4,5}, one), one)));
+
+
+    const SDD s1 = SDD(0, {0,1}, SDD(0, {0,1}, one))
+                 + SDD(0, {2,3}, SDD(0, {2,3}, one))
+                 + SDD(0, {4,5}, SDD(0, {4,5}, one));
+
+    const auto h0 = Closure<conf>(o, {"b", "c"});
+    ASSERT_EQ(s1, h0(o, s0));
+  }
+}
 
 /*-------------------------------------------------------------------------------------------*/

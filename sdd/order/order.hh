@@ -1,11 +1,12 @@
 #ifndef _SDD_ORDER_ORDER_HH_
 #define _SDD_ORDER_ORDER_HH_
 
+#include <algorithm> // find
 #include <initializer_list>
 #include <iostream>
-#include <memory>  // shared_ptr, unique_ptr
+#include <memory>    // shared_ptr, unique_ptr
 #include <sstream>
-#include <utility> // pair
+#include <utility>   // pair
 #include <vector>
 
 #include <boost/multi_index_container.hpp>
@@ -63,7 +64,7 @@ private:
     const node_ptr next;
 
     /// @brief Constructor.
-    node( std::unique_ptr<identifier_type>&& id, const node_ptr& nst, const node_ptr& nxt)
+    node(std::unique_ptr<identifier_type>&& id, const node_ptr& nst, const node_ptr& nxt)
       : identifier(std::move(id))
       , nested(nst)
       , next(nxt)
@@ -332,7 +333,8 @@ public:
     }
     else
     {
-      return search->path.find(upper) != search->path.end();
+      const auto& path = *search->path_ptr;
+      return std::find(path.begin(), path.end(), upper) != path.end();
     }
   }
 
@@ -474,6 +476,7 @@ private:
       }
 
       const auto& variable = next.second;
+      /// TODO Manage artificial identifiers.
       const node n(ob.identifier(), variable, old_pos, next.first, nested.first, path);
 
       const auto insertion = nodes_ptr->insert(n);
