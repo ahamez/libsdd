@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B04D095163454D900CB57A3 /* test_order.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B04D093163454D900CB57A3 /* test_order.cc */; };
 		2B0EA13A161640450019EB04 /* test_utility.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B0EA138161640450019EB04 /* test_utility.cc */; };
 		2B19AF0A15C5E3CD00C4ABB0 /* test_paths.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B19AF0815C5E3CD00C4ABB0 /* test_paths.cc */; };
 		2B1A269E1619EA87005D6BB0 /* test_hom_identity.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B1A269C1619EA87005D6BB0 /* test_hom_identity.cc */; };
@@ -86,6 +87,7 @@
 		2B0197C315BDE7D900CE5F70 /* top.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = top.hh; sourceTree = "<group>"; };
 		2B0197C515BDF18800CE5F70 /* nary_fwd.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = nary_fwd.hh; sourceTree = "<group>"; };
 		2B037A1D15C6B26B00395E2C /* visit.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = visit.hh; sourceTree = "<group>"; };
+		2B04D093163454D900CB57A3 /* test_order.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_order.cc; sourceTree = "<group>"; };
 		2B0EA1321615D0A10019EB04 /* order.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = order.hh; sourceTree = "<group>"; };
 		2B0EA13616163AC80019EB04 /* utility.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = utility.hh; sourceTree = "<group>"; };
 		2B0EA138161640450019EB04 /* test_utility.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_utility.cc; sourceTree = "<group>"; };
@@ -280,6 +282,7 @@
 		2B0EA137161640190019EB04 /* order */ = {
 			isa = PBXGroup;
 			children = (
+				2B04D093163454D900CB57A3 /* test_order.cc */,
 				2B0EA138161640450019EB04 /* test_utility.cc */,
 			);
 			path = order;
@@ -659,6 +662,7 @@
 				2B4C60A8162474550065D7F3 /* test_hom_saturation_fixpoint.cc in Sources */,
 				2B4C60AB16256E440065D7F3 /* test_rewriting.cc in Sources */,
 				2B86F64A162C4BE90026412E /* test_hom_closure.cc in Sources */,
+				2B04D095163454D900CB57A3 /* test_order.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
