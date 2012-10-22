@@ -96,6 +96,12 @@ public:
   {
   }
 
+  /// @brief Constructor.
+  inductive_derived(User&& h)
+    : h_(std::move(h))
+  {
+  }
+
   /// @brief Tell if the user's inductive skip the current variable.
   bool
   skip(const variable_type& var)
@@ -352,6 +358,16 @@ Inductive(const User& u)
 {
   return homomorphism<C>::create( internal::mem::construct<inductive<C>>()
                                 , new inductive_derived<C, User>(u));
+}
+
+/// @brief Create the Inductive homomorphism.
+/// @related homomorphism
+template <typename C, typename User>
+homomorphism<C>
+Inductive(User&& u)
+{
+  return homomorphism<C>::create( internal::mem::construct<inductive<C>>()
+                                , new inductive_derived<C, User>(std::move(u)));
 }
 
 /*-------------------------------------------------------------------------------------------*/
