@@ -115,6 +115,11 @@ public:
 
 /// @endcond
 
+  ~evaluation_error()
+  noexcept
+  {
+  }
+
   /// @brief Return the textual description of the error.
   ///
   /// All operations that led to the error are printed.
