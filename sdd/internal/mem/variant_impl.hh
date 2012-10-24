@@ -78,7 +78,7 @@ struct union_storage
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief Dispatch the desctructor to the contained type in the visited variant.
+/// @brief Dispatch the destructor to the contained type in the visited variant.
 struct dtor_visitor
 {
   typedef void result_type;
