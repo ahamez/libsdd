@@ -28,6 +28,7 @@ print_sizes(std::ostream& os)
 
   os << std::endl;
   os << "SDD::data          " << sizeof(typename SDD<C>::SDD_data) << std::endl;
+  os << "SDD::data::storage " << sizeof(typename SDD<C>::SDD_data::storage_type) << std::endl;
   os << "SDD::unique        " << sizeof(typename SDD<C>::SDD_unique) << std::endl;
   os << "zero_terminal      " << sizeof(zero_terminal<C>) << std::endl;
   os << "one_terminal       " << sizeof(one_terminal<C>) << std::endl;
@@ -37,8 +38,9 @@ print_sizes(std::ostream& os)
   typedef hom::homomorphism<C> hom_type;
 
   os << std::endl;
-  os << "Homomorphism::data    " << sizeof(typename hom_type::data_type) << std::endl;
-  os << "Homomorphism::unique  " << sizeof(typename hom_type::unique_type) << std::endl;
+  os << "Hom::data             " << sizeof(typename hom_type::data_type) << std::endl;
+  os << "Hom::data::storage    " << sizeof(typename hom_type::data_type::storage_type) << std::endl;
+  os << "Hom::unique           " << sizeof(typename hom_type::unique_type) << std::endl;
   os << "Composition           " << sizeof(hom::composition<C>) << std::endl;
   os << "Flat Cons             " << sizeof(hom::cons<C, typename C::Values>) << std::endl;
   os << "Hierarchical Cons     " << sizeof(hom::cons<C, SDD<C>>) << std::endl;

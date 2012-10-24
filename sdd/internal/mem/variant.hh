@@ -14,6 +14,7 @@
 #include "sdd/internal/util/hash.hh"
 #include "sdd/internal/util/packed.hh"
 #include "sdd/internal/util/typelist.hh"
+#include "sdd/internal/util/print_sizes_fwd.hh"
 
 namespace sdd { namespace internal { namespace mem {
 
@@ -48,6 +49,9 @@ class _LIBSDD_ATTRIBUTE_PACKED variant
   variant(variant&&) = delete;
 
 private:
+
+  template <typename C>
+  friend void internal::util::print_sizes(std::ostream&);
 
   static_assert( sizeof...(Types) >= 1
                , "A variant should contain at least one type.");
