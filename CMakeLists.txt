@@ -72,6 +72,9 @@ endif ()
 set( CMAKE_CXX_FLAGS_RELEASE
      "${CMAKE_CXX_FLAGS_RELEASE} -fvisibility=hidden -fstrict-aliasing")
 
+set( CMAKE_CXX_FLAGS_DEBUG
+     "${CMAKE_CXX_FLAGS_DEBUG} -O0")
+
 ################################################################################
 
 include_directories("${Boost_INCLUDE_DIRS}")
