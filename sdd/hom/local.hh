@@ -8,6 +8,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
+#include "sdd/internal/util/packed.hh"
 
 namespace sdd { namespace hom {
 
@@ -17,7 +18,7 @@ namespace sdd { namespace hom {
 
 /// @brief Local homomorphism.
 template <typename C>
-class local
+class _LIBSDD_ATTRIBUTE_PACKED local
 {
 private:
 

@@ -9,6 +9,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
+#include "sdd/internal/util/packed.hh"
 
 namespace sdd { namespace hom {
 
@@ -18,7 +19,7 @@ namespace sdd { namespace hom {
 
 /// @brief Fixpoint homomorphism.
 template <typename C>
-class fixpoint
+class _LIBSDD_ATTRIBUTE_PACKED fixpoint
 {
 private:
 

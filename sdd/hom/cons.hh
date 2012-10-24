@@ -6,6 +6,7 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
+#include "sdd/internal/util/packed.hh"
 
 namespace sdd { namespace hom {
 
@@ -15,7 +16,7 @@ namespace sdd { namespace hom {
 
 /// @brief Cons homomorphism.
 template <typename C, typename Valuation>
-class cons
+class _LIBSDD_ATTRIBUTE_PACKED cons
 {
 public:
 

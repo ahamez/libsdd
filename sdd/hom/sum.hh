@@ -16,6 +16,7 @@
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
+#include "sdd/internal/util/packed.hh"
 
 namespace sdd { namespace hom {
 
@@ -25,7 +26,7 @@ namespace sdd { namespace hom {
 
 /// @brief Sum homomorphism.
 template <typename C>
-class sum
+class _LIBSDD_ATTRIBUTE_PACKED sum
 {
 public:
 
