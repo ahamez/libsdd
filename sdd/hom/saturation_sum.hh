@@ -16,6 +16,7 @@
 #include "sdd/hom/local.hh"
 #include "sdd/hom/sum.hh"
 #include "sdd/order/order.hh"
+#include "sdd/internal/util/packed.hh"
 
 namespace sdd { namespace hom {
 
@@ -25,7 +26,7 @@ namespace sdd { namespace hom {
 
 /// @brief Saturation Sum homomorphism.
 template <typename C>
-class saturation_sum
+class _LIBSDD_ATTRIBUTE_PACKED saturation_sum
 {
 public:
 

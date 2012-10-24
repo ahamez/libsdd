@@ -14,6 +14,7 @@
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
+#include "sdd/internal/util/packed.hh"
 
 namespace sdd { namespace hom {
 
@@ -23,7 +24,7 @@ namespace sdd { namespace hom {
 
 /// @brief Saturation Fixpoint homomorphism.
 template <typename C>
-class saturation_fixpoint
+class _LIBSDD_ATTRIBUTE_PACKED saturation_fixpoint
 {
 public:
 

@@ -191,6 +191,8 @@
 		2BE71C70161CE08E00B22084 /* test_hom_local.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_local.cc; sourceTree = "<group>"; };
 		2BE71C73161CE1B300B22084 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		2BE8742015BF1DD000D38953 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
+		2BEA6EFB1637A5E500952A79 /* print_sizes.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = print_sizes.hh; sourceTree = "<group>"; };
+		2BEA6EFD1637DCE800952A79 /* print_sizes_fwd.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = print_sizes_fwd.hh; sourceTree = "<group>"; };
 		2BF0F988157A71B7005D1275 /* bitset.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bitset.hh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -379,6 +381,8 @@
 			children = (
 				2BD545BC15702831006B51B3 /* hash.hh */,
 				2B54BE8815710F9E005D5D3B /* packed.hh */,
+				2BEA6EFD1637DCE800952A79 /* print_sizes_fwd.hh */,
+				2BEA6EFB1637A5E500952A79 /* print_sizes.hh */,
 				2BB1A9AB14E07D38007921F2 /* typelist.hh */,
 			);
 			path = util;
