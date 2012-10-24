@@ -60,14 +60,18 @@ struct largest_size<T>
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief Provide our own version of std::aligned_union while it's not done by gcc and clang.
+/// @brief A storage large enough for the biggest T in Types.
 template <std::size_t Len, typename... Types>
-struct aligned_union
+struct union_storage
 {
   static constexpr std::size_t max_size = largest_size<Types...>::value;
   static constexpr std::size_t alignment_value = largest_alignment<Types...>::value;
   typedef typename std::aligned_storage< (Len > max_size ? Len : max_size)
+#ifdef LIBSDD_PACKED
+                                       , 1
+#else
                                        , alignment_value
+#endif
                                        >::type
                    type;
 };

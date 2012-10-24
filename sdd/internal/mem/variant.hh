@@ -59,7 +59,7 @@ private:
   const uint8_t index_;
 
   /// @brief A type large enough to contain all variant's types, with the correct alignement.
-  typedef typename aligned_union<0, Types...>::type storage_type;
+  typedef typename union_storage<0, Types...>::type storage_type;
 
   /// @brief Memory storage suitable for all Types.
   const storage_type storage_;
