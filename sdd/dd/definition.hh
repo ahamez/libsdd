@@ -13,6 +13,7 @@
 #include "sdd/internal/mem/ptr.hh"
 #include "sdd/internal/mem/ref_counted.hh"
 #include "sdd/internal/mem/variant.hh"
+#include "sdd/internal/util/print_sizes_fwd.hh"
 
 namespace sdd {
 
@@ -362,6 +363,8 @@ private:
       new (addr) SDD_unique(internal::mem::construct<node<C, Valuation>>(), var, builder);
     return internal::mem::unify(u);
   }
+
+  friend void internal::util::print_sizes<C>(std::ostream&);
 
 /// @endcond
 };

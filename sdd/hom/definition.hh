@@ -19,6 +19,7 @@
 #include "sdd/internal/mem/ptr.hh"
 #include "sdd/internal/mem/ref_counted.hh"
 #include "sdd/internal/mem/variant.hh"
+#include "sdd/internal/util/print_sizes_fwd.hh"
 
 namespace sdd { namespace hom {
 
@@ -213,6 +214,8 @@ public:
       return h.selector();
     }
   };
+
+  friend void internal::util::print_sizes<C>(std::ostream&);
 
 /// @endcond
 };
