@@ -65,13 +65,13 @@ template <std::size_t Len, typename... Types>
 struct union_storage
 {
   static constexpr std::size_t max_size = largest_size<Types...>::value;
-  static constexpr std::size_t alignment_value = largest_alignment<Types...>::value;
-  typedef typename std::aligned_storage< (Len > max_size ? Len : max_size)
 #ifdef LIBSDD_PACKED
-                                       , 1
+  static constexpr std::size_t alignment_value = 1;
 #else
-                                       , alignment_value
+  static constexpr std::size_t alignment_value = largest_alignment<Types...>::value;
 #endif
+  typedef typename std::aligned_storage< (Len > max_size ? Len : max_size)
+                                       , alignment_value
                                        >::type
                    type;
 };
