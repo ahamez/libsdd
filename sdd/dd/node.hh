@@ -74,9 +74,9 @@ public:
   /// O(n) where n is the number of arcs in the node.
   ~node()
   {
-    for (auto& arc : *this)
+    for (auto& a : *this)
     {
-      arc.~arc<C, Valuation>();
+      a.~arc<C, Valuation>();
     }
   }
 

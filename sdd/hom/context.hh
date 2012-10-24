@@ -68,7 +68,7 @@ public:
   }
 
   /// @brief Copy constructor.
-  context(context& other) = default;
+  context(const context& other) = default;
 
   /// @brief Return the cache of homomorphism evaluation.
   cache_type&
