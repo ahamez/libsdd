@@ -49,15 +49,6 @@ public:
   /// @brief The type of a set of values.
   typedef typename C::Values values_type;
 
-  /// @brief The type of a set of identifiers.
-//  typedef std::vector<identifier_type> identifiers_type;
-
-  /// @brief The type of a pointer to a set of identifiers.
-//  typedef std::shared_ptr<identifiers_type> identifiers_ptr_type;
-
-  /// @brief The type of an iterator to a set of identifiers.
-//  typedef typename identifiers_type::const_iterator identifiers_iterator_type;
-
   /// @brief We re-use this homomorphism as a visitor.
   typedef SDD<C> result_type;
 
@@ -131,15 +122,17 @@ public:
         for (const auto& arc : node)
         {
           const SDD<C> succ = next_closure(cxt, o.next(), arc.successor());
-          const flat_node<C>& n
-            = internal::mem::variant_cast<const flat_node<C>>(succ->data());
+          const flat_node<C>& n = internal::mem::variant_cast<const flat_node<C>>(succ->data());
+
           for (const auto& succ_arc : n)
           {
             su.add(succ_arc.successor(), succ_arc.valuation());
           }
         }
 
-        return SDD<C>(o.identifier_variable(*begin_), su(cxt.sdd_context()));
+        const variable_type var
+          = static_cast<variable_type>(std::distance(begin_, identifiers_ptr_->cend()) - 1);
+        return SDD<C>(var, su(cxt.sdd_context()));
       }
     }
     else // this level contains some identifiers we are interested in.
@@ -161,11 +154,9 @@ public:
         }
 
         // Then, transmit it to the nested closure.
-        const auto nested_closure = Closure( o.nested(), identifiers_ptr_, begin_
-                                           , new_successor);
-        SDD<C> new_valuation = nested_closure(cxt, o.nested(), arc.valuation());
-        const flat_node<C>& n
-          = internal::mem::variant_cast<const flat_node<C>>(new_valuation->data());
+        const auto nested_closure = Closure( o.nested(), identifiers_ptr_, begin_, new_successor);
+        SDD<C> new_val = nested_closure(cxt, o.nested(), arc.valuation());
+        const flat_node<C>& n = internal::mem::variant_cast<const flat_node<C>>(new_val->data());
 
         // Finally, add the new arcs to square union operands.
         for (const auto& narc : n)
@@ -174,7 +165,9 @@ public:
         }
       }
 
-      return SDD<C>(o.identifier_variable(*begin_), su(cxt.sdd_context()));
+      const variable_type var
+        = static_cast<variable_type>(std::distance(begin_, identifiers_ptr_->cend()) - 1);
+      return SDD<C>(var, su(cxt.sdd_context()));
     }
   }
 
@@ -201,15 +194,16 @@ public:
         for (const auto& arc : node)
         {
           const SDD<C> succ = next_closure(cxt, o.next(), arc.successor());
-          const flat_node<C>& n
-            = internal::mem::variant_cast<const flat_node<C>>(succ->data());
+          const flat_node<C>& n = internal::mem::variant_cast<const flat_node<C>>(succ->data());
           for (const auto& succ_arc : n)
           {
             su.add(succ_arc.successor(), succ_arc.valuation());
           }
         }
 
-        return SDD<C>(o.identifier_variable(*begin_), su(cxt.sdd_context()));
+        const variable_type var
+          = static_cast<variable_type>(std::distance(begin_, identifiers_ptr_->cend()) - 1);
+        return SDD<C>(var, su(cxt.sdd_context()));
       }
     }
     else // keep current level
@@ -231,12 +225,14 @@ public:
         const auto next_closure = Closure(o.next(), identifiers_ptr_, next_begin, successor_);
         for (const auto& arc : node)
         {
-          SDD<C> new_successor = next_closure(cxt, o.next(), arc.successor());
-          su.add(new_successor, arc.valuation());
+          SDD<C> new_succ = next_closure(cxt, o.next(), arc.successor());
+          su.add(new_succ, arc.valuation());
         }
       }
 
-      return SDD<C>(o.identifier_variable(*begin_), su(cxt.sdd_context()));
+      const variable_type var
+        = static_cast<variable_type>(std::distance(begin_, identifiers_ptr_->cend()) - 1);
+      return SDD<C>(var, su(cxt.sdd_context()));
     }
   }
 
@@ -351,6 +347,16 @@ Closure(const order::order<C>& o, InputIterator begin, InputIterator end)
                    return o.compare(lhs, rhs);
                  }
            );
+
+  for (const auto& id : *ptr)
+  {
+    if (not o.contains(id))
+    {
+      std::stringstream ss;
+      ss << "Identifier " << id << " not found at closure construction" << std::endl;
+      throw std::runtime_error(ss.str());
+    }
+  }
 
   return Closure(o, ptr, ptr->begin(), one<C>());
 }

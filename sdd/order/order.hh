@@ -15,8 +15,6 @@
 #include <boost/multi_index/key_extractors.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 
-#include "sdd/conf/variable_traits.hh"
-
 namespace sdd { namespace order {
 
 namespace bmi = boost::multi_index;
@@ -338,6 +336,14 @@ public:
     }
   }
 
+  bool
+  contains(const identifier_type& id)
+  const noexcept
+  {
+    const auto& identifiers = nodes_ptr_->template get<by_identifier>();
+    return identifiers.find(id) != identifiers.end();
+  }
+
   /// @brief Get the variable of an identifier
   variable_type
   identifier_variable(const identifier_type& id)
@@ -455,7 +461,7 @@ private:
     (const order_builder<C>& ob, const std::shared_ptr<std::vector<identifier_type>>& path)
     -> std::pair<const node*, unsigned int>
     {
-      constexpr variable_type first_variable = conf::variable_traits<variable_type>::first();
+      constexpr variable_type first_variable = 0;
 
       const unsigned int old_pos = pos++;
 
@@ -486,8 +492,7 @@ private:
         ss << "Duplicate identifier " << ob.identifier();
         throw std::runtime_error(ss.str());
       }
-      return std::make_pair( &*(insertion.first)
-                           , conf::variable_traits<variable_type>::next(variable));
+      return std::make_pair( &*(insertion.first), variable + 1);
     };
 
     helper(builder, std::make_shared<std::vector<identifier_type>>());

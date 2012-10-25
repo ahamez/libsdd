@@ -91,7 +91,6 @@
 		2B0EA1321615D0A10019EB04 /* order.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = order.hh; sourceTree = "<group>"; };
 		2B0EA13616163AC80019EB04 /* utility.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = utility.hh; sourceTree = "<group>"; };
 		2B0EA138161640450019EB04 /* test_utility.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_utility.cc; sourceTree = "<group>"; };
-		2B0EA13B161825110019EB04 /* variable_traits.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = variable_traits.hh; sourceTree = "<group>"; };
 		2B19AF0615C5D75800C4ABB0 /* paths.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; path = paths.hh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		2B19AF0815C5E3CD00C4ABB0 /* test_paths.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_paths.cc; sourceTree = "<group>"; };
 		2B1A26941619BDB1005D6BB0 /* definition.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = definition.hh; sourceTree = "<group>"; };
@@ -349,7 +348,6 @@
 			isa = PBXGroup;
 			children = (
 				2B85630B15C9B1CC00085F5F /* default_configurations.hh */,
-				2B0EA13B161825110019EB04 /* variable_traits.hh */,
 			);
 			path = conf;
 			sourceTree = "<group>";

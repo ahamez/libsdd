@@ -46,7 +46,7 @@ TEST_F(hom_closure_test, evaluation_flat)
   {
     order o(order_builder {"a", "b", "c"});
     const SDD s0(2, {0,1}, SDD(1, {2,3}, SDD(0, {4,5}, one)));
-    const SDD s1(2, {0,1}, SDD(0, {4,5}, one));
+    const SDD s1(1, {0,1}, SDD(0, {4,5}, one));
     const auto h0 = Closure<conf>(o, {"a", "c"});
     ASSERT_EQ(s1, h0(o, s0));
   }
@@ -60,21 +60,21 @@ TEST_F(hom_closure_test, evaluation_flat)
   {
     order o(order_builder {"a", "b", "c"});
     const SDD s0(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)));
-    const SDD s1(2, {0,1}, SDD(1, {0,1}, one));
+    const SDD s1(1, {0,1}, SDD(0, {0,1}, one));
     const auto h0 = Closure<conf>(o, {"a", "b"});
     ASSERT_EQ(s1, h0(o, s0));
   }
   {
     order o(order_builder {"a", "b", "c"});
     const SDD s0(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)));
-    const SDD s1(2, {0,1}, one);
+    const SDD s1(0, {0,1}, one);
     const auto h0 = Closure<conf>(o, {"a"});
     ASSERT_EQ(s1, h0(o, s0));
   }
   {
     order o(order_builder {"a", "b", "c"});
     const SDD s0(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)));
-    const SDD s1(1, {0,1}, one);
+    const SDD s1(0, {0,1}, one);
     const auto h0 = Closure<conf>(o, {"b"});
     ASSERT_EQ(s1, h0(o, s0));
   }
@@ -87,12 +87,6 @@ TEST_F(hom_closure_test, evaluation_flat)
   }
   {
     order o(order_builder {"a", "b", "c"});
-    const SDD s0(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)));
-    const auto h0 = Closure<conf>(o, {"d"});
-    ASSERT_THROW(h0(o, s0), std::runtime_error);
-  }
-  {
-    order o(order_builder {"a", "b", "c"});
     const SDD s0 = SDD(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)))
                  + SDD(2, {0,1}, SDD(1, {2,3}, SDD(0, {2,3}, one)));
     const auto h0 = Closure<conf>(o, {"a", "b", "c"});
@@ -102,7 +96,7 @@ TEST_F(hom_closure_test, evaluation_flat)
     order o(order_builder {"a", "b", "c"});
     const SDD s0 = SDD(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)))
                  + SDD(2, {0,1}, SDD(1, {2,3}, SDD(0, {2,3}, one)));
-    const SDD s1 = SDD(2, {0,1}, SDD(0, {0,1,2,3}, one));
+    const SDD s1 = SDD(1, {0,1}, SDD(0, {0,1,2,3}, one));
     const auto h0 = Closure<conf>(o, {"a", "c"});
     ASSERT_EQ(s1, h0(o, s0));
   }
@@ -110,7 +104,7 @@ TEST_F(hom_closure_test, evaluation_flat)
     order o(order_builder {"a", "b", "c"});
     const SDD s0 = SDD(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)))
                  + SDD(2, {0,1}, SDD(1, {2,3}, SDD(0, {2,3}, one)));
-    const SDD s1 = SDD(1, {0,1,2,3}, one);
+    const SDD s1 = SDD(0, {0,1,2,3}, one);
     const auto h0 = Closure<conf>(o, {"b"});
     ASSERT_EQ(s1, h0(o, s0));
   }
@@ -118,7 +112,7 @@ TEST_F(hom_closure_test, evaluation_flat)
     order o(order_builder {"a", "b", "c"});
     const SDD s0 = SDD(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)))
                  + SDD(2, {0,1}, SDD(1, {2,3}, SDD(0, {2,3}, one)));
-    const SDD s1 = SDD(2, {0,1}, one);
+    const SDD s1 = SDD(0, {0,1}, one);
     const auto h0 = Closure<conf>(o, {"a"});
     ASSERT_EQ(s1, h0(o, s0));
   }
@@ -134,8 +128,8 @@ TEST_F(hom_closure_test, evaluation_flat)
     order o(order_builder {"a", "b", "c"});
     const SDD s0 = SDD(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)))
                  + SDD(2, {2,3}, SDD(1, {2,3}, SDD(0, {2,3}, one)));
-    const SDD s1 = SDD(2, {0,1}, SDD(0, {0,1}, one))
-                 + SDD(2, {2,3}, SDD(0, {2,3}, one));
+    const SDD s1 = SDD(1, {0,1}, SDD(0, {0,1}, one))
+                 + SDD(1, {2,3}, SDD(0, {2,3}, one));
     const auto h0 = Closure<conf>(o, {"a", "c"});
     ASSERT_EQ(s1, h0(o, s0));
   }
@@ -153,21 +147,21 @@ TEST_F(hom_closure_test, evaluation_hierarchical)
   {
     order o(order_builder().add("c").add("x", order_builder {"b"}).add("a"));
     const SDD s0(2, {0,1}, SDD(1, SDD(0, {0,1}, one), SDD(0, {0,1}, one)));
-    const SDD s1(2, {0,1}, SDD(0, {0,1}, SDD(0, {0,1}, one)));
+    const SDD s1(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)));
     const auto h0 = Closure<conf>(o, {"a", "b", "c"});
     ASSERT_EQ(s1, h0(o, s0));
   }
   {
     order o(order_builder().add("c").add("x", order_builder {"b"}).add("a"));
     const SDD s0(2, {0,1}, SDD(1, SDD(0, {0,1}, one), SDD(0, {0,1}, one)));
-    const SDD s1(2, {0,1}, SDD(0, {0,1}, SDD(0, {0,1}, one)));
+    const SDD s1(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)));
     const auto h0 = Closure<conf>(o, {"c", "b", "a"});
     ASSERT_EQ(s1, h0(o, s0));
   }
   {
     order o(order_builder().add("c").add("x", order_builder {"b"}).add("a"));
     const SDD s0(2, {0,1}, SDD(1, SDD(0, {0,1}, one), SDD(0, {0,1}, one)));
-    const SDD s1(2, {0,1}, SDD(0, {0,1}, SDD(0, {0,1}, one)));
+    const SDD s1(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)));
     const auto h0 = Closure<conf>(o, {"b", "c", "a"});
     ASSERT_EQ(s1, h0(o, s0));
   }
@@ -183,17 +177,9 @@ TEST_F(hom_closure_test, evaluation_hierarchical)
     const SDD s0(2, {0,1}
         , SDD(1, SDD(0, {0,1}, one)
         , SDD(0, SDD(0, {0,1}, one), one)));
-    const SDD s1(2, {0,1}, SDD(0, {0,1}, SDD(0, {0,1}, one)));
+    const SDD s1(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)));
     const auto h0 = Closure<conf>(o, {"a", "b", "c"});
     ASSERT_EQ(s1, h0(o, s0));
-  }
-  {
-    order o(order_builder().add("y", order_builder {"c"}).add("x", order_builder {"b"}).add("a"));
-    const SDD s0(2, {0,1}
-        , SDD(1, SDD(0, {0,1}, one)
-        , SDD(0, SDD(0, {0,1}, one), one)));
-    const auto h0 = Closure<conf>(o, {"d"});
-    ASSERT_THROW(h0(o, s0), std::runtime_error);
   }
   {
     order o(order_builder().add("y", order_builder {"c"}).add("x", order_builder {"b"}).add("a"));
@@ -205,8 +191,8 @@ TEST_F(hom_closure_test, evaluation_hierarchical)
                  , SDD(1, SDD(0, {2,3}, one)
                  , SDD(0, SDD(0, {2,3}, one), one)));
 
-    const SDD s1 = SDD(2, {0,1}, SDD(0, {0,1}, SDD(0, {0,1}, one)))
-                 + SDD(2, {0,1}, SDD(0, {2,3}, SDD(0, {2,3}, one)));
+    const SDD s1 = SDD(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)))
+                 + SDD(2, {0,1}, SDD(1, {2,3}, SDD(0, {2,3}, one)));
 
     const auto h0 = Closure<conf>(o, {"a", "b", "c"});
     ASSERT_EQ(s1, h0(o, s0));
@@ -226,9 +212,9 @@ TEST_F(hom_closure_test, evaluation_hierarchical)
                  , SDD(0, SDD(0, {4,5}, one), one)));
 
 
-    const SDD s1 = SDD(2, {0,1}, SDD(0, {0,1}, SDD(0, {0,1}, one)))
-                 + SDD(2, {0,1}, SDD(0, {2,3}, SDD(0, {2,3}, one)))
-                 + SDD(2, {0,1}, SDD(0, {4,5}, SDD(0, {4,5}, one)));
+    const SDD s1 = SDD(2, {0,1}, SDD(1, {0,1}, SDD(0, {0,1}, one)))
+                 + SDD(2, {0,1}, SDD(1, {2,3}, SDD(0, {2,3}, one)))
+                 + SDD(2, {0,1}, SDD(1, {4,5}, SDD(0, {4,5}, one)));
 
     const auto h0 = Closure<conf>(o, {"a", "c", "b"});
     ASSERT_EQ(s1, h0(o, s0));
@@ -248,7 +234,7 @@ TEST_F(hom_closure_test, evaluation_hierarchical)
                  , SDD(0, SDD(0, {4,5}, one), one)));
 
 
-    const SDD s1 = SDD(2, {0,1}, SDD(0, {0,1,2,3,4,5}, one));
+    const SDD s1 = SDD(1, {0,1}, SDD(0, {0,1,2,3,4,5}, one));
 
     const auto h0 = Closure<conf>(o, {"a", "c"});
     ASSERT_EQ(s1, h0(o, s0));
@@ -267,9 +253,9 @@ TEST_F(hom_closure_test, evaluation_hierarchical)
                  , SDD(1, SDD(0, {4,5}, one)
                  , SDD(0, SDD(0, {4,5}, one), one)));
 
-    const SDD s1 = SDD(0, {0,1}, SDD(0, {0,1}, one))
-                 + SDD(0, {2,3}, SDD(0, {2,3}, one))
-                 + SDD(0, {4,5}, SDD(0, {4,5}, one));
+    const SDD s1 = SDD(1, {0,1}, SDD(0, {0,1}, one))
+                 + SDD(1, {2,3}, SDD(0, {2,3}, one))
+                 + SDD(1, {4,5}, SDD(0, {4,5}, one));
 
     const auto h0 = Closure<conf>(o, {"b", "c"});
     ASSERT_EQ(s1, h0(o, s0));
@@ -290,9 +276,9 @@ TEST_F(hom_closure_test, evaluation_hierarchical)
                  , SDD(0, SDD(0, {4,5}, one), one)));
 
 
-    const SDD s1 = SDD(0, {0,1}, SDD(0, {0,1}, one))
-                 + SDD(0, {2,3}, SDD(0, {2,3}, one))
-                 + SDD(0, {4,5}, SDD(0, {4,5}, one));
+    const SDD s1 = SDD(1, {0,1}, SDD(0, {0,1}, one))
+                 + SDD(1, {2,3}, SDD(0, {2,3}, one))
+                 + SDD(1, {4,5}, SDD(0, {4,5}, one));
 
     const auto h0 = Closure<conf>(o, {"b", "c"});
     ASSERT_EQ(s1, h0(o, s0));

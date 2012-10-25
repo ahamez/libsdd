@@ -5,6 +5,7 @@
 /// @brief Contain all stuff necessary to describe and build SDD.
 
 #include <initializer_list>
+#include <type_traits> // is_integral
 
 #include "sdd/dd/alpha.hh"
 #include "sdd/dd/definition_fwd.hh"
@@ -61,6 +62,10 @@ struct node_for_tag<C, node_tag::hierarchical>
 template <typename C>
 class SDD
 {
+
+  static_assert( std::is_integral<typename C::Variable>::value
+               , "A variable must be an integral type.");
+
 private:
 
   /// @brief A canonized SDD.
