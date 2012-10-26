@@ -16,6 +16,7 @@
 #include "sdd/hom/saturation_fixpoint.hh"
 #include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
+#include "sdd/hom/values_function.hh"
 #include "sdd/internal/mem/ptr.hh"
 #include "sdd/internal/mem/ref_counted.hh"
 #include "sdd/internal/mem/variant.hh"
@@ -43,6 +44,7 @@ private:
                                 , const saturation_fixpoint<C>
                                 , const saturation_sum<C>
                                 , const sum<C>
+                                , const values_function<C>
                                 >
           data_type;
 
