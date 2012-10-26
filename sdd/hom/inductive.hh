@@ -147,7 +147,7 @@ public:
   /// @brief Compare inductive_derived.
   bool
   operator==(const inductive_base<C>& other)
-  const noexcept
+  const noexcept(noexcept(User::operator==))
   {
     return typeid(*this) == typeid(other)
          ? h_ == reinterpret_cast<const inductive_derived&>(other).h_
