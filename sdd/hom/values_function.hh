@@ -245,37 +245,28 @@ private:
               , const values_function_base<C>& fun, context<C>& cxt, const SDD<C>& s)
     const
     {
-      try
+      if (fun.selector())
       {
-        if (fun.selector())
+        alpha_builder<C, values_type> ab;
+        ab.reserve(node.size());
+        for (const auto& arc : node)
         {
-          alpha_builder<C, values_type> ab;
-          ab.reserve(node.size());
-          for (const auto& arc : node)
+          values_type val = fun(arc.valuation());
+          if (not val.empty())
           {
-            values_type val = fun(arc.valuation());
-            if (not val.empty())
-            {
-              ab.add(std::move(val), arc.successor());
-            }
+            ab.add(std::move(val), arc.successor());
           }
-          return SDD<C>(node.variable(), std::move(ab));
         }
-        else
-        {
-          sum_builder<C, SDD<C>> sum_operands(node.size());
-          for (const auto& arc : node)
-          {
-            sum_operands.add(SDD<C>(node.variable(), fun(arc.valuation()), arc.successor()));
-          }
-          return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
-        }
+        return SDD<C>(node.variable(), std::move(ab));
       }
-      catch (top<C>& t)
+      else
       {
-        evaluation_error<C> e(s);
-        e.add_top(t);
-        throw e;
+        sum_builder<C, SDD<C>> sum_operands(node.size());
+        for (const auto& arc : node)
+        {
+          sum_operands.add(SDD<C>(node.variable(), fun(arc.valuation()), arc.successor()));
+        }
+        return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
       }
     }
   };
