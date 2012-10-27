@@ -43,6 +43,7 @@ public:
   /// @brief Local's evaluation implementation.
   struct evaluation
   {
+    /// @brief Used by variant.
     typedef SDD<C> result_type;
 
     SDD<C>
@@ -51,45 +52,43 @@ public:
               , const SDD<C>& s)
     const
     {
-      if (h.selector()) // partition won't change
+      try
       {
-        square_union<C, SDD<C>> su;
-        su.reserve(node.size());
-        for (const auto& arc : node)
+        if (h.selector()) // partition won't change
         {
-          SDD<C> new_valuation = h(cxt, arc.valuation());
-          if (not new_valuation.empty())
+          square_union<C, SDD<C>> su;
+          su.reserve(node.size());
+          for (const auto& arc : node)
           {
-            su.add(arc.successor(), new_valuation);
+            SDD<C> new_valuation = h(cxt, arc.valuation());
+            if (not new_valuation.empty())
+            {
+              su.add(arc.successor(), new_valuation);
+            }
           }
+          return SDD<C>(node.variable(), su(cxt.sdd_context()));
         }
-        return SDD<C>(node.variable(), su(cxt.sdd_context()));
-      }
-      else
-      {
-        sum_builder<C, SDD<C>> sum_operands(node.size());
-        for (const auto& arc : node)
+        else
         {
-          sum_operands.add(SDD<C>(var, h(cxt, arc.valuation()), arc.successor()));
-        }
-
-        try
-        {
+          sum_builder<C, SDD<C>> sum_operands(node.size());
+          for (const auto& arc : node)
+          {
+            sum_operands.add(SDD<C>(var, h(cxt, arc.valuation()), arc.successor()));
+          }
           return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
         }
-        catch (top<C>& t)
-        {
-          evaluation_error<C> e(s);
-          e.add_top(t);
-          throw e;
-        }
+      }
+      catch (top<C>& t)
+      {
+        evaluation_error<C> e(s);
+        e.add_top(t);
+        throw e;
       }
     }
 
     template <typename T>
     SDD<C>
-    operator()( const T&, context<C>&, const variable_type&, const homomorphism<C>&
-              , const SDD<C> s)
+    operator()(const T&, context<C>&, const variable_type&, const homomorphism<C>&, const SDD<C> s)
     const
     {
       throw evaluation_error<C>(s);
