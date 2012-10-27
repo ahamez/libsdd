@@ -23,6 +23,7 @@ set(SOURCES
     hom/test_hom_saturation_fixpoint.cc
     hom/test_hom_saturation_sum.cc
     hom/test_hom_sum.cc
+    hom/test_hom_values_function.cc
     hom/test_rewriting.cc
     internal/mem/test_cache.cc
     internal/mem/test_ptr.cc

@@ -1,6 +1,8 @@
 #ifndef _SDD_DD_SQUARE_UNION_HH_
 #define _SDD_DD_SQUARE_UNION_HH_
 
+#include <cassert>
+
 #include <boost/container/flat_map.hpp>
 
 #include "sdd/dd/alpha.hh"
@@ -29,10 +31,14 @@ private:
 public:
 
   /// @brief Add a new (reversed) arc to the operands.
+  ///
+  /// @pre not succ.empty() and not val.empty()
   template <typename Val>
   void
   add(const SDD<C>& succ, Val&& val)
   {
+    assert(not succ.empty() and not val.empty());
+
     auto lb = map_.lower_bound(succ);
     if (lb != map_.end() and not map_.key_comp()(succ, lb->first))
     {
