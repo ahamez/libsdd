@@ -259,7 +259,6 @@ public:
   skip(const order::order<C>& o)
   const noexcept
   {
-    std::cout << "skip ? " << o.identifier() << std::endl;
     return identifier_ != o.identifier();
   }
 

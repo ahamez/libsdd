@@ -128,6 +128,7 @@ struct hash<threshold_fun2>
 
 TEST_F(hom_values_function_test, construction)
 {
+<<<<<<< HEAD
   const order o(order_builder {"a", "b"});
   {
     const auto h0 = ValuesFunction<conf>(o, "a", threshold_fun(3));
@@ -147,6 +148,23 @@ TEST_F(hom_values_function_test, construction)
   {
     ASSERT_THROW(ValuesFunction<conf>(o, "c", threshold_fun(2)), std::runtime_error);
   }
+=======
+  {
+    const auto h0 = ValuesFunction<conf>(0, threshold_fun(3));
+    const auto h1 = ValuesFunction<conf>(0, threshold_fun(3));
+    ASSERT_EQ(h0, h1);
+  }
+  {
+    const auto h0 = ValuesFunction<conf>(0, threshold_fun(3));
+    const auto h1 = ValuesFunction<conf>(0, threshold_fun(0));
+    ASSERT_NE(h0, h1);
+  }
+  {
+    const auto h0 = ValuesFunction<conf>(0, threshold_fun(3));
+    const auto h1 = ValuesFunction<conf>(1, threshold_fun(3));
+    ASSERT_NE(h0, h1);
+  }
+>>>>>>> 18437b132e751aceeddc8777dbadc393980982c9
 }
 
 /*-------------------------------------------------------------------------------------------*/
@@ -154,6 +172,7 @@ TEST_F(hom_values_function_test, construction)
 TEST_F(hom_values_function_test, evaluation_selector)
 {
   {
+<<<<<<< HEAD
     const order o(order_builder {"a"});
     const SDD s0(0, {1,2,3}, one);
     const auto h0 = ValuesFunction<conf>(o, "a", threshold_fun(2));
@@ -196,6 +215,49 @@ TEST_F(hom_values_function_test, evaluation_selector)
                  + SDD(1, {4,5,6}, SDD(0, {4,5,6}, one));
     const auto h0 = ValuesFunction<conf>(o, "b", threshold_fun(0));
     ASSERT_EQ(zero, h0(o, s0));
+=======
+    const SDD s0('a', {1,2,3}, one);
+    const auto h0 = ValuesFunction<conf>('a', threshold_fun(2));
+    const SDD s1('a', {1,2}, one);
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0('a', {0,1,3}, one);
+    const auto h0 = ValuesFunction<conf>('a', threshold_fun(2));
+    const SDD s1('a', {0,1}, one);
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0('a', {1,2,3}, one);
+    const auto h0 = ValuesFunction<conf>('b', threshold_fun(2));
+    ASSERT_EQ(s0, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {1,2,3}, SDD('b', {1,2,3}, one))
+                 + SDD('a', {4,5,6}, SDD('b', {4,5,6}, one));
+    const auto h0 = ValuesFunction<conf>('a', threshold_fun(2));
+    const SDD s1 = SDD('a', {1,2}, SDD('b', {1,2,3}, one));
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {1,2,3}, SDD('b', {1,2,3}, one))
+                 + SDD('a', {4,5,6}, SDD('b', {4,5,6}, one));
+    const auto h0 = ValuesFunction<conf>('b', threshold_fun(2));
+    const SDD s1 = SDD('a', {1,2,3}, SDD('b', {1,2}, one));
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {1,2,3}, SDD('b', {1,2,3}, one))
+                 + SDD('a', {4,5,6}, SDD('b', {4,5,6}, one));
+    const auto h0 = ValuesFunction<conf>('a', threshold_fun(0));
+    ASSERT_EQ(zero, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {1,2,3}, SDD('b', {1,2,3}, one))
+                 + SDD('a', {4,5,6}, SDD('b', {4,5,6}, one));
+    const auto h0 = ValuesFunction<conf>('b', threshold_fun(0));
+    ASSERT_EQ(zero, h0(s0));
+>>>>>>> 18437b132e751aceeddc8777dbadc393980982c9
   }
 }
 
@@ -204,6 +266,7 @@ TEST_F(hom_values_function_test, evaluation_selector)
 TEST_F(hom_values_function_test, evaluation_no_selector)
 {
   {
+<<<<<<< HEAD
     const order o(order_builder {"a"});
     const SDD s0(0, {1,2,3}, one);
     const auto h0 = ValuesFunction<conf>(o, "a", threshold_fun2(2));
@@ -246,6 +309,49 @@ TEST_F(hom_values_function_test, evaluation_no_selector)
                  + SDD(1, {4,5,6}, SDD(0, {4,5,6}, one));
     const auto h0 = ValuesFunction<conf>(o, "b", threshold_fun2(0));
     ASSERT_EQ(zero, h0(o, s0));
+=======
+    const SDD s0('a', {1,2,3}, one);
+    const auto h0 = ValuesFunction<conf>('a', threshold_fun2(2));
+    const SDD s1('a', {1,2}, one);
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0('a', {0,1,3}, one);
+    const auto h0 = ValuesFunction<conf>('a', threshold_fun2(2));
+    const SDD s1('a', {0,1}, one);
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0('a', {1,2,3}, one);
+    const auto h0 = ValuesFunction<conf>('b', threshold_fun2(2));
+    ASSERT_EQ(s0, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {1,2,3}, SDD('b', {1,2,3}, one))
+                 + SDD('a', {4,5,6}, SDD('b', {4,5,6}, one));
+    const auto h0 = ValuesFunction<conf>('a', threshold_fun2(2));
+    const SDD s1 = SDD('a', {1,2}, SDD('b', {1,2,3}, one));
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {1,2,3}, SDD('b', {1,2,3}, one))
+                 + SDD('a', {4,5,6}, SDD('b', {4,5,6}, one));
+    const auto h0 = ValuesFunction<conf>('b', threshold_fun2(2));
+    const SDD s1 = SDD('a', {1,2,3}, SDD('b', {1,2}, one));
+    ASSERT_EQ(s1, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {1,2,3}, SDD('b', {1,2,3}, one))
+                 + SDD('a', {4,5,6}, SDD('b', {4,5,6}, one));
+    const auto h0 = ValuesFunction<conf>('a', threshold_fun2(0));
+    ASSERT_EQ(zero, h0(s0));
+  }
+  {
+    const SDD s0 = SDD('a', {1,2,3}, SDD('b', {1,2,3}, one))
+                 + SDD('a', {4,5,6}, SDD('b', {4,5,6}, one));
+    const auto h0 = ValuesFunction<conf>('b', threshold_fun2(0));
+    ASSERT_EQ(zero, h0(s0));
+>>>>>>> 18437b132e751aceeddc8777dbadc393980982c9
   }
 }
 
