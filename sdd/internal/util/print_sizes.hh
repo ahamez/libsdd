@@ -52,6 +52,7 @@ print_sizes(std::ostream& os)
   os << "Saturation Fixpoint   " << sizeof(hom::saturation_fixpoint<C>) << std::endl;
   os << "Saturation Sum        " << sizeof(hom::saturation_sum<C>) << std::endl;
   os << "Sum                   " << sizeof(hom::sum<C>) << std::endl;
+  os << "Values Function       " << sizeof(hom::values_function<C>) << std::endl;
 }
 
 /*-------------------------------------------------------------------------------------------*/

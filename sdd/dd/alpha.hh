@@ -111,7 +111,7 @@ public:
   }
 
   /// @brief Add an arc to the alpha.
-  /// @param val shall be an element of a partition, no verification will be made.
+  /// @param val shall be a non-empty element of a partition, no verification will be made.
   /// @param succ
   void
   add(Valuation&& val, const SDD<C>& succ)
@@ -120,7 +120,7 @@ public:
   }
 
   /// @brief Add an arc to the alpha.
-  /// @param val shall be an element of a partition, no verification will be made.
+  /// @param val shall be a non-empty element of a partition, no verification will be made.
   /// @param succ
   void
   add(const Valuation& val, const SDD<C>& succ)

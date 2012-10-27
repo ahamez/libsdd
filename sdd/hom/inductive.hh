@@ -2,14 +2,15 @@
 #define _SDD_HOM_INDUCTIVE_HH_
 
 #include <iosfwd>
-#include <memory> // unique_ptr
+#include <memory>   // unique_ptr
+#include <typeinfo> // typeid
 
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
-#include "sdd/order/order.hh"
 #include "sdd/internal/util/packed.hh"
+#include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
 
@@ -147,16 +148,12 @@ public:
   /// @brief Compare inductive_derived.
   bool
   operator==(const inductive_base<C>& other)
-  const noexcept
+  const noexcept(noexcept(User::operator==))
   {
-    try
-    {
-      return h_ == dynamic_cast<const inductive_derived&>(other).h_;
-    }
-    catch(std::bad_cast)
-    {
-      return false;
-    }
+    return typeid(*this) == typeid(other)
+         ? h_ == reinterpret_cast<const inductive_derived&>(other).h_
+         : false
+         ;
   }
 
   /// @brief Get the user's inductive hash value.

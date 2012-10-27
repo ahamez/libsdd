@@ -6,32 +6,33 @@ add_subdirectory(gtest)
 
 set(SOURCES
     tests.cc
-    dd/test_definition.cc
-    dd/test_difference.cc
-    dd/test_intersection.cc
-    dd/test_paths.cc
-    dd/test_sum.cc
-    dd/test_top.cc
-    hom/common_inductives.cc
-    hom/test_hom_closure.cc
-    hom/test_hom_composition.cc
-    hom/test_hom_cons.cc
-    hom/test_hom_fixpoint.cc
-    hom/test_hom_identity.cc
-    hom/test_hom_inductive.cc
-    hom/test_hom_local.cc
-    hom/test_hom_saturation_fixpoint.cc
-    hom/test_hom_saturation_sum.cc
-    hom/test_hom_sum.cc
-    hom/test_rewriting.cc
-    internal/mem/test_cache.cc
-    internal/mem/test_ptr.cc
-    internal/mem/test_unique_table.cc
-    internal/mem/test_variant_no_unroll.cc
-    internal/mem/test_variant.cc
-    order/test_order.cc
-    order/test_utility.cc
-    values/test_bitset.cc
+    # dd/test_definition.cc
+    # dd/test_difference.cc
+    # dd/test_intersection.cc
+    # dd/test_paths.cc
+    # dd/test_sum.cc
+    # dd/test_top.cc
+    # hom/common_inductives.cc
+    # hom/test_hom_closure.cc
+    # hom/test_hom_composition.cc
+    # hom/test_hom_cons.cc
+    # hom/test_hom_fixpoint.cc
+    # hom/test_hom_identity.cc
+    # hom/test_hom_inductive.cc
+    # hom/test_hom_local.cc
+    # hom/test_hom_saturation_fixpoint.cc
+    # hom/test_hom_saturation_sum.cc
+    # hom/test_hom_sum.cc
+    hom/test_hom_values_function.cc
+    # hom/test_rewriting.cc
+    # internal/mem/test_cache.cc
+    # internal/mem/test_ptr.cc
+    # internal/mem/test_unique_table.cc
+    # internal/mem/test_variant_no_unroll.cc
+    # internal/mem/test_variant.cc
+    # order/test_order.cc
+    # order/test_utility.cc
+    # values/test_bitset.cc
     )
 
 add_executable(tests ${SOURCES})
