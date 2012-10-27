@@ -249,13 +249,17 @@ private:
       {
         if (fun.selector())
         {
-          square_union<C, values_type> su;
-          su.reserve(node.size());
+          alpha_builder<C, values_type> ab;
+          ab.reserve(node.size());
           for (const auto& arc : node)
           {
-            su.add(arc.successor(), fun(arc.valuation()));
+            values_type val = fun(arc.valuation());
+            if (not val.empty())
+            {
+              ab.add(std::move(val), arc.successor());
+            }
           }
-          return SDD<C>(node.variable(), su(cxt.sdd_context()));
+          return SDD<C>(node.variable(), std::move(ab));
         }
         else
         {
