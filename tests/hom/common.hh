@@ -24,6 +24,7 @@ using sdd::hom::Local;
 using sdd::hom::SaturationFixpoint;
 using sdd::hom::SaturationSum;
 using sdd::hom::Sum;
+using sdd::hom::ValuesFunction;
 
 /*-------------------------------------------------------------------------------------------*/
 
