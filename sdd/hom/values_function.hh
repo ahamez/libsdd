@@ -23,18 +23,12 @@ class values_function_base
 {
 public:
 
-  typedef typename C::Variable  variable_type;
   typedef typename C::Values    values_type;
 
   virtual
   ~values_function_base()
   {
   }
-
-  /// @brief Tell if the user's function skip the current variable.
-  virtual
-  bool
-  skip(const variable_type&) const noexcept = 0;
 
   /// @brief Tell if the user's function is a selector.
   virtual
@@ -94,14 +88,6 @@ public:
   {
   }
 
-  /// @brief Tell if the user's function skip the current variable.
-  bool
-  skip(const variable_type& var)
-  const noexcept
-  {
-    return skip_impl(fun_, var, 0);
-  }
-
   /// @brief Tell if the user's function is a selector.
   bool
   selector()
@@ -147,30 +133,6 @@ public:
 
 private:
 
-  /// @brief Called when the user's function has skip().
-  ///
-  /// Compile-time dispatch.
-  template <typename T>
-  static auto
-  skip_impl(const T& x, const variable_type& v, int)
-  noexcept
-  -> decltype(x.skip(v))
-  {
-    return x.skip(v);
-  }
-
-  /// @brief Called when the user's function doesn't have skip().
-  ///
-  /// Compile-time dispatch.
-  template <typename T>
-  static auto
-  skip_impl(const T&, const variable_type&, long)
-  noexcept
-  -> decltype(false)
-  {
-    return false;
-  }
-
   /// @brief Called when the user's function has selector().
   ///
   /// Compile-time dispatch.
@@ -204,8 +166,14 @@ class _LIBSDD_ATTRIBUTE_PACKED values_function
 {
 private:
 
+  /// @brief The type of a variable.
+  typedef typename C::Variable variable_type;
+
   /// @brief The type of a valuation on a flat node.
   typedef typename C::Values values_type;
+
+  /// @brief The variable on which the user function is applied.
+  const variable_type variable_;
 
   /// @brief Ownership of the user's values function.
   const std::unique_ptr<const values_function_base<C>> fun_ptr_;
@@ -274,9 +242,26 @@ private:
 public:
 
   /// @brief Constructor.
-  values_function(const values_function_base<C>* f_ptr)
-    : fun_ptr_(f_ptr)
+  values_function(const variable_type& var, const values_function_base<C>* f_ptr)
+    : variable_(var)
+    , fun_ptr_(f_ptr)
   {
+  }
+
+  /// @brief Skip variable predicate.
+  bool
+  skip(const variable_type& var)
+  const noexcept
+  {
+    return var != variable_;
+  }
+
+  /// @brief Selector predicate
+  bool
+  selector()
+  const noexcept
+  {
+    return fun_ptr_->selector();
   }
 
   /// @brief Evaluation.
@@ -287,20 +272,12 @@ public:
     return apply_visitor(helper(), x->data(), *fun_ptr_, cxt, x);
   }
 
-  /// @brief Skip variable predicate.
-  bool
-  skip(const typename C::Variable& var)
+  /// @brief Get the variable on which the user's function is applied.
+  const variable_type&
+  variable()
   const noexcept
   {
-    return fun_ptr_->skip(var);
-  }
-
-  /// @brief Selector predicate
-  bool
-  selector()
-  const noexcept
-  {
-    return fun_ptr_->selector();
+    return variable_;
   }
 
   /// @brief Return the user's values function.
@@ -322,7 +299,7 @@ bool
 operator==(const values_function<C>& lhs, const values_function<C>& rhs)
 noexcept
 {
-  return lhs.fun() == rhs.fun();
+  return lhs.variable() == rhs.variable() and lhs.fun() == rhs.fun();
 }
 
 /// @related values_function
@@ -330,32 +307,33 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const values_function<C>& x)
 {
+  os << "Function(" << x.variable() << ", ";
   x.fun().print(os);
-  return os;
+  return os << ")";
 }
 
 /// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief Create the Values homomorphism.
+/// @brief Create the Values Function homomorphism.
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-Values(const User& u)
+ValuesFunction(const typename C::Variable& v, const User& u)
 {
   return homomorphism<C>::create( internal::mem::construct<values_function<C>>()
-                                , new values_function_derived<C, User>(u));
+                                , v, new values_function_derived<C, User>(u));
 }
 
-/// @brief Create the Values homomorphism.
+/// @brief Create the Values Function homomorphism.
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-Values(User&& u)
+ValuesFunction(const typename C::Variable& v, User&& u)
 {
   return homomorphism<C>::create( internal::mem::construct<values_function<C>>()
-                                , new values_function_derived<C, User>(std::move(u)));
+                                , v, new values_function_derived<C, User>(std::move(u)));
 }
 
 /*-------------------------------------------------------------------------------------------*/
@@ -376,7 +354,9 @@ struct hash<sdd::hom::values_function<C>>
   operator()(const sdd::hom::values_function<C>& x)
   const noexcept
   {
-    return x.fun().hash();
+    std::size_t seed = x.fun().hash();
+    sdd::internal::util::hash_combine(seed, x.variable());
+    return seed;
   }
 };
 
