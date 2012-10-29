@@ -107,7 +107,7 @@ public:
   /// @brief Compare values_derived.
   bool
   operator==(const values_function_base<C>& other)
-  const noexcept(noexcept(User::operator==))
+  const noexcept
   {
     return typeid(*this) == typeid(other)
          ? fun_ == reinterpret_cast<const values_function_derived&>(other).fun_
