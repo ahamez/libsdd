@@ -2,8 +2,9 @@
 #define _SDD_HOM_VALUES_FUNCTION_HH_
 
 #include <iosfwd>
-#include <memory>   // unique_ptr
-#include <typeinfo> // typeid
+#include <memory>    // unique_ptr
+#include <stdexcept> // invalid_argument
+#include <typeinfo>  // typeid
 
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
@@ -332,7 +333,7 @@ ValuesFunction(const order::order<C>& o, const typename C::Idenfitier& i, const 
   {
     std::stringstream ss;
     ss << "Identifier " << i << " not found." << std::endl;
-    throw std::runtime_error(ss.str());
+    throw std::invalid_argument(ss.str());
   }
   return homomorphism<C>::create( internal::mem::construct<values_function<C>>()
                                 , i, new values_function_derived<C, User>(u));
@@ -348,7 +349,7 @@ ValuesFunction(const order::order<C>& o, const typename C::Identifier& i, User&&
   {
     std::stringstream ss;
     ss << "Identifier " << i << " not found." << std::endl;
-    throw std::runtime_error(ss.str());
+    throw std::invalid_argument(ss.str());
   }
   return homomorphism<C>::create( internal::mem::construct<values_function<C>>()
                                 , i, new values_function_derived<C, User>(std::move(u)));
