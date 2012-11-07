@@ -267,7 +267,7 @@ private:
       for (const auto& arc : node)
       {
         const homomorphism<C> next_hom = i(o, arc.valuation());
-        sum_operands.add(next_hom(cxt, o, arc.successor()));
+        sum_operands.add(next_hom(cxt, o.next(), arc.successor()));
       }
 
       try
