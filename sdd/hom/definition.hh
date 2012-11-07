@@ -4,7 +4,6 @@
 #include <iosfwd>
 
 #include "sdd/dd/sum.hh"
-#include "sdd/hom/closure.hh"
 #include "sdd/hom/composition.hh"
 #include "sdd/hom/cons.hh"
 #include "sdd/hom/constant.hh"
@@ -35,8 +34,7 @@ class homomorphism
 private:
 
   /// @brief A canonized homomorphism.
-  typedef internal::mem::variant< const closure<C>
-                                , const composition<C>
+  typedef internal::mem::variant< const composition<C>
                                 , const cons<C, SDD<C>>
                                 , const cons<C, typename C::Values>
                                 , const constant<C>

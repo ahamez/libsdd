@@ -13,7 +13,6 @@ set(SOURCES
     dd/test_sum.cc
     dd/test_top.cc
     hom/common_inductives.cc
-    hom/test_hom_closure.cc
     hom/test_hom_composition.cc
     hom/test_hom_cons.cc
     hom/test_hom_fixpoint.cc
