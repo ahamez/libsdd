@@ -145,7 +145,7 @@ TEST_F(hom_values_function_test, construction)
     ASSERT_NE(h0, h1);
   }
   {
-    ASSERT_THROW(ValuesFunction<conf>(o, "c", threshold_fun(2)), std::runtime_error);
+    ASSERT_THROW(ValuesFunction<conf>(o, "c", threshold_fun(2)), std::invalid_argument);
   }
 }
 
