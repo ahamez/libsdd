@@ -17,7 +17,6 @@ typedef sdd::SDD<conf> SDD;
 typedef sdd::hom::homomorphism<conf> hom;
 typedef sdd::values::bitset<64> bitset;
 
-using sdd::hom::Closure;
 using sdd::hom::Composition;
 using sdd::hom::Cons;
 using sdd::hom::Fixpoint;
