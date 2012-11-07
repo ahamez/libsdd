@@ -485,6 +485,27 @@ public:
     return head_ == nullptr;
   }
 
+  /// @cond INTERNAL_DOC
+
+  std::size_t
+  hash()
+  const noexcept
+  {
+    std::size_t seed = 0;
+    internal::util::hash_combine(seed, nodes_ptr_.get());
+    internal::util::hash_combine(seed, head_);
+    return seed;
+  }
+
+  bool
+  operator==(const order& other)
+  const noexcept
+  {
+    return nodes_ptr_ == other.nodes_ptr_ and head_ == other.head_;
+  }
+
+  /// @endcond
+
 private:
 
   /// @brief Construct whith a shallow copy an already existing order.
@@ -601,5 +622,29 @@ operator<<(std::ostream& os, const order<C>& ord)
 /*-------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::order
+
+namespace std {
+
+/*-------------------------------------------------------------------------------------------*/
+
+/// @cond INTERNAL_DOC
+
+/// @brief Hash specialization for sdd::order::order.
+template <typename C>
+struct hash<sdd::order::order<C>>
+{
+  std::size_t
+  operator()(const sdd::order::order<C>& o)
+  const noexcept
+  {
+    return o.hash();
+  }
+};
+
+/// @endcond
+
+/*-------------------------------------------------------------------------------------------*/
+
+} // namespace std
 
 #endif // _SDD_ORDER_ORDER_HH_
