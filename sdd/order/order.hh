@@ -9,6 +9,8 @@
 #include <utility>   // pair
 #include <vector>
 
+#include <boost/iterator/transform_iterator.hpp>
+
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/identity.hpp>
@@ -273,13 +275,33 @@ private:
             >
           > nodes_type;
 
+  /// @brief
+  typedef typename nodes_type::template index<by_identifier>::type::const_iterator
+          identifiers_const_iterator;
+
   /// @brief The concrete order.
   const std::shared_ptr<nodes_type> nodes_ptr_;
 
   /// @brief The first node in the order.
   const node* head_;
 
+  /// @brief Extract the identifier of a node.
+  struct extract_identifier
+  {
+    typedef const identifier_type& result_type;
+
+    const identifier_type&
+    operator()(const node& n)
+    const noexcept
+    {
+      return n.identifier;
+    }
+  };
+
 public:
+
+  /// @brief
+  typedef boost::transform_iterator<extract_identifier, identifiers_const_iterator> const_iterator;
 
   /// @brief Constructor.
   order(const order_builder<C>& builder)
@@ -336,12 +358,47 @@ public:
     }
   }
 
-  bool
-  contains(const identifier_type& id)
+  /// @brief Beginning of identifiers.
+  const_iterator
+  cbegin()
   const noexcept
   {
+    return const_iterator(nodes_ptr_->template get<by_identifier>().begin(), extract_identifier());
+  }
+
+  /// @brief End of identifiers.
+  const_iterator
+  cend()
+  const noexcept
+  {
+    return const_iterator(nodes_ptr_->template get<by_identifier>().end(), extract_identifier());
+  }
+
+  /// @brief Tell if two identifiers belong to the same hierarchy.
+  bool
+  same_hierarchy(const identifier_type& lhs, const identifier_type& rhs)
+  const
+  {
     const auto& identifiers = nodes_ptr_->template get<by_identifier>();
-    return identifiers.find(id) != identifiers.end();
+
+    const auto lhs_search = identifiers.find(lhs);
+    if (lhs_search == identifiers.end())
+    {
+      std::stringstream ss;
+      ss << "Identifier " << lhs << " not found";
+      throw std::runtime_error(ss.str());
+    }
+
+    const auto rhs_search = identifiers.find(rhs);
+    if (rhs_search == identifiers.end())
+    {
+      std::stringstream ss;
+      ss << "Identifier " << rhs << " not found";
+      throw std::runtime_error(ss.str());
+    }
+
+    // paths are shared, we can compare pointers
+    return lhs_search->path_ptr == rhs_search->path_ptr;
   }
 
   /// @brief Get the variable of an identifier

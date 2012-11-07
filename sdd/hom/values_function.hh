@@ -1,6 +1,7 @@
 #ifndef _SDD_HOM_VALUES_FUNCTION_HH_
 #define _SDD_HOM_VALUES_FUNCTION_HH_
 
+#include <algorithm> // find
 #include <iosfwd>
 #include <memory>    // unique_ptr
 #include <stdexcept> // invalid_argument
@@ -329,7 +330,7 @@ template <typename C, typename User>
 homomorphism<C>
 ValuesFunction(const order::order<C>& o, const typename C::Idenfitier& i, const User& u)
 {
-  if (not o.contains(i))
+  if (std::find(o.cbegin(), o.cend(), i) == o.cend())
   {
     std::stringstream ss;
     ss << "Identifier " << i << " not found." << std::endl;
@@ -345,7 +346,7 @@ template <typename C, typename User>
 homomorphism<C>
 ValuesFunction(const order::order<C>& o, const typename C::Identifier& i, User&& u)
 {
-  if (not o.contains(i))
+  if (std::find(o.cbegin(), o.cend(), i) == o.cend())
   {
     std::stringstream ss;
     ss << "Identifier " << i << " not found." << std::endl;

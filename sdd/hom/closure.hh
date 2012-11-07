@@ -350,7 +350,7 @@ Closure(const order::order<C>& o, InputIterator begin, InputIterator end)
 
   for (const auto& id : *ptr)
   {
-    if (not o.contains(id))
+    if (std::find(o.cbegin(), o.cend(), id) == o.cend())
     {
       std::stringstream ss;
       ss << "Identifier " << id << " not found at closure construction" << std::endl;
