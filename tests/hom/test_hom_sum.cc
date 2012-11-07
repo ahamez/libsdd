@@ -112,8 +112,8 @@ TEST_F(hom_sum_test, construction)
   {
     order_builder ob {"0"};
     order o(ob);
-    const hom h1 = sdd::hom::Sum(o, {sdd::hom::Cons("0", o, bitset {0,1}, id)});
-    ASSERT_EQ(sdd::hom::Cons("0", o, bitset {0,1}, id), h1);
+    const hom h1 = sdd::hom::Sum(o, {sdd::hom::Cons(o, bitset {0,1}, id)});
+    ASSERT_EQ(sdd::hom::Cons(o, bitset {0,1}, id), h1);
   }
   {
     const hom h1 = sdd::hom::Sum(order(order_builder()), {id});
@@ -123,8 +123,8 @@ TEST_F(hom_sum_test, construction)
   {
     order_builder ob {"0"};
     order o(ob);
-    const hom h1 = sdd::hom::Sum(o, {id, sdd::hom::Cons("0", o, bitset {0,1}, id)});
-    const hom h2 = sdd::hom::Sum(o, {id, sdd::hom::Cons("0", o, bitset {0,2}, id)});
+    const hom h1 = sdd::hom::Sum(o, {id, sdd::hom::Cons(o, bitset {0,1}, id)});
+    const hom h2 = sdd::hom::Sum(o, {id, sdd::hom::Cons(o, bitset {0,2}, id)});
     ASSERT_NE(h1, h2);
   }
   {
@@ -181,40 +181,8 @@ TEST_F(hom_sum_test, evaluation)
   {
     order_builder ob {"a", "b"};
     order o(ob);
-    hom h = Sum(o, {Cons("a", o, bitset {0}, id), Cons("a", o, bitset {1}, id)});
-    ASSERT_EQ(SDD(1, {0,1}, one), h(o, one));
-    ASSERT_EQ(SDD(1, {0,1}, SDD(0, {0}, one)), h(o, SDD(0, {0}, one)));
-  }
-}
-
-/*-------------------------------------------------------------------------------------------*/
-
-TEST_F(hom_sum_test, error)
-{
-  order_builder ob {"a", "b", "c"};
-  order o(ob);
-  hom h = Sum(o, {Cons("a", o, bitset {0}, id), Cons("b", o, bitset {0}, id)});
-
-  ASSERT_THROW(h(o, one), sdd::hom::evaluation_error<conf>);
-  try
-  {
-    h(o, one);
-  }
-  catch(sdd::hom::evaluation_error<conf>& e)
-  {
-    ASSERT_EQ(one, e.operand());
-    ASSERT_NE(nullptr, e.what());
-  }
-
-  ASSERT_THROW(h(o, SDD(0, {0}, one)), sdd::hom::evaluation_error<conf>);
-  try
-  {
-    h(o, SDD(0, {0}, one));
-  }
-  catch(sdd::hom::evaluation_error<conf>& e)
-  {
-    ASSERT_EQ(SDD(0, {0}, one), e.operand());
-    ASSERT_NE(nullptr, e.what());
+    hom h = Sum(o, {Cons(o, bitset {0}, id), Cons(o, bitset {1}, id)});
+    ASSERT_EQ(SDD(1, {0,1}, SDD(0, {0}, one)), h(o.next(), SDD(0, {0}, one)));
   }
 }
 

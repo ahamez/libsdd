@@ -24,7 +24,7 @@ hom
 targeted_incr::operator()(const order& o, const SDD& x)
 const
 {
-  return Cons(o.identifier(), o, x, Inductive<conf>(*this));
+  return Cons(o, x, Inductive<conf>(*this));
 }
 
 hom
@@ -33,11 +33,11 @@ const
 {
   if (val.content().test(2))
   {
-    return Cons(o.identifier(), o, val, id);
+    return Cons(o, val, id);
   }
   else
   {
-    return Cons(o.identifier(), o, val << value_, id);
+    return Cons(o, val << value_, id);
   }
 }
 
@@ -86,7 +86,7 @@ hom
 incr::operator()(const order& o, const SDD& x)
 const
 {
-  return Cons(o.identifier(), o, x, Inductive<conf>(*this));
+  return Cons(o, x, Inductive<conf>(*this));
 }
 
 hom
@@ -95,11 +95,11 @@ const
 {
   if (val.content().test(2))
   {
-    return Cons(o.identifier(), o, val, id);
+    return Cons(o, val, id);
   }
   else
   {
-    return Cons(o.identifier(), o, val << value_, id);
+    return Cons(o, val << value_, id);
   }
 }
 
@@ -148,14 +148,14 @@ hom
 targeted_noop::operator()(const order& o, const SDD& val)
 const
 {
-  return Cons(o.identifier(), o, val, id);
+  return Cons(o, val, id);
 }
 
 hom
 targeted_noop::operator()(const order& o, const bitset& val)
 const
 {
-  return Cons(o.identifier(), o, val, id);
+  return Cons(o, val, id);
 }
 
 SDD

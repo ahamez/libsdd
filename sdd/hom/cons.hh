@@ -21,16 +21,13 @@ class _LIBSDD_ATTRIBUTE_PACKED cons
 {
 public:
 
-  /// @brief The variable type.
-  typedef typename C::Variable variable_type;
-
   /// @brief The identifier type.
   typedef typename C::Identifier identifier_type;
 
 private:
 
-  /// @brief The variable of the SDD to create.
-  const variable_type variable_;
+  /// @brief
+  const order::order<C> order_;
 
   /// @brief The valuation of the SDD to create.
   const Valuation valuation_;
@@ -41,9 +38,8 @@ private:
 public:
 
   /// @brief Constructor.
-  cons( const identifier_type& id, const order::order<C>& o
-      , const Valuation& val, const homomorphism<C>& h)
-    : variable_(o.identifier_variable(id))
+  cons(const order::order<C>& o, const Valuation& val, const homomorphism<C>& h)
+    : order_(o)
     , valuation_(val)
     , next_(h)
   {
@@ -51,10 +47,10 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
+  operator()(context<C>& cxt, const order::order<C>&, const SDD<C>& x)
   const
   {
-    return SDD<C>(variable_, valuation_, next_(cxt, o.next(), x));
+    return SDD<C>(order_.variable(), valuation_, next_(cxt, order_.next(), x));
   }
 
   /// @brief Skip predicate.
@@ -73,12 +69,12 @@ public:
     return false;
   }
 
-  /// @brief Return the variable of the SDD to create.
-  const variable_type&
-  variable()
+  /// @brief Return the order of this Cons.
+  const order::order<C>&
+  order()
   const noexcept
   {
-    return variable_;
+    return order_;
   }
 
   /// @brief Return the valuation of the SDD to create.
@@ -117,8 +113,8 @@ bool
 operator==(const cons<C, Valuation>& lhs, const cons<C, Valuation>& rhs)
 noexcept
 {
-  return lhs.variable() == rhs.variable() and lhs.valuation() == rhs.valuation()
-     and lhs.next() == rhs.next();
+  return lhs.valuation() == rhs.valuation() and lhs.next() == rhs.next()
+     and lhs.order() == rhs.order();
 }
 
 /// @related cons
@@ -126,7 +122,8 @@ template <typename C, typename Valuation>
 std::ostream&
 operator<<(std::ostream& os, const cons<C, Valuation>& c)
 {
-  return os << "Cons(" << c.variable() << ", " << c.valuation() << ", " << c.next() << ")";
+  return os << "Cons(" << c.order().identifier() << ", " << c.valuation() << ", " << c.next()
+            << ")";
 }
 
 /// @endcond
@@ -137,11 +134,9 @@ operator<<(std::ostream& os, const cons<C, Valuation>& c)
 /// @related homomorphism
 template <typename C, typename Valuation>
 homomorphism<C>
-Cons( const typename C::Identifier& id, const order::order<C> o, const Valuation& val
-    , const homomorphism<C>& h)
+Cons(const order::order<C> o, const Valuation& val, const homomorphism<C>& h)
 {
-  return homomorphism<C>::create( internal::mem::construct<cons<C, Valuation>>()
-                                , id, o, val, h);
+  return homomorphism<C>::create(internal::mem::construct<cons<C, Valuation>>(), o, val, h);
 }
 
 /*-------------------------------------------------------------------------------------------*/
@@ -163,7 +158,7 @@ struct hash<sdd::hom::cons<C, Valuation>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, h.variable());
+    sdd::internal::util::hash_combine(seed, h.order());
     sdd::internal::util::hash_combine(seed, h.valuation());
     sdd::internal::util::hash_combine(seed, h.next());
     return seed;

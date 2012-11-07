@@ -42,7 +42,7 @@ struct f0
   operator()(const order& o, const bitset& val)
   const
   {
-    return sdd::hom::Cons<conf>("0", o, val << 1, id);
+    return sdd::hom::Cons<conf>(o, val << 1, id);
   }
 
   SDD
@@ -93,7 +93,7 @@ struct f1
   operator()(const order& o, const bitset& val)
   const
   {
-    return sdd::hom::Cons<conf>("1", o, val << 2, id);
+    return sdd::hom::Cons<conf>(o, val << 2, id);
   }
 
   SDD
@@ -137,14 +137,14 @@ struct cut
   operator()(const order& o, const SDD&)
   const
   {
-    return sdd::hom::Cons<conf>(o.identifier(), o, zero, id);
+    return sdd::hom::Cons<conf>(o, zero, id);
   }
 
   hom
   operator()(const order& o, const bitset&)
   const
   {
-    return sdd::hom::Cons<conf>(o.identifier(), o, bitset {}, id);
+    return sdd::hom::Cons<conf>(o, bitset {}, id);
   }
 
   SDD
@@ -188,14 +188,14 @@ struct id_prime
   operator()(const order& o, const SDD& x)
   const
   {
-    return sdd::hom::Cons<conf>(o.identifier(), o, x, sdd::hom::Inductive<conf>(*this));
+    return sdd::hom::Cons<conf>(o, x, sdd::hom::Inductive<conf>(*this));
   }
 
   hom
   operator()(const order& o, const bitset& val)
   const
   {
-    return sdd::hom::Cons<conf>(o.identifier(), o, val, sdd::hom::Inductive<conf>(*this));
+    return sdd::hom::Cons<conf>(o, val, sdd::hom::Inductive<conf>(*this));
   }
 
   SDD
