@@ -51,6 +51,9 @@ struct evaluation
             , const homomorphism<C>& hom_proxy)
   const
   {
+    assert(not o.empty() && "Empty order.");
+    assert(o.variable() == node.variable() && "Different variables in order and SDD.");
+
     if (h.skip(o))
     {
       square_union<C, typename Node::valuation_type> su;
