@@ -524,7 +524,8 @@ public:
   skip(const order::order<C>& o)
   const noexcept
   {
-    return o.identifier() != *identifiers_.cbegin()
+    return o.identifier() != target_
+       and o.identifier() != *identifiers_.cbegin()
        and not o.contains(o.identifier(), *identifiers_.cbegin());
   }
 
