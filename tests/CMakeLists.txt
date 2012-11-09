@@ -15,6 +15,7 @@ set(SOURCES
     hom/common_inductives.cc
     hom/test_hom_composition.cc
     hom/test_hom_cons.cc
+    hom/test_hom_expression.cc
     hom/test_hom_fixpoint.cc
     hom/test_hom_identity.cc
     hom/test_hom_inductive.cc

@@ -19,6 +19,7 @@ typedef sdd::values::bitset<64> bitset;
 
 using sdd::hom::Composition;
 using sdd::hom::Cons;
+using sdd::hom::Expression;
 using sdd::hom::Fixpoint;
 using sdd::hom::Inductive;
 using sdd::hom::Local;
