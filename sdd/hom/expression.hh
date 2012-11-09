@@ -90,14 +90,14 @@ public:
   void
   update(const identifier_type& id, const values_type& values)
   {
-    eval_->update(id, values);
+    eval_.update(id, values);
   }
 
   ///
   values_type
   evaluate()
   {
-    return eval_->evaluate();
+    return eval_.evaluate();
   }
 
   /// @brief Compare evaluator_derived.
