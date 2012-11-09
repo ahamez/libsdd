@@ -15,6 +15,7 @@
 		2B38499E15B595A000D04B6D /* test_variant.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BD0DA83157A95C6005BC59A /* test_variant.cc */; };
 		2B38499F15B595A000D04B6D /* test_variant_no_unroll.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BD0DA84157A95C6005BC59A /* test_variant_no_unroll.cc */; };
 		2B3849A015B595A000D04B6D /* test_bitset.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BD0DA80157A9596005BC59A /* test_bitset.cc */; };
+		2B429E85164CFE33008000C1 /* test_unique_flat_set.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B429E83164CFE33008000C1 /* test_unique_flat_set.cc */; };
 		2B4BE59915C416670053346F /* test_definition.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B4BE59715C416670053346F /* test_definition.cc */; };
 		2B4BE59D15C431B10053346F /* test_unique_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B4BE59B15C431B10053346F /* test_unique_table.cc */; };
 		2B4C1C2116207349005E0690 /* common_inductives.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B4C1C1F16207348005E0690 /* common_inductives.cc */; };
@@ -87,6 +88,8 @@
 		2B1A269C1619EA87005D6BB0 /* test_hom_identity.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_identity.cc; sourceTree = "<group>"; };
 		2B1E0FD515C3EBB7006BC2A1 /* test_top.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_top.cc; sourceTree = "<group>"; };
 		2B38CC8615C023C10067BDD2 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		2B429E82164C46C5008000C1 /* unique_flat_set.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = unique_flat_set.hh; sourceTree = "<group>"; };
+		2B429E83164CFE33008000C1 /* test_unique_flat_set.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_unique_flat_set.cc; sourceTree = "<group>"; };
 		2B454E8F162C2BE50086989F /* constant.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = constant.hh; sourceTree = "<group>"; };
 		2B4BE59715C416670053346F /* test_definition.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_definition.cc; sourceTree = "<group>"; };
 		2B4BE59B15C431B10053346F /* test_unique_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_unique_table.cc; sourceTree = "<group>"; };
@@ -454,6 +457,7 @@
 			isa = PBXGroup;
 			children = (
 				2BD0DA80157A9596005BC59A /* test_bitset.cc */,
+				2B429E83164CFE33008000C1 /* test_unique_flat_set.cc */,
 			);
 			path = values;
 			sourceTree = "<group>";
@@ -474,6 +478,7 @@
 			isa = PBXGroup;
 			children = (
 				2BF0F988157A71B7005D1275 /* bitset.hh */,
+				2B429E82164C46C5008000C1 /* unique_flat_set.hh */,
 			);
 			path = values;
 			sourceTree = "<group>";

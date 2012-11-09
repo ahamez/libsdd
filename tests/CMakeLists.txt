@@ -30,6 +30,7 @@ set(SOURCES
     internal/mem/test_variant_no_unroll.cc
     internal/mem/test_variant.cc
     values/test_bitset.cc
+    values/test_unique_flat_set.cc
     )
 
 add_executable(tests ${SOURCES})
