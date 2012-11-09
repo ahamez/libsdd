@@ -157,7 +157,7 @@ private:
   {
     // Can't copy a cache_entry.
     cache_entry(const cache_entry&) = delete;
-    cache_entry* operator=(const cache_entry&) = delete;
+    cache_entry& operator=(const cache_entry&) = delete;
 
     /// @brief The cached operation.
     const Operation operation_;
