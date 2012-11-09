@@ -418,7 +418,9 @@ private:
       const auto update = [&](const values_type& values)
                              {
                                if (update_values)
+                               {
                                  eval_ptr_->update(o.identifier(), values);
+                               }
                              };
 
       if (update_values)
@@ -594,13 +596,7 @@ operator<<(std::ostream& os, const expression<C>& e)
 {
   os << "Expression(" << e.target() << " = ";
   e.evaluator().print(os);
-  os << " [";
-
-  typedef typename C::Identifier identifier_type;
-  std::copy( e.identifiers().cbegin(), std::prev(e.identifiers().cend())
-           , std::ostream_iterator<identifier_type>(os, ", "));
-
-  return os << *std::prev(e.identifiers().cend()) << "])";
+  return os << ")";
 }
 
 /// @endcond
