@@ -512,7 +512,7 @@ public:
 
   /// @brief Constructor.
   expression( std::shared_ptr<evaluator_base<C>> e_ptr, identifiers_type&& identifiers
-            , const variable_type& target)
+            , const identifier_type& target)
     : eval_ptr_(e_ptr)
     , identifiers_(std::move(identifiers))
     , target_(target)
