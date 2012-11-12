@@ -165,6 +165,14 @@ public:
     return data_->size();
   }
 
+  /// @brief Find a value.
+  const_iterator
+  find(const Value& x)
+  const
+  {
+    return data_->find(x);
+  }
+
 /// @cond INTERNAL_DOC
 
   const flat_set_type* const
