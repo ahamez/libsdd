@@ -229,6 +229,20 @@ noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @brief Comparison of unique_flat_set
+/// @related unique_flat_set
+template <typename Value>
+inline
+bool
+operator<(const unique_flat_set<Value>& lhs, const unique_flat_set<Value>& rhs)
+noexcept
+{
+  // Pointer comparison.
+  return lhs.data() < rhs.data();
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
 /// @brief Textual output of a unique_flat_set
 /// @related unique_flat_set
 template <typename Value>
