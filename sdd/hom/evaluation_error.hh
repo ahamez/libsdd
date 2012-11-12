@@ -1,11 +1,11 @@
 #ifndef _SDD_HOM_EVALUATION_ERROR_HH_
 #define _SDD_HOM_EVALUATION_ERROR_HH_
 
+#include <deque>
 #include <exception>
 #include <memory> // make_shared, shared_ptr
 #include <sstream>
 #include <string>
-#include <vector>
 
 namespace sdd { namespace hom {
 
@@ -93,7 +93,7 @@ private:
   const SDD<C> sdd_;
 
   /// @brief The sequence, in reverse order, of operations that led to the error.
-  std::vector<std::shared_ptr<operation_wrapper_base>> steps_;
+  std::deque<std::shared_ptr<operation_wrapper_base>> steps_;
 
   /// @brief Flag to determine if the description has been built.
   mutable bool description_built_;

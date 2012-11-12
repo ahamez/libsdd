@@ -2,8 +2,8 @@
 #define _SDD_HOM_REWRITING_HH_
 
 #include <algorithm> // partition
+#include <deque>
 #include <tuple>
-#include <vector>
 
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
@@ -29,7 +29,7 @@ struct rewriter
   typedef typename C::Variable variable_type;
 
   /// @brief The type of a list of homomorphisms.
-  typedef std::vector<homomorphism<C>> hom_list_type;
+  typedef std::deque<homomorphism<C>> hom_list_type;
 
   /// @brief Tell if an homomorphism is Local.
   struct is_local

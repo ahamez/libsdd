@@ -2,11 +2,11 @@
 #define _SDD_HOM_SUM_HH_
 
 #include <algorithm>  // all_of, copy
+#include <deque>
 #include <initializer_list>
 #include <iosfwd>
 #include <stdexcept>  //invalid_argument
 #include <unordered_map>
-#include <vector>
 
 #include <boost/container/flat_set.hpp>
 
@@ -126,7 +126,7 @@ struct sum_builder_helper
 {
   typedef void result_type;
   typedef typename sum<C>::operands_type operands_type;
-  typedef std::vector<homomorphism<C>> hom_list_type;
+  typedef std::deque<homomorphism<C>> hom_list_type;
   typedef std::unordered_map<typename C::Variable, hom_list_type> locals_type;
 
   /// @brief Flatten nested sums.
