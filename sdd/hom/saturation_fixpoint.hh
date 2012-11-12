@@ -4,7 +4,6 @@
 #include <algorithm>  // all_of, copy
 #include <iosfwd>
 #include <stdexcept>  //invalid_argument
-#include <vector>
 
 #include <boost/container/flat_set.hpp>
 
