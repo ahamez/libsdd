@@ -294,7 +294,7 @@ namespace std {
 
 /// @brief Hash specialization for sdd::values::flat_set
 template <typename Value>
-struct hash
+struct hash<sdd::values::unique_flat_set<Value>>
 {
   std::size_t
   operator()(const sdd::values::unique_flat_set<Value>& fs)
