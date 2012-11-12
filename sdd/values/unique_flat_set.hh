@@ -26,6 +26,9 @@ public:
   /// @brief The type of the real container.
   typedef boost::container::flat_set<Value> flat_set_type;
 
+  /// @brief The type of the contained value.
+  typedef Value value_type;
+
 private:
 
   /// @brief Faster, unsafe mode for Boost.Intrusive.
