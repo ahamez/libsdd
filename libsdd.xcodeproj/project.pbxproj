@@ -15,7 +15,6 @@
 		2B38499E15B595A000D04B6D /* test_variant.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BD0DA83157A95C6005BC59A /* test_variant.cc */; };
 		2B38499F15B595A000D04B6D /* test_variant_no_unroll.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BD0DA84157A95C6005BC59A /* test_variant_no_unroll.cc */; };
 		2B3849A015B595A000D04B6D /* test_bitset.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BD0DA80157A9596005BC59A /* test_bitset.cc */; };
-		2B429E85164CFE33008000C1 /* test_unique_flat_set.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B429E83164CFE33008000C1 /* test_unique_flat_set.cc */; };
 		2B4BE59915C416670053346F /* test_definition.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B4BE59715C416670053346F /* test_definition.cc */; };
 		2B4BE59D15C431B10053346F /* test_unique_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B4BE59B15C431B10053346F /* test_unique_table.cc */; };
 		2B4C1C2116207349005E0690 /* common_inductives.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B4C1C1F16207348005E0690 /* common_inductives.cc */; };
@@ -26,6 +25,7 @@
 		2B5723EC161F1C8F00F09892 /* test_hom_inductive.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B5723EA161F1C8F00F09892 /* test_hom_inductive.cc */; };
 		2B7D16B2161BDAFC00FD77F8 /* test_hom_sum.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B7D16B0161BDAFC00FD77F8 /* test_hom_sum.cc */; };
 		2B99C75B15AB2BE0007389B8 /* tests.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BD33B5514E660D0004A7657 /* tests.cc */; };
+		2BB6B441165181E7003063B8 /* test_unique_flat_set.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B429E83164CFE33008000C1 /* test_unique_flat_set.cc */; };
 		2BC472A215BF1B9300A8D442 /* test_difference.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC4729F15BF1B9300A8D442 /* test_difference.cc */; };
 		2BC472A315BF1B9300A8D442 /* test_intersection.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC472A015BF1B9300A8D442 /* test_intersection.cc */; };
 		2BC472A415BF1B9300A8D442 /* test_sum.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC472A115BF1B9300A8D442 /* test_sum.cc */; };
@@ -580,6 +580,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2BB6B441165181E7003063B8 /* test_unique_flat_set.cc in Sources */,
 				2B38499C15B595A000D04B6D /* test_cache.cc in Sources */,
 				2B38499D15B595A000D04B6D /* test_ptr.cc in Sources */,
 				2B38499E15B595A000D04B6D /* test_variant.cc in Sources */,
