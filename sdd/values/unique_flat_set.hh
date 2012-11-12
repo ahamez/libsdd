@@ -196,14 +196,33 @@ public:
 
 private:
 
+  /// @brief Help cleaning the static set.
+  struct set_disposer
+  {
+    bucket_type* buckets;
+    set_type* set;
+
+    set_disposer(std::size_t size)
+      : buckets(new bucket_type[size])
+      , set(new set_type(bucket_traits(buckets, size)))
+    {
+    }
+
+    ~set_disposer()
+    {
+      set->clear_and_dispose([](entry* e){delete e;});
+      delete set;
+      delete[] buckets;
+    }
+  };
+
   /// @brief Get the static set of flat sets.
   static
   set_type&
   set()
   {
-    static bucket_type buckets[32000];
-    static set_type set(bucket_traits(buckets, 32000));
-    return set;
+    static set_disposer disposer(32000);
+    return *disposer.set;
   }
 
   /// @brief Get the static empty flat set.
