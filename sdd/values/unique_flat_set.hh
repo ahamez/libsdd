@@ -173,6 +173,16 @@ public:
     return data_->find(x);
   }
 
+  /// @brief Erase a value.
+  std::size_t
+  erase(const Value& x)
+  {
+    flat_set_type fs(*data_);
+    const std::size_t nb_erased = fs.erase(x);
+    unify(std::move(fs));
+    return nb_erased;
+  }
+
 /// @cond INTERNAL_DOC
 
   const flat_set_type* const
