@@ -189,7 +189,7 @@ struct rewriter
                              , G.begin(), G.end()
                              , Local( o.identifier()
                                     , o
-                                    , rewrite(Fixpoint(Sum<C>(o.nested(), F.begin(), F.end())), o.nested())
+                                    , rewrite(Fixpoint(Sum<C>(o.nested(), L.begin(), L.end())), o.nested())
                                     )
                              );
   }
