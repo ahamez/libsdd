@@ -238,10 +238,6 @@ main(int argc, char** argv)
   hom events = Fixpoint(Sum<conf>(o, union_swap_pole.begin(), union_swap_pole.end()));
   hom sat_events = sdd::hom::rewrite(events, o);
 
-  std::cout << events << std::endl;
-  std::cout << std::endl;
-  std::cout << sat_events << std::endl;
-
   std::chrono::time_point<std::chrono::system_clock> start, end;
   std::size_t elapsed;
 
