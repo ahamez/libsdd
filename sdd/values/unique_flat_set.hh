@@ -26,6 +26,9 @@ public:
   /// @brief The type of the real container.
   typedef boost::container::flat_set<Value> flat_set_type;
 
+  /// @brief The type of the contained value.
+  typedef Value value_type;
+
 private:
 
   /// @brief Faster, unsafe mode for Boost.Intrusive.
@@ -162,6 +165,24 @@ public:
     return data_->size();
   }
 
+  /// @brief Find a value.
+  const_iterator
+  find(const Value& x)
+  const
+  {
+    return data_->find(x);
+  }
+
+  /// @brief Erase a value.
+  std::size_t
+  erase(const Value& x)
+  {
+    flat_set_type fs(*data_);
+    const std::size_t nb_erased = fs.erase(x);
+    unify(std::move(fs));
+    return nb_erased;
+  }
+
 /// @cond INTERNAL_DOC
 
   const flat_set_type* const
@@ -175,14 +196,33 @@ public:
 
 private:
 
+  /// @brief Help cleaning the static set.
+  struct set_disposer
+  {
+    bucket_type* buckets;
+    set_type* set;
+
+    set_disposer(std::size_t size)
+      : buckets(new bucket_type[size])
+      , set(new set_type(bucket_traits(buckets, size)))
+    {
+    }
+
+    ~set_disposer()
+    {
+      set->clear_and_dispose([](entry* e){delete e;});
+      delete set;
+      delete[] buckets;
+    }
+  };
+
   /// @brief Get the static set of flat sets.
   static
   set_type&
   set()
   {
-    static bucket_type buckets[32000];
-    static set_type set(bucket_traits(buckets, 32000));
-    return set;
+    static set_disposer disposer(32000);
+    return *disposer.set;
   }
 
   /// @brief Get the static empty flat set.
@@ -222,6 +262,20 @@ noexcept
 {
   // Pointer comparison.
   return lhs.data() == rhs.data();
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @brief Comparison of unique_flat_set
+/// @related unique_flat_set
+template <typename Value>
+inline
+bool
+operator<(const unique_flat_set<Value>& lhs, const unique_flat_set<Value>& rhs)
+noexcept
+{
+  // Pointer comparison.
+  return lhs.data() < rhs.data();
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -294,7 +348,7 @@ namespace std {
 
 /// @brief Hash specialization for sdd::values::flat_set
 template <typename Value>
-struct hash
+struct hash<sdd::values::unique_flat_set<Value>>
 {
   std::size_t
   operator()(const sdd::values::unique_flat_set<Value>& fs)

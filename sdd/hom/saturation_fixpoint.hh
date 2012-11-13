@@ -3,7 +3,7 @@
 
 #include <algorithm>  // all_of, copy
 #include <iosfwd>
-#include <vector>
+#include <stdexcept>  //invalid_argument
 
 #include <boost/container/flat_set.hpp>
 
