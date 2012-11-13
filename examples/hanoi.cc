@@ -55,7 +55,7 @@ struct no_ring_above
     Values v(val);
     v.erase(i);
     v.erase(j);
-    return Cons<conf>(var, v, Inductive<conf>(*this));
+    return Cons<conf>(var, std::move(v), Inductive<conf>(*this));
   }
 
   SDD
