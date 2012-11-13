@@ -175,7 +175,7 @@ template <>
 struct hash<swap_pole>
 {
 
-  std::size_t  
+  std::size_t
   operator()(const swap_pole& x)
   const noexcept
   {
