@@ -184,10 +184,11 @@ public:
   homomorphism
   create(internal::mem::construct<T>, Args&&... args)
   {
-    void* addr = internal::mem::allocate<unique_type>(sizeof(unique_type));
+    const std::size_t size = sizeof(unique_type);
+    char* addr = internal::mem::allocate<unique_type>(size);
     unique_type* u =
       new (addr) unique_type(internal::mem::construct<T>(), std::forward<Args>(args)...);
-    return homomorphism(internal::mem::unify(u));
+    return homomorphism(internal::mem::unify(u, size));
   }
 
   /// @brief Dispatch the skip predicate call to concrete homomorphisms.

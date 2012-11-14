@@ -269,7 +269,7 @@ public:
   zero_ptr()
   {
     static SDD_unique* z = new SDD_unique(internal::mem::construct<zero_terminal<C>>());
-    static const ptr_type zero(internal::mem::unify(z));
+    static const ptr_type zero(internal::mem::unify(z, sizeof(SDD_unique)));
     return zero;
   }
 
@@ -281,7 +281,7 @@ public:
   one_ptr()
   {
     static SDD_unique* o = new SDD_unique(internal::mem::construct<one_terminal<C>>());
-    static const ptr_type one(internal::mem::unify(o));
+    static const ptr_type one(internal::mem::unify(o, sizeof(SDD_unique)));
     return one;
   }
 
@@ -359,10 +359,10 @@ private:
     // taken. This is also why we use Boost.Intrusive in order to be able to manage memory
     // exactly the way we want.
     const std::size_t size = sizeof(SDD_unique) + builder.size_to_allocate();
-    void* addr = internal::mem::allocate<SDD_unique>(size);
+    char* addr = internal::mem::allocate<SDD_unique>(size);
     SDD_unique* u =
       new (addr) SDD_unique(internal::mem::construct<node<C, Valuation>>(), var, builder);
-    return internal::mem::unify(u);
+    return internal::mem::unify(u, size);
   }
 
   friend void internal::util::print_sizes<C>(std::ostream&);

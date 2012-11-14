@@ -3,6 +3,7 @@
 
 /// @cond INTERNAL_DOC
 
+#include <boost/container/flat_map.hpp>
 #include <boost/intrusive/unordered_set.hpp>
 
 namespace sdd { namespace internal { namespace mem {
@@ -55,12 +56,16 @@ private:
   /// @brief The number of rehash.
   std::size_t rehash_;
 
+  ///
+  boost::container::flat_multimap<std::size_t, char*> blocks_;
+
 public:
 
   unique_table(std::size_t initial_size)
   	: buckets_(new bucket_type[set_type::suggested_upper_bucket_count(initial_size)])
     , set_(new set_type(bucket_traits( buckets_
                                      , set_type::suggested_upper_bucket_count(initial_size))))
+    , blocks_()
   {
   }
 
@@ -73,10 +78,14 @@ public:
   {
     delete set_;
     delete[] buckets_;
+    for (auto& b : blocks_)
+    {
+      delete[] b.second;
+    }
   }
 
   const Unique&
-  operator()(Unique* u_ptr)
+  operator()(Unique* u_ptr, std::size_t size)
   {
     if (load_factor() >= 0.9)
     {
@@ -88,7 +97,15 @@ public:
     if (not insertion.second)
     {
       ++hit_;
-      delete u_ptr;
+      u_ptr->~Unique();
+      if (blocks_.size() == 2048)
+      {
+        // erase last block
+        auto it = blocks_.end() - 1;
+        delete[] it->second;
+        blocks_.erase(it);
+      }
+      blocks_.emplace(size, reinterpret_cast<char*>(u_ptr));
     }
     else
     {
@@ -97,10 +114,21 @@ public:
     return *insertion.first;
   }
 
-  void*
+  char*
   allocate(std::size_t size)
   {
-    return new char[size];
+    const auto it = blocks_.find(size);
+    if (it != blocks_.end())
+    {
+      // re-use allocated blocks
+      char* addr = it->second;
+      blocks_.erase(it);
+      return addr;
+    }
+    else
+    {
+      return new char[size];
+    }
   }
 
   void
@@ -158,7 +186,7 @@ noexcept
 /// @related unique_table
 template <typename Unique>
 inline
-void*
+char*
 allocate(std::size_t size)
 {
   return global_unique_table<Unique>().allocate(size);
@@ -169,9 +197,9 @@ allocate(std::size_t size)
 template <typename Unique>
 inline
 const Unique&
-unify(Unique* u_ptr)
+unify(Unique* u_ptr, std::size_t size)
 {
-  return global_unique_table<Unique>()(u_ptr);
+  return global_unique_table<Unique>()(u_ptr, size);
 }
 
 /*-------------------------------------------------------------------------------------------*/
