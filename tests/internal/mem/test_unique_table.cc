@@ -53,6 +53,7 @@ TEST(unique_table_test, insertion)
     const foo& i2 = ut(i2_ptr, sizeof(foo));
 
     ASSERT_EQ(&i1, &i2);
+    ut.erase(const_cast<foo&>(i1));
   }
   {
     sdd::internal::mem::unique_table<foo> ut;
@@ -66,6 +67,8 @@ TEST(unique_table_test, insertion)
     const foo& i2 = ut(i2_ptr, sizeof(foo));
 
     ASSERT_NE(&i1, &i2);
+    ut.erase(const_cast<foo&>(i1));
+    ut.erase(const_cast<foo&>(i2));
   }
 }
 
@@ -79,11 +82,13 @@ TEST(unique_table_test, rehash)
   foo* f1_ptr = new (addr1) foo(0);
   const foo& f1 = ut(f1_ptr, sizeof(foo));
 
+  std::vector<const foo*> ptrs;
+  ptrs.reserve(10000);
   // insert enough data to force at least one rehash
   for (int i = 1; i < 10000; ++i)
   {
     char* addr = ut.allocate(sizeof(foo));
-    ut(new (addr) foo(i), sizeof(foo));
+    ptrs.push_back(&ut(new (addr) foo(i), sizeof(foo)));
   }
 
   char* addr2 = ut.allocate(sizeof(foo));
@@ -92,6 +97,14 @@ TEST(unique_table_test, rehash)
 
   // ensure that addresses didn't move (ok, just for one...)
   ASSERT_EQ(&f1, &f2);
+
+  ut.erase(const_cast<foo&>(f1));
+
+  for (auto p : ptrs)
+  {
+    ut.erase(*const_cast<foo*>(p));
+  }
+
 }
 
 /*-------------------------------------------------------------------------------------------*/
