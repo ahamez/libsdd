@@ -17,7 +17,7 @@ template <typename C>
 struct count_paths_visitor
 {
 
-  typedef std::size_t result_type;
+  typedef long double result_type;
 
   /// @brief A cache is used to speed up the computation.
   ///
@@ -89,7 +89,7 @@ struct count_paths_visitor
 /// O(N) where N is the number of nodes in x.
 template <typename C>
 inline
-std::size_t
+long double
 count_paths(const SDD<C>& x)
 noexcept
 {
