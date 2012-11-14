@@ -46,14 +46,14 @@ private:
   /// @brief The actual container of unified data.
   set_type* set_;
 
-//  /// @brief The number of hits.
-//  std::size_t hits_;
-//
-//  /// @brief The number of misses.
-//  std::size_t misses_;
-//
-//  /// @brief The number of deleted entries.
-//  std::size_t deleted_;
+  /// @brief The number of hits.
+  std::size_t hit_;
+
+  /// @brief The number of misses.
+  std::size_t miss_;
+
+  /// @brief The number of rehash.
+  std::size_t rehash_;
 
 public:
 
@@ -80,13 +80,19 @@ public:
   {
     if (load_factor() >= 0.9)
     {
+      ++rehash_;
       rehash();
     }
 
     auto insertion = set_->insert(*u_ptr);
     if (not insertion.second)
     {
+      ++hit_;
       delete u_ptr;
+    }
+    else
+    {
+      ++miss_;
     }
     return *insertion.first;
   }
