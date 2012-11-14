@@ -184,8 +184,9 @@ public:
   homomorphism
   create(internal::mem::construct<T>, Args&&... args)
   {
+    void* addr = internal::mem::allocate<unique_type>(sizeof(unique_type));
     unique_type* u =
-      new unique_type(internal::mem::construct<T>(), std::forward<Args>(args)...);
+      new (addr) unique_type(internal::mem::construct<T>(), std::forward<Args>(args)...);
     return homomorphism(internal::mem::unify(u));
   }
 

@@ -97,6 +97,12 @@ public:
     return *insertion.first;
   }
 
+  void*
+  allocate(std::size_t size)
+  {
+    return new char[size];
+  }
+
   void
   erase(Unique& x)
   noexcept
@@ -146,6 +152,17 @@ noexcept
 }
 
 } // namespace anonymous
+
+/*-------------------------------------------------------------------------------------------*/
+
+/// @related unique_table
+template <typename Unique>
+inline
+void*
+allocate(std::size_t size)
+{
+  return global_unique_table<Unique>().allocate(size);
+}
 
 /*-------------------------------------------------------------------------------------------*/
 

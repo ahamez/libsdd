@@ -358,7 +358,8 @@ private:
     // Note that the alpha function is allocated right behind the node, thus extra care must be
     // taken. This is also why we use Boost.Intrusive in order to be able to manage memory
     // exactly the way we want.
-    void* const addr = new char[sizeof(SDD_unique) + builder.size_to_allocate()];
+    const std::size_t size = sizeof(SDD_unique) + builder.size_to_allocate();
+    void* addr = internal::mem::allocate<SDD_unique>(size);
     SDD_unique* u =
       new (addr) SDD_unique(internal::mem::construct<node<C, Valuation>>(), var, builder);
     return internal::mem::unify(u);
