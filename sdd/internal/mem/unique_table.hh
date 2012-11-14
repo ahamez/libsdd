@@ -3,6 +3,7 @@
 
 /// @cond INTERNAL_DOC
 
+#include <boost/container/flat_map.hpp>
 #include <boost/intrusive/unordered_set.hpp>
 
 namespace sdd { namespace internal { namespace mem {
@@ -46,14 +47,17 @@ private:
   /// @brief The actual container of unified data.
   set_type* set_;
 
-//  /// @brief The number of hits.
-//  std::size_t hits_;
-//
-//  /// @brief The number of misses.
-//  std::size_t misses_;
-//
-//  /// @brief The number of deleted entries.
-//  std::size_t deleted_;
+  /// @brief The number of hits.
+  std::size_t hit_;
+
+  /// @brief The number of misses.
+  std::size_t miss_;
+
+  /// @brief The number of rehash.
+  std::size_t rehash_;
+
+  ///
+  boost::container::flat_multimap<std::size_t, char*> blocks_;
 
 public:
 
@@ -61,6 +65,7 @@ public:
   	: buckets_(new bucket_type[set_type::suggested_upper_bucket_count(initial_size)])
     , set_(new set_type(bucket_traits( buckets_
                                      , set_type::suggested_upper_bucket_count(initial_size))))
+    , blocks_()
   {
   }
 
@@ -73,22 +78,57 @@ public:
   {
     delete set_;
     delete[] buckets_;
+    for (auto& b : blocks_)
+    {
+      delete[] b.second;
+    }
   }
 
   const Unique&
-  operator()(Unique* u_ptr)
+  operator()(Unique* u_ptr, std::size_t size)
   {
     if (load_factor() >= 0.9)
     {
+      ++rehash_;
       rehash();
     }
 
     auto insertion = set_->insert(*u_ptr);
     if (not insertion.second)
     {
-      delete u_ptr;
+      ++hit_;
+      u_ptr->~Unique();
+      if (blocks_.size() == 2048)
+      {
+        // erase last block
+        auto it = blocks_.end() - 1;
+        delete[] it->second;
+        blocks_.erase(it);
+      }
+      blocks_.emplace(size, reinterpret_cast<char*>(u_ptr));
+    }
+    else
+    {
+      ++miss_;
     }
     return *insertion.first;
+  }
+
+  char*
+  allocate(std::size_t size)
+  {
+    const auto it = blocks_.find(size);
+    if (it != blocks_.end())
+    {
+      // re-use allocated blocks
+      char* addr = it->second;
+      blocks_.erase(it);
+      return addr;
+    }
+    else
+    {
+      return new char[size];
+    }
   }
 
   void
@@ -143,12 +183,23 @@ noexcept
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @related unique_table
+template <typename Unique>
+inline
+char*
+allocate(std::size_t size)
+{
+  return global_unique_table<Unique>().allocate(size);
+}
+
+/*-------------------------------------------------------------------------------------------*/
+
 template <typename Unique>
 inline
 const Unique&
-unify(Unique* u_ptr)
+unify(Unique* u_ptr, std::size_t size)
 {
-  return global_unique_table<Unique>()(u_ptr);
+  return global_unique_table<Unique>()(u_ptr, size);
 }
 
 /*-------------------------------------------------------------------------------------------*/

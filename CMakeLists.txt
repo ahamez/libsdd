@@ -38,6 +38,8 @@ if (TCMALLOC)
   find_library(TCMALLOC_LIBRARY tcmalloc)
   if (NOT TCMALLOC_LIBRARY)
     message(STATUS "TCMalloc not found.")
+  else ()
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ltcmalloc")
   endif ()
 endif ()
 
