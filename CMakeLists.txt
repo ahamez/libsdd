@@ -9,6 +9,7 @@ project (libsdd)
 ################################################################################
 
 find_package(Boost 1.52.0 REQUIRED)
+find_package(Doxygen QUIET)
 
 ################################################################################
 
@@ -18,6 +19,7 @@ option (ADDRESS_SANITIZER "Check memory with AddressSanitizer." OFF)
 option (TCMALLOC "Use TCMalloc" OFF)
 option (PACKED "Pack structures" OFF)
 option (COVERAGE "Code coverage" OFF)
+option (INTERNAL_DOC "Generate internal documentation" OFF)
 
 if (VALGRIND AND ADDRESS_SANITIZER)
   message(FATAL_ERROR "Can't use both valgrind and AddressSanitizer.")
@@ -50,6 +52,24 @@ endif ()
 if (COVERAGE)
   add_definitions("--coverage")
 endif ()
+
+################################################################################
+
+if(DOXYGEN_FOUND)
+  if (INTERNAL_DOC)
+    set(GEN_INTERNAL_DOC "YES")
+  else ()
+    set(GEN_INTERNAL_DOC "NO")
+  endif ()
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+  add_custom_target(doc
+                    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+                    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                    COMMENT "Generating API documentation with Doxygen" VERBATIM
+                    SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+                   )
+endif(DOXYGEN_FOUND)
 
 ################################################################################
 
