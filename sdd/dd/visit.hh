@@ -23,4 +23,4 @@ visit(const Visitor& v, const SDD<C>& x, Args&&... args)
 
 } // namespace sdd
 
-#endif // SDD_DD_VISIT_HH_
+#endif // _SDD_DD_VISIT_HH_
