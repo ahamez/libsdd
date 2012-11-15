@@ -1,29 +1,27 @@
-#ifndef _SDD_INTERNAL_UTIL_TYPELIST_HH_
-#define _SDD_INTERNAL_UTIL_TYPELIST_HH_
+#ifndef _SDD_UTIL_TYPELIST_HH_
+#define _SDD_UTIL_TYPELIST_HH_
 
-/// @cond INTERNAL_DOC
+namespace sdd { namespace util {
 
-/// @file typelist.hh
-/// @brief Various helpers to manipulate a list of types.
+/*------------------------------------------------------------------------------------------------*/
 
-namespace sdd { namespace internal { namespace util {
-
-/*-------------------------------------------------------------------------------------------*/
-
+/// @internal
 /// @brief Represent the empty type.
 ///
 /// Used by nth to indicate that a type was not found.
 struct nil {};
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <typename... Types>
 struct typelist
 {
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <typename T, typename... Types>
 struct index_of;
 
@@ -39,8 +37,9 @@ struct index_of<T, Head, Types...>
   static constexpr std::size_t value = index_of<T, Types...>::value + 1;
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <std::size_t Index, typename... Types>
 struct nth
 {
@@ -59,10 +58,8 @@ struct nth<Index, Head, Tail...>
   typedef typename nth<Index - 1, Tail...>::type type;
 };  
 
-/*-------------------------------------------------------------------------------------------*/  
+/*------------------------------------------------------------------------------------------------*/  
 
-}}} // namespace sdd::internal::util
+}} // namespace sdd::util
 
-/// @endcond
-
-#endif // _SDD_INTERNAL_UTIL_TYPELIST_HH_
+#endif // _SDD_UTIL_TYPELIST_HH_

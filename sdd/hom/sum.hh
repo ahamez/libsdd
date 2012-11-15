@@ -17,14 +17,13 @@
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
 namespace sdd { namespace hom {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Sum homomorphism.
 template <typename C>
 class _LIBSDD_ATTRIBUTE_PACKED sum
@@ -96,8 +95,9 @@ public:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two sum.
 /// @related sum
 template <typename C>
@@ -109,6 +109,7 @@ noexcept
   return lhs.operands() == rhs.operands();
 }
 
+/// @internal
 /// @related sum
 template <typename C>
 std::ostream&
@@ -120,8 +121,9 @@ operator<<(std::ostream& os, const sum<C>& s)
   return os << *std::prev(s.operands().end()) << ")";
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Help optimize an union's operands.
 template <typename C>
 struct sum_builder_helper
@@ -164,9 +166,9 @@ struct sum_builder_helper
 
 };
 
-/// @endcond
+} // namespace hom
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Sum homomorphism.
 /// @related homomorphism
@@ -181,11 +183,11 @@ Sum(const order::order<C>& o, InputIterator begin, InputIterator end)
     throw std::invalid_argument("Empty operands at Sum construction.");
   }
 
-  typename sum<C>::operands_type operands;
+  typename hom::sum<C>::operands_type operands;
   operands.reserve(size);
 
-  sum_builder_helper<C> sbv;
-  typename sum_builder_helper<C>::locals_type locals;
+  hom::sum_builder_helper<C> sbv;
+  typename hom::sum_builder_helper<C>::locals_type locals;
   for (; begin != end; ++begin)
   {
     apply_visitor(sbv, (*begin)->data(), *begin, operands, locals);
@@ -204,11 +206,11 @@ Sum(const order::order<C>& o, InputIterator begin, InputIterator end)
   else
   {
     operands.shrink_to_fit();
-    return homomorphism<C>::create(internal::mem::construct<sum<C>>(), std::move(operands));
+    return homomorphism<C>::create(mem::construct<hom::sum<C>>(), std::move(operands));
   }
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Sum homomorphism.
 /// @related homomorphism
@@ -219,16 +221,15 @@ Sum(const order::order<C>& o, std::initializer_list<homomorphism<C>> operands)
   return Sum<C>(o, operands.begin(), operands.end());
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::sum.
 template <typename C>
 struct hash<sdd::hom::sum<C>>
@@ -240,17 +241,14 @@ struct hash<sdd::hom::sum<C>>
     std::size_t seed = 0;
     for (const auto& op : s.operands())
     {
-      sdd::internal::util::hash_combine(seed, op);
+      sdd::util::hash_combine(seed, op);
     }
     return seed;
   }
 };
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
 
 #endif // _SDD_HOM_SUM_HH_

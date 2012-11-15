@@ -12,18 +12,18 @@ struct conf
   typedef unsigned int Identifier;
 };
 typedef sdd::SDD<conf> SDD;
-typedef sdd::hom::homomorphism<conf> hom;
+typedef sdd::homomorphism<conf> hom;
 typedef sdd::conf::conf1::Values Values;
 
 SDD one = sdd::one<conf>();
 SDD zero = sdd::zero<conf>();
 
-using sdd::hom::Cons;
-using sdd::hom::Constant;
-using sdd::hom::Fixpoint;
-using sdd::hom::Id;
-using sdd::hom::Inductive;
-using sdd::hom::Sum;
+using sdd::Cons;
+using sdd::Constant;
+using sdd::Fixpoint;
+using sdd::Id;
+using sdd::Inductive;
+using sdd::Sum;
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -165,8 +165,8 @@ struct hash<no_ring_above>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, x.i);
-    sdd::internal::util::hash_combine(seed, x.j);
+    sdd::util::hash_combine(seed, x.i);
+    sdd::util::hash_combine(seed, x.j);
     return seed;
   }
 };
@@ -180,9 +180,9 @@ struct hash<swap_pole>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, x.ring);
-    sdd::internal::util::hash_combine(seed, x.source);
-    sdd::internal::util::hash_combine(seed, x.destination);
+    sdd::util::hash_combine(seed, x.ring);
+    sdd::util::hash_combine(seed, x.source);
+    sdd::util::hash_combine(seed, x.destination);
     return seed;
   }
 };
@@ -234,9 +234,10 @@ main(int argc, char** argv)
       }
     }
   }
+
   union_swap_pole.insert(Id<conf>());
   hom events = Fixpoint(Sum<conf>(o, union_swap_pole.begin(), union_swap_pole.end()));
-  hom sat_events = sdd::hom::rewrite(events, o);
+  hom sat_events = sdd::rewrite(events, o);
 
   std::chrono::time_point<std::chrono::system_clock> start, end;
   std::size_t elapsed;

@@ -7,12 +7,12 @@
 
 #include "sdd/dd/alpha.hh"
 #include "sdd/dd/definition.hh"
-#include "sdd/internal/util/hash.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/hash.hh"
+#include "sdd/util/packed.hh"
 
 namespace sdd {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief  A non-terminal node in an SDD.
 /// \tparam Valuation If a set of values, define a flat node; if an SDD, define a hierarchical
@@ -35,16 +35,16 @@ class _LIBSDD_ATTRIBUTE_PACKED node
 public:
 
   /// @brief The type of the variable of this node.
-  typedef typename C::Variable          variable_type;
+  typedef typename C::Variable variable_type;
 
   /// @brief The type of the valuation of this node.
-  typedef Valuation                     valuation_type;
+  typedef Valuation valuation_type;
 
   /// @brief The type used to store the number of arcs of this node.
-  typedef typename C::alpha_size_type   alpha_size_type;
+  typedef typename C::alpha_size_type alpha_size_type;
 
   /// @brief A (const) iterator on the arcs of this node.
-  typedef const arc<C, Valuation>*      const_iterator;
+  typedef const arc<C, Valuation>* const_iterator;
 
 private:
 
@@ -56,6 +56,7 @@ private:
 
 public:
 
+  /// @internal
   /// @brief Constructor.
   ///
   /// O(n) where n is the number of arcs in the builder.
@@ -69,6 +70,7 @@ public:
     builder.consolidate(alpha_addr());
   }
 
+  /// @internal
   /// @brief Destructor.
   ///
   /// O(n) where n is the number of arcs in the node.
@@ -122,6 +124,7 @@ public:
 
 private:
 
+  /// @internal
   /// @brief Return the address of the alpha function.
   ///
   /// O(1).
@@ -135,7 +138,7 @@ private:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief   Equality of two nodes.
 /// @related node
@@ -165,15 +168,13 @@ operator<<(std::ostream& os, const node<C, Valuation>& n)
   return os << (n.end() - 1)->valuation() << " --> " << (n.end() - 1)->successor() << "]";
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
 
-/// @cond INTERNAL_DOC
-
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief Hash specialization for sdd::node
 template <typename C, typename Valuation>
@@ -184,20 +185,18 @@ struct hash<sdd::node<C, Valuation>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, n.variable());
+    sdd::util::hash_combine(seed, n.variable());
     for (auto& arc : n)
     {
-      sdd::internal::util::hash_combine(seed, arc.valuation());
-      sdd::internal::util::hash_combine(seed, arc.successor());
+      sdd::util::hash_combine(seed, arc.valuation());
+      sdd::util::hash_combine(seed, arc.successor());
     }
     return seed;
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-/// @endcond
 
 #endif // _SDD_DD_NODE_HH_

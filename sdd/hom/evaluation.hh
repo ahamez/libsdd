@@ -5,19 +5,19 @@
 #include <iosfwd>
 
 #include "sdd/hom/context_fwd.hh"
+#include "sdd/hom/rewrite.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
 
-/// @cond INTERNAL_DOC
+/*------------------------------------------------------------------------------------------------*/
 
-/*-------------------------------------------------------------------------------------------*/
-
+/// @internal
 /// @brief Evaluate an homomorphism.
 template <typename C>
 struct evaluation
 {
-  /// @brief Used by internal::util::variant.
+  /// @brief Used by util::variant.
   typedef SDD<C> result_type;
 
   template <typename H>
@@ -75,8 +75,9 @@ struct evaluation
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Default traits for homomorphisms.
 template <typename T>
 struct homomorphism_traits
@@ -84,8 +85,9 @@ struct homomorphism_traits
   static constexpr bool should_cache = true;
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief The evaluation of an homomorphism in the cache.
 template <typename C>
 struct cached_homomorphism
@@ -125,8 +127,9 @@ struct cached_homomorphism
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related cached_homomorphism
 template <typename C>
 inline
@@ -137,6 +140,7 @@ noexcept
   return lhs.h_ == rhs.h_ and lhs.sdd_ == rhs.sdd_;
 }
 
+/// @internal
 /// @related cached_homomorphism
 template <typename C>
 std::ostream&
@@ -145,8 +149,9 @@ operator<<(std::ostream& os, const cached_homomorphism<C>& ch)
   return os << ch.h_;
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Used by the cache as a filter to know if an homomorphism should be cached.
 template <typename C>
 struct should_cache
@@ -172,14 +177,15 @@ struct should_cache
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::hom
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Hash specialization for sdd::hom::cached_homomorphism
 template <typename C>
 struct hash<sdd::hom::cached_homomorphism<C>>
@@ -189,15 +195,13 @@ struct hash<sdd::hom::cached_homomorphism<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, op.h_);
-    sdd::internal::util::hash_combine(seed, op.sdd_);
+    sdd::util::hash_combine(seed, op.h_);
+    sdd::util::hash_combine(seed, op.sdd_);
     return seed;
   }
 };
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
 

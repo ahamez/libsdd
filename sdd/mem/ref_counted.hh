@@ -1,7 +1,5 @@
-#ifndef _SDD_INTERNAL_MEM_REF_COUNTED_HH_
-#define _SDD_INTERNAL_MEM_REF_COUNTED_HH_
-
-/// @cond INTERNAL_DOC
+#ifndef _SDD_MEM_REF_COUNTED_HH_
+#define _SDD_MEM_REF_COUNTED_HH_
 
 #include <functional>  // hash
 #include <type_traits> // is_nothrow_constructible
@@ -9,12 +7,13 @@
 
 #include <boost/intrusive/unordered_set.hpp>
 
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
-namespace sdd { namespace internal { namespace mem {
+namespace sdd { namespace mem {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief A wrapper to associate a reference counter to a unified data.
 ///
 /// This type is meant to be used by ptr, which takes care of incrementing and decrementing
@@ -106,8 +105,9 @@ private:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related ref_counted
 template <typename T>
 inline
@@ -118,30 +118,29 @@ noexcept
   return lhs.data() == rhs.data();
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace sdd::internal::mem
+}} // namespace sdd::mem
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @brief Hash specialization for sdd::internal::mem::ref_counted
+/// @internal
+/// @brief Hash specialization for sdd::mem::ref_counted
 template <typename T>
-struct hash<sdd::internal::mem::ref_counted<T>>
+struct hash<sdd::mem::ref_counted<T>>
 {
   std::size_t
-  operator()(const sdd::internal::mem::ref_counted<T>& x)
+  operator()(const sdd::mem::ref_counted<T>& x)
   const noexcept
   {
     return std::hash<T>()(x.data());
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
 
-/// @endcond
-
-#endif // _SDD_INTERNAL_MEM_REF_COUNTED_HH_
+#endif // _SDD_MEM_REF_COUNTED_HH_

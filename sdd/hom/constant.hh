@@ -10,10 +10,9 @@
 
 namespace sdd { namespace hom {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Constant homomorphism.
 template <typename C>
 struct constant
@@ -63,8 +62,9 @@ public:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Describe Constant characteristics.
 template <typename C>
 struct homomorphism_traits<constant<C>>
@@ -72,8 +72,9 @@ struct homomorphism_traits<constant<C>>
   static constexpr bool should_cache = false;
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two constant.
 /// @related constant
 template <typename C>
@@ -85,6 +86,7 @@ noexcept
   return lhs.sdd() == rhs.sdd();
 }
 
+/// @internal
 /// @related constant
 template <typename C>
 std::ostream&
@@ -93,9 +95,9 @@ operator<<(std::ostream& os, const constant<C>& c)
   return os << c.sdd();
 }
 
-/// @endcond
+} // namespace hom
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Constant homomorphism.
 /// @related homomorphism
@@ -103,19 +105,18 @@ template <typename C>
 homomorphism<C>
 Constant(const SDD<C>& s)
 {
-  return homomorphism<C>::create(internal::mem::construct<constant<C>>(), s);
+  return homomorphism<C>::create(mem::construct<hom::constant<C>>(), s);
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::constant.
 template <typename C>
 struct hash<sdd::hom::constant<C>>
@@ -129,9 +130,7 @@ struct hash<sdd::hom::constant<C>>
   }
 };
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
 

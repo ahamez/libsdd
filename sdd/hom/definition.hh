@@ -18,14 +18,14 @@
 #include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
 #include "sdd/hom/values_function.hh"
-#include "sdd/internal/mem/ptr.hh"
-#include "sdd/internal/mem/ref_counted.hh"
-#include "sdd/internal/mem/variant.hh"
-#include "sdd/internal/util/print_sizes_fwd.hh"
+#include "sdd/mem/ptr.hh"
+#include "sdd/mem/ref_counted.hh"
+#include "sdd/mem/variant.hh"
+#include "sdd/util/print_sizes_fwd.hh"
 
-namespace sdd { namespace hom {
+namespace sdd {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief An homomorphism operation.
 template <typename C>
@@ -34,32 +34,32 @@ class homomorphism
 private:
 
   /// @brief A canonized homomorphism.
-  typedef internal::mem::variant< const composition<C>
-                                , const cons<C, SDD<C>>
-                                , const cons<C, typename C::Values>
-                                , const constant<C>
-                                , const expression<C>
-                                , const fixpoint<C>
-                                , const identity<C>
-                                , const inductive<C>
-                                , const local<C>
-                                , const saturation_fixpoint<C>
-                                , const saturation_sum<C>
-                                , const sum<C>
-                                , const values_function<C>
-                                >
+  typedef mem::variant< const hom::composition<C>
+                      , const hom::cons<C, SDD<C>>
+                      , const hom::cons<C, typename C::Values>
+                      , const hom::constant<C>
+                      , const hom::expression<C>
+                      , const hom::fixpoint<C>
+                      , const hom::identity<C>
+                      , const hom::inductive<C>
+                      , const hom::local<C>
+                      , const hom::saturation_fixpoint<C>
+                      , const hom::saturation_sum<C>
+                      , const hom::sum<C>
+                      , const hom::values_function<C>
+                      >
           data_type;
 
   /// @brief A unified and canonized homomorphism, meant to be stored in a unique table.
   ///
   /// It is automatically erased when there is no more reference to it.
-  typedef internal::mem::ref_counted<const data_type> unique_type;
+  typedef mem::ref_counted<const data_type> unique_type;
 
   /// @brief Define the smart pointer around a unified homomorphism.
   ///
   /// It handles the reference counting as well as the deletion of the homomorphism when it is
   /// no longer referenced.
-  typedef internal::mem::ptr<const unique_type> ptr_type;
+  typedef mem::ptr<const unique_type> ptr_type;
 
   /// @brief The real smart pointer around a unified homomorphism.
   ptr_type ptr_;
@@ -99,7 +99,7 @@ public:
   operator()(const order::order<C>& o, const SDD<C>& x)
   const
   {
-    return (*this)(initial_context<C>(), o, x);
+    return (*this)(hom::initial_context<C>(), o, x);
   }
 
   /// @brief Tell if this homomorphism skips a given identifier.
@@ -118,9 +118,8 @@ public:
     return apply_visitor(selector_helper(), ptr()->data());
   }
 
-/// @cond INTERNAL_DOC
-
-  /// @brief Get the content of the homomorphism (an internal::mem::ref_counted).
+  /// @internal
+  /// @brief Get the content of the homomorphism (an mem::ref_counted).
   ///
   /// O(1).
   const unique_type&
@@ -130,7 +129,8 @@ public:
     return *ptr_;
   }
 
-  /// @brief Get a pointer to the content of the homomorphism (an internal::mem::ref_counted).
+  /// @internal
+  /// @brief Get a pointer to the content of the homomorphism (an mem::ref_counted).
   ///
   /// O(1).
   const unique_type*
@@ -140,6 +140,7 @@ public:
     return ptr_.operator->();
   }
 
+  /// @internal
   /// @brief Get the real smart pointer of the unified data.
   ///
   /// O(1).
@@ -150,6 +151,7 @@ public:
     return ptr_;
   }
 
+  /// @internal
   /// @brief Construct an homomorphism from a ptr.
   ///
   /// O(1).
@@ -159,6 +161,7 @@ public:
   {
   }
 
+  /// @internal
   /// @brief Construct an homomorphism from a moved ptr.
   ///
   /// O(1).
@@ -168,9 +171,10 @@ public:
   {
   }
 
+  /// @internal
   /// @brief Apply this homomorphism on an SDD, in a given context.
   SDD<C>
-  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
+  operator()(hom::context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
   const
   {
     // hard-wired cases:
@@ -180,22 +184,24 @@ public:
     {
       return x;
     }
-    return cxt.cache()(cached_homomorphism<C>(cxt, o, *this, x));
+    return cxt.cache()(hom::cached_homomorphism<C>(cxt, o, *this, x));
   }
 
+  /// @internal
   /// @brief Create an homomorphism from a concrete type (e.g. Id, Cons, etc.).
   template<typename T, typename... Args>
   static
   homomorphism
-  create(internal::mem::construct<T>, Args&&... args)
+  create(mem::construct<T>, Args&&... args)
   {
     const std::size_t size = sizeof(unique_type);
-    char* addr = internal::mem::allocate<unique_type>(size);
+    char* addr = mem::allocate<unique_type>(size);
     unique_type* u =
-      new (addr) unique_type(internal::mem::construct<T>(), std::forward<Args>(args)...);
-    return homomorphism(internal::mem::unify(u, size));
+      new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
+    return homomorphism(mem::unify(u, size));
   }
 
+  /// @internal
   /// @brief Dispatch the skip predicate call to concrete homomorphisms.
   struct skip_helper
   {
@@ -210,6 +216,7 @@ public:
     }
   };
 
+  /// @internal
   /// @brief Dispatch the selector predicate call to concrete homomorphisms.
   struct selector_helper
   {
@@ -224,12 +231,10 @@ public:
     }
   };
 
-  friend void internal::util::print_sizes<C>(std::ostream&);
-
-/// @endcond
+  friend void util::print_sizes<C>(std::ostream&);
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @related homomorphism
 template <typename C>
@@ -269,31 +274,27 @@ operator<<(std::ostream& os, const homomorphism<C>& h)
   return os << h->data();
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-}} // namespace dd::shom
+} // namespace sdd
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
-/// @brief Hash specialization for sdd::hom::homomorphism
+/// @brief Hash specialization for sdd::homomorphism
 template <typename C>
-struct hash<sdd::hom::homomorphism<C>>
+struct hash<sdd::homomorphism<C>>
 {
   std::size_t
-  operator()(const sdd::hom::homomorphism<C>& h)
+  operator()(const sdd::homomorphism<C>& h)
   const noexcept
   {
     return std::hash<decltype(h.ptr())>()(h.ptr());
   }
 };
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
 

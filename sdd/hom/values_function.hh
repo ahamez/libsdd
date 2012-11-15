@@ -11,23 +11,24 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Used to wrap user's values function.
 template <typename C>
 class values_function_base
 {
 public:
 
-  typedef typename C::Values    values_type;
+  /// @brief The type of a set of values.
+  typedef typename C::Values values_type;
 
+  /// @brief Destructor.
   virtual
   ~values_function_base()
   {
@@ -59,8 +60,9 @@ public:
   print(std::ostream&) const = 0;
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Used to wrap user's values function.
 template <typename C, typename User>
 class values_function_derived
@@ -74,10 +76,10 @@ private:
 public:
 
   /// @brief The type of a variable.
-  typedef typename C::Variable  variable_type;
+  typedef typename C::Variable variable_type;
 
   /// @brief The type of a set of values.
-  typedef typename C::Values    values_type;
+  typedef typename C::Values values_type;
 
   /// @brief Constructor.
   values_function_derived(const User& f)
@@ -161,8 +163,9 @@ private:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Values homomorphism.
 template <typename C>
 class _LIBSDD_ATTRIBUTE_PACKED values_function
@@ -297,9 +300,10 @@ public:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @brief Equality of two values.
+/// @internal
+/// @brief Equality of two values_function.
 /// @related values_function
 template <typename C>
 inline
@@ -310,6 +314,7 @@ noexcept
   return lhs.identifier() == rhs.identifier() and lhs.fun() == rhs.fun();
 }
 
+/// @internal
 /// @related values_function
 template <typename C>
 std::ostream&
@@ -320,9 +325,9 @@ operator<<(std::ostream& os, const values_function<C>& x)
   return os << ")";
 }
 
-/// @endcond
+} // namespace hom
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Values Function homomorphism.
 /// @related homomorphism
@@ -336,8 +341,8 @@ ValuesFunction(const order::order<C>& o, const typename C::Idenfitier& i, const 
     ss << "Identifier " << i << " not found." << std::endl;
     throw std::invalid_argument(ss.str());
   }
-  return homomorphism<C>::create( internal::mem::construct<values_function<C>>()
-                                , i, new values_function_derived<C, User>(u));
+  return homomorphism<C>::create( mem::construct<hom::values_function<C>>()
+                                , i, new hom::values_function_derived<C, User>(u));
 }
 
 /// @brief Create the Values Function homomorphism.
@@ -352,20 +357,19 @@ ValuesFunction(const order::order<C>& o, const typename C::Identifier& i, User&&
     ss << "Identifier " << i << " not found." << std::endl;
     throw std::invalid_argument(ss.str());
   }
-  return homomorphism<C>::create( internal::mem::construct<values_function<C>>()
-                                , i, new values_function_derived<C, User>(std::move(u)));
+  return homomorphism<C>::create( mem::construct<hom::values_function<C>>()
+                                , i, new hom::values_function_derived<C, User>(std::move(u)));
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::values.
 template <typename C>
 struct hash<sdd::hom::values_function<C>>
@@ -375,14 +379,12 @@ struct hash<sdd::hom::values_function<C>>
   const noexcept
   {
     std::size_t seed = x.fun().hash();
-    sdd::internal::util::hash_combine(seed, x.identifier());
+    sdd::util::hash_combine(seed, x.identifier());
     return seed;
   }
 };
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
 

@@ -1,15 +1,18 @@
-#ifndef _SDD_HOM_DEFINITION_FWD_HH_
-#define _SDD_HOM_DEFINITION_FWD_HH_
+#ifndef _SDD_UTIL_PRINT_SIZES_FWD_HH_
+#define _SDD_UTIL_PRINT_SIZES_FWD_HH_
 
-namespace sdd {
+#include <iosfwd>
+
+namespace sdd { namespace util {
 
 /*------------------------------------------------------------------------------------------------*/
 
 template <typename C>
-class homomorphism;
+void
+print_sizes(std::ostream&);
 
 /*------------------------------------------------------------------------------------------------*/
-  
-} // namespace sdd
 
-#endif // _SDD_HOM_DEFINITION_FWD_HH_
+}} // namespace sdd::util
+
+#endif // _SDD_UTIL_PRINT_SIZES_FWD_HH_

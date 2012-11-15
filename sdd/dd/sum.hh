@@ -1,9 +1,6 @@
 #ifndef _SDD_DD_SUM_HH_
 #define _SDD_DD_SUM_HH_
 
-/// @file  sum.hh
-/// @brief Contain all stuff to implement the union operation.
-
 #include <unordered_map>
 #include <vector>
 
@@ -14,15 +11,14 @@
 #include "sdd/dd/nary.hh"
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
-#include "sdd/internal/util/hash.hh"
+#include "sdd/util/hash.hh"
 
 namespace sdd {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
-/// @brief The union operation in the cache.
+/// @internal
+/// @brief The sum operation in the cache.
 template <typename C>
 struct _LIBSDD_ATTRIBUTE_PACKED sum_op
   : nary_base<C, sum_op<C>>
@@ -62,7 +58,7 @@ struct _LIBSDD_ATTRIBUTE_PACKED sum_op
     const auto operands_end = base_type::end();
 
     // Get the first operand as a node, we need it to initialize the algorithm.
-    const node_type& head = internal::mem::variant_cast<node_type>((*operands_cit)->data());
+    const node_type& head = mem::variant_cast<node_type>((*operands_cit)->data());
 
     // Type of the list of successors for a valuation, to be merged with the union operation
     // right before calling the square union.
@@ -94,7 +90,7 @@ struct _LIBSDD_ATTRIBUTE_PACKED sum_op
     {
       const auto res_end = res.end();
 
-      const node_type& node = internal::mem::variant_cast<node_type>((*operands_cit)->data());
+      const node_type& node = mem::variant_cast<node_type>((*operands_cit)->data());
       const auto alpha_end = node.end();
 
       // (B). For each arc of the current operand.
@@ -212,8 +208,9 @@ struct _LIBSDD_ATTRIBUTE_PACKED sum_op
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Add an arc to the operands of the sum operation.
 ///
 /// This implementation is meant to be used as a policy by nary_builder which doesn't know how
@@ -240,8 +237,9 @@ struct _LIBSDD_ATTRIBUTE_PACKED sum_builder_impl
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief   The sum operation of a set of SDD.
 /// @related SDD
 template <typename C>
@@ -260,8 +258,9 @@ sum(context<C>& cxt, sum_builder<C, SDD<C>>&& builder)
   return cxt.sum_cache()(sum_op<C>(cxt, builder));
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief   The sum operation of a set of values.
 /// @details A wrapper around the implementation of sum provided by Values.
 template <typename C, typename Values>
@@ -292,11 +291,9 @@ sum(context<C>&, sum_builder<C, Values>&& builder)
   }
 }
 
-/// @endcond
+/*------------------------------------------------------------------------------------------------*/
 
-/*-------------------------------------------------------------------------------------------*/
-
-/// @brief   Perform the union of two SDD.
+/// @brief Perform the union of two SDD.
 /// @related SDD
 template <typename C>
 inline
@@ -306,7 +303,7 @@ operator+(const SDD<C>& lhs, const SDD<C>& rhs)
   return sum(initial_context<C>(), {lhs, rhs});
 }
 
-/// @brief   Perform the union of two SDD.
+/// @brief Perform the union of two SDD.
 /// @related SDD
 template <typename C>
 inline
@@ -319,7 +316,7 @@ operator+=(SDD<C>& lhs, const SDD<C>& rhs)
   return lhs;
 }
 
-/// @brief   Perform the union of an iterable container of SDD.
+/// @brief Perform the union of an iterable container of SDD.
 /// @related SDD
 template <typename C, typename InputIterator>
 SDD<C>
@@ -344,14 +341,15 @@ sum(std::initializer_list<SDD<C>> operands)
   return sum<C>(std::begin(operands), std::end(operands));
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Hash specialization for sdd::dd::sum_op
 template <typename C>
 struct hash<sdd::sum_op<C>>
@@ -363,13 +361,13 @@ struct hash<sdd::sum_op<C>>
     std::size_t seed = 0;
     for (const auto& operand : sum)
     {
-      sdd::internal::util::hash_combine(seed, operand);
+      sdd::util::hash_combine(seed, operand);
     }
     return seed;
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
 

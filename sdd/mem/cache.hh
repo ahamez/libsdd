@@ -1,10 +1,5 @@
-#ifndef _SDD_INTERNAL_MEM_CACHE_HH_
-#define _SDD_INTERNAL_MEM_CACHE_HH_
-
-/// @cond INTERNAL_DOC
-
-/// @file cache.hh
-/// @brief Provide a cache to store results of operations.
+#ifndef _SDD_MEM_CACHE_HH_
+#define _SDD_MEM_CACHE_HH_
 
 #include <algorithm> // count_if, for_each, nth_element
 #include <forward_list>
@@ -15,13 +10,16 @@
 
 #include <boost/intrusive/unordered_set.hpp>
 
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
-namespace sdd { namespace internal { namespace mem {
+namespace sdd { namespace mem {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @brief A filter should always return the same result for the same operation.
+/// @internal
+/// @brief Used by cache to know if an operation should be cached or not.
+///
+/// A filter should always return the same result for the same operation.
 template <typename T, typename... Filters>
 struct apply_filters;
 
@@ -48,16 +46,16 @@ struct apply_filters<T, Filter, Filters...>
   }
 };
 
-/// @endcond
+/*------------------------------------------------------------------------------------------------*/
 
-/*-------------------------------------------------------------------------------------------*/
-
+/// @internal
 /// @brief The statistics of a cache.
 ///
 /// A statistic is made of several rounds: each time a cache is cleaned up, a new round is
 /// created. Thus, one can have detailed statistics to see how well the cache performed.
 struct cache_statistics
 {
+  /// @internal
   /// @brief Statistic between two cleanups.
   struct round
   {
@@ -120,10 +118,9 @@ struct cache_statistics
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief  A generic cache.
 /// @tparam Operation is the operation type.
 /// @tparam EvaluationError is the exception that the evaluation of an Operation can throw.
@@ -226,8 +223,9 @@ private:
 
 public:
 
-  /// @brief   Construct a cache.
-  /// @param   size tells how many cache entries are keeped in the cache.
+  /// @brief Construct a cache.
+  /// @param name Give a name to this cache.
+  /// @param size tells how many cache entries are keeped in the cache.
   ///
   /// When the maximal size is reached, a cleanup is launched: half of the cache is removed,
   /// using an LFU strategy. This cache will never perform a rehash, therefore it allocates
@@ -306,8 +304,6 @@ public:
     }
   }
 
-/// @endcond
-
   /// @brief Remove half of the cache (LFU strategy).
   void
   cleanup()
@@ -370,8 +366,8 @@ public:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace sdd::internal::mem
+}} // namespace sdd::mem
 
-#endif // _SDD_INTERNAL_MEM_CACHE_HH_
+#endif // _SDD_MEM_CACHE_HH_

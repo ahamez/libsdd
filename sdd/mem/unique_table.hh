@@ -1,15 +1,15 @@
-#ifndef _SDD_INTERNAL_MEM_UNIQUE_TABLE_HH_
-#define _SDD_INTERNAL_MEM_UNIQUE_TABLE_HH_
-
-/// @cond INTERNAL_DOC
+#ifndef _SDD_MEM_UNIQUE_TABLE_HH_
+#define _SDD_MEM_UNIQUE_TABLE_HH_
 
 #include <boost/container/flat_map.hpp>
 #include <boost/intrusive/unordered_set.hpp>
 
-namespace sdd { namespace internal { namespace mem {
+namespace sdd { namespace mem {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
+/// @brief A table to unify data.
 template <typename Unique>
 class unique_table
 {
@@ -165,24 +165,27 @@ private:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 namespace /* anonymous */ {
 
+/// @internal
+/// @related unique_table
 template <typename Unique>
 inline
-internal::mem::unique_table<Unique>&
+mem::unique_table<Unique>&
 global_unique_table()
 noexcept
 {
-  static internal::mem::unique_table<Unique> unique_table;
+  static mem::unique_table<Unique> unique_table;
   return unique_table;
 }
 
 } // namespace anonymous
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related unique_table
 template <typename Unique>
 inline
@@ -192,8 +195,10 @@ allocate(std::size_t size)
   return global_unique_table<Unique>().allocate(size);
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
+/// @related unique_table
 template <typename Unique>
 inline
 const Unique&
@@ -202,10 +207,8 @@ unify(Unique* u_ptr, std::size_t size)
   return global_unique_table<Unique>()(u_ptr, size);
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace sdd::internal::mem
+}} // namespace sdd::mem
 
-/// @endcond
-
-#endif // _SDD_INTERNAL_MEM_UNIQUE_TABLE_HH_
+#endif // _SDD_MEM_UNIQUE_TABLE_HH_

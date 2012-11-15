@@ -14,27 +14,23 @@
 namespace sdd
 {
 
-/// @brief Stuff related to SDD: definition and operations.
-namespace dd {}
-
-/// @brief Definition and evaluation of homomorphisms.
-namespace hom {}
-
 /// @brief Definition of values to be stored on arcs.
 namespace values {}
 
 /// @brief Stuff necessary to describe and manipulate variable orders.
 namespace order {}
 
-/// @cond INTERNAL_DOC
+/// @internal
+/// @brief Definition and evaluation of homomorphisms.
+namespace hom {}
 
-/// @brief Contain internal stuff necessary for the library.
-namespace internal {}
-
+/// @internal
 /// @brief Contain stuff necessary for the memory management.
 namespace mem {}
 
-/// @endcond
+/// @internal
+/// @brief Contain miscellaneous utilities.
+namespace util {}
 
 }
 

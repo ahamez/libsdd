@@ -7,12 +7,13 @@
 #include <sstream>
 #include <string>
 
-namespace sdd { namespace hom {
+namespace sdd {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
+namespace hom {
 
+/// @internal
 /// @brief A base class to wrap operations of different type.
 struct operation_wrapper_base
 {
@@ -24,6 +25,7 @@ struct operation_wrapper_base
   virtual std::string print() const noexcept = 0;
 };
 
+/// @internal
 /// @brief A new type for each different operation, but which inherits from
 /// operation_wrapper_base.
 ///
@@ -54,6 +56,7 @@ struct operation_wrapper
   }
 };
 
+/// @internal
 /// @brief Specialization to contain a Top exception.
 template <typename C>
 struct operation_wrapper<top<C>>
@@ -76,10 +79,9 @@ struct operation_wrapper<top<C>>
   }
 };
 
+} // namespace hom
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @exception evaluation_error
 /// @brief Raised when an error is encountered by an evaluated homomorphism.
@@ -93,7 +95,7 @@ private:
   const SDD<C> sdd_;
 
   /// @brief The sequence, in reverse order, of operations that led to the error.
-  std::deque<std::shared_ptr<operation_wrapper_base>> steps_;
+  std::deque<std::shared_ptr<hom::operation_wrapper_base>> steps_;
 
   /// @brief Flag to determine if the description has been built.
   mutable bool description_built_;
@@ -103,8 +105,7 @@ private:
 
 public:
 
-/// @cond INTERNAL_DOC
-
+  /// @internal
   evaluation_error(const SDD<C>& s)
     : sdd_(s)
     , steps_()
@@ -112,8 +113,6 @@ public:
     , description_()
   {
   }
-
-/// @endcond
 
   ~evaluation_error()
   noexcept
@@ -130,22 +129,23 @@ public:
     return description().c_str();
   }
 
-/// @cond INTERNAL_DOC
-
+  /// @internal
   /// @brief Add an operation to the sequence of operations that lead to an evaluation error.
   template <typename Operation>
   void
   add_step(Operation&& op)
   {
-    steps_.emplace_back(std::make_shared<operation_wrapper<Operation>>(std::move(op)));
+    steps_.emplace_back(std::make_shared<hom::operation_wrapper<Operation>>(std::move(op)));
   }
 
+  /// @internal
   void
   add_top(const top<C>& t)
   {
-    steps_.emplace_back(std::make_shared<operation_wrapper<top<C>>>(t));
+    steps_.emplace_back(std::make_shared<hom::operation_wrapper<top<C>>>(t));
   }
 
+  /// @internal
   /// @brief Return a textual description.
   std::string&
   description()
@@ -167,7 +167,7 @@ public:
     return description_;
   }
 
-  /// @brief Get the operand.
+  /// @brief Get the operand that raises this error.
   SDD<C>
   operand()
   const noexcept
@@ -175,11 +175,10 @@ public:
     return sdd_;
   }
 
-/// @endcond
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 #endif // _SDD_HOM_EVALUATION_ERROR_HH_

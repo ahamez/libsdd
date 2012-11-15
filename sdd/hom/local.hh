@@ -9,14 +9,13 @@
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/order/order.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
 namespace sdd { namespace hom {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Local homomorphism.
 template <typename C>
 class _LIBSDD_ATTRIBUTE_PACKED local
@@ -48,6 +47,7 @@ public:
   {
   }
 
+  /// @internal
   /// @brief Local's evaluation implementation.
   struct evaluation
   {
@@ -153,8 +153,9 @@ public:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two Local homomorphisms.
 /// @related local
 template <typename C>
@@ -166,6 +167,7 @@ noexcept
   return lhs.variable() == rhs.variable() and lhs.hom() == rhs.hom();
 }
 
+/// @internal
 /// @related local
 template <typename C>
 std::ostream&
@@ -174,9 +176,9 @@ operator<<(std::ostream& os, const local<C>& l)
   return os << "@(" << l.variable() << ", " << l.hom() << ")";
 }
 
-/// @endcond
+} // namespace hom
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Local homomorphism.
 /// @related homomorphism
@@ -190,20 +192,19 @@ Local(const typename C::Identifier& id, const order::order<C>& o, const homomorp
   }
   else
   {
-    return homomorphism<C>::create(internal::mem::construct<local<C>>(), id, o, h);
+    return homomorphism<C>::create(mem::construct<hom::local<C>>(), id, o, h);
   }
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::local.
 template <typename C>
 struct hash<sdd::hom::local<C>>
@@ -213,17 +214,14 @@ struct hash<sdd::hom::local<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, l.variable());
-    sdd::internal::util::hash_combine(seed, l.hom());
+    sdd::util::hash_combine(seed, l.variable());
+    sdd::util::hash_combine(seed, l.hom());
     return seed;
   }
 };
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
 
-
-#endif // _SDD_HOM_FIXPOINT_HH_
+#endif // _SDD_HOM_LOCAL_HH_

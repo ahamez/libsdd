@@ -8,14 +8,13 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/order/order.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
 namespace sdd { namespace hom {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Composition homomorphism.
 template <typename C>
 class _LIBSDD_ATTRIBUTE_PACKED composition
@@ -91,8 +90,9 @@ public:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two composition homomorphisms.
 /// @related composition
 template <typename C>
@@ -104,7 +104,8 @@ noexcept
   return lhs.left() == rhs.left() and lhs.right() == rhs.right();
 }
 
-/// @related compostion
+/// @internal
+/// @related composition
 template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const composition<C>& c)
@@ -112,9 +113,9 @@ operator<<(std::ostream& os, const composition<C>& c)
   return os << c.left() << " o " << c.right();
 }
 
-/// @endcond
+} // namespace hom
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the composition homomorphism.
 /// @related homomorphism
@@ -130,19 +131,18 @@ Composition(const homomorphism<C>& left, const homomorphism<C>& right)
   {
     return left;
   }
-  return homomorphism<C>::create(internal::mem::construct<composition<C>>(), left, right);
+  return homomorphism<C>::create(mem::construct<hom::composition<C>>(), left, right);
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::composition.
 template <typename C>
 struct hash<sdd::hom::composition<C>>
@@ -152,15 +152,13 @@ struct hash<sdd::hom::composition<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, c.left());
-    sdd::internal::util::hash_combine(seed, c.right());
+    sdd::util::hash_combine(seed, c.left());
+    sdd::util::hash_combine(seed, c.right());
     return seed;
   }
 };
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
 

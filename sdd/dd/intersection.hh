@@ -8,14 +8,13 @@
 #include "sdd/dd/nary.hh"
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
-#include "sdd/internal/util/hash.hh"
+#include "sdd/util/hash.hh"
 
 namespace sdd {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief The intersection operation in the cache.
 template <typename C>
 struct _LIBSDD_ATTRIBUTE_PACKED intersection_op
@@ -56,7 +55,7 @@ struct _LIBSDD_ATTRIBUTE_PACKED intersection_op
     SDD<C> res = *operands_cit;
 
     const variable_type& variable =
-	    internal::mem::variant_cast<node_type>((*operands_cit)->data()).variable();
+	    mem::variant_cast<node_type>((*operands_cit)->data()).variable();
 
     // We re-use the same square union to save some allocations.
     square_union<C, valuation_type> su;
@@ -66,8 +65,8 @@ struct _LIBSDD_ATTRIBUTE_PACKED intersection_op
       // Cleanup for the next usage.
       su.clear();
 
-      const node_type& lhs = internal::mem::variant_cast<node_type>((res)->data());
-      const node_type& rhs = internal::mem::variant_cast<node_type>((*operands_cit)->data());
+      const node_type& lhs = mem::variant_cast<node_type>((res)->data());
+      const node_type& rhs = mem::variant_cast<node_type>((*operands_cit)->data());
 
       for (auto& lhs_arc : lhs)
       {
@@ -106,8 +105,9 @@ struct _LIBSDD_ATTRIBUTE_PACKED intersection_op
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Add an arc to the operands of the intersection operation.
 ///
 /// This implementation is meant to be used as a policy by nary_builder which doesn't know how
@@ -155,12 +155,10 @@ struct _LIBSDD_ATTRIBUTE_PACKED intersection_builder_impl
   }
 };
 
-/// @endcond
+/*------------------------------------------------------------------------------------------------*/
 
-/*-------------------------------------------------------------------------------------------*/
-
-/// @brief The intersection operation.
-/// @return The intersection of n operands.
+/// @internal
+/// @brief The intersection operation applied on SDD.
 template <typename C>
 inline
 SDD<C>
@@ -177,8 +175,10 @@ intersection(context<C>& cxt, intersection_builder<C, SDD<C>>&& builder)
   return cxt.intersection_cache()(intersection_op<C>(cxt, builder));
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
+/// @brief The intersection operations applied on sets of values.
 template <typename C, typename Values>
 inline
 Values
@@ -207,9 +207,9 @@ intersection(context<C>&, intersection_builder<C, Values>&& builder)
   }
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @brief   Perform the intersection of two SDD.
+/// @brief Perform the intersection of two SDD.
 /// @related SDD
 template <typename C>
 inline
@@ -219,7 +219,7 @@ operator&(const SDD<C>& lhs, const SDD<C>& rhs)
   return intersection(initial_context<C>(), {lhs, rhs});
 }
 
-/// @brief   Perform the intersection of two SDD.
+/// @brief Perform the intersection of two SDD.
 /// @related SDD
 template <typename C>
 inline
@@ -232,7 +232,7 @@ operator&=(SDD<C>& lhs, const SDD<C>& rhs)
   return lhs;
 }
 
-/// @brief   Perform the intersection of an iterable container of SDD.
+/// @brief Perform the intersection of an iterable container of SDD.
 /// @related SDD
 template <typename C, typename InputIterator>
 SDD<C>
@@ -247,7 +247,7 @@ intersection(InputIterator begin, InputIterator end)
   return intersection(initial_context<C>(), std::move(builder));
 }
 
-/// @brief   Perform the intersection of an initializer list of SDD.
+/// @brief Perform the intersection of an initializer list of SDD.
 /// @related SDD
 template <typename C>
 SDD<C>
@@ -257,16 +257,15 @@ intersection(std::initializer_list<SDD<C>> operands)
   return intersection<C>(std::begin(operands), std::end(operands));
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::dd::intersection_op
 template <typename C>
 struct hash<sdd::intersection_op<C>>
@@ -278,15 +277,13 @@ struct hash<sdd::intersection_op<C>>
     std::size_t seed = 0;
     for (auto& operand : inter)
     {
-      sdd::internal::util::hash_combine(seed, operand);
+      sdd::util::hash_combine(seed, operand);
     }
     return seed;
   }
 };
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
 

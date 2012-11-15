@@ -1,7 +1,5 @@
-#ifndef _SDD_INTERNAL_MEM_VARIANT_HH_
-#define _SDD_INTERNAL_MEM_VARIANT_HH_
-
-/// @cond INTERNAL_DOC
+#ifndef _SDD_MEM_VARIANT_HH_
+#define _SDD_MEM_VARIANT_HH_
 
 #include <climits>     // USHRT_MAX
 #include <cstdint>     // uint8_t
@@ -10,28 +8,30 @@
 #include <type_traits> // is_nothrow_constructible
 #include <utility>     // forward
 
-#include "sdd/internal/mem/variant_impl.hh"
-#include "sdd/internal/util/hash.hh"
-#include "sdd/internal/util/packed.hh"
-#include "sdd/internal/util/typelist.hh"
-#include "sdd/internal/util/print_sizes_fwd.hh"
+#include "sdd/mem/variant_impl.hh"
+#include "sdd/util/hash.hh"
+#include "sdd/util/packed.hh"
+#include "sdd/util/typelist.hh"
+#include "sdd/util/print_sizes_fwd.hh"
 
-namespace sdd { namespace internal { namespace mem {
+namespace sdd { namespace mem {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Helper struct to determine the type to be constructed in place.
 template <typename T>
 struct construct {};
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 template <typename Visitor, typename Variant, typename... Args>
 typename Visitor::result_type
 apply_visitor(const Visitor&, const Variant&, Args&&...);
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief  A union-like structure.
 /// @tparam Types The list of possible types.
 ///
@@ -51,7 +51,7 @@ class _LIBSDD_ATTRIBUTE_PACKED variant
 private:
 
   template <typename C>
-  friend void internal::util::print_sizes(std::ostream&);
+  friend void util::print_sizes(std::ostream&);
 
   static_assert( sizeof...(Types) >= 1
                , "A variant should contain at least one type.");
@@ -117,8 +117,9 @@ public:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related variant
 template < typename Visitor
          , typename... Types, template <typename...> class Variant
@@ -132,6 +133,7 @@ apply_visitor(const Visitor& v, const Variant<Types...>& x, Args&&... args)
                       , std::forward<Args>(args)...);
 }
 
+/// @internal
 /// @related variant
 template < typename Visitor
          , typename... Types1, template <typename...> class Variant1
@@ -149,6 +151,7 @@ apply_binary_visitor( const Visitor& v
                              , std::forward<Args>(args)...);
 }
 
+/// @internal
 /// @related variant
 template <typename... Types>
 inline
@@ -159,6 +162,7 @@ noexcept
   return lhs.index() == rhs.index() and apply_binary_visitor(eq_visitor(), lhs, rhs);
 }
 
+/// @internal
 /// @related variant
 template <typename T, typename... Types>
 inline
@@ -169,8 +173,9 @@ noexcept
   return v.template get<T>();
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related variant
 template <typename... Types>
 std::ostream&
@@ -179,33 +184,32 @@ operator<<(std::ostream& os, const variant<Types...>& v)
   return apply_visitor(ostream_visitor(os), v);
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace sdd::internal::mem
+}} // namespace sdd::mem
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @brief Hash specialization for sdd::internal::mem::variant
+/// @internal
+/// @brief Hash specialization for sdd::mem::variant
 template <typename... Types>
-struct hash<const sdd::internal::mem::variant<Types...>>
+struct hash<const sdd::mem::variant<Types...>>
 {
   std::size_t
-  operator()(const sdd::internal::mem::variant<Types...>& x)
+  operator()(const sdd::mem::variant<Types...>& x)
   const noexcept
   {
     std::size_t seed =
-      sdd::internal::mem::apply_visitor(sdd::internal::mem::hash_visitor(), x);
-    sdd::internal::util::hash_combine(seed, x.index());
+      sdd::mem::apply_visitor(sdd::mem::hash_visitor(), x);
+    sdd::util::hash_combine(seed, x.index());
     return seed;
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-/// @endcond
 
 #endif // _SDD_INTERNAL_MEM_VARIANT_HH_

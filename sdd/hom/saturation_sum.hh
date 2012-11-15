@@ -16,14 +16,13 @@
 #include "sdd/hom/local.hh"
 #include "sdd/hom/sum.hh"
 #include "sdd/order/order.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
 namespace sdd { namespace hom {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Saturation Sum homomorphism.
 template <typename C>
 class _LIBSDD_ATTRIBUTE_PACKED saturation_sum
@@ -151,8 +150,9 @@ public:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two saturation_sum.
 /// @related saturation_sum
 template <typename C>
@@ -167,6 +167,7 @@ noexcept
      and lhs.G() == rhs.G();
 }
 
+/// @internal
 /// @related sum
 template <typename C>
 std::ostream&
@@ -192,10 +193,9 @@ operator<<(std::ostream& os, const saturation_sum<C>& s)
   return os;
 }
 
-/// @endcond
+/*------------------------------------------------------------------------------------------------*/
 
-/*-------------------------------------------------------------------------------------------*/
-
+/// @internal
 /// @brief Create the Saturation Sum homomorphism.
 /// @related homomorphism
 ///
@@ -220,23 +220,22 @@ SaturationSum( const typename C::Variable& var
     return *l;
   }
 
-  return homomorphism<C>::create( internal::mem::construct<saturation_sum<C>>()
+  return homomorphism<C>::create( mem::construct<saturation_sum<C>>()
                                 , var
                                 , f
                                 , typename saturation_sum<C>::g_type(gbegin, gend)
                                 , l);
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::hom
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::saturation_sum.
 template <typename C>
 struct hash<sdd::hom::saturation_sum<C>>
@@ -246,26 +245,24 @@ struct hash<sdd::hom::saturation_sum<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, s.variable());
+    sdd::util::hash_combine(seed, s.variable());
     if (s.F())
     {
-      sdd::internal::util::hash_combine(seed, *s.F());
+      sdd::util::hash_combine(seed, *s.F());
     }
     if (s.L())
     {
-      sdd::internal::util::hash_combine(seed, *s.L());
+      sdd::util::hash_combine(seed, *s.L());
     }
     for (const auto& g : s.G())
     {
-      sdd::internal::util::hash_combine(seed, g);
+      sdd::util::hash_combine(seed, g);
     }
     return seed;
   }
 };
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
 

@@ -492,8 +492,8 @@ public:
   const noexcept
   {
     std::size_t seed = 0;
-    internal::util::hash_combine(seed, nodes_ptr_.get());
-    internal::util::hash_combine(seed, head_);
+    util::hash_combine(seed, nodes_ptr_.get());
+    util::hash_combine(seed, head_);
     return seed;
   }
 

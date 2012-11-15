@@ -1,9 +1,6 @@
 #ifndef _SDD_DD_DEFINITION_HH_
 #define _SDD_DD_DEFINITION_HH_
 
-/// @file definition.hh
-/// @brief Contain all stuff necessary to describe and build SDD.
-
 #include <initializer_list>
 #include <type_traits> // is_integral
 
@@ -11,14 +8,14 @@
 #include "sdd/dd/definition_fwd.hh"
 #include "sdd/dd/node.hh"
 #include "sdd/dd/terminal.hh"
-#include "sdd/internal/mem/ptr.hh"
-#include "sdd/internal/mem/ref_counted.hh"
-#include "sdd/internal/mem/variant.hh"
-#include "sdd/internal/util/print_sizes_fwd.hh"
+#include "sdd/mem/ptr.hh"
+#include "sdd/mem/ref_counted.hh"
+#include "sdd/mem/variant.hh"
+#include "sdd/util/print_sizes_fwd.hh"
 
 namespace sdd {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief SDD at the deepest level.
 template <typename C>
@@ -28,18 +25,19 @@ using flat_node = node<C, typename C::Values>;
 template <typename C>
 using hierarchical_node = node<C, SDD<C>>;
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Tag to describe the type of a node.
 enum class node_tag {flat, hierarchical};
 
+/// @internal
 /// @brief Signature of the meta-function that returns the node's type corresponding to the
 /// given tag.
 template <typename C, enum node_tag>
 struct node_for_tag;
 
+/// @internal
 /// @brief Specialization for flat node.
 template <typename C>
 struct node_for_tag<C, node_tag::flat>
@@ -47,6 +45,7 @@ struct node_for_tag<C, node_tag::flat>
   typedef flat_node<C> type;
 };
 
+/// @internal
 /// @brief Specialization for hierarchical node.
 template <typename C>
 struct node_for_tag<C, node_tag::hierarchical>
@@ -54,9 +53,7 @@ struct node_for_tag<C, node_tag::hierarchical>
   typedef hierarchical_node<C> type;
 };
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief Hierarchical Set Decision Diagram.
 template <typename C>
@@ -72,20 +69,20 @@ private:
   ///
   /// This is the real recursive definition of an SDD: it can be a |0| or |1| terminal, or it
   /// can be a flat or an hierachical node.
-  typedef internal::mem::variant< const zero_terminal<C>, const one_terminal<C>
-                                , const flat_node<C>, const hierarchical_node<C>>
+  typedef mem::variant< const zero_terminal<C>, const one_terminal<C>
+                      , const flat_node<C>, const hierarchical_node<C>>
           SDD_data;
 
   /// @brief A unified and canonized SDD, meant to be stored in a unique table.
   ///
   /// It is automatically erased when there is no more reference to it.
-  typedef internal::mem::ref_counted<const SDD_data> SDD_unique;
+  typedef mem::ref_counted<const SDD_data> SDD_unique;
 
   /// @brief Define the smart pointer around a unified SDD.
   ///
   /// It handles the reference counting as well as the deletion of the SDD when it is no longer
   /// referenced.
-  typedef internal::mem::ptr<const SDD_unique> ptr_type;
+  typedef mem::ptr<const SDD_unique> ptr_type;
 
 public:
 
@@ -204,8 +201,7 @@ public:
     swap(lhs.ptr_, rhs.ptr_);
   }
 
-/// @cond INTERNAL_DOC
-
+  /// @internal
   /// @brief Construct an SDD from a ptr.
   ///
   /// O(1).
@@ -215,6 +211,7 @@ public:
   {
   }
 
+  /// @internal
   /// @brief Construct an SDD from a moved ptr.
   ///
   /// O(1).
@@ -224,6 +221,7 @@ public:
   {
   }
 
+  /// @internal
   /// @brief  Construct an SDD, flat or hierarchical, with an alpha.
   /// \tparam Valuation If an SDD, constructs a hierarchical SDD; if a set of values,
   /// constructs a flat SDD.
@@ -235,7 +233,8 @@ public:
   {
   }
 
-  /// @brief Get the content of the SDD (an internal::mem::ref_counted).
+  /// @internal
+  /// @brief Get the content of the SDD (an mem::ref_counted).
   ///
   /// O(1).
   const SDD_unique&
@@ -245,7 +244,8 @@ public:
     return *ptr_;
   }
 
-  /// @brief Get a pointer to the content of the SDD (an internal::mem::ref_counted).
+  /// @internal
+  /// @brief Get a pointer to the content of the SDD (an mem::ref_counted).
   ///
   /// O(1).
   const SDD_unique*
@@ -255,6 +255,7 @@ public:
     return ptr_.operator->();
   }
 
+  /// @internal
   /// @brief Get the real smart pointer of the unified data.
   ///
   /// O(1).
@@ -265,6 +266,7 @@ public:
     return ptr_;
   }
 
+  /// @internal
   /// @brief Create the |0| terminal.
   ///
   /// O(1). The |0| is cached in a static variable.
@@ -272,11 +274,12 @@ public:
   ptr_type
   zero_ptr()
   {
-    static SDD_unique* z = new SDD_unique(internal::mem::construct<zero_terminal<C>>());
-    static const ptr_type zero(internal::mem::unify(z, sizeof(SDD_unique)));
+    static SDD_unique* z = new SDD_unique(mem::construct<zero_terminal<C>>());
+    static const ptr_type zero(mem::unify(z, sizeof(SDD_unique)));
     return zero;
   }
 
+  /// @internal
   /// @brief Create the |1| terminal.
   ///
   /// O(1). The |1| is cached in a static variable.
@@ -284,13 +287,14 @@ public:
   ptr_type
   one_ptr()
   {
-    static SDD_unique* o = new SDD_unique(internal::mem::construct<one_terminal<C>>());
-    static const ptr_type one(internal::mem::unify(o, sizeof(SDD_unique)));
+    static SDD_unique* o = new SDD_unique(mem::construct<one_terminal<C>>());
+    static const ptr_type one(mem::unify(o, sizeof(SDD_unique)));
     return one;
   }
 
 private:
 
+  /// @internal
   /// @brief Helper function to create a node, flat or hierarchical, with only one arc.
   ///
   /// O(1).
@@ -311,6 +315,7 @@ private:
     }
   }
 
+  /// @internal
   /// @brief Helper function to create a node, flat or hierarchical, with only one arc.
   ///
   /// O(1).
@@ -331,6 +336,7 @@ private:
     }
   }
 
+  /// @internal
   /// @brief Helper function to create a node, flat or hierarchical, from an alpha.
   ///
   /// O(n) where n is the number of arcs in the builder.
@@ -349,6 +355,7 @@ private:
     }
   }
 
+  /// @internal
   /// @brief Helper function to unify a node, flat or hierarchical, from an alpha.
   ///
   /// O(n) where n is the number of arcs in the builder.
@@ -363,18 +370,16 @@ private:
     // taken. This is also why we use Boost.Intrusive in order to be able to manage memory
     // exactly the way we want.
     const std::size_t size = sizeof(SDD_unique) + builder.size_to_allocate();
-    char* addr = internal::mem::allocate<SDD_unique>(size);
+    char* addr = mem::allocate<SDD_unique>(size);
     SDD_unique* u =
-      new (addr) SDD_unique(internal::mem::construct<node<C, Valuation>>(), var, builder);
-    return internal::mem::unify(u, size);
+      new (addr) SDD_unique(mem::construct<node<C, Valuation>>(), var, builder);
+    return mem::unify(u, size);
   }
 
-  friend void internal::util::print_sizes<C>(std::ostream&);
-
-/// @endcond
+  friend void util::print_sizes<C>(std::ostream&);
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief   Equality of two SDD.
 /// @related SDD
@@ -426,7 +431,7 @@ operator<<(std::ostream& os, const SDD<C>& x)
   return os << x->data();
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief   Return the |0| terminal.
 /// @related SDD
@@ -454,13 +459,13 @@ noexcept
   return SDD<C>(true);
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief Hash specialization for sdd::dd::SDD.
 template <typename C>
@@ -474,7 +479,7 @@ struct hash<sdd::SDD<C>>
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
 

@@ -120,19 +120,11 @@
 		2B4C60A11624676B0065D7F3 /* saturation_fixpoint.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = saturation_fixpoint.hh; sourceTree = "<group>"; };
 		2B4C60A6162474550065D7F3 /* test_hom_saturation_fixpoint.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_saturation_fixpoint.cc; sourceTree = "<group>"; };
 		2B4C60A916256E440065D7F3 /* test_rewriting.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_rewriting.cc; sourceTree = "<group>"; };
-		2B54BE8815710F9E005D5D3B /* packed.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; path = packed.hh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		2B5723E8161F0A3200F09892 /* inductive.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = inductive.hh; sourceTree = "<group>"; };
 		2B5723EA161F1C8F00F09892 /* test_hom_inductive.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_inductive.cc; sourceTree = "<group>"; };
 		2B5F99771623149000BAA8D4 /* composition.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = composition.hh; sourceTree = "<group>"; };
-		2B6986191576A393001DC189 /* cache.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cache.hh; sourceTree = "<group>"; };
 		2B7D16B0161BDAFC00FD77F8 /* test_hom_sum.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_sum.cc; sourceTree = "<group>"; };
 		2B85630B15C9B1CC00085F5F /* default_configurations.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = default_configurations.hh; sourceTree = "<group>"; };
-		2BB1A99A14E07D38007921F2 /* ptr.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ptr.hh; sourceTree = "<group>"; };
-		2BB1A99B14E07D38007921F2 /* ref_counted.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; path = ref_counted.hh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		2BB1A99C14E07D38007921F2 /* unique_table.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = unique_table.hh; sourceTree = "<group>"; };
-		2BB1A99D14E07D38007921F2 /* variant.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; path = variant.hh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		2BB1A99E14E07D38007921F2 /* variant_impl.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = variant_impl.hh; sourceTree = "<group>"; };
-		2BB1A9AB14E07D38007921F2 /* typelist.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = typelist.hh; sourceTree = "<group>"; };
 		2BB1A9B014E08BC7007921F2 /* sdd.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = sdd.hh; sourceTree = "<group>"; };
 		2BB53736163C8F8C007E04E1 /* test_hom_expression.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_expression.cc; sourceTree = "<group>"; };
 		2BB6B43B16517FD9003063B8 /* hanoi.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = hanoi.cc; sourceTree = "<group>"; };
@@ -185,7 +177,17 @@
 		2BD0DA87157A9687005BC59A /* test_cache.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_cache.cc; sourceTree = "<group>"; };
 		2BD0DA91157A99A6005BC59A /* test_ptr.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_ptr.cc; sourceTree = "<group>"; };
 		2BD33B5514E660D0004A7657 /* tests.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tests.cc; sourceTree = "<group>"; };
-		2BD545BC15702831006B51B3 /* hash.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = hash.hh; sourceTree = "<group>"; };
+		2BE06D7316555594002339CF /* cache.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cache.hh; sourceTree = "<group>"; };
+		2BE06D7416555594002339CF /* ptr.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ptr.hh; sourceTree = "<group>"; };
+		2BE06D7516555594002339CF /* ref_counted.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ref_counted.hh; sourceTree = "<group>"; };
+		2BE06D7616555594002339CF /* unique_table.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = unique_table.hh; sourceTree = "<group>"; };
+		2BE06D7716555594002339CF /* variant.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = variant.hh; sourceTree = "<group>"; };
+		2BE06D7816555594002339CF /* variant_impl.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = variant_impl.hh; sourceTree = "<group>"; };
+		2BE06D7A16555594002339CF /* hash.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = hash.hh; sourceTree = "<group>"; };
+		2BE06D7B16555594002339CF /* packed.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = packed.hh; sourceTree = "<group>"; };
+		2BE06D7C16555594002339CF /* print_sizes.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = print_sizes.hh; sourceTree = "<group>"; };
+		2BE06D7D16555594002339CF /* print_sizes_fwd.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = print_sizes_fwd.hh; sourceTree = "<group>"; };
+		2BE06D7E16555594002339CF /* typelist.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = typelist.hh; sourceTree = "<group>"; };
 		2BE1B4E9165211B300862ACE /* hanoi */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hanoi; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BE71C62161C2CBA00B22084 /* cons.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cons.hh; sourceTree = "<group>"; };
 		2BE71C64161C2FBB00B22084 /* test_hom_cons.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_cons.cc; sourceTree = "<group>"; };
@@ -195,8 +197,6 @@
 		2BE71C70161CE08E00B22084 /* test_hom_local.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_local.cc; sourceTree = "<group>"; };
 		2BE71C73161CE1B300B22084 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		2BE8742015BF1DD000D38953 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
-		2BEA6EFB1637A5E500952A79 /* print_sizes.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = print_sizes.hh; sourceTree = "<group>"; };
-		2BEA6EFD1637DCE800952A79 /* print_sizes_fwd.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = print_sizes_fwd.hh; sourceTree = "<group>"; };
 		2BF0F988157A71B7005D1275 /* bitset.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bitset.hh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -341,9 +341,10 @@
 				2BB1A9B014E08BC7007921F2 /* sdd.hh */,
 				2BB1A99614E07D38007921F2 /* conf */,
 				2B0197B415BDE7D900CE5F70 /* dd */,
-				2BB1A99814E07D38007921F2 /* internal */,
 				2B0EA134161638F90019EB04 /* hom */,
+				2BE06D7216555594002339CF /* mem */,
 				2B0EA1301614B3E70019EB04 /* order */,
+				2BE06D7916555594002339CF /* util */,
 				2BF0F986157A719E005D1275 /* values */,
 			);
 			path = sdd;
@@ -355,40 +356,6 @@
 				2B85630B15C9B1CC00085F5F /* default_configurations.hh */,
 			);
 			path = conf;
-			sourceTree = "<group>";
-		};
-		2BB1A99814E07D38007921F2 /* internal */ = {
-			isa = PBXGroup;
-			children = (
-				2BB1A99914E07D38007921F2 /* mem */,
-				2BB1A9A514E07D38007921F2 /* util */,
-			);
-			path = internal;
-			sourceTree = "<group>";
-		};
-		2BB1A99914E07D38007921F2 /* mem */ = {
-			isa = PBXGroup;
-			children = (
-				2B6986191576A393001DC189 /* cache.hh */,
-				2BB1A99A14E07D38007921F2 /* ptr.hh */,
-				2BB1A99B14E07D38007921F2 /* ref_counted.hh */,
-				2BB1A99C14E07D38007921F2 /* unique_table.hh */,
-				2BB1A99D14E07D38007921F2 /* variant.hh */,
-				2BB1A99E14E07D38007921F2 /* variant_impl.hh */,
-			);
-			path = mem;
-			sourceTree = "<group>";
-		};
-		2BB1A9A514E07D38007921F2 /* util */ = {
-			isa = PBXGroup;
-			children = (
-				2BD545BC15702831006B51B3 /* hash.hh */,
-				2B54BE8815710F9E005D5D3B /* packed.hh */,
-				2BEA6EFD1637DCE800952A79 /* print_sizes_fwd.hh */,
-				2BEA6EFB1637A5E500952A79 /* print_sizes.hh */,
-				2BB1A9AB14E07D38007921F2 /* typelist.hh */,
-			);
-			path = util;
 			sourceTree = "<group>";
 		};
 		2BB1A9AE14E086E3007921F2 /* tests */ = {
@@ -537,6 +504,31 @@
 				2BD0DA84157A95C6005BC59A /* test_variant_no_unroll.cc */,
 			);
 			path = mem;
+			sourceTree = "<group>";
+		};
+		2BE06D7216555594002339CF /* mem */ = {
+			isa = PBXGroup;
+			children = (
+				2BE06D7316555594002339CF /* cache.hh */,
+				2BE06D7416555594002339CF /* ptr.hh */,
+				2BE06D7516555594002339CF /* ref_counted.hh */,
+				2BE06D7616555594002339CF /* unique_table.hh */,
+				2BE06D7716555594002339CF /* variant.hh */,
+				2BE06D7816555594002339CF /* variant_impl.hh */,
+			);
+			path = mem;
+			sourceTree = "<group>";
+		};
+		2BE06D7916555594002339CF /* util */ = {
+			isa = PBXGroup;
+			children = (
+				2BE06D7A16555594002339CF /* hash.hh */,
+				2BE06D7B16555594002339CF /* packed.hh */,
+				2BE06D7C16555594002339CF /* print_sizes.hh */,
+				2BE06D7D16555594002339CF /* print_sizes_fwd.hh */,
+				2BE06D7E16555594002339CF /* typelist.hh */,
+			);
+			path = util;
 			sourceTree = "<group>";
 		};
 		2BF0F986157A719E005D1275 /* values */ = {
@@ -974,6 +966,7 @@
 				2BE1B4F1165211B300862ACE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

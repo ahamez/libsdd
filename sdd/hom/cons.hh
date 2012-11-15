@@ -7,14 +7,13 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/order/order.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
 namespace sdd { namespace hom {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Cons homomorphism.
 template <typename C, typename Valuation>
 class _LIBSDD_ATTRIBUTE_PACKED cons
@@ -94,8 +93,9 @@ public:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Describe Cons characteristics.
 template <typename C, typename Valuation>
 struct homomorphism_traits<cons<C, Valuation>>
@@ -103,8 +103,9 @@ struct homomorphism_traits<cons<C, Valuation>>
   static constexpr bool should_cache = false;
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two Cons homomorphisms.
 /// @related cons
 template <typename C, typename Valuation>
@@ -117,6 +118,7 @@ noexcept
      and lhs.order() == rhs.order();
 }
 
+/// @internal
 /// @related cons
 template <typename C, typename Valuation>
 std::ostream&
@@ -126,9 +128,9 @@ operator<<(std::ostream& os, const cons<C, Valuation>& c)
             << ")";
 }
 
-/// @endcond
+} // namespace hom
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Cons homomorphism.
 /// @related homomorphism
@@ -136,19 +138,18 @@ template <typename C, typename Valuation>
 homomorphism<C>
 Cons(const order::order<C> o, const Valuation& val, const homomorphism<C>& h)
 {
-  return homomorphism<C>::create(internal::mem::construct<cons<C, Valuation>>(), o, val, h);
+  return homomorphism<C>::create(mem::construct<hom::cons<C, Valuation>>(), o, val, h);
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::cons.
 template <typename C, typename Valuation>
 struct hash<sdd::hom::cons<C, Valuation>>
@@ -158,18 +159,15 @@ struct hash<sdd::hom::cons<C, Valuation>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, h.order());
-    sdd::internal::util::hash_combine(seed, h.valuation());
-    sdd::internal::util::hash_combine(seed, h.next());
+    sdd::util::hash_combine(seed, h.order());
+    sdd::util::hash_combine(seed, h.valuation());
+    sdd::util::hash_combine(seed, h.next());
     return seed;
   }
 };
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
 
 #endif // _SDD_HOM_CONS_HH_

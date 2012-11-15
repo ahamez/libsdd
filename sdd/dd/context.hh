@@ -1,8 +1,6 @@
 #ifndef _SDD_DD_CONTEXT_HH_
 #define _SDD_DD_CONTEXT_HH_
 
-/// @cond INTERNAL_DOC
-
 #include <memory> // make_shared, shared_ptr
 
 #include "sdd/dd/context_fwd.hh"
@@ -11,12 +9,13 @@
 #include "sdd/dd/intersection.hh"
 #include "sdd/dd/sum.hh"
 #include "sdd/dd/top.hh"
-#include "sdd/internal/mem/cache.hh"
+#include "sdd/mem/cache.hh"
 
 namespace sdd {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief   The evaluation context of operations on SDD (union, intersection, difference).
 ///
 /// Its purpose is to be able to create local caches at different points of the evaluation.
@@ -28,13 +27,13 @@ class context
 public:
 
   /// @brief Cache parameterized by the difference operation and the top error.
-  typedef internal::mem::cache<difference_op<C>, top<C>> difference_cache_type;
+  typedef mem::cache<difference_op<C>, top<C>> difference_cache_type;
 
   /// @brief Cache parameterized by the intersection operation and the top error.
-  typedef internal::mem::cache<intersection_op<C>, top<C>> intersection_cache_type;
+  typedef mem::cache<intersection_op<C>, top<C>> intersection_cache_type;
 
   /// @brief Cache parameterized by the sum operation and the top error.
-  typedef internal::mem::cache<sum_op<C>, top<C>> sum_cache_type;
+  typedef mem::cache<sum_op<C>, top<C>> sum_cache_type;
 
 private:
 
@@ -111,10 +110,10 @@ public:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @brief Return the context that serves as an entry point for the evaluation of operations on
-/// SDD.
+/// @internal
+/// @brief Return the context that serves as an entry point for the evaluation of operations on SDD.
 /// @related context
 template <typename C>
 context<C>&
@@ -125,10 +124,8 @@ noexcept
   return initial_context;
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-/// @endcond
 
 #endif // _SDD_DD_CONTEXT_HH_

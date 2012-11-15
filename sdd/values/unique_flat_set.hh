@@ -11,7 +11,7 @@
 #include <boost/container/flat_set.hpp>
 #include <boost/intrusive/unordered_set.hpp>
 
-#include "sdd/internal/util/hash.hh"
+#include "sdd/util/hash.hh"
 
 namespace sdd { namespace values {
 
@@ -71,7 +71,7 @@ private:
       std::size_t seed = 0;
       for (const auto& v : e.data)
       {
-        internal::util::hash_combine(seed, v);
+        util::hash_combine(seed, v);
       }
       return seed;
     }
@@ -183,16 +183,14 @@ public:
     return nb_erased;
   }
 
-/// @cond INTERNAL_DOC
-
+  /// @internal
+  /// @brief Get the pointer to the unified data.
   const flat_set_type* const
   data()
   const noexcept
   {
     return data_;
   }
-
-/// @endcond
 
 private:
 
@@ -260,7 +258,7 @@ bool
 operator==(const unique_flat_set<Value>& lhs, const unique_flat_set<Value>& rhs)
 noexcept
 {
-  // Pointer comparison.
+  // Pointer equality.
   return lhs.data() == rhs.data();
 }
 
@@ -268,6 +266,8 @@ noexcept
 
 /// @brief Comparison of unique_flat_set
 /// @related unique_flat_set
+///
+/// The order on unique_flat_set is arbitrary. 
 template <typename Value>
 inline
 bool
@@ -359,5 +359,7 @@ struct hash<sdd::values::unique_flat_set<Value>>
 };
 
 } // namespace std
+
+/*------------------------------------------------------------------------------------------------*/
 
 #endif // _SDD_VALUES_UNIQUE_FLAT_SET_HH_

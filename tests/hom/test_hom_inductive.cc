@@ -2,18 +2,18 @@
 
 #include "tests/hom/common.hh"
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 const SDD zero = sdd::zero<conf>();
 const SDD one = sdd::one<conf>();
-const hom id = sdd::hom::Id<conf>();
+const hom id = sdd::Id<conf>();
 
 struct hom_inductive_test
   : public testing::Test
 {
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 struct f0
 {
@@ -35,14 +35,14 @@ struct f0
   operator()(const order&, const SDD&)
   const
   {
-    return sdd::hom::Id<conf>();
+    return id;
   }
 
   hom
   operator()(const order& o, const bitset& val)
   const
   {
-    return sdd::hom::Cons<conf>(o, val << 1, id);
+    return Cons<conf>(o, val << 1, id);
   }
 
   SDD
@@ -86,14 +86,14 @@ struct f1
   operator()(const order&, const SDD&)
   const
   {
-    return sdd::hom::Id<conf>();
+    return id;
   }
 
   hom
   operator()(const order& o, const bitset& val)
   const
   {
-    return sdd::hom::Cons<conf>(o, val << 2, id);
+    return Cons<conf>(o, val << 2, id);
   }
 
   SDD
@@ -137,14 +137,14 @@ struct cut
   operator()(const order& o, const SDD&)
   const
   {
-    return sdd::hom::Cons<conf>(o, zero, id);
+    return Cons<conf>(o, zero, id);
   }
 
   hom
   operator()(const order& o, const bitset&)
   const
   {
-    return sdd::hom::Cons<conf>(o, bitset {}, id);
+    return Cons<conf>(o, bitset {}, id);
   }
 
   SDD
@@ -188,14 +188,14 @@ struct id_prime
   operator()(const order& o, const SDD& x)
   const
   {
-    return sdd::hom::Cons<conf>(o, x, sdd::hom::Inductive<conf>(*this));
+    return Cons<conf>(o, x, Inductive<conf>(*this));
   }
 
   hom
   operator()(const order& o, const bitset& val)
   const
   {
-    return sdd::hom::Cons<conf>(o, val, sdd::hom::Inductive<conf>(*this));
+    return Cons<conf>(o, val, Inductive<conf>(*this));
   }
 
   SDD
@@ -239,14 +239,14 @@ struct consume
   operator()(const order&, const SDD&)
   const
   {
-    return sdd::hom::Inductive<conf>(*this);
+    return Inductive<conf>(*this);
   }
 
   hom
   operator()(const order&, const bitset& val)
   const
   {
-    return sdd::hom::Inductive<conf>(*this);
+    return Inductive<conf>(*this);
   }
 
   SDD
@@ -329,35 +329,35 @@ struct hash<consume>
 
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 TEST_F(hom_inductive_test, construction)
 {
   {
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
-    const hom h2 = sdd::hom::Inductive<conf>(f0());
+    const hom h1 = Inductive<conf>(f0());
+    const hom h2 = Inductive<conf>(f0());
     ASSERT_EQ(h1, h2);
   }
   {
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
-    const hom h2 = sdd::hom::Inductive<conf>(f1());
+    const hom h1 = Inductive<conf>(f0());
+    const hom h2 = Inductive<conf>(f1());
     ASSERT_NE(h1, h2);
   }
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 TEST_F(hom_inductive_test, evaluation_flat)
 {
   {
     order o (order_builder {"0"});
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
+    const hom h1 = Inductive<conf>(f0());
     ASSERT_EQ(SDD(0, {1,2,3}, one), h1(o, SDD(0, {0,1,2}, one)));
   }
   {
     order o (order_builder {"0", "1"});
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
-    const hom h2 = sdd::hom::Inductive<conf>(f1());
+    const hom h1 = Inductive<conf>(f0());
+    const hom h2 = Inductive<conf>(f1());
     ASSERT_EQ( SDD(1, {1,2,3}, SDD(0, {2,3,4}, one))
              , h2(o, h1(o, SDD(1, {0,1,2}, SDD(0, {0,1,2}, one)))));
     ASSERT_EQ( SDD(1, {1,2,3}, SDD(0, {2,3,4}, one))
@@ -367,34 +367,34 @@ TEST_F(hom_inductive_test, evaluation_flat)
     order o (order_builder {"0", "1"});
     const SDD s0 = SDD(1, {0}, SDD(0, {0}, one)) + SDD(1, {1}, SDD(0, {1}, one));
     const SDD s1 = SDD(1, {1}, SDD(0, {0}, one)) + SDD(1, {2}, SDD(0, {1}, one));
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
+    const hom h1 = Inductive<conf>(f0());
     ASSERT_EQ(s1, h1(o, s0));
   }
   {
     order o (order_builder {"0"});
-    const hom h1 = sdd::hom::Inductive<conf>(id_prime());
+    const hom h1 = Inductive<conf>(id_prime());
     ASSERT_EQ(SDD(0, {0,1,2}, one), h1(o, SDD(0, {0,1,2}, one)));
   }
   {
     order o (order_builder {"1", "0"});
-    const hom h1 = sdd::hom::Inductive<conf>(consume());
+    const hom h1 = Inductive<conf>(consume());
     ASSERT_EQ(one, h1(o, SDD(1, {0,1,2}, SDD(0, one, one))));
   }
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 TEST_F(hom_inductive_test, evaluation_hierarchical)
 {
   {
     order o (order_builder {"0"});
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
+    const hom h1 = Inductive<conf>(f0());
     ASSERT_EQ(SDD(0, {1,2,3}, one), h1(o, SDD(0, {0,1,2}, one)));
   }
   {
     order o (order_builder {"1", "0"});
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
-    const hom h2 = sdd::hom::Inductive<conf>(f1());
+    const hom h1 = Inductive<conf>(f0());
+    const hom h2 = Inductive<conf>(f1());
     ASSERT_EQ( SDD(1, {1,2,3}, SDD(0, {2,3,4}, one))
               , h2(o, h1(o, SDD(1, {0,1,2}, SDD(0, {0,1,2}, one)))));
     ASSERT_EQ( SDD(1, {1,2,3}, SDD(0, {2,3,4}, one))
@@ -404,27 +404,27 @@ TEST_F(hom_inductive_test, evaluation_hierarchical)
     order o (order_builder {"0", "1"});
     const SDD s0 = SDD(1, {0}, SDD(0, {0}, one)) + SDD(1, {1}, SDD(0, {1}, one));
     const SDD s1 = SDD(1, {1}, SDD(0, {0}, one)) + SDD(1, {2}, SDD(0, {1}, one));
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
+    const hom h1 = Inductive<conf>(f0());
     ASSERT_EQ(s1, h1(o, s0));
   }
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 TEST_F(hom_inductive_test, cut_path)
 {
   {
-    const hom h0 = sdd::hom::Inductive<conf>(cut());
+    const hom h0 = Inductive<conf>(cut());
     ASSERT_EQ(zero, h0(order(order_builder()), one));
   }
   {
-    const hom h0 = sdd::hom::Inductive<conf>(cut());
+    const hom h0 = Inductive<conf>(cut());
     ASSERT_EQ(zero, h0(order(order_builder {"a"}), SDD(0, {0}, one)));
   }
   {
-    const hom h0 = sdd::hom::Inductive<conf>(cut());
+    const hom h0 = Inductive<conf>(cut());
     ASSERT_EQ(zero, h0(order(order_builder {"a"}), SDD(0, one, one)));
   }
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/

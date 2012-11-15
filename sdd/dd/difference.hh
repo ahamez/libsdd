@@ -9,14 +9,13 @@
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
 #include "sdd/dd/top.hh"
-#include "sdd/internal/util/hash.hh"
+#include "sdd/util/hash.hh"
 
 namespace sdd {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Implementation of the difference operation.
 ///
 /// Called by difference_op.
@@ -138,9 +137,10 @@ struct difference_visitor
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @brief   The difference operation in the cache.
+/// @internal
+/// @brief The difference operation in the cache.
 template <typename C>
 struct difference_op
 {
@@ -166,8 +166,9 @@ struct difference_op
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related difference_op
 template <typename C>
 inline
@@ -178,8 +179,9 @@ noexcept
   return lhs.lhs_ == rhs.lhs_ and lhs.rhs_ == rhs.rhs_;
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related difference_op
 template <typename C>
 std::ostream&
@@ -188,10 +190,10 @@ operator<<(std::ostream& os, const difference_op<C>& x)
   return os << "- (" << x.lhs_ << "," << x.rhs_ << ")";
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @brief   The difference operation.
-/// @return  The difference of the two operands
+/// @internal
+/// @brief The difference operation.
 ///
 /// The computation is cached, except for the trivial cases (when the two operands are
 /// equal or when one of the operand is |0|).
@@ -211,8 +213,9 @@ difference(context<C>& cxt, const SDD<C>& lhs, const SDD<C>& rhs)
   return cxt.difference_cache()(difference_op<C>(cxt, lhs, rhs));
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related SDD
 template <typename C, typename Values>
 inline
@@ -222,9 +225,7 @@ difference(context<C>&, const Values& lhs, const Values& rhs)
   return difference(lhs, rhs);
 }
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief   Perform the difference of two SDD.
 /// @related SDD
@@ -249,16 +250,15 @@ operator-=(SDD<C>& lhs, const SDD<C>& rhs)
   return lhs;
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::dd::difference_op
 template <typename C>
 struct hash<sdd::difference_op<C>>
@@ -268,15 +268,13 @@ struct hash<sdd::difference_op<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, op.lhs_);
-    sdd::internal::util::hash_combine(seed, op.rhs_);
+    sdd::util::hash_combine(seed, op.lhs_);
+    sdd::util::hash_combine(seed, op.rhs_);
     return seed;
   }
 };
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
 

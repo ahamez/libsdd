@@ -1,9 +1,9 @@
 #include "gtest/gtest.h"
 
-#include "sdd/internal/mem/ptr.hh"
-#include "sdd/internal/mem/ref_counted.hh"
+#include "sdd/mem/ptr.hh"
+#include "sdd/mem/ref_counted.hh"
 
-namespace sdd { namespace internal { namespace mem {
+namespace sdd { namespace mem {
 
 struct unique
 {
@@ -77,28 +77,28 @@ struct unique_table<unique>
 namespace {
 
 template <>
-internal::mem::unique_table<unique>&
+mem::unique_table<unique>&
 global_unique_table()
 noexcept
 {
-  static internal::mem::unique_table<unique> unique_table;
+  static mem::unique_table<unique> unique_table;
   return unique_table;
 }
 
 }
 
-}}} // namespace sdd::internal::mem
+}} // namespace sdd::mem
 
-using namespace sdd::internal::mem;
+using namespace sdd::mem;
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 struct ptr_test
   : public testing::Test
 {
   typedef ptr<unique> ptr_type;
 
-  sdd::internal::mem::unique_table<unique>& table_;
+  sdd::mem::unique_table<unique>& table_;
 
   ptr_test()
     : table_(global_unique_table<unique>())
@@ -112,7 +112,7 @@ struct ptr_test
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 TEST_F(ptr_test, object_life)
 {
@@ -223,4 +223,4 @@ TEST_F(ptr_test, object_life)
   ASSERT_EQ(0, u.ref_counter_);
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/

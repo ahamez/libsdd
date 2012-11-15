@@ -9,21 +9,26 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/fixpoint.hh"
 #include "sdd/hom/local.hh"
+#include "sdd/hom/saturation_fixpoint.hh"
 #include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
 
-/// @cond INTERNAL_DOC
+namespace sdd {
 
-namespace sdd { namespace hom {
+/*------------------------------------------------------------------------------------------------*/
 
-/*-------------------------------------------------------------------------------------------*/
-
+// Forward declaration for recursive call by rewriter.
 template <typename C>
 homomorphism<C>
 rewrite(const homomorphism<C>&, const order::order<C>&);
 
 /*-------------------------------------------------------------------------------------------*/
 
+namespace hom {
+
+/*-------------------------------------------------------------------------------------------*/
+
+/// @internal
 /// @brief Concrete implementation of the rewriting process.
 template <typename C>
 struct rewriter
@@ -37,6 +42,7 @@ struct rewriter
   /// @brief The type of a list of homomorphisms.
   typedef std::deque<homomorphism<C>> hom_list_type;
 
+  /// @internal
   /// @brief Tell if an homomorphism is Local.
   struct is_local
   {
@@ -58,6 +64,7 @@ struct rewriter
     }
   };
 
+  /// @internal
   /// @brief Tell if an homomorphism is Sum.
   struct is_sum
   {
@@ -101,7 +108,7 @@ struct rewriter
       }
       else if (apply_visitor(is_local(), (*begin)->data()))
       {
-        const local<C>& l = internal::mem::variant_cast<const local<C>>((*begin)->data());
+        const local<C>& l = mem::variant_cast<const local<C>>((*begin)->data());
         L.push_back(l.hom());
       }
       else
@@ -158,7 +165,7 @@ struct rewriter
       return h;
     }
 
-    const sum<C>& s = internal::mem::variant_cast<const sum<C>>(f.hom()->data());
+    const sum<C>& s = mem::variant_cast<const sum<C>>(f.hom()->data());
 
     auto&& p = partition(o, s.operands().begin(), s.operands().end());
     auto& F = std::get<0>(p);
@@ -189,7 +196,8 @@ struct rewriter
                              , G.begin(), G.end()
                              , Local( o.identifier()
                                     , o
-                                    , rewrite(Fixpoint(Sum<C>(o.nested(), L.begin(), L.end())), o.nested())
+                                    , rewrite( Fixpoint(Sum<C>(o.nested(), L.begin(), L.end()))
+                                             , o.nested())
                                     )
                              );
   }
@@ -206,8 +214,11 @@ struct rewriter
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+} // namespace hom
 
+/*------------------------------------------------------------------------------------------------*/
+
+/// @brief Rewrite an homomorphism to enable saturation.
 template <typename C>
 homomorphism<C>
 rewrite(const homomorphism<C>& h, const order::order<C>& o)
@@ -218,14 +229,12 @@ rewrite(const homomorphism<C>& h, const order::order<C>& o)
   }
   else
   {
-    return apply_visitor(rewriter<C>(), h->data(), h, o);
+    return apply_visitor(hom::rewriter<C>(), h->data(), h, o);
   }
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
-
-/// @endcond
+} // namespace sdd
 
 #endif // _SDD_HOM_REWRITING_HH_

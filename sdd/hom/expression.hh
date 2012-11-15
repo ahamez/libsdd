@@ -16,10 +16,9 @@
 
 namespace sdd { namespace hom {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief
 template <typename C>
 class evaluator_base
@@ -60,8 +59,9 @@ public:
   print(std::ostream&) const = 0;
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Used to wrap user's evaluator.
 template <typename C, typename User>
 class evaluator_derived
@@ -128,8 +128,9 @@ public:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Expression homomorphism.
 template <typename C>
 class expression
@@ -217,13 +218,14 @@ private:
 
     /// @brief Evaluation on hierarchical nodes.
     void
-    operator()( const hierarchical_node<C>& node, const order::order<C>& o, application_stack app
-              , values_type& valuation, identifiers_iterator begin, identifiers_iterator end)
+    operator()( const hierarchical_node<C>& node, const order::order<C>& o
+              , application_stack app, values_type& valuation
+              , identifiers_iterator begin, identifiers_iterator end)
     const noexcept
     {
       if (begin == end)
       {
-        valuation = sum(valuation, eval_ptr_->evaluate());
+        valuation = values::sum(valuation, eval_ptr_->evaluate());
         return;
       }
 
@@ -254,13 +256,14 @@ private:
 
     /// @brief Evaluation on flat nodes.
     void
-    operator()( const flat_node<C>& node, const order::order<C>& o, application_stack app
-              , values_type& valuation, identifiers_iterator begin, identifiers_iterator end)
+    operator()( const flat_node<C>& node, const order::order<C>& o
+              , application_stack app, values_type& valuation
+              , identifiers_iterator begin, identifiers_iterator end)
     const noexcept
     {
       if (begin == end)
       {
-        valuation = sum(valuation, eval_ptr_->evaluate());
+        valuation = values::sum(valuation, eval_ptr_->evaluate());
         return;
       }
 
@@ -283,13 +286,14 @@ private:
 
     /// @brief Evaluation on |1|.
     void
-    operator()( const one_terminal<C>&, const order::order<C>&, application_stack app
-              , values_type& valuation, identifiers_iterator begin, identifiers_iterator end)
+    operator()( const one_terminal<C>&, const order::order<C>&
+              , application_stack app, values_type& valuation
+              , identifiers_iterator begin, identifiers_iterator end)
     const noexcept
     {
       if (begin == end)
       {
-        valuation = sum(valuation, eval_ptr_->evaluate());
+        valuation = values::sum(valuation, eval_ptr_->evaluate());
       }
       else if (app)
       {
@@ -357,10 +361,10 @@ private:
 
           assert(not res->result.empty() && "Invalid result");
           operands.add( SDD<C>(o.variable(), nested
-                      , sum(cxt.sdd_context(), std::move(res->result))));
+                      , sdd::sum<C>(cxt.sdd_context(), std::move(res->result))));
         }
 
-        return sum(cxt.sdd_context(), std::move(operands));
+        return sdd::sum<C>(cxt.sdd_context(), std::move(operands));
       }
 
       // Are there some values of interest in the current hierarchy?
@@ -385,7 +389,7 @@ private:
                                              , begin, end);
 
           assert(not res->result.empty() && "Invalid result");
-          su.add(sum(cxt.sdd_context(), std::move(res->result)), nested);
+          su.add(sdd::sum<C>(cxt.sdd_context(), std::move(res->result)), nested);
         }
 
         return SDD<C>(o.variable(), su(cxt.sdd_context()));
@@ -444,7 +448,7 @@ private:
           operands.add(SDD<C>(o.variable(), std::move(valuation), arc.successor()));
         }
 
-        return sum(cxt.sdd_context(), std::move(operands));
+        return sdd::sum(cxt.sdd_context(), std::move(operands));
       }
 
       if (o.same_hierarchy(o.identifier(), target_))
@@ -574,7 +578,7 @@ public:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief Equality of two expression homomorphisms.
 /// @related expression
@@ -599,9 +603,9 @@ operator<<(std::ostream& os, const expression<C>& e)
   return os << ")";
 }
 
-/// @endcond
+} // namespace hom
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Expression homomorphism.
 /// @related homomorphism.
@@ -616,29 +620,28 @@ Expression( const order::order<C>& o, const User& u, InputIterator begin, InputI
   }
 
   typedef typename C::Identifier identifier_type;
-  typename expression<C>::identifiers_type identifiers(begin, end);
+  typename hom::expression<C>::identifiers_type identifiers(begin, end);
   std::sort( identifiers.begin(), identifiers.end()
            , [&](const identifier_type& lhs, const identifier_type& rhs)
                 {
                   return o.compare(lhs, rhs);
                 });
 
-  return homomorphism<C>::create( internal::mem::construct<expression<C>>()
-                                , std::make_shared<evaluator_derived<C, User>>(u)
+  return homomorphism<C>::create( mem::construct<hom::expression<C>>()
+                                , std::make_shared<hom::evaluator_derived<C, User>>(u)
                                 , std::move(identifiers)
                                 , target);
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
-
-/// @cond INTERNAL_DOC
+} // namespace sdd
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Hash specialization for sdd::hom::expression.
 template <typename C>
 struct hash<sdd::hom::expression<C>>
@@ -650,17 +653,15 @@ struct hash<sdd::hom::expression<C>>
     std::size_t seed = e.evaluator().hash();
     for (const auto& v : e.identifiers())
     {
-      sdd::internal::util::hash_combine(seed, v);
+      sdd::util::hash_combine(seed, v);
     }
-    sdd::internal::util::hash_combine(seed, e.target());
+    sdd::util::hash_combine(seed, e.target());
     return seed;
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-/// @endcond
 
 #endif // _SDD_HOM_EXPRESSION_HH_

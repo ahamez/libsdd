@@ -4,11 +4,11 @@
 #include <boost/container/flat_map.hpp>
 
 #include "sdd/dd/definition_fwd.hh"
-#include "sdd/internal/util/hash.hh"
+#include "sdd/util/hash.hh"
 
 namespace sdd {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief Represent an arc of an alpha.
 template <typename C, typename Valuation>
@@ -55,10 +55,9 @@ noexcept
   return lhs.successor() == rhs.successor() and lhs.valuation() == rhs.valuation();
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Helper class to build an alpha.
 ///
 /// It serves two goals. First, it ensures that all alphas use the same order to store arcs.
@@ -154,9 +153,7 @@ public:
   }
 };
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
 

@@ -15,7 +15,7 @@ typedef sdd::conf::conf0 conf;
 typedef conf::Identifier identifier_type;
 typedef conf::Values bitset_type;
 typedef sdd::SDD<conf> SDD;
-typedef sdd::hom::homomorphism<conf> hom;
+typedef sdd::homomorphism<conf> hom;
 
 const SDD one = sdd::one<conf>();
 
@@ -26,9 +26,7 @@ enum class binop {add, sub, mul};
 struct binary_operation;
 struct operand;
 
-typedef boost::variant< boost::recursive_wrapper<binary_operation>
-                      , operand>
-        ast_type;
+typedef boost::variant< boost::recursive_wrapper<binary_operation>, operand> ast_type;
 
 
 struct operand
@@ -308,8 +306,8 @@ struct hash<indexed_ast>
     const noexcept
     {
       std::size_t seed = hash_op(op.operation);
-      sdd::internal::util::hash_combine(seed, apply_visitor(*this, op.lhs));
-      sdd::internal::util::hash_combine(seed, apply_visitor(*this, op.rhs));
+      sdd::util::hash_combine(seed, apply_visitor(*this, op.lhs));
+      sdd::util::hash_combine(seed, apply_visitor(*this, op.rhs));
       return seed;
     }
   };

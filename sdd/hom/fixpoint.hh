@@ -9,14 +9,20 @@
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
-namespace sdd { namespace hom {
+namespace sdd {
 
-/*-------------------------------------------------------------------------------------------*/
+// Forward declaration needed by fixpoint_builder_helper.
+template <typename C>
+homomorphism<C>
+Fixpoint(const homomorphism<C>&);
 
-/// @cond INTERNAL_DOC
+namespace hom {
 
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
 /// @brief Fixpoint homomorphism.
 template <typename C>
 class _LIBSDD_ATTRIBUTE_PACKED fixpoint
@@ -74,8 +80,9 @@ public:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of fixpoint.
 /// @related fixpoint
 template <typename C>
@@ -87,6 +94,7 @@ noexcept
   return lhs.hom() == rhs.hom();
 }
 
+/// @internal
 /// @related fixpoint
 template <typename C>
 std::ostream&
@@ -95,13 +103,9 @@ operator<<(std::ostream& os, const fixpoint<C>& f)
   return os << "(" << f.hom() << ")*";
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-// Forward declaration.
-template <typename C>
-homomorphism<C>
-Fixpoint(const homomorphism<C>&);
-
+/// @internal
 /// @brief Concrete creation of Fixpoint.
 template <typename C>
 struct fixpoint_builder_helper
@@ -127,13 +131,13 @@ struct fixpoint_builder_helper
   operator()(const T&, const homomorphism<C>& h)
   const noexcept
   {
-    return homomorphism<C>::create(internal::mem::construct<fixpoint<C>>(), h);
+    return homomorphism<C>::create(mem::construct<fixpoint<C>>(), h);
   }
 };
 
-/// @endcond
+} // namespace hom
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Fixpoint homomorphism.
 /// @related homomorphism
@@ -141,19 +145,18 @@ template <typename C>
 homomorphism<C>
 Fixpoint(const homomorphism<C>& h)
 {
-  return apply_visitor(fixpoint_builder_helper<C>(), h->data(), h);
+  return apply_visitor(hom::fixpoint_builder_helper<C>(), h->data(), h);
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::fixpoint.
 template <typename C>
 struct hash<sdd::hom::fixpoint<C>>
@@ -163,14 +166,12 @@ struct hash<sdd::hom::fixpoint<C>>
   const noexcept
   {
     std::size_t seed = 345789; // avoid to have the same hash as the contained homormorphism
-    sdd::internal::util::hash_combine(seed, f.hom());
+    sdd::util::hash_combine(seed, f.hom());
     return seed;
   }
 };
 
-/// @endcond
-
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
 
