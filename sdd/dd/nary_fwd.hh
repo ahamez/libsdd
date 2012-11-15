@@ -1,7 +1,7 @@
 #ifndef _SDD_DD_NARY_FWD_HH_
 #define _SDD_DD_NARY_FWD_HH_
 
-namespace sdd {
+namespace sdd { namespace dd {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -11,6 +11,6 @@ struct nary_builder;
 
 /*------------------------------------------------------------------------------------------------*/
   
-} // namespace sdd
+}} // namespace sdd::dd
 
 #endif // _SDD_DD_NARY_FWD_HH_

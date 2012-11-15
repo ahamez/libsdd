@@ -1,7 +1,7 @@
 #ifndef _SDD_DD_CONTEXT_FWD_HH_
 #define _SDD_DD_CONTEXT_FWD_HH_
 
-namespace sdd {
+namespace sdd { namespace dd {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -16,6 +16,6 @@ initial_context() noexcept;
 
 /*------------------------------------------------------------------------------------------------*/
 
-} // namespace sdd
+}} // namespace sdd::dd
 
 #endif // _SDD_DD_CONTEXT_FWD_HH_

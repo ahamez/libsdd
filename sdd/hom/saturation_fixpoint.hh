@@ -78,7 +78,7 @@ public:
         try
         {
           // chain applications of G
-          s2 = sdd::sum(cxt.sdd_context(), {s2, g(cxt, s2)});
+          s2 = dd::sum(cxt.sdd_context(), {s2, g(cxt, s2)});
         }
         catch (top<C>& t)
         {

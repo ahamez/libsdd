@@ -56,7 +56,7 @@ public:
       {
         if (h.selector()) // partition won't change
         {
-          square_union<C, SDD<C>> su;
+          dd::square_union<C, SDD<C>> su;
           su.reserve(node.size());
           for (const auto& arc : node)
           {
@@ -70,12 +70,12 @@ public:
         }
         else
         {
-          sum_builder<C, SDD<C>> sum_operands(node.size());
+          dd::sum_builder<C, SDD<C>> sum_operands(node.size());
           for (const auto& arc : node)
           {
             sum_operands.add(SDD<C>(var, h(cxt, arc.valuation()), arc.successor()));
           }
-          return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+          return dd::sum(cxt.sdd_context(), std::move(sum_operands));
         }
       }
       catch (top<C>& t)

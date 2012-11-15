@@ -262,7 +262,7 @@ private:
               , const inductive_base<C>& i, context<C>& cxt, const SDD<C>& s)
     const
     {
-      sum_builder<C, SDD<C>> sum_operands(node.size());
+      dd::sum_builder<C, SDD<C>> sum_operands(node.size());
       for (const auto& arc : node)
       {
         const homomorphism<C> next_hom = i(node.variable(), arc.valuation());
@@ -271,7 +271,7 @@ private:
 
       try
       {
-        return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+        return dd::sum(cxt.sdd_context(), std::move(sum_operands));
       }
       catch (top<C>& t)
       {

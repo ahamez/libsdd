@@ -7,7 +7,7 @@
 
 // Forward declarations to let operations call each other recursively.
 
-namespace sdd {
+namespace sdd { namespace dd {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -53,6 +53,6 @@ sum(context<C>&, const sum_builder<C, Values>&);
 
 /*------------------------------------------------------------------------------------------------*/
 
-} // namespace sdd
+}} // namespace sdd::dd
 
 #endif // _SDD_DD_OPERATIONS_FWD_HH_

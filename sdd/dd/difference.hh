@@ -15,6 +15,8 @@ namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
+namespace dd {
+
 /// @internal
 /// @brief Implementation of the difference operation.
 ///
@@ -225,6 +227,8 @@ difference(context<C>&, const Values& lhs, const Values& rhs)
   return difference(lhs, rhs);
 }
 
+} // namespace dd
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief   Perform the difference of two SDD.
@@ -234,7 +238,7 @@ inline
 SDD<C>
 operator-(const SDD<C>& lhs, const SDD<C>& rhs)
 {
-  return difference(initial_context<C>(), lhs, rhs);
+  return dd::difference(dd::initial_context<C>(), lhs, rhs);
 }
 
 /// @brief   Perform the difference of two SDD.
@@ -244,7 +248,7 @@ inline
 SDD<C>&
 operator-=(SDD<C>& lhs, const SDD<C>& rhs)
 {
-  SDD<C> tmp = difference(initial_context<C>(), lhs, rhs);
+  SDD<C> tmp = dd::difference(dd::initial_context<C>(), lhs, rhs);
   using std::swap;
   swap(tmp, lhs);
   return lhs;
@@ -261,10 +265,10 @@ namespace std {
 /// @internal
 /// @brief Hash specialization for sdd::dd::difference_op
 template <typename C>
-struct hash<sdd::difference_op<C>>
+struct hash<sdd::dd::difference_op<C>>
 {
   std::size_t
-  operator()(const sdd::difference_op<C>& op)
+  operator()(const sdd::dd::difference_op<C>& op)
   const noexcept
   {
     std::size_t seed = 0;

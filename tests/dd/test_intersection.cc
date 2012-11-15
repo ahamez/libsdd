@@ -13,7 +13,7 @@ struct intersection_test
 {
   typedef sdd::conf::conf0 conf;
   typedef sdd::SDD<conf> SDD;
-  sdd::context<conf> cxt;
+  sdd::dd::context<conf> cxt;
   const SDD zero = sdd::zero<conf>();
   const SDD one = sdd::one<conf>();
 };
@@ -30,7 +30,7 @@ TEST_F(intersection_test, empty_operand)
 TEST_F(intersection_test, empty_intersection)
 {
   conf::Values val {0};
-  sdd::intersection_builder<conf, SDD> ops;
+  sdd::dd::intersection_builder<conf, SDD> ops;
   ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
 }
 
@@ -40,14 +40,14 @@ TEST_F(intersection_test, flat_x_inter_zero)
 {
   {
     conf::Values val {0};
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
     ops.add(SDD(0, val, one));
     ops.add(zero);
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
     conf::Values val {0,1,2,3};
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
     ops.add(zero);
     ops.add(SDD(0, val, one));
     ops.add(SDD(0, val, one));
@@ -57,14 +57,14 @@ TEST_F(intersection_test, flat_x_inter_zero)
   }
   {
     conf::Values val {0};
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
     ops.add(SDD(0, val, SDD(0, val, one)));
     ops.add(sdd::zero<conf>());
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
     conf::Values val {0,1,2,3};
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
     ops.add(SDD(0, val, SDD(0, val, one)));
     ops.add(SDD(0, val, SDD(0, val, one)));
     ops.add(SDD(0, val, SDD(0, val, one)));
@@ -74,7 +74,7 @@ TEST_F(intersection_test, flat_x_inter_zero)
   }
   {
     conf::Values val {0};    
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
     ops.add(zero);
     ops.add(zero);
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
@@ -91,18 +91,18 @@ TEST_F(intersection_test, flat_x_inter_y)
     SDD ref(0, {1}, one);
     ASSERT_EQ(ref, intersection(cxt, {x,y}));
 
-    sdd::sum_builder<conf, SDD> sum_ops_x;
+    sdd::dd::sum_builder<conf, SDD> sum_ops_x;
     sum_ops_x.add(ref);
     sum_ops_x.add(x);
     ASSERT_EQ(x, sum(cxt, std::move(sum_ops_x)));
 
-    sdd::sum_builder<conf, SDD> sum_ops_y;
+    sdd::dd::sum_builder<conf, SDD> sum_ops_y;
     sum_ops_y.add(ref);
     sum_ops_y.add(y);
     ASSERT_EQ(y, sum(cxt, std::move(sum_ops_y)));
   }
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
 
     conf::Values valx {0,1};
     ops.add(SDD(0, valx, one));
@@ -113,7 +113,7 @@ TEST_F(intersection_test, flat_x_inter_y)
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
 
     conf::Values valx {0,1};
     ops.add(SDD(0, valx, SDD(1, valx, one)));
@@ -126,7 +126,7 @@ TEST_F(intersection_test, flat_x_inter_y)
     ASSERT_EQ(SDD(0, valref, SDD(1, valref, one)), intersection(cxt, std::move(ops)));
   }
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
 
     conf::Values valx {0,1};
     ops.add(SDD(0, valx, SDD(1, valx, one)));
@@ -137,7 +137,7 @@ TEST_F(intersection_test, flat_x_inter_y)
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
 
     conf::Values val0x {0,1};
     conf::Values val1x {2,3};
@@ -153,7 +153,7 @@ TEST_F(intersection_test, flat_x_inter_y)
     ASSERT_EQ(SDD(0, val0ref, SDD(1, val1ref, one)), intersection(cxt, std::move(ops)));
   }
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
 
     conf::Values val0x {0,1};
     conf::Values val1x {2,3};
@@ -167,7 +167,7 @@ TEST_F(intersection_test, flat_x_inter_y)
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
 
     conf::Values val0x {0,1};
     conf::Values val1x {2,3};
@@ -186,7 +186,7 @@ TEST_F(intersection_test, flat_x_inter_y)
 TEST_F(intersection_test, flat_nary)
 {
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
 
     conf::Values valx {0,1,2};
     ops.add(SDD(0, valx, one));
@@ -202,7 +202,7 @@ TEST_F(intersection_test, flat_nary)
     ASSERT_EQ(SDD(0, valref, one), intersection(cxt, std::move(ops)));
   }
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
     
     conf::Values valx {0,1,2};
     ops.add(SDD(0, valx, SDD(1, valx, one)));
@@ -225,7 +225,7 @@ TEST_F(intersection_test, flat_nary)
 TEST_F(intersection_test, hierarchical_nary)
 {
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
     ops.add(SDD('a', SDD('b', {0,1,2}, one), one));
     ops.add(SDD('a', SDD('b', {1,2,3}, one), one));
     ops.add(SDD('a', SDD('b', {2,3,4}, one), one));
@@ -233,7 +233,7 @@ TEST_F(intersection_test, hierarchical_nary)
     ASSERT_EQ(SDD('a', SDD('b', {2}, one), one), intersection(cxt, std::move(ops)));
   }
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
     ops.add(SDD('a', SDD('b', {0,1,2}, one), SDD('a', SDD('b', {0,1,2}, one), one)));
     ops.add(SDD('a', SDD('b', {1,2,3}, one), SDD('a', SDD('b', {1,2,3}, one), one)));
     ops.add(SDD('a', SDD('b', {2,3,4}, one), SDD('a', SDD('b', {2,3,4}, one), one)));
@@ -247,7 +247,7 @@ TEST_F(intersection_test, hierarchical_nary)
 TEST_F(intersection_test, hierarchical_x_inter_y)
 {
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
 
     conf::Values valx {0,1};
     ops.add(SDD(10, SDD(0, valx, one), one));
@@ -261,7 +261,7 @@ TEST_F(intersection_test, hierarchical_x_inter_y)
              , intersection(cxt, std::move(ops)));
   }
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
 
     conf::Values valx {0,1};
     ops.add(SDD(10, SDD(0, valx, one), one));
@@ -272,7 +272,7 @@ TEST_F(intersection_test, hierarchical_x_inter_y)
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
 
     conf::Values valx {0,1};
     SDD x(0, valx, one);
@@ -289,7 +289,7 @@ TEST_F(intersection_test, hierarchical_x_inter_y)
              , intersection(cxt, std::move(ops)));
   }
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
 
     conf::Values valx {0,1};
     SDD x(0, valx, one);
@@ -302,7 +302,7 @@ TEST_F(intersection_test, hierarchical_x_inter_y)
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
 
     conf::Values val10x {0,1};
     conf::Values val11x {2,3};
@@ -325,7 +325,7 @@ TEST_F(intersection_test, hierarchical_x_inter_y)
              , intersection(cxt, std::move(ops)));
   }
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
     
     conf::Values val10x {0,1};
     conf::Values val11x {2,3};
@@ -342,7 +342,7 @@ TEST_F(intersection_test, hierarchical_x_inter_y)
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
-    sdd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops;
     
     conf::Values val10x;
     val10x.insert(0);
@@ -369,7 +369,7 @@ TEST_F(intersection_test, hierarchical_x_inter_y)
 TEST_F(intersection_test, values)
 {
   {
-    sdd::intersection_builder<conf, conf::Values> ops;
+    sdd::dd::intersection_builder<conf, conf::Values> ops;
     ASSERT_EQ(conf::Values(), intersection(cxt, std::move(ops)));
   }
   {
@@ -377,7 +377,7 @@ TEST_F(intersection_test, values)
     conf::Values val1 {1,2};
     conf::Values val2 {2};
     conf::Values ref {2};
-    sdd::intersection_builder<conf, conf::Values> ops {val0, val1, val2};
+    sdd::dd::intersection_builder<conf, conf::Values> ops {val0, val1, val2};
     ASSERT_EQ(ref, intersection(cxt, std::move(ops)));
   }
 }

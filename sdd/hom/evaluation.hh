@@ -50,7 +50,7 @@ struct evaluation
   {
     if (h.skip(node.variable()))
     {
-      square_union<C, typename Node::valuation_type> su;
+      dd::square_union<C, typename Node::valuation_type> su;
       su.reserve(node.size());
       for (const auto& arc : node)
       {

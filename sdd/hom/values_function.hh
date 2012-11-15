@@ -218,7 +218,7 @@ private:
     {
       if (fun.selector())
       {
-        alpha_builder<C, values_type> ab;
+        dd::alpha_builder<C, values_type> ab;
         ab.reserve(node.size());
         for (const auto& arc : node)
         {
@@ -232,12 +232,12 @@ private:
       }
       else
       {
-        sum_builder<C, SDD<C>> sum_operands(node.size());
+        dd::sum_builder<C, SDD<C>> sum_operands(node.size());
         for (const auto& arc : node)
         {
           sum_operands.add(SDD<C>(node.variable(), fun(arc.valuation()), arc.successor()));
         }
-        return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+        return dd::sum(cxt.sdd_context(), std::move(sum_operands));
       }
     }
   };

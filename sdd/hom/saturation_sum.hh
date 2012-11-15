@@ -68,7 +68,7 @@ public:
   operator()(context<C>& cxt, const SDD<C>& s)
   const
   {
-    sum_builder<C, SDD<C>> sum_operands(G_.size() + 2);
+    dd::sum_builder<C, SDD<C>> sum_operands(G_.size() + 2);
 
     if (F_)
     {
@@ -87,7 +87,7 @@ public:
 
     try
     {
-      return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+      return dd::sum(cxt.sdd_context(), std::move(sum_operands));
     }
     catch (top<C>& t)
     {
