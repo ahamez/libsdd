@@ -11,7 +11,7 @@
 #include <boost/container/flat_set.hpp>
 #include <boost/intrusive/unordered_set.hpp>
 
-#include "sdd/internal/util/hash.hh"
+#include "sdd/util/hash.hh"
 
 namespace sdd { namespace values {
 
@@ -71,7 +71,7 @@ private:
       std::size_t seed = 0;
       for (const auto& v : e.data)
       {
-        internal::util::hash_combine(seed, v);
+        util::hash_combine(seed, v);
       }
       return seed;
     }
@@ -359,5 +359,7 @@ struct hash<sdd::values::unique_flat_set<Value>>
 };
 
 } // namespace std
+
+/*------------------------------------------------------------------------------------------------*/
 
 #endif // _SDD_VALUES_UNIQUE_FLAT_SET_HH_

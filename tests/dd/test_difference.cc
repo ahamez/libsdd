@@ -4,7 +4,7 @@
 #include "sdd/dd/context.hh"
 #include "sdd/dd/definition.hh"
 
-using namespace sdd::internal::mem;
+using namespace sdd::mem;
 using namespace sdd;
 
 /*------------------------------------------------------------------------------------------------*/

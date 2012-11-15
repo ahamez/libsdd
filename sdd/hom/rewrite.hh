@@ -95,7 +95,7 @@ struct rewriter
       }
       else if (apply_visitor(is_local(), (*begin)->data()))
       {
-        const local<C>& l = internal::mem::variant_cast<const local<C>>((*begin)->data());
+        const local<C>& l = mem::variant_cast<const local<C>>((*begin)->data());
         L.push_back(l.hom());
       }
       else
@@ -146,7 +146,7 @@ struct rewriter
       return h;
     }
 
-    const sum<C>& s = internal::mem::variant_cast<const sum<C>>(f.hom()->data());
+    const sum<C>& s = mem::variant_cast<const sum<C>>(f.hom()->data());
 
     auto&& p = partition(var, s.operands().begin(), s.operands().end());
     auto& F = std::get<0>(p);
@@ -272,8 +272,8 @@ struct hash<sdd::hom::cached_rewrite<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, op.h_);
-    sdd::internal::util::hash_combine(seed, op.var_);
+    sdd::util::hash_combine(seed, op.h_);
+    sdd::util::hash_combine(seed, op.var_);
     return seed;
   }
 };

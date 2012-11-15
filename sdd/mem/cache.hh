@@ -1,5 +1,5 @@
-#ifndef _SDD_INTERNAL_MEM_CACHE_HH_
-#define _SDD_INTERNAL_MEM_CACHE_HH_
+#ifndef _SDD_MEM_CACHE_HH_
+#define _SDD_MEM_CACHE_HH_
 
 #include <algorithm> // count_if, for_each, nth_element
 #include <forward_list>
@@ -10,9 +10,9 @@
 
 #include <boost/intrusive/unordered_set.hpp>
 
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
-namespace sdd { namespace internal { namespace mem {
+namespace sdd { namespace mem {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -367,6 +367,6 @@ public:
 
 /*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace sdd::internal::mem
+}} // namespace sdd::mem
 
-#endif // _SDD_INTERNAL_MEM_CACHE_HH_
+#endif // _SDD_MEM_CACHE_HH_

@@ -20,12 +20,12 @@ namespace hom {}
 namespace values {}
 
 /// @internal
-/// @brief Contain internal stuff necessary for the library.
-namespace internal {}
-
-/// @internal
 /// @brief Contain stuff necessary for the memory management.
 namespace mem {}
+
+/// @internal
+/// @brief Contain miscellaneous utilities.
+namespace util {}
 
 }
 

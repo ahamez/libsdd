@@ -104,7 +104,7 @@ template <typename C>
 homomorphism<C>
 Constant(const SDD<C>& s)
 {
-  return homomorphism<C>::create(internal::mem::construct<hom::constant<C>>(), s);
+  return homomorphism<C>::create(mem::construct<hom::constant<C>>(), s);
 }
 
 /*------------------------------------------------------------------------------------------------*/

@@ -7,10 +7,10 @@
 #include "sdd/dd/definition_fwd.hh"
 #include "sdd/dd/node.hh"
 #include "sdd/dd/terminal.hh"
-#include "sdd/internal/mem/ptr.hh"
-#include "sdd/internal/mem/ref_counted.hh"
-#include "sdd/internal/mem/variant.hh"
-#include "sdd/internal/util/print_sizes_fwd.hh"
+#include "sdd/mem/ptr.hh"
+#include "sdd/mem/ref_counted.hh"
+#include "sdd/mem/variant.hh"
+#include "sdd/util/print_sizes_fwd.hh"
 
 namespace sdd {
 
@@ -64,20 +64,20 @@ private:
   ///
   /// This is the real recursive definition of an SDD: it can be a |0| or |1| terminal, or it
   /// can be a flat or an hierachical node.
-  typedef internal::mem::variant< const zero_terminal<C>, const one_terminal<C>
-                                , const flat_node<C>, const hierarchical_node<C>>
+  typedef mem::variant< const zero_terminal<C>, const one_terminal<C>
+                      , const flat_node<C>, const hierarchical_node<C>>
           SDD_data;
 
   /// @brief A unified and canonized SDD, meant to be stored in a unique table.
   ///
   /// It is automatically erased when there is no more reference to it.
-  typedef internal::mem::ref_counted<const SDD_data> SDD_unique;
+  typedef mem::ref_counted<const SDD_data> SDD_unique;
 
   /// @brief Define the smart pointer around a unified SDD.
   ///
   /// It handles the reference counting as well as the deletion of the SDD when it is no longer
   /// referenced.
-  typedef internal::mem::ptr<const SDD_unique> ptr_type;
+  typedef mem::ptr<const SDD_unique> ptr_type;
 
 public:
 
@@ -230,7 +230,7 @@ public:
   }
 
   /// @internal
-  /// @brief Get the content of the SDD (an internal::mem::ref_counted).
+  /// @brief Get the content of the SDD (an mem::ref_counted).
   ///
   /// O(1).
   const SDD_unique&
@@ -241,7 +241,7 @@ public:
   }
 
   /// @internal
-  /// @brief Get a pointer to the content of the SDD (an internal::mem::ref_counted).
+  /// @brief Get a pointer to the content of the SDD (an mem::ref_counted).
   ///
   /// O(1).
   const SDD_unique*
@@ -270,8 +270,8 @@ public:
   ptr_type
   zero_ptr()
   {
-    static SDD_unique* z = new SDD_unique(internal::mem::construct<zero_terminal<C>>());
-    static const ptr_type zero(internal::mem::unify(z, sizeof(SDD_unique)));
+    static SDD_unique* z = new SDD_unique(mem::construct<zero_terminal<C>>());
+    static const ptr_type zero(mem::unify(z, sizeof(SDD_unique)));
     return zero;
   }
 
@@ -283,8 +283,8 @@ public:
   ptr_type
   one_ptr()
   {
-    static SDD_unique* o = new SDD_unique(internal::mem::construct<one_terminal<C>>());
-    static const ptr_type one(internal::mem::unify(o, sizeof(SDD_unique)));
+    static SDD_unique* o = new SDD_unique(mem::construct<one_terminal<C>>());
+    static const ptr_type one(mem::unify(o, sizeof(SDD_unique)));
     return one;
   }
 
@@ -366,13 +366,13 @@ private:
     // taken. This is also why we use Boost.Intrusive in order to be able to manage memory
     // exactly the way we want.
     const std::size_t size = sizeof(SDD_unique) + builder.size_to_allocate();
-    char* addr = internal::mem::allocate<SDD_unique>(size);
+    char* addr = mem::allocate<SDD_unique>(size);
     SDD_unique* u =
-      new (addr) SDD_unique(internal::mem::construct<node<C, Valuation>>(), var, builder);
-    return internal::mem::unify(u, size);
+      new (addr) SDD_unique(mem::construct<node<C, Valuation>>(), var, builder);
+    return mem::unify(u, size);
   }
 
-  friend void internal::util::print_sizes<C>(std::ostream&);
+  friend void util::print_sizes<C>(std::ostream&);
 };
 
 /*------------------------------------------------------------------------------------------------*/

@@ -6,7 +6,7 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
 namespace sdd { namespace hom {
 
@@ -136,7 +136,7 @@ template <typename C, typename Valuation>
 homomorphism<C>
 Cons(const typename C::Variable& var, const Valuation& val, const homomorphism<C>& h)
 {
-  return homomorphism<C>::create(internal::mem::construct<hom::cons<C, Valuation>>(), var, val, h);
+  return homomorphism<C>::create(mem::construct<hom::cons<C, Valuation>>(), var, val, h);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -157,9 +157,9 @@ struct hash<sdd::hom::cons<C, Valuation>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, h.variable());
-    sdd::internal::util::hash_combine(seed, h.valuation());
-    sdd::internal::util::hash_combine(seed, h.next());
+    sdd::util::hash_combine(seed, h.variable());
+    sdd::util::hash_combine(seed, h.valuation());
+    sdd::util::hash_combine(seed, h.next());
     return seed;
   }
 };

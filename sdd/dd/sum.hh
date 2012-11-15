@@ -11,7 +11,7 @@
 #include "sdd/dd/nary.hh"
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
-#include "sdd/internal/util/hash.hh"
+#include "sdd/util/hash.hh"
 
 namespace sdd {
 
@@ -58,7 +58,7 @@ struct _LIBSDD_ATTRIBUTE_PACKED sum_op
     const auto operands_end = base_type::end();
 
     // Get the first operand as a node, we need it to initialize the algorithm.
-    const node_type& head = internal::mem::variant_cast<node_type>((*operands_cit)->data());
+    const node_type& head = mem::variant_cast<node_type>((*operands_cit)->data());
 
     // Type of the list of successors for a valuation, to be merged with the union operation
     // right before calling the square union.
@@ -90,7 +90,7 @@ struct _LIBSDD_ATTRIBUTE_PACKED sum_op
     {
       const auto res_end = res.end();
 
-      const node_type& node = internal::mem::variant_cast<node_type>((*operands_cit)->data());
+      const node_type& node = mem::variant_cast<node_type>((*operands_cit)->data());
       const auto alpha_end = node.end();
 
       // (B). For each arc of the current operand.
@@ -361,7 +361,7 @@ struct hash<sdd::sum_op<C>>
     std::size_t seed = 0;
     for (const auto& operand : sum)
     {
-      sdd::internal::util::hash_combine(seed, operand);
+      sdd::util::hash_combine(seed, operand);
     }
     return seed;
   }

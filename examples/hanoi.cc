@@ -160,8 +160,8 @@ struct hash<no_ring_above>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, x.i);
-    sdd::internal::util::hash_combine(seed, x.j);
+    sdd::util::hash_combine(seed, x.i);
+    sdd::util::hash_combine(seed, x.j);
     return seed;
   }
 };
@@ -175,9 +175,9 @@ struct hash<swap_pole>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, x.ring);
-    sdd::internal::util::hash_combine(seed, x.source);
-    sdd::internal::util::hash_combine(seed, x.destination);
+    sdd::util::hash_combine(seed, x.ring);
+    sdd::util::hash_combine(seed, x.source);
+    sdd::util::hash_combine(seed, x.destination);
     return seed;
   }
 };

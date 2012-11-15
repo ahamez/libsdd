@@ -17,10 +17,10 @@
 #include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
 #include "sdd/hom/values_function.hh"
-#include "sdd/internal/mem/ptr.hh"
-#include "sdd/internal/mem/ref_counted.hh"
-#include "sdd/internal/mem/variant.hh"
-#include "sdd/internal/util/print_sizes_fwd.hh"
+#include "sdd/mem/ptr.hh"
+#include "sdd/mem/ref_counted.hh"
+#include "sdd/mem/variant.hh"
+#include "sdd/util/print_sizes_fwd.hh"
 
 namespace sdd {
 
@@ -33,31 +33,31 @@ class homomorphism
 private:
 
   /// @brief A canonized homomorphism.
-  typedef internal::mem::variant< const hom::composition<C>
-                                , const hom::cons<C, SDD<C>>
-                                , const hom::cons<C, typename C::Values>
-                                , const hom::constant<C>
-                                , const hom::fixpoint<C>
-                                , const hom::identity<C>
-                                , const hom::inductive<C>
-                                , const hom::local<C>
-                                , const hom::saturation_fixpoint<C>
-                                , const hom::saturation_sum<C>
-                                , const hom::sum<C>
-                                , const hom::values_function<C>
-                                >
+  typedef mem::variant< const hom::composition<C>
+                      , const hom::cons<C, SDD<C>>
+                      , const hom::cons<C, typename C::Values>
+                      , const hom::constant<C>
+                      , const hom::fixpoint<C>
+                      , const hom::identity<C>
+                      , const hom::inductive<C>
+                      , const hom::local<C>
+                      , const hom::saturation_fixpoint<C>
+                      , const hom::saturation_sum<C>
+                      , const hom::sum<C>
+                      , const hom::values_function<C>
+                      >
           data_type;
 
   /// @brief A unified and canonized homomorphism, meant to be stored in a unique table.
   ///
   /// It is automatically erased when there is no more reference to it.
-  typedef internal::mem::ref_counted<const data_type> unique_type;
+  typedef mem::ref_counted<const data_type> unique_type;
 
   /// @brief Define the smart pointer around a unified homomorphism.
   ///
   /// It handles the reference counting as well as the deletion of the homomorphism when it is
   /// no longer referenced.
-  typedef internal::mem::ptr<const unique_type> ptr_type;
+  typedef mem::ptr<const unique_type> ptr_type;
 
   /// @brief The real smart pointer around a unified homomorphism.
   ptr_type ptr_;
@@ -114,7 +114,7 @@ public:
   }
 
   /// @internal
-  /// @brief Get the content of the homomorphism (an internal::mem::ref_counted).
+  /// @brief Get the content of the homomorphism (an mem::ref_counted).
   ///
   /// O(1).
   const unique_type&
@@ -125,7 +125,7 @@ public:
   }
 
   /// @internal
-  /// @brief Get a pointer to the content of the homomorphism (an internal::mem::ref_counted).
+  /// @brief Get a pointer to the content of the homomorphism (an mem::ref_counted).
   ///
   /// O(1).
   const unique_type*
@@ -187,13 +187,13 @@ public:
   template<typename T, typename... Args>
   static
   homomorphism
-  create(internal::mem::construct<T>, Args&&... args)
+  create(mem::construct<T>, Args&&... args)
   {
     const std::size_t size = sizeof(unique_type);
-    char* addr = internal::mem::allocate<unique_type>(size);
+    char* addr = mem::allocate<unique_type>(size);
     unique_type* u =
-      new (addr) unique_type(internal::mem::construct<T>(), std::forward<Args>(args)...);
-    return homomorphism(internal::mem::unify(u, size));
+      new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
+    return homomorphism(mem::unify(u, size));
   }
 
   /// @internal
@@ -226,7 +226,7 @@ public:
     }
   };
 
-  friend void internal::util::print_sizes<C>(std::ostream&);
+  friend void util::print_sizes<C>(std::ostream&);
 };
 
 /*------------------------------------------------------------------------------------------------*/

@@ -1,11 +1,11 @@
-#ifndef _SDD_INTERNAL_MEM_PTR_HH_
-#define _SDD_INTERNAL_MEM_PTR_HH_
+#ifndef _SDD_MEM_PTR_HH_
+#define _SDD_MEM_PTR_HH_
 
 #include <functional> // hash
 
-#include "sdd/internal/mem/unique_table.hh"
+#include "sdd/mem/unique_table.hh"
 
-namespace sdd { namespace internal { namespace mem {
+namespace sdd { namespace mem {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -161,19 +161,19 @@ noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace sdd::internal::mem
+}} // namespace sdd::mem
 
 namespace std {
 
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Hash specialization for sdd::internal::mem::ptr
+/// @brief Hash specialization for sdd::mem::ptr
 template <typename Unique>
-struct hash<sdd::internal::mem::ptr<Unique>>
+struct hash<sdd::mem::ptr<Unique>>
 {
   std::size_t
-  operator()(const sdd::internal::mem::ptr<Unique>& x)
+  operator()(const sdd::mem::ptr<Unique>& x)
   const noexcept
   {
     return std::hash<Unique*>()(x.operator->());
@@ -184,4 +184,4 @@ struct hash<sdd::internal::mem::ptr<Unique>>
 
 } // namespace std
 
-#endif // _SDD_INTERNAL_MEM_PTR_HH_
+#endif // _SDD_MEM_PTR_HH_

@@ -1,7 +1,7 @@
-#ifndef _SDD_INTERNAL_UTIL_TYPELIST_HH_
-#define _SDD_INTERNAL_UTIL_TYPELIST_HH_
+#ifndef _SDD_UTIL_TYPELIST_HH_
+#define _SDD_UTIL_TYPELIST_HH_
 
-namespace sdd { namespace internal { namespace util {
+namespace sdd { namespace util {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -60,6 +60,6 @@ struct nth<Index, Head, Tail...>
 
 /*------------------------------------------------------------------------------------------------*/  
 
-}}} // namespace sdd::internal::util
+}} // namespace sdd::util
 
-#endif // _SDD_INTERNAL_UTIL_TYPELIST_HH_
+#endif // _SDD_UTIL_TYPELIST_HH_

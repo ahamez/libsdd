@@ -9,7 +9,7 @@
 #include "sdd/hom/evaluation.hh"
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/rewrite.hh"
-#include "sdd/internal/mem/cache.hh"
+#include "sdd/mem/cache.hh"
 
 namespace sdd { namespace hom {
 
@@ -26,11 +26,11 @@ class context
 public:
 
   /// @brief Homomorphism evaluation cache type.
-  typedef internal::mem::cache<cached_homomorphism<C>, evaluation_error<C>, should_cache<C>>
+  typedef mem::cache<cached_homomorphism<C>, evaluation_error<C>, should_cache<C>>
           cache_type;
 
   /// @brief Homomorphism rewriting cache type.
-  typedef internal::mem::cache<cached_rewrite<C>, evaluation_error<C>>
+  typedef mem::cache<cached_rewrite<C>, evaluation_error<C>>
           rewrite_cache_type;
 
   /// @brief SDD operation context type.

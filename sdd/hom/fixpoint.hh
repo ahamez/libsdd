@@ -9,7 +9,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
 namespace sdd {
 
@@ -141,7 +141,7 @@ struct fixpoint_builder_helper
   operator()(const T&, const homomorphism<C>& h)
   const noexcept
   {
-    return homomorphism<C>::create(internal::mem::construct<fixpoint<C>>(), h);
+    return homomorphism<C>::create(mem::construct<fixpoint<C>>(), h);
   }
 };
 
@@ -176,7 +176,7 @@ struct hash<sdd::hom::fixpoint<C>>
   const noexcept
   {
     std::size_t seed = 345789; // avoid to have the same hash as the contained homormorphism
-    sdd::internal::util::hash_combine(seed, f.hom());
+    sdd::util::hash_combine(seed, f.hom());
     return seed;
   }
 };

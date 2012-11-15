@@ -13,7 +13,7 @@
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
 namespace sdd { namespace hom {
 
@@ -206,7 +206,7 @@ SaturationFixpoint( const typename C::Variable& var
     return l;
   }
 
-  return homomorphism<C>::create( internal::mem::construct<saturation_fixpoint<C>>()
+  return homomorphism<C>::create( mem::construct<saturation_fixpoint<C>>()
                                 , var
                                 , f
                                 , typename saturation_fixpoint<C>::g_type(gbegin, gend)
@@ -231,12 +231,12 @@ struct hash<sdd::hom::saturation_fixpoint<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, s.variable());
-    sdd::internal::util::hash_combine(seed, s.F());
-    sdd::internal::util::hash_combine(seed, s.L());
+    sdd::util::hash_combine(seed, s.variable());
+    sdd::util::hash_combine(seed, s.F());
+    sdd::util::hash_combine(seed, s.L());
     for (const auto& g : s.G())
     {
-      sdd::internal::util::hash_combine(seed, g);
+      sdd::util::hash_combine(seed, g);
     }
     return seed;
   }

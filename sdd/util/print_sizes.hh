@@ -1,12 +1,12 @@
-#ifndef _SDD_INTERNAL_UTIL_PRINT_SIZES_HH_
-#define _SDD_INTERNAL_UTIL_PRINT_SIZES_HH_
+#ifndef _SDD_UTIL_PRINT_SIZES_HH_
+#define _SDD_UTIL_PRINT_SIZES_HH_
 
 #include <iosfwd>
 
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/definition.hh"
 
-namespace sdd { namespace internal { namespace util {
+namespace sdd { namespace util {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -40,22 +40,22 @@ print_sizes(std::ostream& os)
   os << "Hom::data             " << sizeof(typename hom_type::data_type) << std::endl;
   os << "Hom::data::storage    " << sizeof(typename hom_type::data_type::storage_type) << std::endl;
   os << "Hom::unique           " << sizeof(typename hom_type::unique_type) << std::endl;
-  os << "Composition           " << sizeof(hom::composition<C>) << std::endl;
-  os << "Flat Cons             " << sizeof(hom::cons<C, typename C::Values>) << std::endl;
-  os << "Hierarchical Cons     " << sizeof(hom::cons<C, SDD<C>>) << std::endl;
-  os << "Constant              " << sizeof(hom::constant<C>) << std::endl;
-  os << "Fixpoint              " << sizeof(hom::fixpoint<C>) << std::endl;
-  os << "Identity              " << sizeof(hom::identity<C>) << std::endl;
-  os << "Inductive             " << sizeof(hom::inductive<C>) << std::endl;
-  os << "Local                 " << sizeof(hom::local<C>) << std::endl;
+  os << "Composition           " << sizeof(composition<C>) << std::endl;
+  os << "Flat Cons             " << sizeof(cons<C, typename C::Values>) << std::endl;
+  os << "Hierarchical Cons     " << sizeof(cons<C, SDD<C>>) << std::endl;
+  os << "Constant              " << sizeof(constant<C>) << std::endl;
+  os << "Fixpoint              " << sizeof(fixpoint<C>) << std::endl;
+  os << "Identity              " << sizeof(identity<C>) << std::endl;
+  os << "Inductive             " << sizeof(inductive<C>) << std::endl;
+  os << "Local                 " << sizeof(local<C>) << std::endl;
   os << "Saturation Fixpoint   " << sizeof(hom::saturation_fixpoint<C>) << std::endl;
   os << "Saturation Sum        " << sizeof(hom::saturation_sum<C>) << std::endl;
-  os << "Sum                   " << sizeof(hom::sum<C>) << std::endl;
-  os << "Values Function       " << sizeof(hom::values_function<C>) << std::endl;
+  os << "Sum                   " << sizeof(sum<C>) << std::endl;
+  os << "Values Function       " << sizeof(values_function<C>) << std::endl;
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace sdd::internal::util
+}} // namespace sdd::util
 
-#endif // _SDD_INTERNAL_UTIL_PRINT_SIZES_HH_
+#endif // _SDD_UTIL_PRINT_SIZES_HH_

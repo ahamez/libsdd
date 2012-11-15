@@ -16,7 +16,7 @@ namespace sdd { namespace hom {
 template <typename C>
 struct evaluation
 {
-  /// @brief Used by internal::util::variant.
+  /// @brief Used by util::variant.
   typedef SDD<C> result_type;
 
   template <typename H>
@@ -200,8 +200,8 @@ struct hash<sdd::hom::cached_homomorphism<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, op.h_);
-    sdd::internal::util::hash_combine(seed, op.sdd_);
+    sdd::util::hash_combine(seed, op.h_);
+    sdd::util::hash_combine(seed, op.sdd_);
     return seed;
   }
 };

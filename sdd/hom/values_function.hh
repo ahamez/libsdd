@@ -9,7 +9,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
 namespace sdd { namespace hom {
 
@@ -73,10 +73,10 @@ private:
 public:
 
   /// @brief The type of a variable.
-  typedef typename C::Variable  variable_type;
+  typedef typename C::Variable variable_type;
 
   /// @brief The type of a set of values.
-  typedef typename C::Values    values_type;
+  typedef typename C::Values values_type;
 
   /// @brief Constructor.
   values_function_derived(const User& f)
@@ -327,7 +327,7 @@ template <typename C, typename User>
 homomorphism<C>
 ValuesFunction(const typename C::Variable& v, const User& u)
 {
-  return homomorphism<C>::create( internal::mem::construct<hom::values_function<C>>()
+  return homomorphism<C>::create( mem::construct<hom::values_function<C>>()
                                 , v, new hom::values_function_derived<C, User>(u));
 }
 
@@ -337,7 +337,7 @@ template <typename C, typename User>
 homomorphism<C>
 ValuesFunction(const typename C::Variable& v, User&& u)
 {
-  return homomorphism<C>::create( internal::mem::construct<hom::values_function<C>>()
+  return homomorphism<C>::create( mem::construct<hom::values_function<C>>()
                                 , v, new hom::values_function_derived<C, User>(std::move(u)));
 }
 
@@ -359,7 +359,7 @@ struct hash<sdd::hom::values_function<C>>
   const noexcept
   {
     std::size_t seed = x.fun().hash();
-    sdd::internal::util::hash_combine(seed, x.variable());
+    sdd::util::hash_combine(seed, x.variable());
     return seed;
   }
 };

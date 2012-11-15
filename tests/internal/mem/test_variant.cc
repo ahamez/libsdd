@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 
-#include "sdd/internal/mem/variant.hh"
+#include "sdd/mem/variant.hh"
 
-using namespace sdd::internal;
+using namespace sdd;
 
 /*------------------------------------------------------------------------------------------------*/
 

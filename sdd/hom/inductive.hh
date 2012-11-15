@@ -9,7 +9,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
 namespace sdd { namespace hom {
 
@@ -357,7 +357,7 @@ template <typename C, typename User>
 homomorphism<C>
 Inductive(const User& u)
 {
-  return homomorphism<C>::create( internal::mem::construct<hom::inductive<C>>()
+  return homomorphism<C>::create( mem::construct<hom::inductive<C>>()
                                 , new hom::inductive_derived<C, User>(u));
 }
 
@@ -367,7 +367,7 @@ template <typename C, typename User>
 homomorphism<C>
 Inductive(User&& u)
 {
-  return homomorphism<C>::create( internal::mem::construct<hom::inductive<C>>()
+  return homomorphism<C>::create( mem::construct<hom::inductive<C>>()
                                 , new hom::inductive_derived<C, User>(std::move(u)));
 }
 

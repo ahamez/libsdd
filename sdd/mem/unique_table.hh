@@ -1,10 +1,10 @@
-#ifndef _SDD_INTERNAL_MEM_UNIQUE_TABLE_HH_
-#define _SDD_INTERNAL_MEM_UNIQUE_TABLE_HH_
+#ifndef _SDD_MEM_UNIQUE_TABLE_HH_
+#define _SDD_MEM_UNIQUE_TABLE_HH_
 
 #include <boost/container/flat_map.hpp>
 #include <boost/intrusive/unordered_set.hpp>
 
-namespace sdd { namespace internal { namespace mem {
+namespace sdd { namespace mem {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -173,11 +173,11 @@ namespace /* anonymous */ {
 /// @related unique_table
 template <typename Unique>
 inline
-internal::mem::unique_table<Unique>&
+mem::unique_table<Unique>&
 global_unique_table()
 noexcept
 {
-  static internal::mem::unique_table<Unique> unique_table;
+  static mem::unique_table<Unique> unique_table;
   return unique_table;
 }
 
@@ -209,6 +209,6 @@ unify(Unique* u_ptr, std::size_t size)
 
 /*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace sdd::internal::mem
+}} // namespace sdd::mem
 
-#endif // _SDD_INTERNAL_MEM_UNIQUE_TABLE_HH_
+#endif // _SDD_MEM_UNIQUE_TABLE_HH_

@@ -8,7 +8,7 @@
 #include "sdd/dd/nary.hh"
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
-#include "sdd/internal/util/hash.hh"
+#include "sdd/util/hash.hh"
 
 namespace sdd {
 
@@ -55,7 +55,7 @@ struct _LIBSDD_ATTRIBUTE_PACKED intersection_op
     SDD<C> res = *operands_cit;
 
     const variable_type& variable =
-	    internal::mem::variant_cast<node_type>((*operands_cit)->data()).variable();
+	    mem::variant_cast<node_type>((*operands_cit)->data()).variable();
 
     // We re-use the same square union to save some allocations.
     square_union<C, valuation_type> su;
@@ -65,8 +65,8 @@ struct _LIBSDD_ATTRIBUTE_PACKED intersection_op
       // Cleanup for the next usage.
       su.clear();
 
-      const node_type& lhs = internal::mem::variant_cast<node_type>((res)->data());
-      const node_type& rhs = internal::mem::variant_cast<node_type>((*operands_cit)->data());
+      const node_type& lhs = mem::variant_cast<node_type>((res)->data());
+      const node_type& rhs = mem::variant_cast<node_type>((*operands_cit)->data());
 
       for (auto& lhs_arc : lhs)
       {
@@ -277,7 +277,7 @@ struct hash<sdd::intersection_op<C>>
     std::size_t seed = 0;
     for (auto& operand : inter)
     {
-      sdd::internal::util::hash_combine(seed, operand);
+      sdd::util::hash_combine(seed, operand);
     }
     return seed;
   }

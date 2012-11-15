@@ -1,7 +1,7 @@
-#ifndef _SDD_INTERNAL_UTIL_HASH_HH_
-#define _SDD_INTERNAL_UTIL_HASH_HH_
+#ifndef _SDD_UTIL_HASH_HH_
+#define _SDD_UTIL_HASH_HH_
 
-namespace sdd { namespace internal { namespace util {
+namespace sdd { namespace util {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -18,6 +18,6 @@ hash_combine(std::size_t& seed, const T& x)
 }
 /*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace sdd::internal::util
+}} // namespace sdd::util
 
-#endif // _SDD_INTERNAL_UTIL_NIL_HH_
+#endif // _SDD_UTIL_HASH_HH_

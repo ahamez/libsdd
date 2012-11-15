@@ -16,7 +16,7 @@
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
 namespace sdd { namespace hom {
 
@@ -204,7 +204,7 @@ Sum(InputIterator begin, InputIterator end)
   else
   {
     operands.shrink_to_fit();
-    return homomorphism<C>::create(internal::mem::construct<hom::sum<C>>(), std::move(operands));
+    return homomorphism<C>::create(mem::construct<hom::sum<C>>(), std::move(operands));
   }
 }
 
@@ -239,7 +239,7 @@ struct hash<sdd::hom::sum<C>>
     std::size_t seed = 0;
     for (const auto& op : s.operands())
     {
-      sdd::internal::util::hash_combine(seed, op);
+      sdd::util::hash_combine(seed, op);
     }
     return seed;
   }

@@ -9,7 +9,7 @@
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
 #include "sdd/dd/top.hh"
-#include "sdd/internal/util/hash.hh"
+#include "sdd/util/hash.hh"
 
 namespace sdd {
 
@@ -268,8 +268,8 @@ struct hash<sdd::difference_op<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, op.lhs_);
-    sdd::internal::util::hash_combine(seed, op.rhs_);
+    sdd::util::hash_combine(seed, op.lhs_);
+    sdd::util::hash_combine(seed, op.rhs_);
     return seed;
   }
 };

@@ -2,7 +2,7 @@
 
 #include <boost/intrusive/unordered_set.hpp>
 
-#include "sdd/internal/mem/unique_table.hh"
+#include "sdd/mem/unique_table.hh"
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -42,7 +42,7 @@ struct hash<foo>
 TEST(unique_table_test, insertion)
 {
   {
-    sdd::internal::mem::unique_table<foo> ut;
+    sdd::mem::unique_table<foo> ut;
 
     char* addr1 = ut.allocate(sizeof(foo));
     foo* i1_ptr = new (addr1) foo(42);
@@ -56,7 +56,7 @@ TEST(unique_table_test, insertion)
     ut.erase(const_cast<foo&>(i1));
   }
   {
-    sdd::internal::mem::unique_table<foo> ut;
+    sdd::mem::unique_table<foo> ut;
 
     char* addr1 = ut.allocate(sizeof(foo));
     foo* i1_ptr = new (addr1) foo(42);
@@ -76,7 +76,7 @@ TEST(unique_table_test, insertion)
 
 TEST(unique_table_test, rehash)
 {
-  sdd::internal::mem::unique_table<foo> ut(1);
+  sdd::mem::unique_table<foo> ut(1);
 
   char* addr1 = ut.allocate(sizeof(foo));
   foo* f1_ptr = new (addr1) foo(0);

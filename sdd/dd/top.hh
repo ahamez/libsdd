@@ -133,7 +133,7 @@ public:
   /// @internal
   /// @brief Add an operation to the sequence of operations that lead to incompatible SDD.
   ///
-  /// Called by internal::mem::cache.
+  /// Called by mem::cache.
   template <typename Operation>
   void
   add_step(Operation&& op)

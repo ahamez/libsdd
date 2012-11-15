@@ -6,8 +6,6 @@
 #include "sdd/dd/context.hh"
 #include "sdd/dd/definition.hh"
 
-using namespace sdd::internal::mem;
-
 /*------------------------------------------------------------------------------------------------*/
 
 struct intersection_test

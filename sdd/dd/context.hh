@@ -9,7 +9,7 @@
 #include "sdd/dd/intersection.hh"
 #include "sdd/dd/sum.hh"
 #include "sdd/dd/top.hh"
-#include "sdd/internal/mem/cache.hh"
+#include "sdd/mem/cache.hh"
 
 namespace sdd {
 
@@ -27,13 +27,13 @@ class context
 public:
 
   /// @brief Cache parameterized by the difference operation and the top error.
-  typedef internal::mem::cache<difference_op<C>, top<C>> difference_cache_type;
+  typedef mem::cache<difference_op<C>, top<C>> difference_cache_type;
 
   /// @brief Cache parameterized by the intersection operation and the top error.
-  typedef internal::mem::cache<intersection_op<C>, top<C>> intersection_cache_type;
+  typedef mem::cache<intersection_op<C>, top<C>> intersection_cache_type;
 
   /// @brief Cache parameterized by the sum operation and the top error.
-  typedef internal::mem::cache<sum_op<C>, top<C>> sum_cache_type;
+  typedef mem::cache<sum_op<C>, top<C>> sum_cache_type;
 
 private:
 

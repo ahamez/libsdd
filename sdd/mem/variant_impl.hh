@@ -1,5 +1,5 @@
-#ifndef _SDD_INTERNAL_MEM_VARIANT_IMPL_HH_
-#define _SDD_INTERNAL_MEM_VARIANT_IMPL_HH_
+#ifndef _SDD_MEM_VARIANT_IMPL_HH_
+#define _SDD_MEM_VARIANT_IMPL_HH_
 
 #include <cassert>
 #include <cstdint>     // uint8_t
@@ -14,9 +14,9 @@
 #include <boost/preprocessor/repetition/enum_params.hpp>
 #include <boost/preprocessor/cat.hpp>
 
-#include "sdd/internal/util/typelist.hh"
+#include "sdd/util/typelist.hh"
 
-namespace sdd { namespace internal { namespace mem {
+namespace sdd { namespace mem {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -418,6 +418,6 @@ struct dispatch_binary
 
 /*------------------------------------------------------------------------------------------------*/
 
-}}} // namespace sdd::internal::mem
+}} // namespace sdd::mem
 
-#endif // _SDD_INTERNAL_MEM_VARIANT_IMPL_HH_
+#endif // _SDD_MEM_VARIANT_IMPL_HH_

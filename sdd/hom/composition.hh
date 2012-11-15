@@ -7,7 +7,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
 namespace sdd { namespace hom {
 
@@ -122,7 +122,7 @@ Composition(const homomorphism<C>& left, const homomorphism<C>& right)
   {
     return left;
   }
-  return homomorphism<C>::create(internal::mem::construct<hom::composition<C>>(), left, right);
+  return homomorphism<C>::create(mem::construct<hom::composition<C>>(), left, right);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -143,8 +143,8 @@ struct hash<sdd::hom::composition<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, c.left());
-    sdd::internal::util::hash_combine(seed, c.right());
+    sdd::util::hash_combine(seed, c.left());
+    sdd::util::hash_combine(seed, c.right());
     return seed;
   }
 };

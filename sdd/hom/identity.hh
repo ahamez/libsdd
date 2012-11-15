@@ -78,7 +78,7 @@ template <typename C>
 homomorphism<C>
 Id()
 {
-  static homomorphism<C> id = homomorphism<C>::create(internal::mem::construct<hom::identity<C>>());
+  static homomorphism<C> id = homomorphism<C>::create(mem::construct<hom::identity<C>>());
   return id;
 }
 

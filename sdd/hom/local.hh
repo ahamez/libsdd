@@ -8,7 +8,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/packed.hh"
 
 namespace sdd { namespace hom {
 
@@ -174,7 +174,7 @@ Local(const typename C::Variable& var, const homomorphism<C>& h)
   }
   else
   {
-    return homomorphism<C>::create(internal::mem::construct<hom::local<C>>(), var, h);
+    return homomorphism<C>::create(mem::construct<hom::local<C>>(), var, h);
   }
 }
 
@@ -196,8 +196,8 @@ struct hash<sdd::hom::local<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, l.variable());
-    sdd::internal::util::hash_combine(seed, l.hom());
+    sdd::util::hash_combine(seed, l.variable());
+    sdd::util::hash_combine(seed, l.hom());
     return seed;
   }
 };

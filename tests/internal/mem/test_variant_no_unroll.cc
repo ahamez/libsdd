@@ -2,9 +2,9 @@
 
 #define SDD_VARIANT_UNROLL_UNARY_SIZE  0
 #define SDD_VARIANT_UNROLL_BINARY_SIZE 0
-#include "sdd/internal/mem/variant.hh"
+#include "sdd/mem/variant.hh"
 
-using namespace sdd::internal;
+using namespace sdd;
 
 /*------------------------------------------------------------------------------------------------*/
 

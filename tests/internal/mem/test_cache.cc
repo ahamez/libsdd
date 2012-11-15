@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 
-#include "sdd/internal/mem/cache.hh"
+#include "sdd/mem/cache.hh"
 
-using namespace sdd::internal::mem;
+using namespace sdd::mem;
 
 /*------------------------------------------------------------------------------------------------*/
 

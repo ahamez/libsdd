@@ -7,8 +7,8 @@
 
 #include "sdd/dd/alpha.hh"
 #include "sdd/dd/definition.hh"
-#include "sdd/internal/util/hash.hh"
-#include "sdd/internal/util/packed.hh"
+#include "sdd/util/hash.hh"
+#include "sdd/util/packed.hh"
 
 namespace sdd {
 
@@ -185,11 +185,11 @@ struct hash<sdd::node<C, Valuation>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::internal::util::hash_combine(seed, n.variable());
+    sdd::util::hash_combine(seed, n.variable());
     for (auto& arc : n)
     {
-      sdd::internal::util::hash_combine(seed, arc.valuation());
-      sdd::internal::util::hash_combine(seed, arc.successor());
+      sdd::util::hash_combine(seed, arc.valuation());
+      sdd::util::hash_combine(seed, arc.successor());
     }
     return seed;
   }

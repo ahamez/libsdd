@@ -4,7 +4,7 @@
 #include <boost/container/flat_map.hpp>
 
 #include "sdd/dd/definition_fwd.hh"
-#include "sdd/internal/util/hash.hh"
+#include "sdd/util/hash.hh"
 
 namespace sdd {
 
