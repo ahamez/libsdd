@@ -8,7 +8,7 @@
 /*------------------------------------------------------------------------------------------------*/
 
 const SDD one = sdd::one<conf>();
-const hom id = sdd::hom::Id<conf>();
+const hom id = sdd::Id<conf>();
 typedef sdd::hom::saturation_sum<conf>::optional_type optional;
 
 struct hom_saturation_sum_test

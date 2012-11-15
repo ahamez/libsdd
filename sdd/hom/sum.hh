@@ -164,6 +164,8 @@ struct sum_builder_helper
 
 };
 
+} // namespace hom
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Sum homomorphism.
@@ -179,11 +181,11 @@ Sum(InputIterator begin, InputIterator end)
     throw std::invalid_argument("Empty operands at Sum construction.");
   }
 
-  typename sum<C>::operands_type operands;
+  typename hom::sum<C>::operands_type operands;
   operands.reserve(size);
 
-  sum_builder_helper<C> sbv;
-  typename sum_builder_helper<C>::locals_type locals;
+  hom::sum_builder_helper<C> sbv;
+  typename hom::sum_builder_helper<C>::locals_type locals;
   for (; begin != end; ++begin)
   {
     apply_visitor(sbv, (*begin)->data(), *begin, operands, locals);
@@ -202,7 +204,7 @@ Sum(InputIterator begin, InputIterator end)
   else
   {
     operands.shrink_to_fit();
-    return homomorphism<C>::create(internal::mem::construct<sum<C>>(), std::move(operands));
+    return homomorphism<C>::create(internal::mem::construct<hom::sum<C>>(), std::move(operands));
   }
 }
 
@@ -219,7 +221,7 @@ Sum(std::initializer_list<homomorphism<C>> operands)
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 

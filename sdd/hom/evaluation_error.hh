@@ -7,9 +7,11 @@
 #include <sstream>
 #include <string>
 
-namespace sdd { namespace hom {
+namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
+
+namespace hom {
 
 /// @internal
 /// @brief A base class to wrap operations of different type.
@@ -77,6 +79,8 @@ struct operation_wrapper<top<C>>
   }
 };
 
+} // namespace hom
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @exception evaluation_error
@@ -91,7 +95,7 @@ private:
   const SDD<C> sdd_;
 
   /// @brief The sequence, in reverse order, of operations that led to the error.
-  std::deque<std::shared_ptr<operation_wrapper_base>> steps_;
+  std::deque<std::shared_ptr<hom::operation_wrapper_base>> steps_;
 
   /// @brief Flag to determine if the description has been built.
   mutable bool description_built_;
@@ -131,14 +135,14 @@ public:
   void
   add_step(Operation&& op)
   {
-    steps_.emplace_back(std::make_shared<operation_wrapper<Operation>>(std::move(op)));
+    steps_.emplace_back(std::make_shared<hom::operation_wrapper<Operation>>(std::move(op)));
   }
 
   /// @internal
   void
   add_top(const top<C>& t)
   {
-    steps_.emplace_back(std::make_shared<operation_wrapper<top<C>>>(t));
+    steps_.emplace_back(std::make_shared<hom::operation_wrapper<top<C>>>(t));
   }
 
   /// @internal
@@ -175,6 +179,6 @@ public:
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 #endif // _SDD_HOM_EVALUATION_ERROR_HH_

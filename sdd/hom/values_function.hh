@@ -22,8 +22,10 @@ class values_function_base
 {
 public:
 
-  typedef typename C::Values    values_type;
+  /// @brief The type of a set of values.
+  typedef typename C::Values values_type;
 
+  /// @brief Destructor.
   virtual
   ~values_function_base()
   {
@@ -315,6 +317,8 @@ operator<<(std::ostream& os, const values_function<C>& x)
   return os << ")";
 }
 
+} // namespace hom
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Values Function homomorphism.
@@ -323,8 +327,8 @@ template <typename C, typename User>
 homomorphism<C>
 ValuesFunction(const typename C::Variable& v, const User& u)
 {
-  return homomorphism<C>::create( internal::mem::construct<values_function<C>>()
-                                , v, new values_function_derived<C, User>(u));
+  return homomorphism<C>::create( internal::mem::construct<hom::values_function<C>>()
+                                , v, new hom::values_function_derived<C, User>(u));
 }
 
 /// @brief Create the Values Function homomorphism.
@@ -333,13 +337,13 @@ template <typename C, typename User>
 homomorphism<C>
 ValuesFunction(const typename C::Variable& v, User&& u)
 {
-  return homomorphism<C>::create( internal::mem::construct<values_function<C>>()
-                                , v, new values_function_derived<C, User>(std::move(u)));
+  return homomorphism<C>::create( internal::mem::construct<hom::values_function<C>>()
+                                , v, new hom::values_function_derived<C, User>(std::move(u)));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 

@@ -6,7 +6,7 @@
 
 const SDD zero = sdd::zero<conf>();
 const SDD one = sdd::one<conf>();
-const hom id = sdd::hom::Id<conf>();
+const hom id = sdd::Id<conf>();
 
 struct hom_inductive_test
   : public testing::Test
@@ -35,14 +35,14 @@ struct f0
   operator()(unsigned char var, const SDD&)
   const
   {
-    return sdd::hom::Id<conf>();
+    return id;
   }
 
   hom
   operator()(unsigned char var, const bitset& val)
   const
   {
-    return sdd::hom::Cons<conf>(var, val << 1, id);
+    return Cons<conf>(var, val << 1, id);
   }
 
   SDD
@@ -86,14 +86,14 @@ struct f1
   operator()(unsigned char var, const SDD&)
   const
   {
-    return sdd::hom::Id<conf>();
+    return id;
   }
 
   hom
   operator()(unsigned char var, const bitset& val)
   const
   {
-    return sdd::hom::Cons<conf>(var, val << 2, id);
+    return Cons<conf>(var, val << 2, id);
   }
 
   SDD
@@ -137,14 +137,14 @@ struct cut
   operator()(unsigned char var, const SDD&)
   const
   {
-    return sdd::hom::Cons<conf>(var, zero, id);
+    return Cons<conf>(var, zero, id);
   }
 
   hom
   operator()(unsigned char var, const bitset&)
   const
   {
-    return sdd::hom::Cons<conf>(var, bitset {}, id);
+    return Cons<conf>(var, bitset {}, id);
   }
 
   SDD
@@ -188,14 +188,14 @@ struct id_prime
   operator()(unsigned char var, const SDD& x)
   const
   {
-    return sdd::hom::Cons<conf>(var, x, sdd::hom::Inductive<conf>(*this));
+    return Cons<conf>(var, x, Inductive<conf>(*this));
   }
 
   hom
   operator()(unsigned char var, const bitset& val)
   const
   {
-    return sdd::hom::Cons<conf>(var, val, sdd::hom::Inductive<conf>(*this));
+    return Cons<conf>(var, val, Inductive<conf>(*this));
   }
 
   SDD
@@ -239,14 +239,14 @@ struct consume
   operator()(unsigned char var, const SDD&)
   const
   {
-    return sdd::hom::Inductive<conf>(*this);
+    return Inductive<conf>(*this);
   }
 
   hom
   operator()(unsigned char var, const bitset& val)
   const
   {
-    return sdd::hom::Inductive<conf>(*this);
+    return Inductive<conf>(*this);
   }
 
   SDD
@@ -334,13 +334,13 @@ struct hash<consume>
 TEST_F(hom_inductive_test, construction)
 {
   {
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
-    const hom h2 = sdd::hom::Inductive<conf>(f0());
+    const hom h1 = Inductive<conf>(f0());
+    const hom h2 = Inductive<conf>(f0());
     ASSERT_EQ(h1, h2);
   }
   {
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
-    const hom h2 = sdd::hom::Inductive<conf>(f1());
+    const hom h1 = Inductive<conf>(f0());
+    const hom h2 = Inductive<conf>(f1());
     ASSERT_NE(h1, h2);
   }
 }
@@ -350,12 +350,12 @@ TEST_F(hom_inductive_test, construction)
 TEST_F(hom_inductive_test, evaluation_flat)
 {
   {
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
+    const hom h1 = Inductive<conf>(f0());
     ASSERT_EQ(SDD(0, {1,2,3}, one), h1(SDD(0, {0,1,2}, one)));
   }
   {
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
-    const hom h2 = sdd::hom::Inductive<conf>(f1());
+    const hom h1 = Inductive<conf>(f0());
+    const hom h2 = Inductive<conf>(f1());
     ASSERT_EQ( SDD(0, {1,2,3}, SDD(1, {2,3,4}, one))
              , h2(h1(SDD(0, {0,1,2}, SDD(1, {0,1,2}, one)))));
     ASSERT_EQ( SDD(0, {1,2,3}, SDD(1, {2,3,4}, one))
@@ -364,15 +364,15 @@ TEST_F(hom_inductive_test, evaluation_flat)
   {
     const SDD s0 = SDD(0, {0}, SDD(1, {0}, one)) + SDD(0, {1}, SDD(1, {1}, one));
     const SDD s1 = SDD(0, {1}, SDD(1, {0}, one)) + SDD(0, {2}, SDD(1, {1}, one));
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
+    const hom h1 = Inductive<conf>(f0());
     ASSERT_EQ(s1, h1(s0));
   }
   {
-    const hom h1 = sdd::hom::Inductive<conf>(id_prime());
+    const hom h1 = Inductive<conf>(id_prime());
     ASSERT_EQ(SDD(0, {0,1,2}, one), h1(SDD(0, {0,1,2}, one)));
   }
   {
-    const hom h1 = sdd::hom::Inductive<conf>(consume());
+    const hom h1 = Inductive<conf>(consume());
     ASSERT_EQ(one, h1(SDD(0, {0,1,2}, SDD(1, one, one))));
   }
 }
@@ -382,21 +382,21 @@ TEST_F(hom_inductive_test, evaluation_flat)
 TEST_F(hom_inductive_test, evaluation_hierarchical)
 {
   {
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
+    const hom h1 = Inductive<conf>(f0());
     ASSERT_EQ(SDD(0, {1,2,3}, one), h1(SDD(0, {0,1,2}, one)));
   }
   {
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
-    const hom h2 = sdd::hom::Inductive<conf>(f1());
+    const hom h1 = Inductive<conf>(f0());
+    const hom h2 = Inductive<conf>(f1());
     ASSERT_EQ( SDD(0, {1,2,3}, SDD(1, {2,3,4}, one))
-              , h2(h1(SDD(0, {0,1,2}, SDD(1, {0,1,2}, one)))));
+             , h2(h1(SDD(0, {0,1,2}, SDD(1, {0,1,2}, one)))));
     ASSERT_EQ( SDD(0, {1,2,3}, SDD(1, {2,3,4}, one))
-              , h1(h2(SDD(0, {0,1,2}, SDD(1, {0,1,2}, one)))));
+             , h1(h2(SDD(0, {0,1,2}, SDD(1, {0,1,2}, one)))));
   }
   {
     const SDD s0 = SDD(0, {0}, SDD(1, {0}, one)) + SDD(0, {1}, SDD(1, {1}, one));
     const SDD s1 = SDD(0, {1}, SDD(1, {0}, one)) + SDD(0, {2}, SDD(1, {1}, one));
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
+    const hom h1 = Inductive<conf>(f0());
     ASSERT_EQ(s1, h1(s0));
   }
 }
@@ -407,15 +407,15 @@ TEST_F(hom_inductive_test, evaluation_hierarchical)
 TEST_F(hom_inductive_test, cut_path)
 {
   {
-    const hom h0 = sdd::hom::Inductive<conf>(cut());
+    const hom h0 = Inductive<conf>(cut());
     ASSERT_EQ(zero, h0(one));
   }
   {
-    const hom h0 = sdd::hom::Inductive<conf>(cut());
+    const hom h0 = Inductive<conf>(cut());
     ASSERT_EQ(zero, h0(SDD(0, {0}, one)));
   }
   {
-    const hom h0 = sdd::hom::Inductive<conf>(cut());
+    const hom h0 = Inductive<conf>(cut());
     ASSERT_EQ(zero, h0(SDD(0, one, one)));
   }
 }
@@ -425,11 +425,11 @@ TEST_F(hom_inductive_test, cut_path)
 TEST_F(hom_inductive_test, skip_variable)
 {
   {
-    const hom h1 = sdd::hom::Inductive<conf>(f0());
+    const hom h1 = Inductive<conf>(f0());
     ASSERT_EQ(SDD(1, {0,1,2}, one), h1(SDD(1, {0,1,2}, one)));
   }
   {
-    const hom h1 = sdd::hom::Inductive<conf>(f1());
+    const hom h1 = Inductive<conf>(f1());
     ASSERT_EQ(SDD(0, {0,1,2}, one), h1(SDD(0, {0,1,2}, one)));
   }
 }

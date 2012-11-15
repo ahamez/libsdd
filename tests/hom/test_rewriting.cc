@@ -10,7 +10,7 @@
 
 const SDD zero = sdd::zero<conf>();
 const SDD one = sdd::one<conf>();
-const hom id = sdd::hom::Id<conf>();
+const hom id = sdd::Id<conf>();
 
 struct rewriting_test
   : public testing::Test

@@ -126,6 +126,8 @@ operator<<(std::ostream& os, const cons<C, Valuation>& c)
   return os << "Cons(" << c.variable() << ", " << c.valuation() << ", " << c.next() << ")";
 }
 
+} // namespace hom
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Cons homomorphism.
@@ -134,12 +136,12 @@ template <typename C, typename Valuation>
 homomorphism<C>
 Cons(const typename C::Variable& var, const Valuation& val, const homomorphism<C>& h)
 {
-  return homomorphism<C>::create(internal::mem::construct<cons<C, Valuation>>(), var, val, h);
+  return homomorphism<C>::create(internal::mem::construct<hom::cons<C, Valuation>>(), var, val, h);
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 

@@ -22,7 +22,7 @@
 #include "sdd/internal/mem/variant.hh"
 #include "sdd/internal/util/print_sizes_fwd.hh"
 
-namespace sdd { namespace hom {
+namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -33,18 +33,18 @@ class homomorphism
 private:
 
   /// @brief A canonized homomorphism.
-  typedef internal::mem::variant< const composition<C>
-                                , const cons<C, SDD<C>>
-                                , const cons<C, typename C::Values>
-                                , const constant<C>
-                                , const fixpoint<C>
-                                , const identity<C>
-                                , const inductive<C>
-                                , const local<C>
-                                , const saturation_fixpoint<C>
-                                , const saturation_sum<C>
-                                , const sum<C>
-                                , const values_function<C>
+  typedef internal::mem::variant< const hom::composition<C>
+                                , const hom::cons<C, SDD<C>>
+                                , const hom::cons<C, typename C::Values>
+                                , const hom::constant<C>
+                                , const hom::fixpoint<C>
+                                , const hom::identity<C>
+                                , const hom::inductive<C>
+                                , const hom::local<C>
+                                , const hom::saturation_fixpoint<C>
+                                , const hom::saturation_sum<C>
+                                , const hom::sum<C>
+                                , const hom::values_function<C>
                                 >
           data_type;
 
@@ -94,7 +94,7 @@ public:
   operator()(const SDD<C>& x)
   const
   {
-    return (*this)(initial_context<C>(), x);
+    return (*this)(hom::initial_context<C>(), x);
   }
 
   /// @brief Tell if this homomorphism skips a given variable.
@@ -169,7 +169,7 @@ public:
   /// @internal
   /// @brief Apply this homomorphism on an SDD, in a given context.
   SDD<C>
-  operator()(context<C>& cxt, const SDD<C>& x)
+  operator()(hom::context<C>& cxt, const SDD<C>& x)
   const
   {
     // hard-wired cases:
@@ -179,7 +179,7 @@ public:
     {
       return x;
     }
-    return cxt.cache()(cached_homomorphism<C>(cxt, *this, x));
+    return cxt.cache()(hom::cached_homomorphism<C>(cxt, *this, x));
   }
 
   /// @internal
@@ -271,19 +271,18 @@ operator<<(std::ostream& os, const homomorphism<C>& h)
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace dd::shom
+} // namespace sdd
 
 namespace std {
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @internal
-/// @brief Hash specialization for sdd::hom::homomorphism
+/// @brief Hash specialization for sdd::homomorphism
 template <typename C>
-struct hash<sdd::hom::homomorphism<C>>
+struct hash<sdd::homomorphism<C>>
 {
   std::size_t
-  operator()(const sdd::hom::homomorphism<C>& h)
+  operator()(const sdd::homomorphism<C>& h)
   const noexcept
   {
     return std::hash<decltype(h.ptr())>()(h.ptr());

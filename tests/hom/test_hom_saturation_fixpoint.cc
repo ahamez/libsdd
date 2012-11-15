@@ -8,7 +8,7 @@
 /*------------------------------------------------------------------------------------------------*/
 
 const SDD one = sdd::one<conf>();
-const hom id = sdd::hom::Id<conf>();
+const hom id = sdd::Id<conf>();
 
 struct hom_saturation_fixpoint_test
   : public testing::Test

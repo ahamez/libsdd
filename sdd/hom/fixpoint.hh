@@ -11,7 +11,14 @@
 #include "sdd/hom/local.hh"
 #include "sdd/internal/util/packed.hh"
 
-namespace sdd { namespace hom {
+namespace sdd {
+
+// Forward declaration needed by fixpoint_builder_helper.
+template <typename C>
+homomorphism<C>
+Fixpoint(const homomorphism<C>&);
+
+namespace hom {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -101,10 +108,6 @@ operator<<(std::ostream& os, const fixpoint<C>& f)
 
 /*------------------------------------------------------------------------------------------------*/
 
-template <typename C>
-homomorphism<C>
-Fixpoint(const homomorphism<C>&);
-
 /// @internal
 /// @brief Concrete creation of Fixpoint.
 template <typename C>
@@ -142,6 +145,8 @@ struct fixpoint_builder_helper
   }
 };
 
+} // namespace hom
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Fixpoint homomorphism.
@@ -150,12 +155,12 @@ template <typename C>
 homomorphism<C>
 Fixpoint(const homomorphism<C>& h)
 {
-  return apply_visitor(fixpoint_builder_helper<C>(), h->data(), h);
+  return apply_visitor(hom::fixpoint_builder_helper<C>(), h->data(), h);
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 

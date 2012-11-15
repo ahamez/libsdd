@@ -13,18 +13,18 @@
 
 typedef sdd::conf::conf0 conf;
 typedef sdd::SDD<conf> SDD;
-typedef sdd::hom::homomorphism<conf> hom;
+typedef sdd::homomorphism<conf> hom;
 typedef sdd::values::bitset<64> bitset;
 
-using sdd::hom::Composition;
-using sdd::hom::Cons;
-using sdd::hom::Fixpoint;
-using sdd::hom::Inductive;
-using sdd::hom::Local;
+using sdd::Composition;
+using sdd::Cons;
+using sdd::Fixpoint;
+using sdd::Inductive;
+using sdd::Local;
 using sdd::hom::SaturationFixpoint;
 using sdd::hom::SaturationSum;
-using sdd::hom::Sum;
-using sdd::hom::ValuesFunction;
+using sdd::Sum;
+using sdd::ValuesFunction;
 
 /*------------------------------------------------------------------------------------------------*/
 

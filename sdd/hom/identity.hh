@@ -68,6 +68,8 @@ operator<<(std::ostream& os, const identity<C>&)
   return os << "Id";
 }
 
+} // namespace hom
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Identity homomorphism.
@@ -76,13 +78,13 @@ template <typename C>
 homomorphism<C>
 Id()
 {
-  static homomorphism<C> id = homomorphism<C>::create(internal::mem::construct<identity<C>>());
+  static homomorphism<C> id = homomorphism<C>::create(internal::mem::construct<hom::identity<C>>());
   return id;
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 

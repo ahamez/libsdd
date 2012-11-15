@@ -94,6 +94,8 @@ operator<<(std::ostream& os, const constant<C>& c)
   return os << c.sdd();
 }
 
+} // namespace hom
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Constant homomorphism.
@@ -102,12 +104,12 @@ template <typename C>
 homomorphism<C>
 Constant(const SDD<C>& s)
 {
-  return homomorphism<C>::create(internal::mem::construct<constant<C>>(), s);
+  return homomorphism<C>::create(internal::mem::construct<hom::constant<C>>(), s);
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 

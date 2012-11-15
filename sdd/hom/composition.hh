@@ -104,6 +104,8 @@ operator<<(std::ostream& os, const composition<C>& c)
   return os << c.left() << " o " << c.right();
 }
 
+} // namespace hom
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the composition homomorphism.
@@ -120,12 +122,12 @@ Composition(const homomorphism<C>& left, const homomorphism<C>& right)
   {
     return left;
   }
-  return homomorphism<C>::create(internal::mem::construct<composition<C>>(), left, right);
+  return homomorphism<C>::create(internal::mem::construct<hom::composition<C>>(), left, right);
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 

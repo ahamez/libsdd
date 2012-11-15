@@ -8,17 +8,17 @@
 
 typedef sdd::conf::conf1 conf;
 typedef sdd::SDD<conf> SDD;
-typedef sdd::hom::homomorphism<conf> hom;
+typedef sdd::homomorphism<conf> hom;
 typedef sdd::conf::conf1::Values Values;
 
 SDD one = sdd::one<conf>();
 SDD zero = sdd::zero<conf>();
 
-using sdd::hom::Cons;
-using sdd::hom::Constant;
-using sdd::hom::Fixpoint;
-using sdd::hom::Inductive;
-using sdd::hom::Sum;
+using sdd::Cons;
+using sdd::Constant;
+using sdd::Fixpoint;
+using sdd::Inductive;
+using sdd::Sum;
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -225,7 +225,7 @@ main(int argc, char** argv)
       }
     }
   }
-  union_swap_pole.insert(sdd::hom::Id<conf>());
+  union_swap_pole.insert(sdd::Id<conf>());
   hom events = Fixpoint(Sum<conf>(union_swap_pole.begin(), union_swap_pole.end()));
 
   std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();

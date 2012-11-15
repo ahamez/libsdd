@@ -347,6 +347,8 @@ operator<<(std::ostream& os, const inductive<C>& i)
   return os;
 }
 
+} // namespace hom
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Inductive homomorphism.
@@ -355,8 +357,8 @@ template <typename C, typename User>
 homomorphism<C>
 Inductive(const User& u)
 {
-  return homomorphism<C>::create( internal::mem::construct<inductive<C>>()
-                                , new inductive_derived<C, User>(u));
+  return homomorphism<C>::create( internal::mem::construct<hom::inductive<C>>()
+                                , new hom::inductive_derived<C, User>(u));
 }
 
 /// @brief Create the Inductive homomorphism.
@@ -365,13 +367,13 @@ template <typename C, typename User>
 homomorphism<C>
 Inductive(User&& u)
 {
-  return homomorphism<C>::create( internal::mem::construct<inductive<C>>()
-                                , new inductive_derived<C, User>(std::move(u)));
+  return homomorphism<C>::create( internal::mem::construct<hom::inductive<C>>()
+                                , new hom::inductive_derived<C, User>(std::move(u)));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 

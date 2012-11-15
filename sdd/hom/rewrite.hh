@@ -9,6 +9,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/fixpoint.hh"
 #include "sdd/hom/local.hh"
+#include "sdd/hom/saturation_fixpoint.hh"
 #include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
 
@@ -256,7 +257,6 @@ rewrite(context<C>& cxt, const homomorphism<C>& h, const typename C::Variable& v
 }
 
 /*------------------------------------------------------------------------------------------------*/
-
 
 }} // namespace sdd::hom
 

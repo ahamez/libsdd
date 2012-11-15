@@ -8,7 +8,7 @@
 
 const SDD one = sdd::one<conf>();
 const SDD zero = sdd::zero<conf>();
-const hom id = sdd::hom::Id<conf>();
+const hom id = sdd::Id<conf>();
 
 struct hom_values_function_test
   : public testing::Test

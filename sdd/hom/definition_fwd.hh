@@ -1,7 +1,7 @@
 #ifndef _SDD_HOM_DEFINITION_FWD_HH_
 #define _SDD_HOM_DEFINITION_FWD_HH_
 
-namespace sdd { namespace hom {
+namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -10,6 +10,6 @@ class homomorphism;
 
 /*------------------------------------------------------------------------------------------------*/
   
-}} // namespace sdd::hom
+} // namespace sdd
 
 #endif // _SDD_HOM_DEFINITION_FWD_HH_

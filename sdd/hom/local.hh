@@ -158,6 +158,8 @@ operator<<(std::ostream& os, const local<C>& l)
   return os << "@(" << l.variable() << ", " << l.hom() << ")";
 }
 
+} // namespace hom
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Local homomorphism.
@@ -172,13 +174,13 @@ Local(const typename C::Variable& var, const homomorphism<C>& h)
   }
   else
   {
-    return homomorphism<C>::create(internal::mem::construct<local<C>>(), var, h);
+    return homomorphism<C>::create(internal::mem::construct<hom::local<C>>(), var, h);
   }
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::hom
+} // namespace sdd
 
 namespace std {
 
