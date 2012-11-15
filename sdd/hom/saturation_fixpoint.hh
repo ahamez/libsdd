@@ -163,7 +163,7 @@ noexcept
 }
 
 /// @internal
-/// @related sum
+/// @related saturation_fixpoint
 template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const saturation_fixpoint<C>& s)

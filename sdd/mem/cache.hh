@@ -55,6 +55,7 @@ struct apply_filters<T, Filter, Filters...>
 /// created. Thus, one can have detailed statistics to see how well the cache performed.
 struct cache_statistics
 {
+  /// @internal
   /// @brief Statistic between two cleanups.
   struct round
   {

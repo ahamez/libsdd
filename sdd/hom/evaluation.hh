@@ -69,6 +69,7 @@ struct evaluation
     }
   }
 
+  /// @internal
   /// @brief Dispatch to concrete evaluation.
   ///
   /// Avoid infinite recursion.

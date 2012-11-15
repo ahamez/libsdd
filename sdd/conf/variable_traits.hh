@@ -5,6 +5,7 @@ namespace sdd { namespace conf {
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Default trait for variables.
 template <typename T>
 struct variable_traits

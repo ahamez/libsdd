@@ -10,6 +10,7 @@ namespace sdd {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Apply a visitor to an SDD.
+/// @related SDD
 template <typename C, typename Visitor, typename... Args>
 inline
 typename Visitor::result_type

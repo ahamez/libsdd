@@ -39,6 +39,7 @@ public:
   {
   }
 
+  /// @internal
   /// @brief Local's evaluation implementation.
   struct evaluation
   {

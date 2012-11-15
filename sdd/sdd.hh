@@ -13,11 +13,12 @@
 namespace sdd
 {
 
-/// @brief Definition and evaluation of homomorphisms.
-namespace hom {}
-
 /// @brief Definition of values to be stored on arcs.
 namespace values {}
+
+/// @internal
+/// @brief Definition and evaluation of homomorphisms.
+namespace hom {}
 
 /// @internal
 /// @brief Contain stuff necessary for the memory management.

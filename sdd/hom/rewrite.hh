@@ -31,6 +31,7 @@ struct rewriter
   /// @brief The type of a list of homomorphisms.
   typedef std::deque<homomorphism<C>> hom_list_type;
 
+  /// @internal
   /// @brief Tell if an homomorphism is Local.
   struct is_local
   {
@@ -52,6 +53,7 @@ struct rewriter
     }
   };
 
+  /// @internal
   /// @brief Tell if an homomorphism is Sum.
   struct is_sum
   {
