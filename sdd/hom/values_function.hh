@@ -15,8 +15,7 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Used to wrap user's values function.
 template <typename C>
 class values_function_base
@@ -58,6 +57,7 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Used to wrap user's values function.
 template <typename C, typename User>
 class values_function_derived
@@ -160,6 +160,7 @@ private:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Values homomorphism.
 template <typename C>
 class _LIBSDD_ATTRIBUTE_PACKED values_function
@@ -291,7 +292,8 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief Equality of two values.
+/// @internal
+/// @brief Equality of two values_function.
 /// @related values_function
 template <typename C>
 inline
@@ -302,6 +304,7 @@ noexcept
   return lhs.variable() == rhs.variable() and lhs.fun() == rhs.fun();
 }
 
+/// @internal
 /// @related values_function
 template <typename C>
 std::ostream&
@@ -311,8 +314,6 @@ operator<<(std::ostream& os, const values_function<C>& x)
   x.fun().print(os);
   return os << ")";
 }
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -344,8 +345,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::values.
 template <typename C>
 struct hash<sdd::hom::values_function<C>>
@@ -359,8 +359,6 @@ struct hash<sdd::hom::values_function<C>>
     return seed;
   }
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 

@@ -113,8 +113,7 @@ public:
     return apply_visitor(selector_helper(), ptr()->data());
   }
 
-/// @cond INTERNAL_DOC
-
+  /// @internal
   /// @brief Get the content of the homomorphism (an internal::mem::ref_counted).
   ///
   /// O(1).
@@ -125,6 +124,7 @@ public:
     return *ptr_;
   }
 
+  /// @internal
   /// @brief Get a pointer to the content of the homomorphism (an internal::mem::ref_counted).
   ///
   /// O(1).
@@ -135,6 +135,7 @@ public:
     return ptr_.operator->();
   }
 
+  /// @internal
   /// @brief Get the real smart pointer of the unified data.
   ///
   /// O(1).
@@ -145,6 +146,7 @@ public:
     return ptr_;
   }
 
+  /// @internal
   /// @brief Construct an homomorphism from a ptr.
   ///
   /// O(1).
@@ -154,6 +156,7 @@ public:
   {
   }
 
+  /// @internal
   /// @brief Construct an homomorphism from a moved ptr.
   ///
   /// O(1).
@@ -163,6 +166,7 @@ public:
   {
   }
 
+  /// @internal
   /// @brief Apply this homomorphism on an SDD, in a given context.
   SDD<C>
   operator()(context<C>& cxt, const SDD<C>& x)
@@ -178,6 +182,7 @@ public:
     return cxt.cache()(cached_homomorphism<C>(cxt, *this, x));
   }
 
+  /// @internal
   /// @brief Create an homomorphism from a concrete type (e.g. Id, Cons, etc.).
   template<typename T, typename... Args>
   static
@@ -191,6 +196,7 @@ public:
     return homomorphism(internal::mem::unify(u, size));
   }
 
+  /// @internal
   /// @brief Dispatch the skip predicate call to concrete homomorphisms.
   struct skip_helper
   {
@@ -205,6 +211,7 @@ public:
     }
   };
 
+  /// @internal
   /// @brief Dispatch the selector predicate call to concrete homomorphisms.
   struct selector_helper
   {
@@ -220,8 +227,6 @@ public:
   };
 
   friend void internal::util::print_sizes<C>(std::ostream&);
-
-/// @endcond
 };
 
 /*-------------------------------------------------------------------------------------------*/
@@ -272,8 +277,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::homomorphism
 template <typename C>
 struct hash<sdd::hom::homomorphism<C>>
@@ -285,8 +289,6 @@ struct hash<sdd::hom::homomorphism<C>>
     return std::hash<decltype(h.ptr())>()(h.ptr());
   }
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 

@@ -1,8 +1,6 @@
 #ifndef _SDD_INTERNAL_MEM_REF_COUNTED_HH_
 #define _SDD_INTERNAL_MEM_REF_COUNTED_HH_
 
-/// @cond INTERNAL_DOC
-
 #include <functional>  // hash
 #include <type_traits> // is_nothrow_constructible
 #include <utility>     // forward
@@ -15,6 +13,7 @@ namespace sdd { namespace internal { namespace mem {
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief A wrapper to associate a reference counter to a unified data.
 ///
 /// This type is meant to be used by ptr, which takes care of incrementing and decrementing
@@ -108,6 +107,7 @@ private:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related ref_counted
 template <typename T>
 inline
@@ -126,6 +126,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Hash specialization for sdd::internal::mem::ref_counted
 template <typename T>
 struct hash<sdd::internal::mem::ref_counted<T>>
@@ -141,7 +142,5 @@ struct hash<sdd::internal::mem::ref_counted<T>>
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-/// @endcond
 
 #endif // _SDD_INTERNAL_MEM_REF_COUNTED_HH_

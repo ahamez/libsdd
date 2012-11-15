@@ -15,8 +15,7 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Used to wrap user's inductive homomorphisms.
 template <typename C>
 class inductive_base
@@ -74,6 +73,7 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Used to wrap user's inductive homomorphisms.
 template <typename C, typename User>
 class inductive_derived
@@ -224,6 +224,7 @@ private:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Inductive homomorphism.
 template <typename C>
 class _LIBSDD_ATTRIBUTE_PACKED inductive
@@ -324,6 +325,7 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two inductive homomorphisms.
 /// @related inductive
 template <typename C>
@@ -335,6 +337,7 @@ noexcept
   return lhs.hom() == rhs.hom();
 }
 
+/// @internal
 /// @related inductive
 template <typename C>
 std::ostream&
@@ -343,8 +346,6 @@ operator<<(std::ostream& os, const inductive<C>& i)
   i.hom().print(os);
   return os;
 }
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -376,8 +377,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::inductive.
 template <typename C>
 struct hash<sdd::hom::inductive<C>>
@@ -389,8 +389,6 @@ struct hash<sdd::hom::inductive<C>>
     return i.hom().hash();
   }
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 

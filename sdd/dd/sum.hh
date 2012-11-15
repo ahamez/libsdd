@@ -1,9 +1,6 @@
 #ifndef _SDD_DD_SUM_HH_
 #define _SDD_DD_SUM_HH_
 
-/// @file  sum.hh
-/// @brief Contain all stuff to implement the union operation.
-
 #include <unordered_map>
 #include <vector>
 
@@ -20,9 +17,8 @@ namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
-/// @brief The union operation in the cache.
+/// @internal
+/// @brief The sum operation in the cache.
 template <typename C>
 struct _LIBSDD_ATTRIBUTE_PACKED sum_op
   : nary_base<C, sum_op<C>>
@@ -214,6 +210,7 @@ struct _LIBSDD_ATTRIBUTE_PACKED sum_op
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Add an arc to the operands of the sum operation.
 ///
 /// This implementation is meant to be used as a policy by nary_builder which doesn't know how
@@ -242,6 +239,7 @@ struct _LIBSDD_ATTRIBUTE_PACKED sum_builder_impl
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief   The sum operation of a set of SDD.
 /// @related SDD
 template <typename C>
@@ -262,6 +260,7 @@ sum(context<C>& cxt, sum_builder<C, SDD<C>>&& builder)
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief   The sum operation of a set of values.
 /// @details A wrapper around the implementation of sum provided by Values.
 template <typename C, typename Values>
@@ -292,11 +291,9 @@ sum(context<C>&, sum_builder<C, Values>&& builder)
   }
 }
 
-/// @endcond
-
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief   Perform the union of two SDD.
+/// @brief Perform the union of two SDD.
 /// @related SDD
 template <typename C>
 inline
@@ -306,7 +303,7 @@ operator+(const SDD<C>& lhs, const SDD<C>& rhs)
   return sum(initial_context<C>(), {lhs, rhs});
 }
 
-/// @brief   Perform the union of two SDD.
+/// @brief Perform the union of two SDD.
 /// @related SDD
 template <typename C>
 inline
@@ -319,7 +316,7 @@ operator+=(SDD<C>& lhs, const SDD<C>& rhs)
   return lhs;
 }
 
-/// @brief   Perform the union of an iterable container of SDD.
+/// @brief Perform the union of an iterable container of SDD.
 /// @related SDD
 template <typename C, typename InputIterator>
 SDD<C>
@@ -352,6 +349,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Hash specialization for sdd::dd::sum_op
 template <typename C>
 struct hash<sdd::sum_op<C>>

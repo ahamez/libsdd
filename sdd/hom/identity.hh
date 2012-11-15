@@ -12,9 +12,8 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
-/// @brief Return its operand.
+/// @internal
+/// @brief The Identity homomorphism which returns its operand.
 template <typename C>
 struct identity
 {
@@ -48,6 +47,7 @@ struct identity
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two identity homomorphisms.
 /// @related identity
 template <typename C>
@@ -59,6 +59,7 @@ noexcept
   return true;
 }
 
+/// @internal
 /// @related identity
 template <typename C>
 std::ostream&
@@ -66,8 +67,6 @@ operator<<(std::ostream& os, const identity<C>&)
 {
   return os << "Id";
 }
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -89,8 +88,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::identity.
 template <typename C>
 struct hash<sdd::hom::identity<C>>
@@ -103,8 +101,6 @@ struct hash<sdd::hom::identity<C>>
     return 607769;
   }
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 

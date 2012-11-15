@@ -1,8 +1,6 @@
 #ifndef _SDD_HOM_CONTEXT_HH_
 #define _SDD_HOM_CONTEXT_HH_
 
-/// @cond INTERNAL_DOC
-
 #include <memory> // make_shared, shared_ptr
 
 #include "sdd/dd/context.hh"
@@ -17,6 +15,7 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief The evaluation context of homomorphisms.
 ///
 /// Its purpose is to be able to create local caches at different points of the evaluation.
@@ -114,6 +113,7 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Return the context that serves as an entry point for the evaluation of
 /// homomorphisms.
 /// @related context
@@ -129,7 +129,5 @@ noexcept
 /*-------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::hom
-
-/// @endcond
 
 #endif // _SDD_HOM_CONTEXT_HH_

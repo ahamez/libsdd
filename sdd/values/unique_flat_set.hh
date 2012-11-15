@@ -183,16 +183,14 @@ public:
     return nb_erased;
   }
 
-/// @cond INTERNAL_DOC
-
+  /// @internal
+  /// @brief Get the pointer to the unified data.
   const flat_set_type* const
   data()
   const noexcept
   {
     return data_;
   }
-
-/// @endcond
 
 private:
 
@@ -260,7 +258,7 @@ bool
 operator==(const unique_flat_set<Value>& lhs, const unique_flat_set<Value>& rhs)
 noexcept
 {
-  // Pointer comparison.
+  // Pointer equality.
   return lhs.data() == rhs.data();
 }
 
@@ -268,6 +266,8 @@ noexcept
 
 /// @brief Comparison of unique_flat_set
 /// @related unique_flat_set
+///
+/// The order on unique_flat_set is arbitrary. 
 template <typename Value>
 inline
 bool

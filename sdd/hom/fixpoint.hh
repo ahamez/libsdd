@@ -15,8 +15,7 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Fixpoint homomorphism.
 template <typename C>
 class _LIBSDD_ATTRIBUTE_PACKED fixpoint
@@ -79,6 +78,7 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of fixpoint.
 /// @related fixpoint
 template <typename C>
@@ -90,6 +90,7 @@ noexcept
   return lhs.hom() == rhs.hom();
 }
 
+/// @internal
 /// @related fixpoint
 template <typename C>
 std::ostream&
@@ -100,11 +101,11 @@ operator<<(std::ostream& os, const fixpoint<C>& f)
 
 /*-------------------------------------------------------------------------------------------*/
 
-// Forward declaration.
 template <typename C>
 homomorphism<C>
 Fixpoint(const homomorphism<C>&);
 
+/// @internal
 /// @brief Concrete creation of Fixpoint.
 template <typename C>
 struct fixpoint_builder_helper
@@ -141,8 +142,6 @@ struct fixpoint_builder_helper
   }
 };
 
-/// @endcond
-
 /*-------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Fixpoint homomorphism.
@@ -162,8 +161,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::fixpoint.
 template <typename C>
 struct hash<sdd::hom::fixpoint<C>>
@@ -177,8 +175,6 @@ struct hash<sdd::hom::fixpoint<C>>
     return seed;
   }
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 

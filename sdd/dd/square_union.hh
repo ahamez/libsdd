@@ -14,8 +14,7 @@ namespace sdd {
   
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief The square union operation.
 template <typename C, typename Valuation>
 class square_union
@@ -94,8 +93,6 @@ public:
     return builder;
   }
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
   

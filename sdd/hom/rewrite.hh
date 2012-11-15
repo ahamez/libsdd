@@ -12,12 +12,11 @@
 #include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
 
-/// @cond INTERNAL_DOC
-
 namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Concrete implementation of the rewriting process.
 template <typename C>
 struct rewriter
@@ -193,6 +192,7 @@ struct rewriter
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief The evaluation of a rewriting rule in the cache.
 template <typename C>
 struct cached_rewrite
@@ -227,6 +227,7 @@ struct cached_rewrite
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related cached_rewrite
 template <typename C>
 bool
@@ -235,6 +236,7 @@ operator==(const cached_rewrite<C>& lhs, const cached_rewrite<C>& rhs)
   return lhs.h_ == rhs.h_ and lhs.var_ == rhs.var_;
 }
 
+/// @internal
 /// @related cached_rewrite
 template <typename C>
 std::ostream&
@@ -245,6 +247,7 @@ operator<<(std::ostream& os, const cached_rewrite<C>& op)
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <typename C>
 homomorphism<C>
 rewrite(context<C>& cxt, const homomorphism<C>& h, const typename C::Variable& var)
@@ -259,6 +262,7 @@ rewrite(context<C>& cxt, const homomorphism<C>& h, const typename C::Variable& v
 
 namespace std {
 
+/// @internal
 /// @brief Hash specialization for sdd::hom::cached_rewrite
 template <typename C>
 struct hash<sdd::hom::cached_rewrite<C>>
@@ -277,7 +281,5 @@ struct hash<sdd::hom::cached_rewrite<C>>
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-/// @endcond
 
 #endif // _SDD_HOM_REWRITING_HH_

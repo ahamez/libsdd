@@ -11,8 +11,7 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief A base class to wrap operations of different type.
 struct operation_wrapper_base
 {
@@ -24,6 +23,7 @@ struct operation_wrapper_base
   virtual std::string print() const noexcept = 0;
 };
 
+/// @internal
 /// @brief A new type for each different operation, but which inherits from
 /// operation_wrapper_base.
 ///
@@ -54,6 +54,7 @@ struct operation_wrapper
   }
 };
 
+/// @internal
 /// @brief Specialization to contain a Top exception.
 template <typename C>
 struct operation_wrapper<top<C>>
@@ -75,9 +76,6 @@ struct operation_wrapper<top<C>>
     return top_.description();
   }
 };
-
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -103,8 +101,7 @@ private:
 
 public:
 
-/// @cond INTERNAL_DOC
-
+  /// @internal
   evaluation_error(const SDD<C>& s)
     : sdd_(s)
     , steps_()
@@ -112,8 +109,6 @@ public:
     , description_()
   {
   }
-
-/// @endcond
 
   ~evaluation_error()
   noexcept
@@ -130,8 +125,7 @@ public:
     return description().c_str();
   }
 
-/// @cond INTERNAL_DOC
-
+  /// @internal
   /// @brief Add an operation to the sequence of operations that lead to an evaluation error.
   template <typename Operation>
   void
@@ -140,12 +134,14 @@ public:
     steps_.emplace_back(std::make_shared<operation_wrapper<Operation>>(std::move(op)));
   }
 
+  /// @internal
   void
   add_top(const top<C>& t)
   {
     steps_.emplace_back(std::make_shared<operation_wrapper<top<C>>>(t));
   }
 
+  /// @internal
   /// @brief Return a textual description.
   std::string&
   description()
@@ -167,7 +163,7 @@ public:
     return description_;
   }
 
-  /// @brief Get the operand.
+  /// @brief Get the operand that raises this error.
   SDD<C>
   operand()
   const noexcept
@@ -175,7 +171,6 @@ public:
     return sdd_;
   }
 
-/// @endcond
 };
 
 /*-------------------------------------------------------------------------------------------*/

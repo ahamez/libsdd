@@ -1,16 +1,11 @@
 #ifndef _SDD_DD_OPERATIONS_FWD_HH_
 #define _SDD_DD_OPERATIONS_FWD_HH_
 
-/// @cond INTERNAL_DOC
-
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition_fwd.hh"
 #include "sdd/dd/nary_fwd.hh"
 
-/// @file operations_fwd.hh
-/// @brief Contain all necessary forward declarations of operations.
-///
-/// It permits operations to call each other recursively.
+// Forward declarations to let operations call each other recursively.
 
 namespace sdd {
 
@@ -56,11 +51,8 @@ template <typename C, typename Values>
 Values
 sum(context<C>&, const sum_builder<C, Values>&);
 
-
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-/// @endcond
 
 #endif // _SDD_DD_OPERATIONS_FWD_HH_

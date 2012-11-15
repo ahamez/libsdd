@@ -56,6 +56,7 @@ private:
 
 public:
 
+  /// @internal
   /// @brief Constructor.
   ///
   /// O(n) where n is the number of arcs in the builder.
@@ -69,6 +70,7 @@ public:
     builder.consolidate(alpha_addr());
   }
 
+  /// @internal
   /// @brief Destructor.
   ///
   /// O(n) where n is the number of arcs in the node.
@@ -122,6 +124,7 @@ public:
 
 private:
 
+  /// @internal
   /// @brief Return the address of the alpha function.
   ///
   /// O(1).
@@ -169,8 +172,6 @@ operator<<(std::ostream& os, const node<C, Valuation>& n)
 
 } // namespace sdd
 
-/// @cond INTERNAL_DOC
-
 namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
@@ -197,7 +198,5 @@ struct hash<sdd::node<C, Valuation>>
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-/// @endcond
 
 #endif // _SDD_DD_NODE_HH_

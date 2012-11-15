@@ -10,8 +10,7 @@ namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Visitor to count the number of paths in an SDD.
 template <typename C>
 struct count_paths_visitor
@@ -79,8 +78,6 @@ struct count_paths_visitor
     return insertion.first->second;
   }
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 

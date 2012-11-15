@@ -19,8 +19,7 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Saturation Fixpoint homomorphism.
 template <typename C>
 class _LIBSDD_ATTRIBUTE_PACKED saturation_fixpoint
@@ -76,9 +75,6 @@ public:
 
       for (const auto& g : G_)
       {
-//        sum_builder<C, SDD<C>> sum_operands(2);
-//        sum_operands.add(s2);
-//        sum_operands.add(g(cxt, s2));
         try
         {
           // chain applications of G
@@ -151,6 +147,7 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two saturation_fixpoint.
 /// @related saturation_fixpoint
 template <typename C>
@@ -165,6 +162,7 @@ noexcept
      and lhs.G() == rhs.G();
 }
 
+/// @internal
 /// @related sum
 template <typename C>
 std::ostream&
@@ -181,10 +179,9 @@ operator<<(std::ostream& os, const saturation_fixpoint<C>& s)
   return os;
 }
 
-/// @endcond
-
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Create the Saturation Fixpoint homomorphism.
 /// @related homomorphism
 ///
@@ -224,8 +221,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::saturation_fixpoint.
 template <typename C>
 struct hash<sdd::hom::saturation_fixpoint<C>>
@@ -245,8 +241,6 @@ struct hash<sdd::hom::saturation_fixpoint<C>>
     return seed;
   }
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 

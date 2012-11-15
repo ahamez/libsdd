@@ -1,15 +1,11 @@
 #ifndef _SDD_INTERNAL_UTIL_TYPELIST_HH_
 #define _SDD_INTERNAL_UTIL_TYPELIST_HH_
 
-/// @cond INTERNAL_DOC
-
-/// @file typelist.hh
-/// @brief Various helpers to manipulate a list of types.
-
 namespace sdd { namespace internal { namespace util {
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Represent the empty type.
 ///
 /// Used by nth to indicate that a type was not found.
@@ -17,6 +13,7 @@ struct nil {};
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <typename... Types>
 struct typelist
 {
@@ -24,6 +21,7 @@ struct typelist
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <typename T, typename... Types>
 struct index_of;
 
@@ -41,6 +39,7 @@ struct index_of<T, Head, Types...>
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <std::size_t Index, typename... Types>
 struct nth
 {
@@ -62,7 +61,5 @@ struct nth<Index, Head, Tail...>
 /*-------------------------------------------------------------------------------------------*/  
 
 }}} // namespace sdd::internal::util
-
-/// @endcond
 
 #endif // _SDD_INTERNAL_UTIL_TYPELIST_HH_

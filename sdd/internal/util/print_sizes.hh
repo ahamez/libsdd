@@ -6,12 +6,11 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/definition.hh"
 
-/// @cond INTERNAL_DOC
-
 namespace sdd { namespace internal { namespace util {
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <typename C>
 void
 print_sizes(std::ostream& os)
@@ -58,7 +57,5 @@ print_sizes(std::ostream& os)
 /*-------------------------------------------------------------------------------------------*/
 
 }}} // namespace sdd::internal::util
-
-/// @endcond
 
 #endif // _SDD_INTERNAL_UTIL_PRINT_SIZES_HH_

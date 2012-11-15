@@ -1,9 +1,6 @@
 #ifndef _SDD_DD_DEFINITION_HH_
 #define _SDD_DD_DEFINITION_HH_
 
-/// @file definition.hh
-/// @brief Contain all stuff necessary to describe and build SDD.
-
 #include <initializer_list>
 
 #include "sdd/dd/alpha.hh"
@@ -29,16 +26,17 @@ using hierarchical_node = node<C, SDD<C>>;
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Tag to describe the type of a node.
 enum class node_tag {flat, hierarchical};
 
+/// @internal
 /// @brief Signature of the meta-function that returns the node's type corresponding to the
 /// given tag.
 template <typename C, enum node_tag>
 struct node_for_tag;
 
+/// @internal
 /// @brief Specialization for flat node.
 template <typename C>
 struct node_for_tag<C, node_tag::flat>
@@ -46,14 +44,13 @@ struct node_for_tag<C, node_tag::flat>
   typedef flat_node<C> type;
 };
 
+/// @internal
 /// @brief Specialization for hierarchical node.
 template <typename C>
 struct node_for_tag<C, node_tag::hierarchical>
 {
   typedef hierarchical_node<C> type;
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -200,8 +197,7 @@ public:
     swap(lhs.ptr_, rhs.ptr_);
   }
 
-/// @cond INTERNAL_DOC
-
+  /// @internal
   /// @brief Construct an SDD from a ptr.
   ///
   /// O(1).
@@ -211,6 +207,7 @@ public:
   {
   }
 
+  /// @internal
   /// @brief Construct an SDD from a moved ptr.
   ///
   /// O(1).
@@ -220,6 +217,7 @@ public:
   {
   }
 
+  /// @internal
   /// @brief  Construct an SDD, flat or hierarchical, with an alpha.
   /// \tparam Valuation If an SDD, constructs a hierarchical SDD; if a set of values,
   /// constructs a flat SDD.
@@ -231,6 +229,7 @@ public:
   {
   }
 
+  /// @internal
   /// @brief Get the content of the SDD (an internal::mem::ref_counted).
   ///
   /// O(1).
@@ -241,6 +240,7 @@ public:
     return *ptr_;
   }
 
+  /// @internal
   /// @brief Get a pointer to the content of the SDD (an internal::mem::ref_counted).
   ///
   /// O(1).
@@ -251,6 +251,7 @@ public:
     return ptr_.operator->();
   }
 
+  /// @internal
   /// @brief Get the real smart pointer of the unified data.
   ///
   /// O(1).
@@ -261,6 +262,7 @@ public:
     return ptr_;
   }
 
+  /// @internal
   /// @brief Create the |0| terminal.
   ///
   /// O(1). The |0| is cached in a static variable.
@@ -273,6 +275,7 @@ public:
     return zero;
   }
 
+  /// @internal
   /// @brief Create the |1| terminal.
   ///
   /// O(1). The |1| is cached in a static variable.
@@ -287,6 +290,7 @@ public:
 
 private:
 
+  /// @internal
   /// @brief Helper function to create a node, flat or hierarchical, with only one arc.
   ///
   /// O(1).
@@ -307,6 +311,7 @@ private:
     }
   }
 
+  /// @internal
   /// @brief Helper function to create a node, flat or hierarchical, with only one arc.
   ///
   /// O(1).
@@ -327,6 +332,7 @@ private:
     }
   }
 
+  /// @internal
   /// @brief Helper function to create a node, flat or hierarchical, from an alpha.
   ///
   /// O(n) where n is the number of arcs in the builder.
@@ -345,6 +351,7 @@ private:
     }
   }
 
+  /// @internal
   /// @brief Helper function to unify a node, flat or hierarchical, from an alpha.
   ///
   /// O(n) where n is the number of arcs in the builder.
@@ -366,8 +373,6 @@ private:
   }
 
   friend void internal::util::print_sizes<C>(std::ostream&);
-
-/// @endcond
 };
 
 /*-------------------------------------------------------------------------------------------*/

@@ -7,12 +7,11 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/rewrite.hh"
 
-/// @cond INTERNAL_DOC
-
 namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Evaluate an homomorphism.
 template <typename C>
 struct evaluation
@@ -89,6 +88,7 @@ struct evaluation
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Default traits for homomorphisms.
 template <typename T>
 struct homomorphism_traits
@@ -98,6 +98,7 @@ struct homomorphism_traits
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief The evaluation of an homomorphism in the cache.
 template <typename C>
 struct cached_homomorphism
@@ -133,6 +134,7 @@ struct cached_homomorphism
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related cached_homomorphism
 template <typename C>
 inline
@@ -143,6 +145,7 @@ noexcept
   return lhs.h_ == rhs.h_ and lhs.sdd_ == rhs.sdd_;
 }
 
+/// @internal
 /// @related cached_homomorphism
 template <typename C>
 std::ostream&
@@ -153,6 +156,7 @@ operator<<(std::ostream& os, const cached_homomorphism<C>& ch)
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Used by the cache as a filter to know if an homomorphism should be cached.
 template <typename C>
 struct should_cache
@@ -186,6 +190,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Hash specialization for sdd::hom::cached_homomorphism
 template <typename C>
 struct hash<sdd::hom::cached_homomorphism<C>>
@@ -204,7 +209,5 @@ struct hash<sdd::hom::cached_homomorphism<C>>
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-/// @endcond
 
 #endif // _SDD_HOM_EVALUATION_HH_

@@ -57,8 +57,7 @@ noexcept
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Helper class to build an alpha.
 ///
 /// It serves two goals. First, it ensures that all alphas use the same order to store arcs.
@@ -153,8 +152,6 @@ public:
     }
   }
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 

@@ -11,8 +11,7 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Constant homomorphism.
 template <typename C>
 struct constant
@@ -64,6 +63,7 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Describe Constant characteristics.
 template <typename C>
 struct homomorphism_traits<constant<C>>
@@ -73,6 +73,7 @@ struct homomorphism_traits<constant<C>>
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two constant.
 /// @related constant
 template <typename C>
@@ -84,6 +85,7 @@ noexcept
   return lhs.sdd() == rhs.sdd();
 }
 
+/// @internal
 /// @related constant
 template <typename C>
 std::ostream&
@@ -91,8 +93,6 @@ operator<<(std::ostream& os, const constant<C>& c)
 {
   return os << c.sdd();
 }
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -113,8 +113,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::constant.
 template <typename C>
 struct hash<sdd::hom::constant<C>>
@@ -127,8 +126,6 @@ struct hash<sdd::hom::constant<C>>
     return hash<sdd::SDD<C>>()(c.sdd());
   }
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 

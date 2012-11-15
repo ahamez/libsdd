@@ -22,8 +22,7 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Sum homomorphism.
 template <typename C>
 class _LIBSDD_ATTRIBUTE_PACKED sum
@@ -96,6 +95,7 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two sum.
 /// @related sum
 template <typename C>
@@ -107,6 +107,7 @@ noexcept
   return lhs.operands() == rhs.operands();
 }
 
+/// @internal
 /// @related sum
 template <typename C>
 std::ostream&
@@ -120,6 +121,7 @@ operator<<(std::ostream& os, const sum<C>& s)
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Help optimize an union's operands.
 template <typename C>
 struct sum_builder_helper
@@ -161,8 +163,6 @@ struct sum_builder_helper
   }
 
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -225,8 +225,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::sum.
 template <typename C>
 struct hash<sdd::hom::sum<C>>
@@ -244,11 +243,8 @@ struct hash<sdd::hom::sum<C>>
   }
 };
 
-/// @endcond
-
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
 
 #endif // _SDD_HOM_SUM_HH_

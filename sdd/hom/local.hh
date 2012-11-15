@@ -14,8 +14,7 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Local homomorphism.
 template <typename C>
 class _LIBSDD_ATTRIBUTE_PACKED local
@@ -138,6 +137,7 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two Local homomorphisms.
 /// @related local
 template <typename C>
@@ -149,6 +149,7 @@ noexcept
   return lhs.variable() == rhs.variable() and lhs.hom() == rhs.hom();
 }
 
+/// @internal
 /// @related local
 template <typename C>
 std::ostream&
@@ -156,8 +157,6 @@ operator<<(std::ostream& os, const local<C>& l)
 {
   return os << "@(" << l.variable() << ", " << l.hom() << ")";
 }
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -185,8 +184,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::local.
 template <typename C>
 struct hash<sdd::hom::local<C>>
@@ -202,11 +200,8 @@ struct hash<sdd::hom::local<C>>
   }
 };
 
-/// @endcond
-
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace std
 
-
-#endif // _SDD_HOM_FIXPOINT_HH_
+#endif // _SDD_HOM_LOCAL_HH_

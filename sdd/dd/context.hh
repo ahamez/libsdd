@@ -1,8 +1,6 @@
 #ifndef _SDD_DD_CONTEXT_HH_
 #define _SDD_DD_CONTEXT_HH_
 
-/// @cond INTERNAL_DOC
-
 #include <memory> // make_shared, shared_ptr
 
 #include "sdd/dd/context_fwd.hh"
@@ -17,6 +15,7 @@ namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief   The evaluation context of operations on SDD (union, intersection, difference).
 ///
 /// Its purpose is to be able to create local caches at different points of the evaluation.
@@ -113,8 +112,8 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief Return the context that serves as an entry point for the evaluation of operations on
-/// SDD.
+/// @internal
+/// @brief Return the context that serves as an entry point for the evaluation of operations on SDD.
 /// @related context
 template <typename C>
 context<C>&
@@ -128,7 +127,5 @@ noexcept
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-/// @endcond
 
 #endif // _SDD_DD_CONTEXT_HH_

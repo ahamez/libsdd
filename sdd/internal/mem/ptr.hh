@@ -1,8 +1,6 @@
 #ifndef _SDD_INTERNAL_MEM_PTR_HH_
 #define _SDD_INTERNAL_MEM_PTR_HH_
 
-/// @cond INTERNAL_DOC
-
 #include <functional> // hash
 
 #include "sdd/internal/mem/unique_table.hh"
@@ -11,6 +9,7 @@ namespace sdd { namespace internal { namespace mem {
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief  A smart pointer to manage unified ressources.
 /// @tparam Unique the type of the unified ressource.
 ///
@@ -138,6 +137,7 @@ private:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related ptr
 template <typename Unique>
 inline
@@ -148,6 +148,7 @@ noexcept
   return lhs.operator->() == rhs.operator->();
 }
 
+/// @internal
 /// @related ptr
 template <typename Unique>
 inline
@@ -166,6 +167,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Hash specialization for sdd::internal::mem::ptr
 template <typename Unique>
 struct hash<sdd::internal::mem::ptr<Unique>>
@@ -181,7 +183,5 @@ struct hash<sdd::internal::mem::ptr<Unique>>
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-/// @endcond
 
 #endif // _SDD_INTERNAL_MEM_PTR_HH_

@@ -21,8 +21,7 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Saturation Sum homomorphism.
 template <typename C>
 class _LIBSDD_ATTRIBUTE_PACKED saturation_sum
@@ -152,6 +151,7 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two saturation_sum.
 /// @related saturation_sum
 template <typename C>
@@ -166,6 +166,7 @@ noexcept
      and lhs.G() == rhs.G();
 }
 
+/// @internal
 /// @related sum
 template <typename C>
 std::ostream&
@@ -191,10 +192,9 @@ operator<<(std::ostream& os, const saturation_sum<C>& s)
   return os;
 }
 
-/// @endcond
-
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Create the Saturation Sum homomorphism.
 /// @related homomorphism
 ///
@@ -234,8 +234,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::saturation_sum.
 template <typename C>
 struct hash<sdd::hom::saturation_sum<C>>
@@ -261,8 +260,6 @@ struct hash<sdd::hom::saturation_sum<C>>
     return seed;
   }
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 

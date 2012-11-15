@@ -1,8 +1,6 @@
 #ifndef _SDD_INTERNAL_MEM_VARIANT_IMPL_HH_
 #define _SDD_INTERNAL_MEM_VARIANT_IMPL_HH_
 
-/// @cond INTERNAL_DOC
-
 #include <cassert>
 #include <cstdint>     // uint8_t
 #include <functional>  // hash
@@ -28,6 +26,7 @@ using util::nil;
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <typename T, typename... Types>
 struct largest_alignment
 {
@@ -44,6 +43,7 @@ struct largest_alignment<T>
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <typename T, typename... Types>
 struct largest_size
 {
@@ -60,6 +60,7 @@ struct largest_size<T>
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief A storage large enough for the biggest T in Types.
 template <std::size_t Len, typename... Types>
 struct union_storage
@@ -78,6 +79,7 @@ struct union_storage
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Dispatch the destructor to the contained type in the visited variant.
 struct dtor_visitor
 {
@@ -94,6 +96,7 @@ struct dtor_visitor
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Dispatch the hash function to the contained type in the visited variant.
 ///
 /// It uses the standard (C++11) way of hashing an object.
@@ -112,6 +115,7 @@ struct hash_visitor
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// Dispatch the ostream export to the contained type in the visited variant.
 struct ostream_visitor
 {
@@ -135,6 +139,7 @@ struct ostream_visitor
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Dispatch the equality operator to the contained type in the visited variant.
 struct eq_visitor
 {
@@ -160,6 +165,9 @@ struct eq_visitor
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
+/// @brief Invokation out-of-bounds case.
+///
 /// Used by dispatch* to narrow down the possible invocations of visitor only to the types
 /// held by the visited variant. It thus avoid to apply the visitor on the nil type which is
 /// returned by util::nth when the provided index does not match any held type. It is
@@ -174,6 +182,8 @@ noexcept
   __builtin_unreachable();
 }
 
+/// @internal
+/// @brief Invoke user's visitor for deduced type.
 template <typename Visitor, typename T, typename... Args>
 inline
 typename enable_if<not is_same<T, nil>::value, typename Visitor::result_type>::type
@@ -183,9 +193,9 @@ noexcept(noexcept(v(x, std::forward<Args>(args)...)))
   return v(x, std::forward<Args>(args)...);
 }
 
-
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <uint8_t Index>
 struct dispatch
 {
@@ -250,6 +260,9 @@ struct dispatch
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
+/// @brief Invokation out-of-bounds case.
+///
 /// Used by dispatch* to narrow down the possible invocations of visitor only to the types
 /// held by the visited variant. It thus avoid to apply the visitor on the nil type which is
 /// returned by util::nth when the provided index does not match any held type. It is
@@ -265,6 +278,8 @@ noexcept
   __builtin_unreachable();
 }
 
+/// @internal
+/// @brief Invoke user's visitor for deduced type.
 template <typename Visitor, typename T, typename U, typename... Args>
 inline
 typename enable_if< not (is_same<T, nil>::value or is_same<U, nil>::value)
@@ -277,6 +292,7 @@ noexcept(noexcept(v(x, y, std::forward<Args>(args)...)))
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <uint8_t Index>
 struct inner_dispatch
 {
@@ -335,6 +351,7 @@ struct inner_dispatch
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <uint8_t Index1>
 struct dispatch_binary
 {
@@ -402,7 +419,5 @@ struct dispatch_binary
 /*-------------------------------------------------------------------------------------------*/
 
 }}} // namespace sdd::internal::mem
-
-/// @endcond
 
 #endif // _SDD_INTERNAL_MEM_VARIANT_IMPL_HH_

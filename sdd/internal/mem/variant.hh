@@ -1,8 +1,6 @@
 #ifndef _SDD_INTERNAL_MEM_VARIANT_HH_
 #define _SDD_INTERNAL_MEM_VARIANT_HH_
 
-/// @cond INTERNAL_DOC
-
 #include <climits>     // USHRT_MAX
 #include <cstdint>     // uint8_t
 #include <functional>  // hash
@@ -20,6 +18,7 @@ namespace sdd { namespace internal { namespace mem {
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Helper struct to determine the type to be constructed in place.
 template <typename T>
 struct construct {};
@@ -32,6 +31,7 @@ apply_visitor(const Visitor&, const Variant&, Args&&...);
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief  A union-like structure.
 /// @tparam Types The list of possible types.
 ///
@@ -119,6 +119,7 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related variant
 template < typename Visitor
          , typename... Types, template <typename...> class Variant
@@ -132,6 +133,7 @@ apply_visitor(const Visitor& v, const Variant<Types...>& x, Args&&... args)
                       , std::forward<Args>(args)...);
 }
 
+/// @internal
 /// @related variant
 template < typename Visitor
          , typename... Types1, template <typename...> class Variant1
@@ -149,6 +151,7 @@ apply_binary_visitor( const Visitor& v
                              , std::forward<Args>(args)...);
 }
 
+/// @internal
 /// @related variant
 template <typename... Types>
 inline
@@ -159,6 +162,7 @@ noexcept
   return lhs.index() == rhs.index() and apply_binary_visitor(eq_visitor(), lhs, rhs);
 }
 
+/// @internal
 /// @related variant
 template <typename T, typename... Types>
 inline
@@ -171,6 +175,7 @@ noexcept
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related variant
 template <typename... Types>
 std::ostream&
@@ -187,6 +192,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Hash specialization for sdd::internal::mem::variant
 template <typename... Types>
 struct hash<const sdd::internal::mem::variant<Types...>>
@@ -205,7 +211,5 @@ struct hash<const sdd::internal::mem::variant<Types...>>
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-/// @endcond
 
 #endif // _SDD_INTERNAL_MEM_VARIANT_HH_

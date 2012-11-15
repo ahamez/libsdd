@@ -1,8 +1,6 @@
 #ifndef _SDD_DD_NARY_HH_
 #define _SDD_DD_NARY_HH_
 
-/// @cond INTERNAL_DOC
-
 #include <algorithm> // copy, equal
 #include <cassert>
 #include <initializer_list>
@@ -17,6 +15,7 @@ namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Check that all operands are compatible and determine the nodes' type (hierarchical
 /// or flat).
 template<typename C>
@@ -68,6 +67,7 @@ struct check_visitor
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Base class for sum and intersection operations, used by the cache.
 ///
 /// It manages the allocation and deallocation of operands, as well as the dispatch on the
@@ -168,7 +168,8 @@ struct _LIBSDD_ATTRIBUTE_PACKED nary_base
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief   Equality of two operations based on nary_base.
+/// @internal
+/// @brief Equality of two operations based on nary_base.
 /// @related nary_base
 template <typename C, typename Operation>
 inline
@@ -179,6 +180,7 @@ noexcept
   return lhs.size_ == rhs.size_ and std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
+/// @internal
 /// @related nary_base
 template <typename C, typename Operation>
 std::ostream&
@@ -191,6 +193,7 @@ operator<<(std::ostream& os, const nary_base<C, Operation>& x)
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Base type for builders of sum and intersection operations.
 ///
 /// The goal of a this builder is ensure that operands are always stored in the same order
@@ -314,7 +317,5 @@ struct _LIBSDD_ATTRIBUTE_PACKED nary_builder
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-/// @endcond
 
 #endif // _SDD_DD_NARY_HH_

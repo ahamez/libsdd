@@ -12,8 +12,7 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Cons homomorphism.
 template <typename C, typename Valuation>
 class _LIBSDD_ATTRIBUTE_PACKED cons
@@ -95,6 +94,7 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Describe Cons characteristics.
 template <typename C, typename Valuation>
 struct homomorphism_traits<cons<C, Valuation>>
@@ -104,6 +104,7 @@ struct homomorphism_traits<cons<C, Valuation>>
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two Cons homomorphisms.
 /// @related cons
 template <typename C, typename Valuation>
@@ -116,6 +117,7 @@ noexcept
      and lhs.next() == rhs.next();
 }
 
+/// @internal
 /// @related cons
 template <typename C, typename Valuation>
 std::ostream&
@@ -123,8 +125,6 @@ operator<<(std::ostream& os, const cons<C, Valuation>& c)
 {
   return os << "Cons(" << c.variable() << ", " << c.valuation() << ", " << c.next() << ")";
 }
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -145,8 +145,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::cons.
 template <typename C, typename Valuation>
 struct hash<sdd::hom::cons<C, Valuation>>
@@ -163,11 +162,8 @@ struct hash<sdd::hom::cons<C, Valuation>>
   }
 };
 
-/// @endcond
-
 /*-------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
 
 #endif // _SDD_HOM_CONS_HH_

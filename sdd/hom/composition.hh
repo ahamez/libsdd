@@ -13,8 +13,7 @@ namespace sdd { namespace hom {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Composition homomorphism.
 template <typename C>
 class _LIBSDD_ATTRIBUTE_PACKED composition
@@ -84,6 +83,7 @@ public:
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two composition homomorphisms.
 /// @related composition
 template <typename C>
@@ -95,15 +95,14 @@ noexcept
   return lhs.left() == rhs.left() and lhs.right() == rhs.right();
 }
 
-/// @related compostion
+/// @internal
+/// @related composition
 template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const composition<C>& c)
 {
   return os << c.left() << " o " << c.right();
 }
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -132,8 +131,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::hom::composition.
 template <typename C>
 struct hash<sdd::hom::composition<C>>
@@ -148,8 +146,6 @@ struct hash<sdd::hom::composition<C>>
     return seed;
   }
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 

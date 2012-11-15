@@ -13,8 +13,7 @@ namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief A base class to wrap operations of different type.
 struct operation_wrapper_base
 {
@@ -26,6 +25,7 @@ struct operation_wrapper_base
   virtual std::string print() const noexcept = 0;
 };
 
+/// @internal
 /// @brief A new type for each different operation, but which inherits from
 /// operation_wrapper_base.
 ///
@@ -56,8 +56,6 @@ struct operation_wrapper
   }
 };
 
-/// @endcond
-
 /*-------------------------------------------------------------------------------------------*/
 
 /// @exception top
@@ -87,8 +85,7 @@ private:
 
 public:
 
-/// @cond INTERNAL_DOC
-
+  /// @internal
   top(const SDD<C>& lhs, const SDD<C>& rhs)
     : lhs_(lhs)
     , rhs_(rhs)
@@ -97,8 +94,6 @@ public:
     , description_()
   {
   }
-
-/// @endcond
 
   ~top()
   noexcept
@@ -135,8 +130,7 @@ public:
     return rhs_;
   }
 
-/// @cond INTERNAL_DOC
-
+  /// @internal
   /// @brief Add an operation to the sequence of operations that lead to incompatible SDD.
   ///
   /// Called by internal::mem::cache.
@@ -147,6 +141,7 @@ public:
     steps_.emplace_back(std::make_shared<operation_wrapper<Operation>>(std::move(op)));
   }
 
+  /// @internal
   /// @brief Return a textual description.
   std::string&
   description()
@@ -169,8 +164,6 @@ public:
     }
     return description_;
   }
-
-/// @endcond
 };
 
 /*-------------------------------------------------------------------------------------------*/

@@ -15,8 +15,7 @@ namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Implementation of the difference operation.
 ///
 /// Called by difference_op.
@@ -140,7 +139,8 @@ struct difference_visitor
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief   The difference operation in the cache.
+/// @internal
+/// @brief The difference operation in the cache.
 template <typename C>
 struct difference_op
 {
@@ -168,6 +168,7 @@ struct difference_op
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related difference_op
 template <typename C>
 inline
@@ -180,6 +181,7 @@ noexcept
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related difference_op
 template <typename C>
 std::ostream&
@@ -190,8 +192,8 @@ operator<<(std::ostream& os, const difference_op<C>& x)
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @brief   The difference operation.
-/// @return  The difference of the two operands
+/// @internal
+/// @brief The difference operation.
 ///
 /// The computation is cached, except for the trivial cases (when the two operands are
 /// equal or when one of the operand is |0|).
@@ -213,6 +215,7 @@ difference(context<C>& cxt, const SDD<C>& lhs, const SDD<C>& rhs)
 
 /*-------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @related SDD
 template <typename C, typename Values>
 inline
@@ -221,8 +224,6 @@ difference(context<C>&, const Values& lhs, const Values& rhs)
 {
   return difference(lhs, rhs);
 }
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -257,8 +258,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::dd::difference_op
 template <typename C>
 struct hash<sdd::difference_op<C>>
@@ -273,8 +273,6 @@ struct hash<sdd::difference_op<C>>
     return seed;
   }
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 
