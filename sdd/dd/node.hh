@@ -12,7 +12,7 @@
 
 namespace sdd {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief  A non-terminal node in an SDD.
 /// \tparam Valuation If a set of values, define a flat node; if an SDD, define a hierarchical
@@ -35,16 +35,16 @@ class _LIBSDD_ATTRIBUTE_PACKED node
 public:
 
   /// @brief The type of the variable of this node.
-  typedef typename C::Variable          variable_type;
+  typedef typename C::Variable variable_type;
 
   /// @brief The type of the valuation of this node.
-  typedef Valuation                     valuation_type;
+  typedef Valuation valuation_type;
 
   /// @brief The type used to store the number of arcs of this node.
-  typedef typename C::alpha_size_type   alpha_size_type;
+  typedef typename C::alpha_size_type alpha_size_type;
 
   /// @brief A (const) iterator on the arcs of this node.
-  typedef const arc<C, Valuation>*      const_iterator;
+  typedef const arc<C, Valuation>* const_iterator;
 
 private:
 
@@ -138,7 +138,7 @@ private:
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief   Equality of two nodes.
 /// @related node
@@ -168,13 +168,13 @@ operator<<(std::ostream& os, const node<C, Valuation>& n)
   return os << (n.end() - 1)->valuation() << " --> " << (n.end() - 1)->successor() << "]";
 }
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
 
 namespace std {
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 /// @brief Hash specialization for sdd::node
 template <typename C, typename Valuation>
@@ -195,7 +195,7 @@ struct hash<sdd::node<C, Valuation>>
   }
 };
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
 
