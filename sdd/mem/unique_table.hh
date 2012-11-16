@@ -56,24 +56,32 @@ private:
   /// @brief The number of rehash.
   std::size_t rehash_;
 
-  ///
+  /// The number of re-usable memory blocks to keep.
+  static constexpr std::size_t nb_blocks = 2048;
+
+  /// Index re-usable memory blocks by size.
   boost::container::flat_multimap<std::size_t, char*> blocks_;
 
 public:
 
+  /// @brief Constructor.
+  /// @param initial_size Initial capacity of the container.
   unique_table(std::size_t initial_size)
   	: buckets_(new bucket_type[set_type::suggested_upper_bucket_count(initial_size)])
     , set_(new set_type(bucket_traits( buckets_
                                      , set_type::suggested_upper_bucket_count(initial_size))))
     , blocks_()
   {
+    blocks_.reserve(nb_blocks);
   }
 
+  /// @brief Default constructor.
   unique_table()
     : unique_table(1000000)
   {
   }
 
+  /// @brief Destructor.
   ~unique_table()
   {
     delete set_;
@@ -84,6 +92,11 @@ public:
     }
   }
 
+  /// @brief Unify a data.
+  /// @param u_ptr A pointer to a data constructed with a placement new into the storage returned by
+  /// allocate().
+  /// @param size The size of the data. It must be the same as the one given to allocate().
+  /// @return A reference to the unified data.
   const Unique&
   operator()(Unique* u_ptr, std::size_t size)
   {
@@ -98,7 +111,7 @@ public:
     {
       ++hit_;
       u_ptr->~Unique();
-      if (blocks_.size() == 2048)
+      if (blocks_.size() == nb_blocks)
       {
         // erase last block
         auto it = blocks_.end() - 1;
@@ -114,6 +127,7 @@ public:
     return *insertion.first;
   }
 
+  /// @brief Allocate a memory block large enough for the given size.
   char*
   allocate(std::size_t size)
   {
@@ -131,6 +145,9 @@ public:
     }
   }
 
+  /// @brief Erase the given unified data.
+  ///
+  /// All subsequent uses of the erased data are invalid.
   void
   erase(Unique& x)
   noexcept
@@ -138,6 +155,7 @@ public:
     set_->erase_and_dispose(x, [](Unique* ptr){delete ptr;});
   }
 
+  /// @brief Get the load factor of the internal hash table.
   double
   load_factor()
   const noexcept
@@ -145,6 +163,7 @@ public:
     return static_cast<double>(set_->size()) / static_cast<double>(set_->bucket_count());
   }
 
+  /// @brief Get the number of unified elements.
   std::size_t
   size()
   const noexcept
@@ -154,6 +173,7 @@ public:
 
 private:
 
+  /// @brief Rehash the internal hash table.
   void
   rehash()
   {
@@ -186,6 +206,7 @@ noexcept
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+/// @brief Allocate a memory block large enough for the given size, in the global unique table.
 /// @related unique_table
 template <typename Unique>
 inline
@@ -198,6 +219,10 @@ allocate(std::size_t size)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+/// @brief Unify a data in the global unique table.
+/// @param u_ptr A pointer to a data constructed with a placement new into the storage returned by
+/// allocate().
+/// @param size The size of the data. It must be the same as the one given to allocate().
 /// @related unique_table
 template <typename Unique>
 inline

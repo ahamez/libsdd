@@ -124,6 +124,7 @@ public:
   SDD&
   operator=(const SDD&) noexcept = default;
 
+  /// @internal
   /// @brief  Construct a terminal.
   /// @param  terminal If true, create the |1| terminal; the |0| terminal otherwise.
   /// @return The terminal |0| or |1|.
@@ -228,7 +229,7 @@ public:
   ///
   /// O(n) where n is the number of arcs in the builder.
   template <typename Valuation>
-  SDD(const variable_type& var, alpha_builder<C, Valuation>&& builder)
+  SDD(const variable_type& var, dd::alpha_builder<C, Valuation>&& builder)
     : ptr_(create_node(var, std::move(builder)))
   {
   }
@@ -309,7 +310,7 @@ private:
     }
     else
     {
-      alpha_builder<C, Valuation> builder;
+      dd::alpha_builder<C, Valuation> builder;
       builder.add(std::move(val), succ);
       return unify_node<Valuation>(var, std::move(builder));
     }
@@ -330,7 +331,7 @@ private:
     }
     else
     {
-      alpha_builder<C, Valuation> builder;
+      dd::alpha_builder<C, Valuation> builder;
       builder.add(val, succ);
       return unify_node<Valuation>(var, std::move(builder));
     }
@@ -343,7 +344,7 @@ private:
   template <typename Valuation>
   static
   ptr_type
-  create_node(const variable_type& var, alpha_builder<C, Valuation>&& builder)
+  create_node(const variable_type& var, dd::alpha_builder<C, Valuation>&& builder)
   {
     if (builder.empty())
     {
@@ -362,7 +363,7 @@ private:
   template <typename Valuation>
   static
   const SDD_unique&
-  unify_node(const variable_type& var, alpha_builder<C, Valuation>&& builder)
+  unify_node(const variable_type& var, dd::alpha_builder<C, Valuation>&& builder)
   {
     // Will be erased by the unicity table, either it's an already existing node or a deletion
     // is requested by ptr.

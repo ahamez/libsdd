@@ -14,6 +14,8 @@ namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
+namespace dd {
+
 /// @internal
 /// @brief The intersection operation in the cache.
 template <typename C>
@@ -207,6 +209,8 @@ intersection(context<C>&, intersection_builder<C, Values>&& builder)
   }
 }
 
+} // namespace dd
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Perform the intersection of two SDD.
@@ -216,7 +220,7 @@ inline
 SDD<C>
 operator&(const SDD<C>& lhs, const SDD<C>& rhs)
 {
-  return intersection(initial_context<C>(), {lhs, rhs});
+  return dd::intersection(dd::initial_context<C>(), {lhs, rhs});
 }
 
 /// @brief Perform the intersection of two SDD.
@@ -226,7 +230,7 @@ inline
 SDD<C>&
 operator&=(SDD<C>& lhs, const SDD<C>& rhs)
 {
-  SDD<C> tmp = intersection(initial_context<C>(), {lhs, rhs});
+  SDD<C> tmp = dd::intersection(dd::initial_context<C>(), {lhs, rhs});
   using std::swap;
   swap(tmp, lhs);
   return lhs;
@@ -239,12 +243,12 @@ SDD<C>
 inline
 intersection(InputIterator begin, InputIterator end)
 {
-  intersection_builder<C, SDD<C>> builder;
+  dd::intersection_builder<C, SDD<C>> builder;
   for (; begin != end; ++begin)
   {
     builder.add(*begin);
   }
-  return intersection(initial_context<C>(), std::move(builder));
+  return dd::intersection(dd::initial_context<C>(), std::move(builder));
 }
 
 /// @brief Perform the intersection of an initializer list of SDD.
@@ -268,10 +272,10 @@ namespace std {
 /// @internal
 /// @brief Hash specialization for sdd::dd::intersection_op
 template <typename C>
-struct hash<sdd::intersection_op<C>>
+struct hash<sdd::dd::intersection_op<C>>
 {
   std::size_t
-  operator()(const sdd::intersection_op<C>& inter)
+  operator()(const sdd::dd::intersection_op<C>& inter)
   const noexcept
   {
     std::size_t seed = 0;

@@ -102,7 +102,9 @@ public:
     return (*this)(hom::initial_context<C>(), o, x);
   }
 
+  /// @internal
   /// @brief Tell if this homomorphism skips a given identifier.
+  /// @brief Tell if this homomorphism skips a given variable.
   bool
   skip(const order::order<C>& o)
   const noexcept
@@ -110,6 +112,7 @@ public:
     return apply_visitor(skip_helper(), ptr()->data(), o);
   }
 
+  /// @internal
   /// @brief Tell if this homomorphism returns only subsets.
   bool
   selector()

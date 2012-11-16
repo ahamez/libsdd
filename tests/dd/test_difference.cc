@@ -14,7 +14,7 @@ struct difference_test
 {
   typedef sdd::conf::conf0 conf;
   typedef sdd::SDD<conf> SDD;
-  context<conf> cxt;
+  dd::context<conf> cxt;
   const SDD zero = sdd::zero<conf>();
   const SDD one = sdd::one<conf>();
 };
@@ -133,7 +133,7 @@ TEST_F(difference_test, flat_x_minus_y)
     conf::Values valref1;
     valref1.insert(1);
 
-    sum_builder<conf, SDD> sum_ops;
+    dd::sum_builder<conf, SDD> sum_ops;
     sum_ops.add(SDD(0, valref0, SDD(1, valref0, one)));
     sum_ops.add(SDD(0, valref0, SDD(1, valref1, one)));
     sum_ops.add(SDD(0, valref1, SDD(1, valref0, one)));
@@ -151,7 +151,7 @@ TEST_F(difference_test, flat_x_minus_y)
     valy.insert(1);
     const SDD y(0, valy, one);
 
-    sum_builder<conf, SDD> sum_ops;
+    dd::sum_builder<conf, SDD> sum_ops;
     sum_ops.add(x);
     sum_ops.add(y);
     const SDD x_plus_y = sum(cxt, std::move(sum_ops));
@@ -219,7 +219,7 @@ TEST_F(difference_test, hierarchical_x_minus_y)
     valref0.insert(0);
     conf::Values valref1;
     valref1.insert(1);
-    sum_builder<conf, SDD> nested_sum_ops;
+    dd::sum_builder<conf, SDD> nested_sum_ops;
     nested_sum_ops.add(SDD(0, valref0, SDD(1, valref0, one)));
     nested_sum_ops.add(SDD(0, valref0, SDD(1, valref1, one)));
     nested_sum_ops.add(SDD(0, valref1, SDD(1, valref0, one)));
@@ -251,7 +251,7 @@ TEST_F(difference_test, hierarchical_x_minus_y)
     const SDD nested10(0, valref1, SDD(1, valref0, one));
     const SDD nested11(0, valref1, SDD(1, valref1, one));
 
-    sum_builder<conf, SDD> sum_ops;
+    dd::sum_builder<conf, SDD> sum_ops;
     sum_ops.add(SDD(10, nested00, SDD(11, nested00, one)));
     sum_ops.add(SDD(10, nested00, SDD(11, nested01, one)));
     sum_ops.add(SDD(10, nested00, SDD(11, nested10, one)));

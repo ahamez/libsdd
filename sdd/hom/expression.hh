@@ -191,7 +191,7 @@ private:
   /// @brief A stack of results to create successors of hierarchical nodes.
   struct results_stack_node
   {
-    sum_builder<C, SDD<C>> result;
+    dd::sum_builder<C, SDD<C>> result;
     results_stack next;
 
     results_stack_node(const results_stack& n)
@@ -347,7 +347,7 @@ private:
       // Is the target nested in the current hierarchy?
       if (o.contains(o.identifier(), target_))
       {
-        sum_builder<C, SDD<C>> operands(node.size());
+        dd::sum_builder<C, SDD<C>> operands(node.size());
 
         for (const auto& arc : node)
         {
@@ -361,10 +361,10 @@ private:
 
           assert(not res->result.empty() && "Invalid result");
           operands.add( SDD<C>(o.variable(), nested
-                      , sdd::sum<C>(cxt.sdd_context(), std::move(res->result))));
+                      , dd::sum<C>(cxt.sdd_context(), std::move(res->result))));
         }
 
-        return sdd::sum<C>(cxt.sdd_context(), std::move(operands));
+        return dd::sum<C>(cxt.sdd_context(), std::move(operands));
       }
 
       // Are there some values of interest in the current hierarchy?
@@ -375,7 +375,7 @@ private:
                                               });
       if (interested)
       {
-        square_union<C, SDD<C>> su;
+        dd::square_union<C, SDD<C>> su;
         su.reserve(node.size());
         
         for (const auto& arc : node)
@@ -389,14 +389,14 @@ private:
                                              , begin, end);
 
           assert(not res->result.empty() && "Invalid result");
-          su.add(sdd::sum<C>(cxt.sdd_context(), std::move(res->result)), nested);
+          su.add(dd::sum<C>(cxt.sdd_context(), std::move(res->result)), nested);
         }
 
         return SDD<C>(o.variable(), su(cxt.sdd_context()));
       }
 
       // We are not interested in this level, thus the visitor is propagated to the next level.
-      square_union<C, SDD<C>> su;
+      dd::square_union<C, SDD<C>> su;
       su.reserve(node.size());
       for (const auto& arc : node)
       {
@@ -438,7 +438,7 @@ private:
       {
         // The target of the expression is reached, a different visitor is needed.
 
-        sum_builder<C, SDD<C>> operands(node.size());
+        dd::sum_builder<C, SDD<C>> operands(node.size());
 
         for (const auto& arc : node)
         {
@@ -448,14 +448,14 @@ private:
           operands.add(SDD<C>(o.variable(), std::move(valuation), arc.successor()));
         }
 
-        return sdd::sum(cxt.sdd_context(), std::move(operands));
+        return dd::sum(cxt.sdd_context(), std::move(operands));
       }
 
       if (o.same_hierarchy(o.identifier(), target_))
       {
         // The current identifier is above the target in the same hierarchy.
 
-        square_union<C, values_type> su;
+        dd::square_union<C, values_type> su;
         su.reserve(node.size());
 
         for (const auto& arc : node)

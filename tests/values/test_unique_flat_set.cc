@@ -24,7 +24,7 @@ TEST(flat_set_test, insertion)
   fs.insert(1);
   fs.insert(42);
   ASSERT_EQ(flat_set({1,10,42}), fs);
-  ASSERT_EQ(3, fs.size());
+  ASSERT_EQ(3u, fs.size());
 }
 
 /*------------------------------------------------------------------------------------------------*/

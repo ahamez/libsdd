@@ -17,6 +17,8 @@ namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
+namespace dd {
+
 /// @internal
 /// @brief The sum operation in the cache.
 template <typename C>
@@ -291,6 +293,8 @@ sum(context<C>&, sum_builder<C, Values>&& builder)
   }
 }
 
+} // namespace dd
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Perform the union of two SDD.
@@ -300,7 +304,7 @@ inline
 SDD<C>
 operator+(const SDD<C>& lhs, const SDD<C>& rhs)
 {
-  return sum(initial_context<C>(), {lhs, rhs});
+  return dd::sum(dd::initial_context<C>(), {lhs, rhs});
 }
 
 /// @brief Perform the union of two SDD.
@@ -310,7 +314,7 @@ inline
 SDD<C>&
 operator+=(SDD<C>& lhs, const SDD<C>& rhs)
 {
-  SDD<C> tmp = sum(initial_context<C>(), {lhs, rhs});
+  SDD<C> tmp = dd::sum(dd::initial_context<C>(), {lhs, rhs});
   using std::swap;
   swap(tmp, lhs);
   return lhs;
@@ -323,12 +327,12 @@ SDD<C>
 inline
 sum(InputIterator begin, InputIterator end)
 {
-  sum_builder<C, SDD<C>> builder;
+  dd::sum_builder<C, SDD<C>> builder;
   for (; begin != end; ++begin)
   {
     builder.add(*begin);
   }
-  return sum(initial_context<C>(), std::move(builder));
+  return dd::sum(dd::initial_context<C>(), std::move(builder));
 }
 
 /// @brief   Perform the union of an initializer list of SDD.
@@ -352,10 +356,10 @@ namespace std {
 /// @internal
 /// @brief Hash specialization for sdd::dd::sum_op
 template <typename C>
-struct hash<sdd::sum_op<C>>
+struct hash<sdd::dd::sum_op<C>>
 {
   std::size_t
-  operator()(const sdd::sum_op<C>& sum)
+  operator()(const sdd::dd::sum_op<C>& sum)
   const noexcept
   {
     std::size_t seed = 0;

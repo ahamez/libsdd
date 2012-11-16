@@ -38,9 +38,9 @@ TEST_F(hom_id_test, no_cache)
 {
   hom h = sdd::Id<conf>();
   sdd::hom::context<conf> cxt;
-  ASSERT_EQ(0, cxt.cache().size());
+  ASSERT_EQ(static_cast<std::size_t>(0), cxt.cache().size());
   ASSERT_EQ(one, h(cxt, order(order_builder()), one));
-  ASSERT_EQ(0, cxt.cache().size());
+  ASSERT_EQ(static_cast<std::size_t>(0), cxt.cache().size());
 }
 
 /*------------------------------------------------------------------------------------------------*/

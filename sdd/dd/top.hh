@@ -61,7 +61,7 @@ struct operation_wrapper
 /// @exception top
 /// @brief The top terminal.
 ///
-/// The top terminal is represented as an exception thrown when encoutering incompatible SDD.
+/// The top terminal is represented with an exception thrown when encoutering incompatible SDD.
 template <typename C>
 class top
   : public std::exception

@@ -264,7 +264,7 @@ private:
               , const order::order<C>& o)
     const
     {
-      sum_builder<C, SDD<C>> sum_operands(node.size());
+      dd::sum_builder<C, SDD<C>> sum_operands(node.size());
       for (const auto& arc : node)
       {
         const homomorphism<C> next_hom = i(o, arc.valuation());
@@ -273,7 +273,7 @@ private:
 
       try
       {
-        return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+        return dd::sum(cxt.sdd_context(), std::move(sum_operands));
       }
       catch (top<C>& t)
       {

@@ -31,9 +31,9 @@ TEST_F(rewriting_test, partition)
                           };
 
     const auto&& p = sdd::hom::rewriter<conf>::partition(o, homs.begin(), homs.end());
-    ASSERT_EQ(1, std::get<0>(p).size()); // F size
-    ASSERT_EQ(1, std::get<1>(p).size()); // G size
-    ASSERT_EQ(1, std::get<2>(p).size()); // L size
+    ASSERT_EQ(static_cast<std::size_t>(1), std::get<0>(p).size()); // F size
+    ASSERT_EQ(static_cast<std::size_t>(1), std::get<1>(p).size()); // G size
+    ASSERT_EQ(static_cast<std::size_t>(1), std::get<2>(p).size()); // L size
     ASSERT_EQ(true, std::get<3>(p)); // has_id
   }
 }

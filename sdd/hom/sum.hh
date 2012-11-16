@@ -51,14 +51,14 @@ public:
   operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
   const
   {
-    sum_builder<C, SDD<C>> sum_operands(operands_.size());
+    dd::sum_builder<C, SDD<C>> sum_operands(operands_.size());
     for (const auto& op : operands_)
     {
       sum_operands.add(op(cxt, o, x));
     }
     try
     {
-      return sdd::sum(cxt.sdd_context(), std::move(sum_operands));
+      return dd::sum(cxt.sdd_context(), std::move(sum_operands));
     }
     catch (top<C>& t)
     {

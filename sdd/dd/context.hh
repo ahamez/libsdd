@@ -11,7 +11,7 @@
 #include "sdd/dd/top.hh"
 #include "sdd/mem/cache.hh"
 
-namespace sdd {
+namespace sdd { namespace dd {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -126,6 +126,6 @@ noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
-} // namespace sdd
+}} // namespace sdd::dd
 
 #endif // _SDD_DD_CONTEXT_HH_

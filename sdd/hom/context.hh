@@ -30,7 +30,7 @@ public:
           cache_type;
 
   /// @brief SDD operation context type.
-  typedef sdd::context<C> sdd_context_type;
+  typedef sdd::dd::context<C> sdd_context_type;
 
 private:
 
@@ -57,7 +57,7 @@ public:
 
   /// @brief Default constructor.
   context()
-	  : context(10000, sdd::initial_context<C>())
+	  : context(100000, dd::initial_context<C>())
   {
   }
 

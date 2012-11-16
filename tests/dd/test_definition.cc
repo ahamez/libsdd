@@ -47,29 +47,29 @@ TEST_F(definition_test, print)
   {
     std::stringstream ss;
     ss << zero;
-    ASSERT_NE(0, ss.str().size());
+    ASSERT_NE(static_cast<std::size_t>(0), ss.str().size());
   }
   {
     std::stringstream ss;
     ss << one;
-    ASSERT_NE(0, ss.str().size());
+    ASSERT_NE(static_cast<std::size_t>(0), ss.str().size());
   }
   {
     std::stringstream ss;
     ss << SDD('a', {0}, one);
-    ASSERT_NE(0, ss.str().size());
+    ASSERT_NE(static_cast<std::size_t>(0), ss.str().size());
   }
   {
     std::stringstream ss;
     ss << SDD('a', {0,1}, one);
-    ASSERT_NE(0, ss.str().size());
+    ASSERT_NE(static_cast<std::size_t>(0), ss.str().size());
   }
   {
     std::stringstream ss;
     SDD x('x', SDD('a', {0}, one), SDD('y', SDD('b', {0}, one), one));
     SDD y('x', SDD('a', {1}, one), SDD('y', SDD('b', {1}, one), one));
     ss << x + y;
-    ASSERT_NE(0, ss.str().size());
+    ASSERT_NE(static_cast<std::size_t>(0), ss.str().size());
   }
 }
 
