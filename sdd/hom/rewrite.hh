@@ -105,7 +105,7 @@ struct rewriter
         G.push_back(*begin);
       }
     }
-    return std::make_tuple(F, G, L, has_id);
+    return std::make_tuple(std::move(F), std::move(G), std::move(L), has_id);
   }
 
   /// @brief Rewrite Sum into a Saturation Sum, if possible.
