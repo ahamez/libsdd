@@ -28,8 +28,8 @@ TEST(bitset_test, insertion)
 
 TEST(bitset_test, size)
 {
-  ASSERT_EQ(0, bitset({}).size());
-  ASSERT_EQ(3, bitset({1,2,10}).size());
+  ASSERT_EQ(0u, bitset({}).size());
+  ASSERT_EQ(3u, bitset({1,2,10}).size());
 }
 
 /*------------------------------------------------------------------------------------------------*/

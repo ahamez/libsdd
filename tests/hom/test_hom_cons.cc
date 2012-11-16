@@ -68,9 +68,9 @@ TEST_F(hom_cons_test, no_cache)
 {
   const hom h = Cons<conf>(0, conf::Values {0,1,2}, id);
   sdd::hom::context<conf> cxt;
-  ASSERT_EQ(0, cxt.cache().size());
+  ASSERT_EQ(static_cast<std::size_t>(0), cxt.cache().size());
   ASSERT_EQ(SDD(0, {0,1,2}, one), h(cxt, one));
-  ASSERT_EQ(0, cxt.cache().size());
+  ASSERT_EQ(static_cast<std::size_t>(0), cxt.cache().size());
 }
 
 /*------------------------------------------------------------------------------------------------*/

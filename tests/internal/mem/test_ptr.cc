@@ -117,110 +117,110 @@ struct ptr_test
 TEST_F(ptr_test, object_life)
 {
   unique u(42);
-  ASSERT_EQ(0, u.ref_counter_);
+  ASSERT_EQ(static_cast<std::size_t>(0), u.ref_counter_);
 
   {
     ptr_type a(table_(u));
-    ASSERT_EQ(1, u.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(1), u.ref_counter_);
 
     ptr_type b(table_(u));
-    ASSERT_EQ(2, u.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(2), u.ref_counter_);
 
     ASSERT_EQ(a, b);
   }
-  ASSERT_EQ(1, table_.nb_deletions_);
-  ASSERT_EQ(0, u.ref_counter_);
+  ASSERT_EQ(static_cast<std::size_t>(1), table_.nb_deletions_);
+  ASSERT_EQ(static_cast<std::size_t>(0), u.ref_counter_);
 
   table_.reset();
   // copy
   {
     ptr_type a(table_(u));
-    ASSERT_EQ(1, u.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(1), u.ref_counter_);
     {
       ptr_type b(a);
-      ASSERT_EQ(2, u.ref_counter_);
+      ASSERT_EQ(static_cast<std::size_t>(2), u.ref_counter_);
     }
-    ASSERT_EQ(1, u.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(1), u.ref_counter_);
   }
-  ASSERT_EQ(1, table_.nb_deletions_);
-  ASSERT_EQ(0, u.ref_counter_);
+  ASSERT_EQ(static_cast<std::size_t>(1), table_.nb_deletions_);
+  ASSERT_EQ(static_cast<std::size_t>(0), u.ref_counter_);
 
   table_.reset();
   // copy operator
   {
     ptr_type a(table_(u));
-    ASSERT_EQ(1, u.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(1), u.ref_counter_);
 
     unique v(43);
-    ASSERT_EQ(0, v.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(0), v.ref_counter_);
     ptr_type b(table_(v));
-    ASSERT_EQ(1, v.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(1), v.ref_counter_);
 
     a = b;
-    ASSERT_EQ(0, u.ref_counter_);
-    ASSERT_EQ(2, v.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(0), u.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(2), v.ref_counter_);
   }
-  ASSERT_EQ(2, table_.nb_deletions_);
-  ASSERT_EQ(0, u.ref_counter_);
+  ASSERT_EQ(static_cast<std::size_t>(2), table_.nb_deletions_);
+  ASSERT_EQ(static_cast<std::size_t>(0), u.ref_counter_);
 
   table_.reset();
   // move
   {
     ptr_type a(table_(u));
-    ASSERT_EQ(1, u.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(1), u.ref_counter_);
     {
       ptr_type b(std::move(a));
-      ASSERT_EQ(1, u.ref_counter_);
+      ASSERT_EQ(static_cast<std::size_t>(1), u.ref_counter_);
       ASSERT_EQ(nullptr, &*a);
     }
-    ASSERT_EQ(0, u.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(0), u.ref_counter_);
   }
-  ASSERT_EQ(1, table_.nb_deletions_);
-  ASSERT_EQ(0, u.ref_counter_);
+  ASSERT_EQ(static_cast<std::size_t>(1), table_.nb_deletions_);
+  ASSERT_EQ(static_cast<std::size_t>(0), u.ref_counter_);
 
   table_.reset();
   // move operator
   {
     ptr_type a(table_(u));
-    ASSERT_EQ(1, u.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(1), u.ref_counter_);
 
     unique v(43);
-    ASSERT_EQ(0, v.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(0), v.ref_counter_);
     ptr_type b(table_(v));
-    ASSERT_EQ(1, v.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(1), v.ref_counter_);
 
     a = std::move(b);
-    ASSERT_EQ(0, u.ref_counter_);
-    ASSERT_EQ(1, v.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(0), u.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(1), v.ref_counter_);
   }
-  ASSERT_EQ(2, table_.nb_deletions_);
-  ASSERT_EQ(0, u.ref_counter_);
+  ASSERT_EQ(static_cast<std::size_t>(2), table_.nb_deletions_);
+  ASSERT_EQ(static_cast<std::size_t>(0), u.ref_counter_);
 
   table_.reset();
   // swap
   {
     unique v(43);
-    ASSERT_EQ(0, v.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(0), v.ref_counter_);
 
     ptr_type pu1(table_(u));
-    ASSERT_EQ(1, u.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(1), u.ref_counter_);
 
     ptr_type pu2(table_(u));
-    ASSERT_EQ(2, u.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(2), u.ref_counter_);
     
     ptr_type pv(table_(v));
-    ASSERT_EQ(1, v.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(1), v.ref_counter_);
 
     using std::swap;
     swap(pu1, pv);
-    ASSERT_EQ(2, u.ref_counter_);
-    ASSERT_EQ(1, v.ref_counter_);    
+    ASSERT_EQ(static_cast<std::size_t>(2), u.ref_counter_);
+    ASSERT_EQ(static_cast<std::size_t>(1), v.ref_counter_);
     ASSERT_EQ(pv, pu2);
     ASSERT_EQ(43, pu1->data());
     ASSERT_EQ(42, pv->data());
   }
-  ASSERT_EQ(2, table_.nb_deletions_);
-  ASSERT_EQ(0, u.ref_counter_);
+  ASSERT_EQ(static_cast<std::size_t>(2), table_.nb_deletions_);
+  ASSERT_EQ(static_cast<std::size_t>(0), u.ref_counter_);
 }
 
 /*------------------------------------------------------------------------------------------------*/
