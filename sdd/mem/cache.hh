@@ -209,7 +209,11 @@ private:
                                                        , boost::intrusive::hash<hash_key>
                                                        >::type
           set_type;
+
+  /// @brief Needed to use Boost.Intrusive.
   typedef typename set_type::bucket_type bucket_type;
+
+  /// @brief Needed to use Boost.Intrusive.
   typedef typename set_type::bucket_traits bucket_traits;
 
   /// @brief Boost.Intrusive requires us to manage ourselves its buckets.
@@ -239,6 +243,7 @@ public:
   {
   }
 
+  /// @brief Destructor.
   ~cache()
   {
     clear();
