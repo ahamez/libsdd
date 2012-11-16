@@ -56,7 +56,10 @@ private:
   /// @brief The number of rehash.
   std::size_t rehash_;
 
-  ///
+  /// The number of re-usable memory blocks to keep.
+  static constexpr std::size_t nb_blocks = 2048;
+
+  /// Index re-usable memory blocks by size.
   boost::container::flat_multimap<std::size_t, char*> blocks_;
 
 public:
@@ -67,6 +70,7 @@ public:
                                      , set_type::suggested_upper_bucket_count(initial_size))))
     , blocks_()
   {
+    blocks_.reserve(nb_blocks);
   }
 
   unique_table()
@@ -98,7 +102,7 @@ public:
     {
       ++hit_;
       u_ptr->~Unique();
-      if (blocks_.size() == 2048)
+      if (blocks_.size() == nb_blocks)
       {
         // erase last block
         auto it = blocks_.end() - 1;
