@@ -119,6 +119,7 @@ public:
   SDD&
   operator=(const SDD&) noexcept = default;
 
+  /// @internal
   /// @brief  Construct a terminal.
   /// @param  terminal If true, create the |1| terminal; the |0| terminal otherwise.
   /// @return The terminal |0| or |1|.

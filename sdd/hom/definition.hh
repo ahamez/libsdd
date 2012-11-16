@@ -97,6 +97,7 @@ public:
     return (*this)(hom::initial_context<C>(), x);
   }
 
+  /// @internal
   /// @brief Tell if this homomorphism skips a given variable.
   bool
   skip(const variable_type& variable)
@@ -105,6 +106,7 @@ public:
     return apply_visitor(skip_helper(), ptr()->data(), variable);
   }
 
+  /// @internal
   /// @brief Tell if this homomorphism returns only subsets.
   bool
   selector()

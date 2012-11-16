@@ -13,20 +13,20 @@
 namespace sdd
 {
 
-/// @brief Definition of values to be stored on arcs.
-namespace values {}
+/// @brief Internal stuff for decision diagrams.
+namespace dd {}
 
-/// @internal
-/// @brief Definition and evaluation of homomorphisms.
+/// @brief Internal stuff for homomorphisms.
 namespace hom {}
 
-/// @internal
-/// @brief Contain stuff necessary for the memory management.
+/// @brief Internal stuff necessary for the memory management.
 namespace mem {}
 
-/// @internal
 /// @brief Contain miscellaneous utilities.
 namespace util {}
+
+/// @brief Definition of values to be stored on arcs.
+namespace values {}
 
 }
 
