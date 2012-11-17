@@ -17,10 +17,6 @@
 
 #include "sdd/util/typelist.hh"
 
-#ifndef LIBSDD_VARIANT_SIZE
-#define LIBSDD_VARIANT_SIZE 16
-#endif
-
 namespace sdd { namespace mem {
 
 /*------------------------------------------------------------------------------------------------*/

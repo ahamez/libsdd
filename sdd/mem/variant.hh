@@ -1,6 +1,10 @@
 #ifndef _SDD_MEM_VARIANT_HH_
 #define _SDD_MEM_VARIANT_HH_
 
+#ifndef LIBSDD_VARIANT_SIZE
+#define LIBSDD_VARIANT_SIZE 16
+#endif
+
 #include <climits>     // USHRT_MAX
 #include <cstdint>     // uint8_t
 #include <functional>  // hash
@@ -58,6 +62,9 @@ private:
 
   static_assert( sizeof...(Types) <= UCHAR_MAX
                , "A variant can't hold more than UCHAR_MAX types.");
+
+  static_assert( sizeof...(Types) <= LIBSDD_VARIANT_SIZE
+               , "LIBSDD_VARIANT_SIZE is too small for the required number of types.");
 
   /// @brief Index of the held type in the list of all possible types.
   const uint8_t index_;
