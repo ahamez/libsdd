@@ -147,7 +147,7 @@ private:
   /// The operation acts as a key and the associated result is the value counterpart.
   struct
 #if defined __clang__
-  _LIBSDD_ATTRIBUTE_PACKED
+  LIBSDD_ATTRIBUTE_PACKED
 #endif
   cache_entry
     : public boost::intrusive::unordered_set_base_hook<link_mode>

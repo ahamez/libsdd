@@ -22,7 +22,7 @@ namespace dd {
 /// @internal
 /// @brief The sum operation in the cache.
 template <typename C>
-struct _LIBSDD_ATTRIBUTE_PACKED sum_op
+struct LIBSDD_ATTRIBUTE_PACKED sum_op
   : nary_base<C, sum_op<C>>
 {
   typedef nary_base<C, sum_op<C>> base_type;
@@ -218,7 +218,7 @@ struct _LIBSDD_ATTRIBUTE_PACKED sum_op
 /// This implementation is meant to be used as a policy by nary_builder which doesn't know how
 /// to add an arc.
 template <typename C, typename Valuation>
-struct _LIBSDD_ATTRIBUTE_PACKED sum_builder_impl
+struct LIBSDD_ATTRIBUTE_PACKED sum_builder_impl
 {
   void
   add(boost::container::flat_set<Valuation>& set, Valuation&& operand)

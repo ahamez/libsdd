@@ -43,7 +43,7 @@ apply_visitor(const Visitor&, const Variant&, Args&&...);
 /// This type is meant to be stored in a unique_table, wrapped in a ref_counted.
 /// Once constructed, it can never be assigned an other data.
 template <typename... Types>
-class _LIBSDD_ATTRIBUTE_PACKED variant
+class LIBSDD_ATTRIBUTE_PACKED variant
 {
   // Can't copy a variant.
   const variant& operator=(const variant&) = delete;

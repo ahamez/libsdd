@@ -227,7 +227,7 @@ private:
 /// @internal
 /// @brief Inductive homomorphism.
 template <typename C>
-class _LIBSDD_ATTRIBUTE_PACKED inductive
+class LIBSDD_ATTRIBUTE_PACKED inductive
 {
 private:
 

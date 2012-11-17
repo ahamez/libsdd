@@ -2,9 +2,9 @@
 #define _SDD_UTIL_PACKED_HH_
 
 #if defined LIBSDD_PACKED
-#  define _LIBSDD_ATTRIBUTE_PACKED __attribute__ ((__packed__))
+#  define LIBSDD_ATTRIBUTE_PACKED __attribute__ ((__packed__))
 #else
-#  define _LIBSDD_ATTRIBUTE_PACKED
+#  define LIBSDD_ATTRIBUTE_PACKED
 #endif
 
 #endif // _SDD_UTIL_PACKED_HH_

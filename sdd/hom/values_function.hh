@@ -165,7 +165,7 @@ private:
 /// @internal
 /// @brief Values homomorphism.
 template <typename C>
-class _LIBSDD_ATTRIBUTE_PACKED values_function
+class LIBSDD_ATTRIBUTE_PACKED values_function
 {
 private:
 

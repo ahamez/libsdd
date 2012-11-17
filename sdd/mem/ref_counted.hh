@@ -21,7 +21,7 @@ namespace sdd { namespace mem {
 template <typename T>
 class
 #ifdef __clang__
-_LIBSDD_ATTRIBUTE_PACKED
+LIBSDD_ATTRIBUTE_PACKED
 #endif
 ref_counted
 {

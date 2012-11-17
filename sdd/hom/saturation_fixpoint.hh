@@ -22,7 +22,7 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief Saturation Fixpoint homomorphism.
 template <typename C>
-class _LIBSDD_ATTRIBUTE_PACKED saturation_fixpoint
+class LIBSDD_ATTRIBUTE_PACKED saturation_fixpoint
 {
 public:
 

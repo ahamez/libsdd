@@ -16,7 +16,7 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief Composition homomorphism.
 template <typename C>
-class _LIBSDD_ATTRIBUTE_PACKED composition
+class LIBSDD_ATTRIBUTE_PACKED composition
 {
 public:
 

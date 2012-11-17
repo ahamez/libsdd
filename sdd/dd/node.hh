@@ -22,7 +22,7 @@ namespace sdd {
 /// its copy. Also, to enforce this canonicity, we need that nodes have always the same
 /// address, thus they can't be moved to an other memory location once created.
 template <typename C, typename Valuation>
-class _LIBSDD_ATTRIBUTE_PACKED node
+class LIBSDD_ATTRIBUTE_PACKED node
 {
   // Can't copy a node.
   node& operator=(const node&) = delete;
