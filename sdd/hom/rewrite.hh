@@ -207,24 +207,24 @@ struct cached_rewrite
   typedef typename C::Variable variable_type;
 
   /// @brief The homomorphism to rewrite.
-  const homomorphism<C> h_;
+  const homomorphism<C> hom;
 
   /// @brief The variable to rewrite the homomorphism for.
-  const variable_type var_;
+  const variable_type var;
 
   /// @brief Constructor.
   cached_rewrite(const homomorphism<C>& h, const variable_type& v)
-    : h_(h)
-    , var_(v)
+    : hom(h)
+    , var(v)
   {
   }
 
   /// @brief Launch the evaluation.
   homomorphism<C>
-  operator()()
+  operator()(context<C>&)
   const
   {
-    return apply_visitor(rewriter<C>(), h_->data(), h_, var_);
+    return apply_visitor(rewriter<C>(), hom->data(), hom, var);
   }
 };
 
@@ -236,7 +236,7 @@ template <typename C>
 bool
 operator==(const cached_rewrite<C>& lhs, const cached_rewrite<C>& rhs)
 {
-  return lhs.h_ == rhs.h_ and lhs.var_ == rhs.var_;
+  return lhs.hom == rhs.hom and lhs.var == rhs.var;
 }
 
 /// @internal
@@ -245,7 +245,7 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const cached_rewrite<C>& op)
 {
-  return os << "rewrite " << op.h_ << " for " << op.var_;
+  return os << "rewrite " << op.hom << " for " << op.var;
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -274,8 +274,8 @@ struct hash<sdd::hom::cached_rewrite<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::util::hash_combine(seed, op.h_);
-    sdd::util::hash_combine(seed, op.var_);
+    sdd::util::hash_combine(seed, op.hom);
+    sdd::util::hash_combine(seed, op.var);
     return seed;
   }
 };

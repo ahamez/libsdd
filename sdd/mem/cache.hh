@@ -127,7 +127,7 @@ struct cache_statistics
 /// @tparam Filters is a list of filters that reject some operations.
 ///
 /// It uses the LFU strategy to cleanup old entries.
-template <typename Operation, typename EvaluationError, typename... Filters>
+template <typename Context, typename Operation, typename EvaluationError, typename... Filters>
 class cache
 {
   // Can't copy a cache.
@@ -135,6 +135,9 @@ class cache
   cache* operator=(const cache&) = delete;
 
 private:
+
+  /// @brief The type of the context of this cache.
+  typedef Context context_type;
 
   /// @brief The type of the result of an operation stored in the cache.
   typedef typename Operation::result_type result_type;
@@ -198,6 +201,9 @@ private:
     }
   };
 
+  /// @brief This cache's context.
+  context_type& cxt_;
+
   /// @brief The cache name.
   const std::string name_;
 
@@ -228,14 +234,16 @@ private:
 public:
 
   /// @brief Construct a cache.
+  /// @param context This cache's context.
   /// @param name Give a name to this cache.
   /// @param size tells how many cache entries are keeped in the cache.
   ///
   /// When the maximal size is reached, a cleanup is launched: half of the cache is removed,
   /// using an LFU strategy. This cache will never perform a rehash, therefore it allocates
   /// all the memory it needs at its construction.
-  cache(const std::string& name, std::size_t size)
-    : name_(name)
+  cache(context_type& context, const std::string& name, std::size_t size)
+    : cxt_(context)
+    , name_(name)
     , max_size_(set_type::suggested_upper_bucket_count(size))
     , buckets_(new bucket_type[max_size_])
     , set_(new set_type(bucket_traits(buckets_, max_size_)))
@@ -261,7 +269,7 @@ public:
       ++stats_.rounds.front().filtered;
       try
       {
-        return op();
+        return op(cxt_);
       }
       catch (EvaluationError& e)
       {
@@ -297,7 +305,7 @@ public:
 
     try
     {
-      cache_entry* entry = new cache_entry(std::move(op), op());
+      cache_entry* entry = new cache_entry(std::move(op), op(cxt_));
       set_->insert_commit(*entry, commit_data); // doesn't throw
       return entry->result_;
     }

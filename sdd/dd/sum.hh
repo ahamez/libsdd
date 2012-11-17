@@ -50,7 +50,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op
   /// Also, a lot of tests permit to break loops as soon as possible.
   template <enum node_tag tag>
   SDD<C>
-  work()
+  work(context<C>& cxt)
   const
   {
     typedef typename node_for_tag<C, tag>::type node_type;
@@ -126,7 +126,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op
           intersection_builder<C, valuation_type> inter_builder;
           inter_builder.add(current_val);
           inter_builder.add(res_val);
-          const valuation_type inter = intersection(base_type::cxt_, std::move(inter_builder));
+          const valuation_type inter = intersection(cxt, std::move(inter_builder));
 
           // (E). The current valuation and the current arc from res have a common part.
           if (not inter.empty())
@@ -135,7 +135,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op
             save.back().second.add(current_succ);
 
             // (F).
-            valuation_type diff = difference(base_type::cxt_, res_val, inter);
+            valuation_type diff = difference(cxt, res_val, inter);
             if (not diff.empty())
             {
               // (res_val - inter) can't be in intersection, but we need to keep it
@@ -160,7 +160,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op
 
             // Continue with what remains of val. if val is empy, the loop will stop at the
             // next iteration.
-            current_val = difference(base_type::cxt_, current_val, inter);
+            current_val = difference(cxt, current_val, inter);
           }
           else // (H). Empty intersection, lookup for next possible common parts.
           {
@@ -203,10 +203,10 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op
     for (auto& arc : res)
     {
       // construct an operand for the square union: (successors union) --> valuation
-      su.add(sum(base_type::cxt_, std::move(arc.second)), arc.first);
+      su.add(sum(cxt, std::move(arc.second)), arc.first);
     }
 
-    return SDD<C>(head.variable(), su(base_type::cxt_));
+    return SDD<C>(head.variable(), su(cxt));
   }
 };
 
@@ -257,7 +257,7 @@ sum(context<C>& cxt, sum_builder<C, SDD<C>>&& builder)
   {
     return *builder.begin();
   }
-  return cxt.sum_cache()(sum_op<C>(cxt, builder));
+  return cxt.sum_cache()(sum_op<C>(builder));
 }
 
 /*------------------------------------------------------------------------------------------------*/

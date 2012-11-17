@@ -43,7 +43,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op
 
   template <enum node_tag tag>
   SDD<C>
-  work()
+  work(context<C>& cxt)
   const
   {
     typedef typename node_for_tag<C, tag>::type node_type;
@@ -77,13 +77,11 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op
           intersection_builder<C, valuation_type> valuation_builder;
           valuation_builder.add(lhs_arc.valuation());
           valuation_builder.add(rhs_arc.valuation());
-          valuation_type inter_val = intersection( base_type::cxt_
-                                                 , std::move(valuation_builder));
+          valuation_type inter_val = intersection(cxt, std::move(valuation_builder));
 
           if (not inter_val.empty())
           {
-            SDD<C> inter_succ = intersection( base_type::cxt_
-                                            , {lhs_arc.successor(), rhs_arc.successor()});
+            SDD<C> inter_succ = intersection(cxt, {lhs_arc.successor(), rhs_arc.successor()});
 
             if (not inter_succ.empty())
             {
@@ -100,7 +98,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op
       }
 
       /// TODO avoid to create an intermediary SDD at each loop.
-      res = SDD<C>(variable, su(base_type::cxt_));
+      res = SDD<C>(variable, su(cxt));
     }
 
     return res;
@@ -178,7 +176,7 @@ intersection(context<C>& cxt, intersection_builder<C, SDD<C>>&& builder)
   {
     return *builder.begin();
   }
-  return cxt.intersection_cache()(intersection_op<C>(cxt, builder));
+  return cxt.intersection_cache()(intersection_op<C>(builder));
 }
 
 /*------------------------------------------------------------------------------------------------*/

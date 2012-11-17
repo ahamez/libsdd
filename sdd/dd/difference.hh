@@ -149,9 +149,6 @@ struct difference_op
   /// @brief Needed by the cache to know the result of this operation.
   typedef SDD<C> result_type;
 
-  /// @brief The context of this operation.
-  context<C>& cxt;
-
   /// @brief The left operand of this difference operation.
   const SDD<C> lhs;
 
@@ -159,9 +156,8 @@ struct difference_op
   const SDD<C> rhs;
 
   /// @brief Constructor.
-  difference_op(context<C>& c, const SDD<C>& l, const SDD<C>& r)
-  	: cxt(c)
-    , lhs(l)
+  difference_op(const SDD<C>& l, const SDD<C>& r)
+  	: lhs(l)
 		, rhs(r)
   {
   }
@@ -170,7 +166,7 @@ struct difference_op
   ///
   /// Called by the cache.
   SDD<C>
-  operator()()
+  operator()(context<C>& cxt)
   const
   {
     return apply_binary_visitor(difference_visitor<C>(cxt, lhs, rhs), lhs->data(), rhs->data());
@@ -221,7 +217,7 @@ difference(context<C>& cxt, const SDD<C>& lhs, const SDD<C>& rhs)
   {
     return lhs;
   }
-  return cxt.difference_cache()(difference_op<C>(cxt, lhs, rhs));
+  return cxt.difference_cache()(difference_op<C>(lhs, rhs));
 }
 
 /*------------------------------------------------------------------------------------------------*/

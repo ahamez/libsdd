@@ -27,13 +27,13 @@ class context
 public:
 
   /// @brief Cache parameterized by the difference operation and the top error.
-  typedef mem::cache<difference_op<C>, top<C>> difference_cache_type;
+  typedef mem::cache<context, difference_op<C>, top<C>> difference_cache_type;
 
   /// @brief Cache parameterized by the intersection operation and the top error.
-  typedef mem::cache<intersection_op<C>, top<C>> intersection_cache_type;
+  typedef mem::cache<context, intersection_op<C>, top<C>> intersection_cache_type;
 
   /// @brief Cache parameterized by the sum operation and the top error.
-  typedef mem::cache<sum_op<C>, top<C>> sum_cache_type;
+  typedef mem::cache<context, sum_op<C>, top<C>> sum_cache_type;
 
 private:
 
@@ -50,11 +50,11 @@ public:
 
   /// @brief Create a new empty context.
   context(std::size_t difference_size, std::size_t intersection_size, std::size_t sum_size)
-	 	: difference_cache_(std::make_shared<difference_cache_type>( "sdd_difference_cache"
+	 	: difference_cache_(std::make_shared<difference_cache_type>( *this, "sdd_difference_cache"
                                                                , difference_size))
-    , intersection_cache_(std::make_shared<intersection_cache_type>( "sdd_intersection_cache"
+    , intersection_cache_(std::make_shared<intersection_cache_type>( *this, "sdd_intersection_cache"
                                                                    , intersection_size))
-    , sum_cache_(std::make_shared<sum_cache_type>("sdd_sum_cache", sum_size))
+    , sum_cache_(std::make_shared<sum_cache_type>(*this, "sdd_sum_cache", sum_size))
   {
   }
 
