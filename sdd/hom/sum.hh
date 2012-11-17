@@ -11,6 +11,7 @@
 #include <boost/container/flat_set.hpp>
 
 #include "sdd/dd/definition.hh"
+#include "sdd/dd/top.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
