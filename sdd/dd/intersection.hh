@@ -117,11 +117,12 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op
 template <typename C, typename Valuation>
 struct LIBSDD_ATTRIBUTE_PACKED intersection_builder_impl
 {
-  bool has_zero_;
   /// @brief Tell if a zero is contained in this set of operands.
+  bool has_zero;
 
+  /// @brief Constructor.
   intersection_builder_impl()
-    : has_zero_(false)
+    : has_zero(false)
   {
   }
 
@@ -129,13 +130,13 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_builder_impl
   void
   add(boost::container::flat_set<Valuation>& set, Valuation&& operand)
   {
-    if (has_zero_)
+    if (has_zero)
     {
       return;
     }
     if (operand.empty())
     {
-      has_zero_ = true,
+      has_zero = true,
       set.clear();
       return;
     }
@@ -146,13 +147,13 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_builder_impl
   void
   add(boost::container::flat_set<Valuation>& set, const Valuation& operand)
   {
-    if (has_zero_)
+    if (has_zero)
     {
       return;
     }
     if (operand.empty())
     {
-      has_zero_ = true,
+      has_zero = true,
       set.clear();
       return;
     }

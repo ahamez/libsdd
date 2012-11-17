@@ -149,23 +149,31 @@ struct difference_op
   /// @brief Needed by the cache to know the result of this operation.
   typedef SDD<C> result_type;
 
-  context<C>& cxt_;
-  const SDD<C> lhs_;
-  const SDD<C> rhs_;
+  /// @brief The context of this operation.
+  context<C>& cxt;
 
-  difference_op(context<C>& cxt, const SDD<C>& lhs, const SDD<C>& rhs)
-  	: cxt_(cxt)
-    , lhs_(lhs)
-		, rhs_(rhs)
+  /// @brief The left operand of this difference operation.
+  const SDD<C> lhs;
+
+  /// @brief The right operand of this difference operation.
+  const SDD<C> rhs;
+
+  /// @brief Constructor.
+  difference_op(context<C>& c, const SDD<C>& l, const SDD<C>& r)
+  	: cxt(c)
+    , lhs(l)
+		, rhs(r)
   {
   }
 
+  /// @brief Apply this operation.
+  ///
+  /// Called by the cache.
   SDD<C>
   operator()()
   const
   {
-    return apply_binary_visitor( difference_visitor<C>(cxt_, lhs_, rhs_)
-                               , lhs_->data(), rhs_->data());
+    return apply_binary_visitor(difference_visitor<C>(cxt, lhs, rhs), lhs->data(), rhs->data());
   }
 };
 
@@ -179,7 +187,7 @@ bool
 operator==(const difference_op<C>& lhs, const difference_op<C>& rhs)
 noexcept
 {
-  return lhs.lhs_ == rhs.lhs_ and lhs.rhs_ == rhs.rhs_;
+  return lhs.lhs == rhs.lhs and lhs.rhs == rhs.rhs;
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -190,7 +198,7 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const difference_op<C>& x)
 {
-  return os << "- (" << x.lhs_ << "," << x.rhs_ << ")";
+  return os << "- (" << x.lhs << "," << x.rhs << ")";
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -273,8 +281,8 @@ struct hash<sdd::dd::difference_op<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::util::hash_combine(seed, op.lhs_);
-    sdd::util::hash_combine(seed, op.rhs_);
+    sdd::util::hash_combine(seed, op.lhs);
+    sdd::util::hash_combine(seed, op.rhs);
     return seed;
   }
 };
