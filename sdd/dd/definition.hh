@@ -66,18 +66,18 @@ private:
   /// can be a flat or an hierachical node.
   typedef mem::variant< const zero_terminal<C>, const one_terminal<C>
                       , const flat_node<C>, const hierarchical_node<C>>
-          SDD_data;
+          data_type;
 
   /// @brief A unified and canonized SDD, meant to be stored in a unique table.
   ///
   /// It is automatically erased when there is no more reference to it.
-  typedef mem::ref_counted<const SDD_data> SDD_unique;
+  typedef mem::ref_counted<const data_type> unique_type;
 
   /// @brief Define the smart pointer around a unified SDD.
   ///
   /// It handles the reference counting as well as the deletion of the SDD when it is no longer
   /// referenced.
-  typedef mem::ptr<const SDD_unique> ptr_type;
+  typedef mem::ptr<const unique_type> ptr_type;
 
 public:
 
@@ -234,7 +234,7 @@ public:
   /// @brief Get the content of the SDD (an mem::ref_counted).
   ///
   /// O(1).
-  const SDD_unique&
+  const unique_type&
   operator*()
   const noexcept
   {
@@ -245,7 +245,7 @@ public:
   /// @brief Get a pointer to the content of the SDD (an mem::ref_counted).
   ///
   /// O(1).
-  const SDD_unique*
+  const unique_type*
   operator->()
   const noexcept
   {
@@ -271,8 +271,8 @@ public:
   ptr_type
   zero_ptr()
   {
-    static SDD_unique* z = new SDD_unique(mem::construct<zero_terminal<C>>());
-    static const ptr_type zero(mem::unify(z, sizeof(SDD_unique)));
+    static unique_type* z = new unique_type(mem::construct<zero_terminal<C>>());
+    static const ptr_type zero(mem::unify(z, sizeof(unique_type)));
     return zero;
   }
 
@@ -284,8 +284,8 @@ public:
   ptr_type
   one_ptr()
   {
-    static SDD_unique* o = new SDD_unique(mem::construct<one_terminal<C>>());
-    static const ptr_type one(mem::unify(o, sizeof(SDD_unique)));
+    static unique_type* o = new unique_type(mem::construct<one_terminal<C>>());
+    static const ptr_type one(mem::unify(o, sizeof(unique_type)));
     return one;
   }
 
@@ -358,7 +358,7 @@ private:
   /// O(n) where n is the number of arcs in the builder.
   template <typename Valuation>
   static
-  const SDD_unique&
+  const unique_type&
   unify_node(const variable_type& var, dd::alpha_builder<C, Valuation>&& builder)
   {
     // Will be erased by the unicity table, either it's an already existing node or a deletion
@@ -366,10 +366,10 @@ private:
     // Note that the alpha function is allocated right behind the node, thus extra care must be
     // taken. This is also why we use Boost.Intrusive in order to be able to manage memory
     // exactly the way we want.
-    const std::size_t size = sizeof(SDD_unique) + builder.size_to_allocate();
-    char* addr = mem::allocate<SDD_unique>(size);
-    SDD_unique* u =
-      new (addr) SDD_unique(mem::construct<node<C, Valuation>>(), var, builder);
+    const std::size_t size = sizeof(unique_type) + builder.size_to_allocate();
+    char* addr = mem::allocate<unique_type>(size);
+    unique_type* u =
+      new (addr) unique_type(mem::construct<node<C, Valuation>>(), var, builder);
     return mem::unify(u, size);
   }
 
