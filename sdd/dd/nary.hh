@@ -8,6 +8,7 @@
 
 #include <boost/container/flat_set.hpp>
 
+#include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/top.hh"
 
@@ -86,42 +87,37 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_base
   /// To iterate on operands.
   typedef const SDD<C>* const_iterator;
 
-  /// The evaluation context.
-  context<C>& cxt_;
-
   /// The dynamically allocated array of operands.
-  char* operands_;
+  char* operands;
 
   /// The number of operands.
-  const typename C::operands_size_type size_;
+  const typename C::operands_size_type size;
 
   template <typename Builder>
-  nary_base(context<C>& cxt, Builder& builder)
-    : cxt_(cxt)
-    , operands_(new char[builder.size_to_allocate()])
-    , size_(static_cast<typename C::operands_size_type>(builder.size()))
+  nary_base(Builder& builder)
+    : operands(new char[builder.size_to_allocate()])
+    , size(static_cast<typename C::operands_size_type>(builder.size()))
   {
-    builder.consolidate(operands_);
+    builder.consolidate(operands);
   }
 
   nary_base(nary_base&& other)
   noexcept
-    : cxt_(other.cxt_)
-    , operands_(other.operands_)
-    , size_(other.size_)
+    : operands(other.operands)
+    , size(other.size)
   {
-    other.operands_ = nullptr;
+    other.operands = nullptr;
   }
 
   ~nary_base()
   {
-    if (operands_ != nullptr)
+    if (operands != nullptr)
     {
       for (auto& operand : *this)
       {
         operand.~SDD<C>();
       }
-      delete[] operands_;
+      delete[] operands;
     }
   }
 
@@ -129,18 +125,18 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_base
   begin()
   const noexcept
   {
-    return reinterpret_cast<const SDD<C>*>(operands_);
+    return reinterpret_cast<const SDD<C>*>(operands);
   }
 
   const_iterator
   end()
   const noexcept
   {
-    return reinterpret_cast<const SDD<C>*>(operands_) + size_;
+    return reinterpret_cast<const SDD<C>*>(operands) + size;
   }
 
   SDD<C>
-  operator()()
+  operator()(context<C>& cxt)
   const
   {
     // Check compatibility of operands, size is necessarily at least 2.
@@ -157,11 +153,11 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_base
     const Operation* impl = static_cast<const Operation*>(this);
     if (tag == node_tag::flat)
     {
-      return impl->template work<node_tag::flat>();
+      return impl->template work<node_tag::flat>(cxt);
     }
     else
     {
-      return impl->template work<node_tag::hierarchical>();
+      return impl->template work<node_tag::hierarchical>(cxt);
     }
   }
 };
@@ -177,7 +173,7 @@ bool
 operator==(const nary_base<C, Operation>& lhs, const nary_base<C, Operation>& rhs)
 noexcept
 {
-  return lhs.size_ == rhs.size_ and std::equal(lhs.begin(), lhs.end(), rhs.begin());
+  return lhs.size == rhs.size and std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 /// @internal

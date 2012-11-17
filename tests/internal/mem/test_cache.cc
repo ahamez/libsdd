@@ -6,6 +6,13 @@ using namespace sdd::mem;
 
 /*------------------------------------------------------------------------------------------------*/
 
+struct context
+{
+};
+
+context cxt;
+
+
 struct error
   : public std::exception
 {
@@ -36,7 +43,7 @@ struct operation
   }
 
   std::size_t
-  operator()()
+  operator()(context&)
   const
   {
     if (i_ == 6666)
@@ -84,7 +91,7 @@ struct hash<operation>
 
 TEST(cache, creation)
 {
-  cache<operation, error> c("c", 100);
+  cache<context, operation, error> c(cxt, "c", 100);
   const auto& stats = c.statistics().rounds.front();
 
   ASSERT_EQ(static_cast<std::size_t>(0), stats.hits);
@@ -96,7 +103,7 @@ TEST(cache, creation)
 
 TEST(cache, insertion)
 {
-  cache<operation, error> c("c", 100);
+  cache<context, operation, error> c(cxt, "c", 100);
   const auto& stats = c.statistics().rounds.front();
 
   ASSERT_EQ(static_cast<std::size_t>(2), c(operation(1)));
@@ -168,7 +175,7 @@ struct filter_6666
 TEST(cache, filters)
 {
   {
-    cache<operation, error, filter_0> c("c", 100);
+    cache<context, operation, error, filter_0> c(cxt, "c", 100);
     const auto& stats = c.statistics().rounds.front();
 
     ASSERT_EQ(static_cast<std::size_t>(2), c(operation(1)));
@@ -187,7 +194,7 @@ TEST(cache, filters)
     ASSERT_EQ(static_cast<std::size_t>(2), stats.filtered);
   }
   {
-    cache<operation, error, filter_0, filter_1> c("c", 100);
+    cache<context, operation, error, filter_0, filter_1> c(cxt, "c", 100);
     const auto& stats = c.statistics().rounds.front();
 
     ASSERT_EQ(static_cast<std::size_t>(2), c(operation(1)));
@@ -222,11 +229,11 @@ TEST(cache, filters)
 TEST(cache, exception)
 {
   {
-    cache<operation, error> c("c", 100);
+    cache<context, operation, error> c(cxt, "c", 100);
     ASSERT_THROW(c(operation(6666)), error);
   }
   {
-    cache<operation, error, filter_6666> c("c", 100);
+    cache<context, operation, error, filter_6666> c(cxt, "c", 100);
     ASSERT_THROW(c(operation(6666)), error);
   }
 }
@@ -235,7 +242,7 @@ TEST(cache, exception)
 
 TEST(cache, cleanup)
 {
-  cache<operation, error> c("c", 1024);
+  cache<context, operation, error> c(cxt, "c", 1024);
   for (std::size_t i = 0; i < 2048; ++i)
   {
     ASSERT_EQ(static_cast<std::size_t>(i + 1), c(operation(i)));

@@ -11,7 +11,7 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-typedef sdd::conf::conf0 conf;
+typedef sdd::conf0 conf;
 typedef conf::Identifier identifier_type;
 typedef conf::Values bitset_type;
 typedef sdd::SDD<conf> SDD;

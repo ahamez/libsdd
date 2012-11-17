@@ -8,6 +8,7 @@
 #include <typeinfo>  // typeid
 
 #include "sdd/dd/definition.hh"
+#include "sdd/dd/top.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
@@ -245,7 +246,16 @@ private:
         {
           sum_operands.add(SDD<C>(o.variable(), fun(arc.valuation()), arc.successor()));
         }
-        return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+        try
+        {
+          return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+        }
+        catch (top<C>& t)
+        {
+          evaluation_error<C> e(s);
+          e.add_top(t);
+          throw e;
+        }
       }
     }
   };

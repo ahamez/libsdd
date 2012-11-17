@@ -14,6 +14,9 @@
 namespace sdd
 {
 
+/// @brief Internal stuff related to the library configuration.
+namespace conf {}
+
 /// @brief Internal stuff for decision diagrams.
 namespace dd {}
 
@@ -31,6 +34,9 @@ namespace util {}
 
 /// @brief Definition of values to be stored on arcs.
 namespace values {}
+
+/// @brief Essentially hash specialization.
+namespace std {}
 
 }
 

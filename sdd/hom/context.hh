@@ -25,8 +25,8 @@ class context
 {
 public:
 
-  /// @brief Cache type.
-  typedef mem::cache<cached_homomorphism<C>, evaluation_error<C>, should_cache<C>>
+  /// @brief Homomorphism evaluation cache type.
+  typedef mem::cache<context, cached_homomorphism<C>, evaluation_error<C>, should_cache<C>>
           cache_type;
 
   /// @brief SDD operation context type.
@@ -49,7 +49,7 @@ public:
 
   /// @brief Construct a new context.
   context(std::size_t size, sdd_context_type& sdd_cxt)
-   	: cache_(std::make_shared<cache_type>("homomorphism_cache", size))
+   	: cache_(std::make_shared<cache_type>(*this, "homomorphism_cache", size))
     , sdd_context_(sdd_cxt)
     , size_(size)
   {

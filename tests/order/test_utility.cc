@@ -16,7 +16,7 @@ struct order_utility_test
 
 struct initializer
 {
-  sdd::conf::conf0::Values
+  sdd::conf0::Values
   operator()(const std::string&)
   const
   {

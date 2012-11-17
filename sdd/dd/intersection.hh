@@ -43,7 +43,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op
 
   template <enum node_tag tag>
   SDD<C>
-  work()
+  work(context<C>& cxt)
   const
   {
     typedef typename node_for_tag<C, tag>::type node_type;
@@ -77,13 +77,11 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op
           intersection_builder<C, valuation_type> valuation_builder;
           valuation_builder.add(lhs_arc.valuation());
           valuation_builder.add(rhs_arc.valuation());
-          valuation_type inter_val = intersection( base_type::cxt_
-                                                 , std::move(valuation_builder));
+          valuation_type inter_val = intersection(cxt, std::move(valuation_builder));
 
           if (not inter_val.empty())
           {
-            SDD<C> inter_succ = intersection( base_type::cxt_
-                                            , {lhs_arc.successor(), rhs_arc.successor()});
+            SDD<C> inter_succ = intersection(cxt, {lhs_arc.successor(), rhs_arc.successor()});
 
             if (not inter_succ.empty())
             {
@@ -100,7 +98,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op
       }
 
       /// TODO avoid to create an intermediary SDD at each loop.
-      res = SDD<C>(variable, su(base_type::cxt_));
+      res = SDD<C>(variable, su(cxt));
     }
 
     return res;
@@ -117,39 +115,43 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op
 template <typename C, typename Valuation>
 struct LIBSDD_ATTRIBUTE_PACKED intersection_builder_impl
 {
-  bool has_zero_;
+  /// @brief Tell if a zero is contained in this set of operands.
+  bool has_zero;
 
+  /// @brief Constructor.
   intersection_builder_impl()
-    : has_zero_(false)
+    : has_zero(false)
   {
   }
 
+  /// @brief Add an rvalue operand.
   void
   add(boost::container::flat_set<Valuation>& set, Valuation&& operand)
   {
-    if (has_zero_)
+    if (has_zero)
     {
       return;
     }
     if (operand.empty())
     {
-      has_zero_ = true,
+      has_zero = true,
       set.clear();
       return;
     }
     set.insert(std::move(operand));
   }
 
+  /// @brief Add an lvalue operand.
   void
   add(boost::container::flat_set<Valuation>& set, const Valuation& operand)
   {
-    if (has_zero_)
+    if (has_zero)
     {
       return;
     }
     if (operand.empty())
     {
-      has_zero_ = true,
+      has_zero = true,
       set.clear();
       return;
     }
@@ -174,7 +176,7 @@ intersection(context<C>& cxt, intersection_builder<C, SDD<C>>&& builder)
   {
     return *builder.begin();
   }
-  return cxt.intersection_cache()(intersection_op<C>(cxt, builder));
+  return cxt.intersection_cache()(intersection_op<C>(builder));
 }
 
 /*------------------------------------------------------------------------------------------------*/

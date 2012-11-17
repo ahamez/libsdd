@@ -95,35 +95,30 @@ struct cached_homomorphism
   /// @brief Needed by the cache.
   typedef SDD<C> result_type;
 
-  /// @brief The evaluation context.
-  context<C>& cxt_;
-
   /// @brief The current order position.
-  const order::order<C>& order_;
+  const order::order<C>& order;
 
   /// @brief The homomorphism to evaluate.
-  const homomorphism<C> h_;
+  const homomorphism<C> hom;
 
   /// @brief The homomorphism's operand.
-  const SDD<C> sdd_;
+  const SDD<C> sdd;
 
   /// @brief Constructor.
   cached_homomorphism( context<C>& cxt, const order::order<C>& o, const homomorphism<C>& h
                      , const SDD<C>& s)
-    : cxt_(cxt)
-    , order_(o)
-    , h_(h)
-    , sdd_(s)
+    : order(o)
+    , hom(h)
+    , sdd(s)
   {
   }
 
   /// @brief Launch the evaluation.
   SDD<C>
-  operator()()
+  operator()(context<C>& cxt)
   const
   {
-    return apply_binary_visitor( evaluation<C>(), h_->data(), sdd_->data()
-                               , sdd_, cxt_, order_, h_);
+    return apply_binary_visitor(evaluation<C>(), hom->data(), sdd->data(), sdd, cxt, order, hom);
   }
 };
 
@@ -137,7 +132,7 @@ bool
 operator==(const cached_homomorphism<C>& lhs, const cached_homomorphism<C>& rhs)
 noexcept
 {
-  return lhs.h_ == rhs.h_ and lhs.sdd_ == rhs.sdd_;
+  return lhs.hom == rhs.hom and lhs.sdd == rhs.sdd;
 }
 
 /// @internal
@@ -146,7 +141,7 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const cached_homomorphism<C>& ch)
 {
-  return os << ch.h_;
+  return os << ch.hom;
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -173,7 +168,7 @@ struct should_cache
   operator()(const cached_homomorphism<C>& ch)
   const noexcept
   {
-    return apply_visitor(*this, ch.h_->data());
+    return apply_visitor(*this, ch.hom->data());
   }
 };
 
@@ -191,12 +186,12 @@ template <typename C>
 struct hash<sdd::hom::cached_homomorphism<C>>
 {
   std::size_t
-  operator()(const sdd::hom::cached_homomorphism<C>& op)
+  operator()(const sdd::hom::cached_homomorphism<C>& ch)
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::util::hash_combine(seed, op.h_);
-    sdd::util::hash_combine(seed, op.sdd_);
+    sdd::util::hash_combine(seed, ch.hom);
+    sdd::util::hash_combine(seed, ch.sdd);
     return seed;
   }
 };
