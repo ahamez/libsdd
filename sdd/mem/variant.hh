@@ -20,6 +20,8 @@
 
 namespace sdd { namespace mem {
 
+/*------------------------------------------------------------------------------------------------*/
+
 /// @internal
 /// @page Variant
 ///
@@ -33,7 +35,6 @@ namespace sdd { namespace mem {
 /// The visitation uses 'computed goto', a GCC extension, also supported by clang.
 /// Note that a 'switch' statement will also do the job.
 /// http://gcc.gnu.org/onlinedocs/gcc-4.7.2/gcc/Labels-as-Values.html
-
 
 /*------------------------------------------------------------------------------------------------*/
 
