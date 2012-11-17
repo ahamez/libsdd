@@ -3,6 +3,7 @@
 
 #include <iosfwd>
 
+#include "sdd/dd/definition.hh"
 #include "sdd/dd/sum.hh"
 #include "sdd/hom/composition.hh"
 #include "sdd/hom/cons.hh"
