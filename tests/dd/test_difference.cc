@@ -12,7 +12,7 @@ using namespace sdd;
 struct difference_test
   : public testing::Test
 {
-  typedef sdd::conf::conf0 conf;
+  typedef sdd::conf0 conf;
   typedef sdd::SDD<conf> SDD;
   dd::context<conf> cxt;
   const SDD zero = sdd::zero<conf>();

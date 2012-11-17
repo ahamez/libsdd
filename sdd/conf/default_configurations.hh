@@ -6,7 +6,7 @@
 #include "sdd/values/bitset.hh"
 #include "sdd/values/unique_flat_set.hh"
 
-namespace sdd { namespace conf {
+namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -36,6 +36,6 @@ struct conf1
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::conf
+}
 
 #endif // _SDD_CONF_DEFAULT_CONFIGURATIONS_HH_

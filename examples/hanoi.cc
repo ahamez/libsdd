@@ -6,10 +6,10 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-typedef sdd::conf::conf1 conf;
+typedef sdd::conf1 conf;
 typedef sdd::SDD<conf> SDD;
 typedef sdd::homomorphism<conf> hom;
-typedef sdd::conf::conf1::Values Values;
+typedef sdd::conf1::Values Values;
 
 SDD one = sdd::one<conf>();
 SDD zero = sdd::zero<conf>();
