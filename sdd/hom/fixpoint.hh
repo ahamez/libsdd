@@ -25,7 +25,7 @@ namespace hom {
 /// @internal
 /// @brief Fixpoint homomorphism.
 template <typename C>
-class _LIBSDD_ATTRIBUTE_PACKED fixpoint
+class LIBSDD_ATTRIBUTE_PACKED fixpoint
 {
 private:
 

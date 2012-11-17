@@ -11,7 +11,7 @@
 struct sum_test
   : public testing::Test
 {
-  typedef sdd::conf::conf0 conf;
+  typedef sdd::conf0 conf;
   typedef sdd::SDD<conf> SDD;
   sdd::dd::context<conf> cxt;
   typedef sdd::dd::alpha_builder<conf, conf::Values> flat_alpha_builder;

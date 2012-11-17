@@ -1,6 +1,10 @@
 #ifndef _SDD_MEM_VARIANT_HH_
 #define _SDD_MEM_VARIANT_HH_
 
+#ifndef LIBSDD_VARIANT_SIZE
+#define LIBSDD_VARIANT_SIZE 16
+#endif
+
 #include <climits>     // USHRT_MAX
 #include <cstdint>     // uint8_t
 #include <functional>  // hash
@@ -25,6 +29,7 @@ struct construct {};
 
 /*------------------------------------------------------------------------------------------------*/
 
+// Forward declaration for destructor.
 template <typename Visitor, typename Variant, typename... Args>
 typename Visitor::result_type
 apply_visitor(const Visitor&, const Variant&, Args&&...);
@@ -38,7 +43,7 @@ apply_visitor(const Visitor&, const Variant&, Args&&...);
 /// This type is meant to be stored in a unique_table, wrapped in a ref_counted.
 /// Once constructed, it can never be assigned an other data.
 template <typename... Types>
-class _LIBSDD_ATTRIBUTE_PACKED variant
+class LIBSDD_ATTRIBUTE_PACKED variant
 {
   // Can't copy a variant.
   const variant& operator=(const variant&) = delete;
@@ -58,6 +63,9 @@ private:
 
   static_assert( sizeof...(Types) <= UCHAR_MAX
                , "A variant can't hold more than UCHAR_MAX types.");
+
+  static_assert( sizeof...(Types) <= LIBSDD_VARIANT_SIZE
+               , "LIBSDD_VARIANT_SIZE is too small for the required number of types.");
 
   /// @brief Index of the held type in the list of all possible types.
   const uint8_t index_;
@@ -128,9 +136,9 @@ inline
 typename Visitor::result_type
 apply_visitor(const Visitor& v, const Variant<Types...>& x, Args&&... args)
 {
-  return dispatch<0>()( v
-                      , x.storage(), util::typelist<Types...>(), x.index()
-                      , std::forward<Args>(args)...);
+  return dispatch( v
+                 , x.storage(), util::typelist<Types...>(), x.index()
+                 , std::forward<Args>(args)...);
 }
 
 /// @internal
@@ -145,10 +153,10 @@ apply_binary_visitor( const Visitor& v
                     , const Variant1<Types1...>& x, const Variant2<Types2...>& y
                     , Args&&... args)
 {
-  return dispatch_binary<0>()( v
-                             , x.storage(), util::typelist<Types1...>(), x.index()
-                             , y.storage(), util::typelist<Types2...>(), y.index()
-                             , std::forward<Args>(args)...);
+  return binary_dispatch( v
+                        , x.storage(), util::typelist<Types1...>(), x.index()
+                        , y.storage(), util::typelist<Types2...>(), y.index()
+                        , std::forward<Args>(args)...);
 }
 
 /// @internal
@@ -201,8 +209,7 @@ struct hash<const sdd::mem::variant<Types...>>
   operator()(const sdd::mem::variant<Types...>& x)
   const noexcept
   {
-    std::size_t seed =
-      sdd::mem::apply_visitor(sdd::mem::hash_visitor(), x);
+    std::size_t seed = sdd::mem::apply_visitor(sdd::mem::hash_visitor(), x);
     sdd::util::hash_combine(seed, x.index());
     return seed;
   }

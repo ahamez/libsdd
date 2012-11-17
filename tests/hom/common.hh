@@ -12,7 +12,7 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-typedef sdd::conf::conf0 conf;
+typedef sdd::conf0 conf;
 typedef sdd::SDD<conf> SDD;
 typedef sdd::homomorphism<conf> hom;
 typedef sdd::values::bitset<64> bitset;

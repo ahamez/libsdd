@@ -74,7 +74,7 @@ struct check_visitor
 /// correct type (flat or hierarchical node). Use CRTP.
 /// As it's an internally used structure, we don't bother with private and public sections.
 template <typename C, typename Operation>
-struct _LIBSDD_ATTRIBUTE_PACKED nary_base
+struct LIBSDD_ATTRIBUTE_PACKED nary_base
 {
   // Can't copy a nary_base.
   nary_base(const nary_base&) = delete;
@@ -201,7 +201,7 @@ operator<<(std::ostream& os, const nary_base<C, Operation>& x)
 /// smallest possible memory to store all of them (this allocation is performed in the
 /// construction of operations in nary_base).
 template <typename Valuation, typename Builder>
-struct _LIBSDD_ATTRIBUTE_PACKED nary_builder
+struct LIBSDD_ATTRIBUTE_PACKED nary_builder
 {
   typedef boost::container::flat_set<Valuation> set_type;
   typedef typename set_type::const_iterator const_iterator;

@@ -7,13 +7,13 @@
 /*------------------------------------------------------------------------------------------------*/
 
 struct conf
-  : public sdd::conf::conf1
+  : public sdd::conf1
 {
   typedef unsigned int Identifier;
 };
 typedef sdd::SDD<conf> SDD;
 typedef sdd::homomorphism<conf> hom;
-typedef sdd::conf::conf1::Values Values;
+typedef sdd::conf1::Values Values;
 
 SDD one = sdd::one<conf>();
 SDD zero = sdd::zero<conf>();

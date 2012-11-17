@@ -147,7 +147,7 @@ private:
   /// The operation acts as a key and the associated result is the value counterpart.
   struct
 #if defined __clang__
-  _LIBSDD_ATTRIBUTE_PACKED
+  LIBSDD_ATTRIBUTE_PACKED
 #endif
   cache_entry
     : public boost::intrusive::unordered_set_base_hook<link_mode>
@@ -209,7 +209,11 @@ private:
                                                        , boost::intrusive::hash<hash_key>
                                                        >::type
           set_type;
+
+  /// @brief Needed to use Boost.Intrusive.
   typedef typename set_type::bucket_type bucket_type;
+
+  /// @brief Needed to use Boost.Intrusive.
   typedef typename set_type::bucket_traits bucket_traits;
 
   /// @brief Boost.Intrusive requires us to manage ourselves its buckets.
@@ -239,6 +243,7 @@ public:
   {
   }
 
+  /// @brief Destructor.
   ~cache()
   {
     clear();

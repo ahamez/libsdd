@@ -28,7 +28,6 @@ set(SOURCES
     internal/mem/test_cache.cc
     internal/mem/test_ptr.cc
     internal/mem/test_unique_table.cc
-    internal/mem/test_variant_no_unroll.cc
     internal/mem/test_variant.cc
     order/test_order.cc
     order/test_utility.cc

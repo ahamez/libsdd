@@ -18,7 +18,7 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief Local homomorphism.
 template <typename C>
-class _LIBSDD_ATTRIBUTE_PACKED local
+class LIBSDD_ATTRIBUTE_PACKED local
 {
 private:
 

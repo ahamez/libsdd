@@ -11,7 +11,7 @@
 struct definition_test
   : public testing::Test
 {
-  typedef sdd::conf::conf0 conf;
+  typedef sdd::conf0 conf;
   typedef sdd::SDD<conf> SDD;
   const SDD zero = sdd::zero<conf>();
   const SDD one = sdd::one<conf>();

@@ -16,7 +16,7 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief Cons homomorphism.
 template <typename C, typename Valuation>
-class _LIBSDD_ATTRIBUTE_PACKED cons
+class LIBSDD_ATTRIBUTE_PACKED cons
 {
 public:
 

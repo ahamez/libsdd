@@ -27,6 +27,7 @@ private:
 
 public:
 
+  /// @brief Constructor with a unified data.
   ptr(const Unique& p)
   noexcept
   	: x_(&p)
@@ -34,6 +35,7 @@ public:
     x_->increment_reference_counter();
   }
 
+  /// @brief Copy constructor.
   ptr(const ptr& other)
   noexcept
     : x_(other.x_)
@@ -44,6 +46,7 @@ public:
     }
   }
 
+  /// @brief Copy operator.
   ptr&
   operator=(const ptr& other)
   noexcept
@@ -64,6 +67,7 @@ public:
     return *this;
   }
 
+  /// @brief Move constructor.
   ptr(ptr&& other)
   noexcept
   	: x_(other.x_)
@@ -71,6 +75,7 @@ public:
     other.x_ = nullptr;
   }
 
+  /// @brief Move operator.
   ptr&
   operator=(ptr&& other)
   noexcept
@@ -88,6 +93,7 @@ public:
     return *this;
   }
 
+  /// @brief Destructor.
   ~ptr()
   {
     if (x_ != nullptr)
@@ -97,6 +103,7 @@ public:
     }
   }
 
+  /// @brief Get a reference to the unified data.
   const Unique&
   operator*()
   const noexcept
@@ -104,6 +111,7 @@ public:
     return *x_;
   }
 
+  /// @brief Get a pointer to the unified data.
   const Unique*
   operator->()
   const noexcept
@@ -111,6 +119,7 @@ public:
     return x_;
   }
 
+  /// @brief Swap.
   friend void
   swap(ptr& lhs, ptr& rhs)
   noexcept
@@ -139,6 +148,8 @@ private:
 
 /// @internal
 /// @related ptr
+///
+/// O(1).
 template <typename Unique>
 inline
 bool
@@ -150,6 +161,8 @@ noexcept
 
 /// @internal
 /// @related ptr
+///
+/// O(1).
 template <typename Unique>
 inline
 bool

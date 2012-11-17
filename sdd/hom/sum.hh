@@ -26,7 +26,7 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief Sum homomorphism.
 template <typename C>
-class _LIBSDD_ATTRIBUTE_PACKED sum
+class LIBSDD_ATTRIBUTE_PACKED sum
 {
 public:
 

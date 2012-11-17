@@ -25,7 +25,7 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief Saturation Sum homomorphism.
 template <typename C>
-class _LIBSDD_ATTRIBUTE_PACKED saturation_sum
+class LIBSDD_ATTRIBUTE_PACKED saturation_sum
 {
 public:
 
