@@ -18,7 +18,7 @@ struct zero_terminal
 /// @related zero_terminal
 template <typename C>
 inline
-bool
+constexpr bool
 operator==(const zero_terminal<C>&, const zero_terminal<C>&)
 noexcept
 {
@@ -46,7 +46,7 @@ struct one_terminal
 /// @related one_terminal
 template <typename C>
 inline
-bool
+constexpr bool
 operator==(const one_terminal<C>&, const one_terminal<C>&)
 noexcept
 {
