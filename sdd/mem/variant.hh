@@ -29,6 +29,7 @@ struct construct {};
 
 /*------------------------------------------------------------------------------------------------*/
 
+// Forward declaration for destructor.
 template <typename Visitor, typename Variant, typename... Args>
 typename Visitor::result_type
 apply_visitor(const Visitor&, const Variant&, Args&&...);
