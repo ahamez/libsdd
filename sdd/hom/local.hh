@@ -46,6 +46,7 @@ public:
     /// @brief Used by variant.
     typedef SDD<C> result_type;
 
+    /// @brief Hierarhical nodes case.
     SDD<C>
     operator()( const hierarchical_node<C>& node
               , context<C>& cxt, const variable_type& var, const homomorphism<C>& h
@@ -86,6 +87,7 @@ public:
       }
     }
 
+    /// @brief Error case: Local only applies on hierarhical nodes.
     template <typename T>
     SDD<C>
     operator()(const T&, context<C>&, const variable_type&, const homomorphism<C>&, const SDD<C> s)
