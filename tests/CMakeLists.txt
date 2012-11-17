@@ -27,7 +27,6 @@ set(SOURCES
     internal/mem/test_cache.cc
     internal/mem/test_ptr.cc
     internal/mem/test_unique_table.cc
-    internal/mem/test_variant_no_unroll.cc
     internal/mem/test_variant.cc
     values/test_bitset.cc
     values/test_unique_flat_set.cc

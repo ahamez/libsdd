@@ -128,9 +128,9 @@ inline
 typename Visitor::result_type
 apply_visitor(const Visitor& v, const Variant<Types...>& x, Args&&... args)
 {
-  return dispatch<0>()( v
-                      , x.storage(), util::typelist<Types...>(), x.index()
-                      , std::forward<Args>(args)...);
+  return dispatch( v
+                 , x.storage(), util::typelist<Types...>(), x.index()
+                 , std::forward<Args>(args)...);
 }
 
 /// @internal
@@ -145,10 +145,10 @@ apply_binary_visitor( const Visitor& v
                     , const Variant1<Types1...>& x, const Variant2<Types2...>& y
                     , Args&&... args)
 {
-  return dispatch_binary<0>()( v
-                             , x.storage(), util::typelist<Types1...>(), x.index()
-                             , y.storage(), util::typelist<Types2...>(), y.index()
-                             , std::forward<Args>(args)...);
+  return binary_dispatch( v
+                        , x.storage(), util::typelist<Types1...>(), x.index()
+                        , y.storage(), util::typelist<Types2...>(), y.index()
+                        , std::forward<Args>(args)...);
 }
 
 /// @internal
@@ -201,8 +201,7 @@ struct hash<const sdd::mem::variant<Types...>>
   operator()(const sdd::mem::variant<Types...>& x)
   const noexcept
   {
-    std::size_t seed =
-      sdd::mem::apply_visitor(sdd::mem::hash_visitor(), x);
+    std::size_t seed = sdd::mem::apply_visitor(sdd::mem::hash_visitor(), x);
     sdd::util::hash_combine(seed, x.index());
     return seed;
   }
