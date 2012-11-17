@@ -20,6 +20,21 @@
 
 namespace sdd { namespace mem {
 
+/// @internal
+/// @page Variant
+///
+/// The sdd::mem::variant class is at the heart of the library. Indeed, sdd::SDD and
+/// sdd::homomorphism definitions rely on it.
+///
+/// Its purpose is to emulate a union, but with much more possibilities. It's completely inspired
+/// from boost::variant
+/// http://www.boost.org/doc/libs/release/doc/html/variant.html
+///
+/// The visitation uses 'computed goto', a GCC extension, also supported by clang.
+/// Note that a 'switch' statement will also do the job.
+/// http://gcc.gnu.org/onlinedocs/gcc-4.7.2/gcc/Labels-as-Values.html
+
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal

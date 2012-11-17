@@ -233,7 +233,10 @@ public:
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @brief homomorphism equality.
 /// @related homomorphism
+///
+/// O(1)
 template <typename C>
 inline
 bool
@@ -243,7 +246,10 @@ noexcept
   return lhs.ptr() == rhs.ptr();
 }
 
+/// @brief homomorphism inequality.
 /// @related homomorphism
+///
+/// O(1)
 template <typename C>
 inline
 bool
@@ -253,7 +259,10 @@ noexcept
   return not (lhs.ptr() == rhs.ptr());
 }
 
+/// @brief homomorphism comparison.
 /// @related homomorphism
+///
+/// O(1)
 template <typename C>
 inline
 bool
@@ -263,6 +272,7 @@ noexcept
   return lhs.ptr() < rhs.ptr();
 }
 
+/// @brief homomorphism textual output.
 /// @related homomorphism
 template <typename C>
 std::ostream&

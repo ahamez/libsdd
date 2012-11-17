@@ -430,7 +430,7 @@ operator<<(std::ostream& os, const SDD<C>& x)
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief   Return the |0| terminal.
+/// @brief Return the |0| terminal.
 /// @related SDD
 ///
 /// O(1).
@@ -443,7 +443,7 @@ noexcept
   return SDD<C>(false);
 }
 
-/// @brief   Return the |1| terminal.
+/// @brief Return the |1| terminal.
 /// @related SDD
 ///
 /// O(1).

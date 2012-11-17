@@ -260,6 +260,7 @@ noexcept(noexcept(v(x, y, std::forward<Args>(args)...)))
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+/// @brief Dispatch a binary visitor on the second visitable.
 template < typename Visitor, typename T, typename Storage
          , typename... Types, template <typename...> class Tuple
          , typename... Args>
@@ -290,6 +291,7 @@ inner_dispatch( const Visitor& v
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+/// @brief Dispatch a binary visitor on the first visitable.
 template < typename Visitor, typename Storage1, typename Storage2
          , typename... Types1, template <typename...> class Tuple1
          , typename... Types2, template <typename...> class Tuple2
