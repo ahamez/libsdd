@@ -16,18 +16,23 @@ class arc
 {
 private:
 
+  /// @brief This arc's valuation, either an SDD or a set of values.
   const Valuation valuation_;
-  const SDD<C>    successor_;
+
+  /// @brief This arcs's SDD successor.
+  const SDD<C> successor_;
 
 public:
 
+  /// @internal
+  /// @brief Constructor.
   arc(Valuation&& val, SDD<C>&& succ)
     : valuation_(std::move(val))
     , successor_(std::move(succ))
   {
   }
 
-  /// @brief Return the valuation of this arc.
+  /// @brief Get the valuation of this arc.
   const Valuation&
   valuation()
   const noexcept
@@ -35,7 +40,7 @@ public:
     return valuation_;
   }
 
-  /// @brief Return the successor of this arc.
+  /// @brief Get the successor of this arc.
   SDD<C>
   successor()
   const noexcept
@@ -63,7 +68,7 @@ namespace dd {
 /// @brief Helper class to build an alpha.
 ///
 /// It serves two goals. First, it ensures that all alphas use the same order to store arcs.
-/// Second, it helps to place the alpha directly behind the owner node.
+/// Second, it helps to place the alpha directly behind the owner node to avoid an indirection.
 template <typename C, typename Valuation>
 class alpha_builder
 {

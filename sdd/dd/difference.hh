@@ -146,6 +146,7 @@ struct difference_visitor
 template <typename C>
 struct difference_op
 {
+  /// @brief Needed by the cache to know the result of this operation.
   typedef SDD<C> result_type;
 
   context<C>& cxt_;

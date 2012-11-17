@@ -16,7 +16,7 @@ namespace sdd { namespace dd {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief   The evaluation context of operations on SDD (union, intersection, difference).
+/// @brief The evaluation context of operations on SDD (union, intersection, difference).
 ///
 /// Its purpose is to be able to create local caches at different points of the evaluation.
 /// There is a cache per operation type, each of them being wrapped in a std::shared_ptr
@@ -75,7 +75,7 @@ public:
   {
   }
 
-  /// @brief Return the difference cache.
+  /// @brief Get the difference cache.
   difference_cache_type&
   difference_cache()
   noexcept
@@ -83,7 +83,7 @@ public:
     return *difference_cache_;
   }
 
-  /// @brief Return the intersection cache.
+  /// @brief Get the intersection cache.
   intersection_cache_type&
   intersection_cache()
   noexcept
@@ -91,7 +91,7 @@ public:
     return *intersection_cache_;
   }
 
-  /// @brief Return the sum cache.
+  /// @brief Get the sum cache.
   sum_cache_type&
   sum_cache()
   noexcept
@@ -99,7 +99,7 @@ public:
     return *sum_cache_;
   }
 
-  /// @brief Remove all entries from all caches.
+  /// @brief Remove all entries from all this context's caches.
   void
   clear()
   noexcept
@@ -113,7 +113,7 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Return the context that serves as an entry point for the evaluation of operations on SDD.
+/// @brief Get the context that serves as the entry point for the evaluation of operations on SDD.
 /// @related context
 template <typename C>
 context<C>&

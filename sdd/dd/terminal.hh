@@ -83,7 +83,7 @@ struct hash<sdd::zero_terminal<C>>
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Hash specialization fdd::dd::or sone_terminal.
+/// @brief Hash specialization for sdd::dd:one_terminal.
 template <typename C>
 struct hash<sdd::one_terminal<C>>
 {
