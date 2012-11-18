@@ -2,7 +2,7 @@
 #define _SDD_MEM_VARIANT_HH_
 
 #ifndef LIBSDD_VARIANT_SIZE
-#define LIBSDD_VARIANT_SIZE 16
+#define LIBSDD_VARIANT_SIZE 12
 #endif
 
 #include <climits>     // USHRT_MAX
