@@ -63,6 +63,9 @@ struct largest_size<T>
 
 /// @internal
 /// @brief A storage large enough for the biggest T in Types.
+///
+/// When the packed mode is required (at compilation time), we don't care about alignement to save
+/// on memory.
 template <std::size_t Len, typename... Types>
 struct union_storage
 {
