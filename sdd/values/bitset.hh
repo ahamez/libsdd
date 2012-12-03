@@ -4,7 +4,7 @@
 #include <bitset>
 #include <functional> // hash
 #include <initializer_list>
-#include <iosfwd>
+#include <ostream>
 #include <limits>
 #include <type_traits>
 
