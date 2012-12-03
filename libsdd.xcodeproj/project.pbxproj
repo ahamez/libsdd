@@ -706,7 +706,7 @@
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
-					/opt/local/include,
+					"$(BOOST_HEADERS)",
 					"$(SRCROOT)",
 				);
 				LIBRARY_SEARCH_PATHS = "";
@@ -727,7 +727,7 @@
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
-					/opt/local/include,
+					"$(BOOST_HEADERS)",
 					"$(SRCROOT)",
 				);
 				LIBRARY_SEARCH_PATHS = "";

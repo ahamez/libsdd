@@ -122,15 +122,44 @@ public:
   unique_flat_set& operator=(unique_flat_set&&) = default;
 
   /// @brief Insert a value.
-  void
+  std::pair<const_iterator, bool>
   insert(const Value& x)
   {
     flat_set_type s(*data_);
     const auto insertion = s.insert(x);
     if (insertion.second)
     {
+      s.shrink_to_fit();
       data_ = unify(std::move(s));
     }
+    return insertion;
+  }
+
+  /// @brief
+  const_iterator
+  insert(const_iterator position, const Value& x)
+  {
+    flat_set_type s(*data_);
+    const auto cit = s.insert(position, x);
+    s.shrink_to_fit();
+    data_ = unify(std::move(s));
+    return cit;
+  }
+
+  /// @brief Get the beginning of this set of values.
+  const_iterator
+  begin()
+  const noexcept
+  {
+    return data_->cbegin();
+  }
+
+  /// @brief Get the end of this set of values.
+  const_iterator
+  end()
+  const noexcept
+  {
+    return data_->cend();
   }
 
   /// @brief Get the beginning of this set of values.
@@ -181,6 +210,14 @@ public:
     const std::size_t nb_erased = fs.erase(x);
     unify(std::move(fs));
     return nb_erased;
+  }
+
+  /// @brief
+  const_iterator
+  lower_bound(const Value& x)
+  const
+  {
+    return data_->lower_bound(x);
   }
 
   /// @internal
