@@ -14,6 +14,7 @@
 #include "sdd/hom/fixpoint.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/inductive.hh"
+#include "sdd/hom/intersection.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/hom/saturation_fixpoint.hh"
 #include "sdd/hom/saturation_sum.hh"
@@ -43,6 +44,7 @@ private:
                       , const hom::fixpoint<C>
                       , const hom::identity<C>
                       , const hom::inductive<C>
+                      , const hom::intersection<C>
                       , const hom::local<C>
                       , const hom::saturation_fixpoint<C>
                       , const hom::saturation_sum<C>

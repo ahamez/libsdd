@@ -124,6 +124,7 @@
 		2B5F99771623149000BAA8D4 /* composition.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = composition.hh; sourceTree = "<group>"; };
 		2B7D16B0161BDAFC00FD77F8 /* test_hom_sum.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_sum.cc; sourceTree = "<group>"; };
 		2B85630B15C9B1CC00085F5F /* default_configurations.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = default_configurations.hh; sourceTree = "<group>"; };
+		2B969458166E5C3100CAC3ED /* intersection.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = intersection.hh; sourceTree = "<group>"; };
 		2BB1A9B014E08BC7007921F2 /* sdd.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = sdd.hh; sourceTree = "<group>"; };
 		2BB53736163C8F8C007E04E1 /* test_hom_expression.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_expression.cc; sourceTree = "<group>"; };
 		2BB6B43B16517FD9003063B8 /* hanoi.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = hanoi.cc; sourceTree = "<group>"; };
@@ -273,6 +274,7 @@
 				2BE71C67161CB5E700B22084 /* fixpoint.hh */,
 				2B1A26961619BDEC005D6BB0 /* identity.hh */,
 				2B5723E8161F0A3200F09892 /* inductive.hh */,
+				2B969458166E5C3100CAC3ED /* intersection.hh */,
 				2BE71C6F161CD4A500B22084 /* local.hh */,
 				2B4C60A0162372630065D7F3 /* rewrite.hh */,
 				2B4C60A11624676B0065D7F3 /* saturation_fixpoint.hh */,
