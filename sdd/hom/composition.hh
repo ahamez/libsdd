@@ -49,14 +49,6 @@ public:
     return left_(cxt, o, right_(cxt, o, x));
   }
 
-//  /// @brief Skip variable predicate.
-//  bool
-//  skip(const variable_type& var)
-//  const noexcept
-//  {
-//    return left_.skip(var) and right_.skip(var);
-//  }
-
   /// @brief Skip predicate.
   bool
   skip(const order<C>& o)
