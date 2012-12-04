@@ -485,8 +485,7 @@ public:
     return head_ == nullptr;
   }
 
-  /// @cond INTERNAL_DOC
-
+  /// @internal
   std::size_t
   hash()
   const noexcept
@@ -497,14 +496,13 @@ public:
     return seed;
   }
 
+  /// @internal
   bool
   operator==(const order& other)
   const noexcept
   {
     return nodes_ptr_ == other.nodes_ptr_ and head_ == other.head_;
   }
-
-  /// @endcond
 
 private:
 
@@ -627,8 +625,7 @@ namespace std {
 
 /*-------------------------------------------------------------------------------------------*/
 
-/// @cond INTERNAL_DOC
-
+/// @internal
 /// @brief Hash specialization for sdd::order.
 template <typename C>
 struct hash<sdd::order<C>>
@@ -640,8 +637,6 @@ struct hash<sdd::order<C>>
     return o.hash();
   }
 };
-
-/// @endcond
 
 /*-------------------------------------------------------------------------------------------*/
 
