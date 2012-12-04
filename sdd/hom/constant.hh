@@ -32,7 +32,7 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>&, const order::order<C>&, const SDD<C>&)
+  operator()(context<C>&, const order<C>&, const SDD<C>&)
   const noexcept
   {
     return sdd_;
@@ -40,7 +40,7 @@ public:
 
   /// @brief Skip variable predicate.
   constexpr bool
-  skip(const order::order<C>&)
+  skip(const order<C>&)
   const noexcept
   {
     return false;

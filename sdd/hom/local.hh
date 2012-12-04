@@ -40,7 +40,7 @@ private:
 public:
 
   /// @brief Constructor.
-  local(const identifier_type& id, const order::order<C>& o, const homomorphism<C>& h)
+  local(const identifier_type& id, const order<C>& o, const homomorphism<C>& h)
     : variable_(o.identifier_variable(id))
     , identifier_(id)
     , h_(h)
@@ -57,7 +57,7 @@ public:
     /// @brief Hierarhical nodes case.
     SDD<C>
     operator()( const hierarchical_node<C>& node
-              , context<C>& cxt, const order::order<C>& o, const variable_type& var
+              , context<C>& cxt, const order<C>& o, const variable_type& var
               , const homomorphism<C>& h, const SDD<C>& s)
     const
     {
@@ -98,7 +98,7 @@ public:
     /// @brief Error case: Local only applies on hierarhical nodes.
     template <typename T>
     SDD<C>
-    operator()( const T&, context<C>&, const order::order<C>&, const variable_type&
+    operator()( const T&, context<C>&, const order<C>&, const variable_type&
               , const homomorphism<C>&, const SDD<C> s)
     const
     {
@@ -108,7 +108,7 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& s)
+  operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
     return apply_visitor(evaluation(), s->data(), cxt, o, variable_, h_, s);
@@ -116,7 +116,7 @@ public:
 
   /// @brief Skip predicate.
   bool
-  skip(const order::order<C>& o)
+  skip(const order<C>& o)
   const noexcept
   {
     return o.variable() != variable_;
@@ -186,7 +186,7 @@ operator<<(std::ostream& os, const local<C>& l)
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-Local(const typename C::Identifier& id, const order::order<C>& o, const homomorphism<C>& h)
+Local(const typename C::Identifier& id, const order<C>& o, const homomorphism<C>& h)
 {
   if (h == Id<C>())
   {

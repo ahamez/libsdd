@@ -12,7 +12,7 @@ namespace sdd {
 /// @param init should be a functor returning the initial set of values for an identifier.
 template <typename C, typename Initializer>
 SDD<C>
-sdd(const order<C>& o, const Initializer& init)
+sdd_from_order(const order<C>& o, const Initializer& init)
 {
   if (o.empty())
   {
@@ -21,17 +21,17 @@ sdd(const order<C>& o, const Initializer& init)
   // flat
   else if (o.nested().empty())
   {
-    return SDD<C>(o.variable(), init(o.identifier()), sdd(o.next(), init));
+    return SDD<C>(o.variable(), init(o.identifier()), sdd_from_order(o.next(), init));
   }
   // hierarchical
   else
   {
-    return SDD<C>(o.variable(), sdd(o.nested(), init), sdd(o.next(), init));
+    return SDD<C>(o.variable(), sdd_from_order(o.nested(), init), sdd_from_order(o.next(), init));
   }
 }
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::order
+} // namespace sdd
 
 #endif // _SDD_ORDER_UTILITY_HH_

@@ -66,7 +66,7 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& s)
+  operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
     dd::sum_builder<C, SDD<C>> sum_operands(G_.size() + 2);
@@ -100,7 +100,7 @@ public:
 
   /// @brief Skip variable predicate.
   bool
-  skip(const order::order<C>& o)
+  skip(const order<C>& o)
   const noexcept
   {
     return variable_ != o.variable();

@@ -97,7 +97,7 @@ public:
 
   /// @brief Apply this homomorphism on an SDD.
   SDD<C>
-  operator()(const order::order<C>& o, const SDD<C>& x)
+  operator()(const order<C>& o, const SDD<C>& x)
   const
   {
     return (*this)(hom::initial_context<C>(), o, x);
@@ -107,7 +107,7 @@ public:
   /// @brief Tell if this homomorphism skips a given identifier.
   /// @brief Tell if this homomorphism skips a given variable.
   bool
-  skip(const order::order<C>& o)
+  skip(const order<C>& o)
   const noexcept
   {
     return apply_visitor(skip_helper(), ptr()->data(), o);
@@ -178,7 +178,7 @@ public:
   /// @internal
   /// @brief Apply this homomorphism on an SDD, in a given context.
   SDD<C>
-  operator()(hom::context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
+  operator()(hom::context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
     // hard-wired cases:
@@ -213,7 +213,7 @@ public:
 
     template <typename H>
     bool
-    operator()(const H& h, const order::order<C>& o)
+    operator()(const H& h, const order<C>& o)
     const noexcept
     {
       return h.skip(o);

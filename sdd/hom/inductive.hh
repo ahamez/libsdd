@@ -34,7 +34,7 @@ public:
   /// @brief Tell if the user's inductive skip the current variable.
   virtual
   bool
-  skip(const order::order<C>&) const noexcept = 0;
+  skip(const order<C>&) const noexcept = 0;
 
   /// @brief Tell if the user's inductive is a selector.
   virtual
@@ -44,12 +44,12 @@ public:
   /// @brief Get the next homomorphism to apply from the user.
   virtual
   homomorphism<C>
-  operator()(const order::order<C>&, const SDD<C>&) const = 0;
+  operator()(const order<C>&, const SDD<C>&) const = 0;
 
   /// @brief Get the next homomorphism to apply from the user.
   virtual
   homomorphism<C>
-  operator()(const order::order<C>&, const values_type&) const = 0;
+  operator()(const order<C>&, const values_type&) const = 0;
 
   /// @brief Get the terminal case from the user.
   virtual
@@ -107,7 +107,7 @@ public:
 
   /// @brief Tell if the user's inductive skip the current variable.
   bool
-  skip(const order::order<C>& o)
+  skip(const order<C>& o)
   const noexcept
   {
     return h_.skip(o.identifier());
@@ -123,7 +123,7 @@ public:
 
   /// @brief Get the next homomorphism to apply from the user.
   homomorphism<C>
-  operator()(const order::order<C>& o, const SDD<C>& x)
+  operator()(const order<C>& o, const SDD<C>& x)
   const
   {
     return h_(o, x);
@@ -131,7 +131,7 @@ public:
 
   /// @brief Get the next homomorphism to apply from the user.
   homomorphism<C>
-  operator()(const order::order<C>& o, const values_type& val)
+  operator()(const order<C>& o, const values_type& val)
   const
   {
     return h_(o, val);
@@ -242,7 +242,7 @@ private:
 
     SDD<C>
     operator()( const zero_terminal<C>&
-              , const inductive_base<C>&, context<C>&, const SDD<C>&, const order::order<C>&)
+              , const inductive_base<C>&, context<C>&, const SDD<C>&, const order<C>&)
     const noexcept
     {
       assert(false);
@@ -251,7 +251,7 @@ private:
 
     SDD<C>
     operator()( const one_terminal<C>& one
-              , const inductive_base<C>& i, context<C>&, const SDD<C>&, const order::order<C>&)
+              , const inductive_base<C>& i, context<C>&, const SDD<C>&, const order<C>&)
     const
     {
       return i(one);
@@ -261,7 +261,7 @@ private:
     SDD<C>
     operator()( const Node& node
               , const inductive_base<C>& i, context<C>& cxt, const SDD<C>& s
-              , const order::order<C>& o)
+              , const order<C>& o)
     const
     {
       dd::sum_builder<C, SDD<C>> sum_operands(node.size());
@@ -294,7 +294,7 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
+  operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
     return apply_visitor(helper(), x->data(), *hom_ptr_, cxt, x, o);
@@ -302,7 +302,7 @@ public:
 
   /// @brief Skip predicate.
   bool
-  skip(const order::order<C>& o)
+  skip(const order<C>& o)
   const noexcept
   {
     return hom_ptr_->skip(o);

@@ -49,7 +49,7 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
+  operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
     dd::sum_builder<C, SDD<C>> sum_operands(operands_.size());
@@ -71,7 +71,7 @@ public:
 
   /// @brief Skip variable predicate.
   bool
-  skip(const order::order<C>& o)
+  skip(const order<C>& o)
   const noexcept
   {
     return std::all_of( operands_.begin(), operands_.end()
@@ -175,7 +175,7 @@ struct sum_builder_helper
 /// @related homomorphism
 template <typename C, typename InputIterator>
 homomorphism<C>
-Sum(const order::order<C>& o, InputIterator begin, InputIterator end)
+Sum(const order<C>& o, InputIterator begin, InputIterator end)
 {
   const std::size_t size = std::distance(begin, end);
 
@@ -217,7 +217,7 @@ Sum(const order::order<C>& o, InputIterator begin, InputIterator end)
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-Sum(const order::order<C>& o, std::initializer_list<homomorphism<C>> operands)
+Sum(const order<C>& o, std::initializer_list<homomorphism<C>> operands)
 {
   return Sum<C>(o, operands.begin(), operands.end());
 }

@@ -61,7 +61,7 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& s)
+  operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
     SDD<C> s1 = s;
@@ -95,7 +95,7 @@ public:
 
   /// @brief Skip predicate.
   bool
-  skip(const order::order<C>& o)
+  skip(const order<C>& o)
   const noexcept
   {
     return variable_ != o.variable();

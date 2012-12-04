@@ -17,7 +17,7 @@
 #include <boost/multi_index/key_extractors.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 
-namespace sdd { namespace order {
+namespace sdd {
 
 namespace bmi = boost::multi_index;
 
@@ -621,7 +621,7 @@ operator<<(std::ostream& os, const order<C>& ord)
 
 /*-------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::order
+} // namespace sdd
 
 namespace std {
 
@@ -629,12 +629,12 @@ namespace std {
 
 /// @cond INTERNAL_DOC
 
-/// @brief Hash specialization for sdd::order::order.
+/// @brief Hash specialization for sdd::order.
 template <typename C>
-struct hash<sdd::order::order<C>>
+struct hash<sdd::order<C>>
 {
   std::size_t
-  operator()(const sdd::order::order<C>& o)
+  operator()(const sdd::order<C>& o)
   const noexcept
   {
     return o.hash();

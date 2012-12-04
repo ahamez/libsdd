@@ -20,7 +20,7 @@ namespace sdd {
 // Forward declaration for recursive call by rewriter.
 template <typename C>
 homomorphism<C>
-rewrite(const homomorphism<C>&, const order::order<C>&);
+rewrite(const homomorphism<C>&, const order<C>&);
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -90,7 +90,7 @@ struct rewriter
   template <typename InputIterator>
   static
   std::tuple<hom_list_type, hom_list_type, hom_list_type, bool>
-  partition(const order::order<C>& o, InputIterator begin, InputIterator end)
+  partition(const order<C>& o, InputIterator begin, InputIterator end)
   {
     bool has_id = false;
     hom_list_type F;
@@ -122,7 +122,7 @@ struct rewriter
   /// @brief Rewrite Sum into a Saturation Sum, if possible.
   homomorphism<C>
   operator()( const sum<C>& s
-            , const homomorphism<C>& h, const order::order<C>& o)
+            , const homomorphism<C>& h, const order<C>& o)
   const
   {
     auto&& p = partition(o, s.operands().begin(), s.operands().end());
@@ -157,7 +157,7 @@ struct rewriter
   /// @brief Rewrite a Fixpoint into a Saturation Fixpoint, if possible.
   homomorphism<C>
   operator()( const fixpoint<C>& f
-            , const homomorphism<C>& h, const order::order<C>& o)
+            , const homomorphism<C>& h, const order<C>& o)
   const
   {
     if (not apply_visitor(is_sum(), f.hom()->data()))
@@ -207,7 +207,7 @@ struct rewriter
   /// Any other homomorphism is not rewritten.
   template <typename T>
   homomorphism<C>
-  operator()(const T&, const homomorphism<C>& h, const order::order<C>&)
+  operator()(const T&, const homomorphism<C>& h, const order<C>&)
   const
   {
     return h;
@@ -221,7 +221,7 @@ struct rewriter
 /// @brief Rewrite an homomorphism to enable saturation.
 template <typename C>
 homomorphism<C>
-rewrite(const homomorphism<C>& h, const order::order<C>& o)
+rewrite(const homomorphism<C>& h, const order<C>& o)
 {
   if (o.empty())
   {

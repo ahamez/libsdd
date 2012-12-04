@@ -22,7 +22,7 @@ struct identity
   ///
   /// This is an error to arrive here as the identity is computed before calling the cache.
   SDD<C>
-  operator()(context<C>&, const order::order<C>&, const SDD<C>&)
+  operator()(context<C>&, const order<C>&, const SDD<C>&)
   const noexcept
   {
     assert(false);
@@ -31,7 +31,7 @@ struct identity
 
   /// @brief Skip predicate.
   constexpr bool
-  skip(const order::order<C>&)
+  skip(const order<C>&)
   const noexcept
   {
     return true;

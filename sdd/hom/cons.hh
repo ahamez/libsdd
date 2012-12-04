@@ -26,7 +26,7 @@ public:
 private:
 
   /// @brief
-  const order::order<C> order_;
+  const order<C> order_;
 
   /// @brief The valuation of the SDD to create.
   const Valuation valuation_;
@@ -37,7 +37,7 @@ private:
 public:
 
   /// @brief Constructor.
-  cons(const order::order<C>& o, const Valuation& val, const homomorphism<C>& h)
+  cons(const order<C>& o, const Valuation& val, const homomorphism<C>& h)
     : order_(o)
     , valuation_(val)
     , next_(h)
@@ -46,7 +46,7 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const order::order<C>&, const SDD<C>& x)
+  operator()(context<C>& cxt, const order<C>&, const SDD<C>& x)
   const
   {
     return SDD<C>(order_.variable(), valuation_, next_(cxt, order_.next(), x));
@@ -54,7 +54,7 @@ public:
 
   /// @brief Skip predicate.
   constexpr bool
-  skip(const order::order<C>&)
+  skip(const order<C>&)
   const noexcept
   {
     return false;
@@ -69,7 +69,7 @@ public:
   }
 
   /// @brief Return the order of this Cons.
-  const order::order<C>&
+  const order<C>&
   order()
   const noexcept
   {
@@ -136,7 +136,7 @@ operator<<(std::ostream& os, const cons<C, Valuation>& c)
 /// @related homomorphism
 template <typename C, typename Valuation>
 homomorphism<C>
-Cons(const order::order<C> o, const Valuation& val, const homomorphism<C>& h)
+Cons(const order<C> o, const Valuation& val, const homomorphism<C>& h)
 {
   return homomorphism<C>::create(mem::construct<hom::cons<C, Valuation>>(), o, val, h);
 }

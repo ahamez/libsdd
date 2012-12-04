@@ -195,7 +195,7 @@ private:
 
     SDD<C>
     operator()( const zero_terminal<C>&
-              , const values_function_base<C>&, context<C>&, const SDD<C>&, const order::order<C>&)
+              , const values_function_base<C>&, context<C>&, const SDD<C>&, const order<C>&)
     const noexcept
     {
       assert(false);
@@ -204,7 +204,7 @@ private:
 
     SDD<C>
     operator()( const one_terminal<C>&
-              , const values_function_base<C>&, context<C>&, const SDD<C>&, const order::order<C>&)
+              , const values_function_base<C>&, context<C>&, const SDD<C>&, const order<C>&)
     const
     {
       return one<C>();
@@ -213,7 +213,7 @@ private:
     SDD<C>
     operator()( const hierarchical_node<C>& node
               , const values_function_base<C>&, context<C>&, const SDD<C>& s
-              , const order::order<C>&)
+              , const order<C>&)
     const
     {
       throw evaluation_error<C>(s);
@@ -222,7 +222,7 @@ private:
     SDD<C>
     operator()( const flat_node<C>& node
               , const values_function_base<C>& fun, context<C>& cxt, const SDD<C>& s
-              , const order::order<C>& o)
+              , const order<C>& o)
     const
     {
       if (fun.selector())
@@ -271,7 +271,7 @@ public:
 
   /// @brief Skip variable predicate.
   bool
-  skip(const order::order<C>& o)
+  skip(const order<C>& o)
   const noexcept
   {
     return identifier_ != o.identifier();
@@ -287,7 +287,7 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& x)
+  operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
     return apply_visitor(helper(), x->data(), *fun_ptr_, cxt, x, o);
@@ -343,7 +343,7 @@ operator<<(std::ostream& os, const values_function<C>& x)
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-ValuesFunction(const order::order<C>& o, const typename C::Idenfitier& i, const User& u)
+ValuesFunction(const order<C>& o, const typename C::Idenfitier& i, const User& u)
 {
   if (std::find(o.cbegin(), o.cend(), i) == o.cend())
   {
@@ -359,7 +359,7 @@ ValuesFunction(const order::order<C>& o, const typename C::Idenfitier& i, const 
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-ValuesFunction(const order::order<C>& o, const typename C::Identifier& i, User&& u)
+ValuesFunction(const order<C>& o, const typename C::Identifier& i, User&& u)
 {
   if (std::find(o.cbegin(), o.cend(), i) == o.cend())
   {

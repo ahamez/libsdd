@@ -23,7 +23,7 @@ struct evaluation
   template <typename H>
   bool
   operator()( const H& h, const zero_terminal<C>&
-            , const SDD<C>&, context<C>&, const order::order<C>& o, const homomorphism<C>&)
+            , const SDD<C>&, context<C>&, const order<C>& o, const homomorphism<C>&)
   const noexcept
   {
     assert(false);
@@ -33,7 +33,7 @@ struct evaluation
   template <typename H>
   SDD<C>
   operator()( const H& h, const one_terminal<C>&
-            , const SDD<C>& x, context<C>& cxt, const order::order<C>& o
+            , const SDD<C>& x, context<C>& cxt, const order<C>& o
             , const homomorphism<C>&)
   const
   {
@@ -47,7 +47,7 @@ struct evaluation
   template <typename H, typename Node>
   SDD<C>
   operator()( const H& h, const Node& node
-            , const SDD<C>& x, context<C>& cxt, const order::order<C>& o
+            , const SDD<C>& x, context<C>& cxt, const order<C>& o
             , const homomorphism<C>& hom_proxy)
   const
   {
@@ -96,7 +96,7 @@ struct cached_homomorphism
   typedef SDD<C> result_type;
 
   /// @brief The current order position.
-  const order::order<C>& order;
+  const order<C>& ord;
 
   /// @brief The homomorphism to evaluate.
   const homomorphism<C> hom;
@@ -105,9 +105,8 @@ struct cached_homomorphism
   const SDD<C> sdd;
 
   /// @brief Constructor.
-  cached_homomorphism( context<C>& cxt, const order::order<C>& o, const homomorphism<C>& h
-                     , const SDD<C>& s)
-    : order(o)
+  cached_homomorphism(context<C>& cxt, const order<C>& o, const homomorphism<C>& h, const SDD<C>& s)
+    : ord(o)
     , hom(h)
     , sdd(s)
   {
@@ -118,7 +117,7 @@ struct cached_homomorphism
   operator()(context<C>& cxt)
   const
   {
-    return apply_binary_visitor(evaluation<C>(), hom->data(), sdd->data(), sdd, cxt, order, hom);
+    return apply_binary_visitor(evaluation<C>(), hom->data(), sdd->data(), sdd, cxt, ord, hom);
   }
 };
 

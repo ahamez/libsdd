@@ -28,8 +28,8 @@ using sdd::hom::SaturationSum;
 using sdd::Sum;
 using sdd::ValuesFunction;
 
-typedef sdd::order::order_builder<conf> order_builder;
-typedef sdd::order::order<conf> order;
+typedef sdd::order_builder<conf> order_builder;
+typedef sdd::order<conf> order;
 
 /*------------------------------------------------------------------------------------------------*/
 

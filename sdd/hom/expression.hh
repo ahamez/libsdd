@@ -172,12 +172,12 @@ private:
   struct application_stack_node
   {
     SDD<C> sdd;
-    const order::order<C> order;
+    const order<C> ord;
     application_stack next;
 
-    application_stack_node(const SDD<C>& s, const order::order<C>& o, const application_stack& n)
+    application_stack_node(const SDD<C>& s, const order<C>& o, const application_stack& n)
       : sdd(s)
-      , order(o)
+      , ord(o)
       , next(n)
     {
     }
@@ -218,7 +218,7 @@ private:
 
     /// @brief Evaluation on hierarchical nodes.
     void
-    operator()( const hierarchical_node<C>& node, const order::order<C>& o
+    operator()( const hierarchical_node<C>& node, const order<C>& o
               , application_stack app, values_type& valuation
               , identifiers_iterator begin, identifiers_iterator end)
     const noexcept
@@ -256,7 +256,7 @@ private:
 
     /// @brief Evaluation on flat nodes.
     void
-    operator()( const flat_node<C>& node, const order::order<C>& o
+    operator()( const flat_node<C>& node, const order<C>& o
               , application_stack app, values_type& valuation
               , identifiers_iterator begin, identifiers_iterator end)
     const noexcept
@@ -286,7 +286,7 @@ private:
 
     /// @brief Evaluation on |1|.
     void
-    operator()( const one_terminal<C>&, const order::order<C>&
+    operator()( const one_terminal<C>&, const order<C>&
               , application_stack app, values_type& valuation
               , identifiers_iterator begin, identifiers_iterator end)
     const noexcept
@@ -298,13 +298,13 @@ private:
       else if (app)
       {
         // Still in a nested hierarchy.
-        apply_visitor(*this, app->sdd->data(), app->order, app->next, valuation, begin, end);
+        apply_visitor(*this, app->sdd->data(), app->ord, app->next, valuation, begin, end);
       }
     }
 
     /// @brief Evaluation on |0|.
     void
-    operator()( const zero_terminal<C>&, const order::order<C>&, application_stack
+    operator()( const zero_terminal<C>&, const order<C>&, application_stack
               , values_type&, identifiers_iterator, identifiers_iterator)
     const noexcept
     {
@@ -339,7 +339,7 @@ private:
     /// @brief Evaluation on hierarchical nodes.
     SDD<C>
     operator()( const hierarchical_node<C>& node
-              , context<C>& cxt, const order::order<C>& o, const SDD<C>& s
+              , context<C>& cxt, const order<C>& o, const SDD<C>& s
               , application_stack app, results_stack res
               , identifiers_iterator begin, identifiers_iterator end)
     const
@@ -411,7 +411,7 @@ private:
     /// @brief Evaluation on flat nodes.
     SDD<C>
     operator()( const flat_node<C>& node
-              , context<C>& cxt, const order::order<C>& o, const SDD<C>& s
+              , context<C>& cxt, const order<C>& o, const SDD<C>& s
               , application_stack app, results_stack res
               , identifiers_iterator begin, identifiers_iterator end)
     const
@@ -483,7 +483,7 @@ private:
     /// @brief Evaluation on |1|.
     SDD<C>
     operator()( const one_terminal<C>&
-              , context<C>& cxt, const order::order<C>&, const SDD<C>& one
+              , context<C>& cxt, const order<C>&, const SDD<C>& one
               , application_stack app, results_stack res
               , identifiers_iterator begin, identifiers_iterator end)
     const
@@ -494,7 +494,7 @@ private:
 
         // Still in a nested hierarchy.
         res->result.add(apply_visitor( *this, app->sdd->data()
-                                     , cxt, app->order, app->sdd, app->next, res->next
+                                     , cxt, app->ord, app->sdd, app->next, res->next
                                      , begin, end));
       }
       return one;
@@ -503,7 +503,7 @@ private:
     /// @brief Evaluation on |0|.
     SDD<C>
     operator()( const zero_terminal<C>&
-              , context<C>&, const order::order<C>&, const SDD<C>&
+              , context<C>&, const order<C>&, const SDD<C>&
               , application_stack, results_stack
               , identifiers_iterator, identifiers_iterator)
     const noexcept
@@ -527,7 +527,7 @@ public:
 
   /// @brief Skip variable predicate.
   bool
-  skip(const order::order<C>& o)
+  skip(const order<C>& o)
   const noexcept
   {
     return o.identifier() != target_
@@ -545,7 +545,7 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const order::order<C>& o, const SDD<C>& s)
+  operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
     return apply_visitor( pre(target_, eval_ptr_), s->data()
@@ -611,7 +611,7 @@ operator<<(std::ostream& os, const expression<C>& e)
 /// @related homomorphism.
 template <typename C, typename User, typename InputIterator>
 homomorphism<C>
-Expression( const order::order<C>& o, const User& u, InputIterator begin, InputIterator end
+Expression( const order<C>& o, const User& u, InputIterator begin, InputIterator end
           , const typename C::Identifier& target)
 {
   if (std::distance(begin, end) == 0)

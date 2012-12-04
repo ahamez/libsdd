@@ -26,9 +26,6 @@ namespace hom {}
 /// @brief Internal stuff necessary for the memory management.
 namespace mem {}
 
-/// @brief Stuff necessary to describe and manipulate variable orders.
-namespace order {}
-
 /// @brief Contain miscellaneous utilities.
 namespace util {}
 
@@ -37,7 +34,6 @@ namespace values {}
 
 /// @brief Essentially hash specialization.
 namespace std {}
-
 }
 
 #endif // _SDD_SDD_HH_
