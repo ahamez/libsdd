@@ -47,6 +47,7 @@ print_sizes(std::ostream& os)
   os << "Fixpoint              " << sizeof(fixpoint<C>) << std::endl;
   os << "Identity              " << sizeof(identity<C>) << std::endl;
   os << "Inductive             " << sizeof(inductive<C>) << std::endl;
+  os << "Intersection          " << sizeof(intersection<C>) << std::endl;
   os << "Local                 " << sizeof(local<C>) << std::endl;
   os << "Saturation Fixpoint   " << sizeof(hom::saturation_fixpoint<C>) << std::endl;
   os << "Saturation Sum        " << sizeof(hom::saturation_sum<C>) << std::endl;
