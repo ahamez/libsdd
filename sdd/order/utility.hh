@@ -1,12 +1,10 @@
 #ifndef _SDD_ORDER_UTILITY_HH_
 #define _SDD_ORDER_UTILITY_HH_
 
-#include <cassert>
-
 #include "sdd/dd/definition.hh"
 #include "sdd/order/order.hh"
 
-namespace sdd { namespace order {
+namespace sdd {
 
 /*-------------------------------------------------------------------------------------------*/
 
