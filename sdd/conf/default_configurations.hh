@@ -31,6 +31,7 @@ struct conf0
 struct conf1
   : public default_parameters
 {
+  typedef std::string Identifier;
   typedef unsigned int Variable;
   typedef values::unique_flat_set<unsigned int> Values;
 };
