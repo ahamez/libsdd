@@ -143,6 +143,8 @@ public:
   }
 
   /// @brief Add a nested identifier at the top of this order.
+  ///
+  /// If nested is an empty order, a flat identifier is added instead.
   order_builder&
   add(const identifier_type& id, const order_builder& nested)
   {
