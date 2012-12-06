@@ -175,10 +175,9 @@ private:
   {
     typedef std::unique_ptr<identifier_type> optional_id_type;
 
-    order_ptr_ =
-      std::make_shared<node>( optional_id_type(new identifier_type(id))
-                            , nested_ptr
-                            , order_ptr_);
+    order_ptr_ = std::make_shared<node>( optional_id_type(new identifier_type(id))
+                                       , nested_ptr
+                                       , order_ptr_);
     return *this;
   }
 };
