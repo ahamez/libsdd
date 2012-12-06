@@ -45,7 +45,7 @@ struct no_ring_above
   }
 
   hom
-  operator()(const sdd::order::order<conf>&, const SDD&)
+  operator()(const sdd::order<conf>&, const SDD&)
   const noexcept
   {
     // no hierarchy
@@ -54,7 +54,7 @@ struct no_ring_above
   }
 
   hom
-  operator()(const sdd::order::order<conf>& o, const Values& val)
+  operator()(const sdd::order<conf>& o, const Values& val)
   const
   {
     Values v(val);
@@ -107,7 +107,7 @@ struct swap_pole
   }
 
   hom
-  operator()(const sdd::order::order<conf>&, const SDD&)
+  operator()(const sdd::order<conf>&, const SDD&)
   const noexcept
   {
     // no hierarchy
@@ -116,7 +116,7 @@ struct swap_pole
   }
 
   hom
-  operator()(const sdd::order::order<conf>& o, const Values& val)
+  operator()(const sdd::order<conf>& o, const Values& val)
   const
   {
     if (val.find(source) == val.cend())
@@ -209,12 +209,12 @@ main(int argc, char** argv)
   }
 
   /// Order
-  sdd::order::order_builder<conf> ob;
+  sdd::order_builder<conf> ob;
   for (unsigned int i = 0; i < nb_rings; ++i)
   {
     ob.add(i);
   }
-  sdd::order::order<conf> o(ob);
+  sdd::order<conf> o(ob);
 
   /// Initial state
   SDD m0 = sdd::order::sdd(o, [](unsigned int){return Values {0};});
