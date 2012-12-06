@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "tests/hom/common.hh"
-#include "sdd/order/utility.hh"
+#include "sdd/sdd.hh"
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -29,7 +29,7 @@ struct initializer
 TEST_F(order_utility_test, empty)
 {
   auto o = order(order_builder());
-  ASSERT_EQ(one, sdd::sdd_from_order(o, initializer()));
+  ASSERT_EQ(one, SDD(o, initializer()));
 }
 
 /*-------------------------------------------------------------------------------------------*/
@@ -39,17 +39,17 @@ TEST_F(order_utility_test, flat)
   {
     order_builder ob;
     ob.add("foo");
-    ASSERT_EQ(SDD(0, {0}, one), sdd::sdd_from_order(order(ob), initializer()));
+    ASSERT_EQ(SDD(0, {0}, one), SDD(order(ob), initializer()));
   }
   {
     order_builder ob;
     ob.add("foo", order_builder());
-    ASSERT_EQ(SDD(0, {0}, one), sdd::sdd_from_order(order(ob), initializer()));
+    ASSERT_EQ(SDD(0, {0}, one), SDD(order(ob), initializer()));
   }
   {
     order_builder ob;
     ob.add("foo1").add("foo2");
-    ASSERT_EQ(SDD(1, {0}, SDD(0, {0}, one)), sdd::sdd_from_order(order(ob), initializer()));
+    ASSERT_EQ(SDD(1, {0}, SDD(0, {0}, one)), SDD(order(ob), initializer()));
   }
 }
 
@@ -62,7 +62,7 @@ TEST_F(order_utility_test, hierarchical)
     ob0.add("foo");
     order_builder ob1;
     ob1.add("bar", ob0);
-    ASSERT_EQ(SDD(0, SDD(0, {0}, one), one), sdd::sdd_from_order(order(ob1), initializer()));
+    ASSERT_EQ(SDD(0, SDD(0, {0}, one), one), SDD(order(ob1), initializer()));
   }
   {
     order_builder ob0;
@@ -70,7 +70,7 @@ TEST_F(order_utility_test, hierarchical)
     order_builder ob1;
     ob1.add("bar", ob0);
     ASSERT_EQ( SDD(0, SDD(1, {0}, SDD(0, {0}, one)), one)
-             , sdd::sdd_from_order(order(ob1), initializer()));
+             , SDD(order(ob1), initializer()));
   }
   {
     order_builder nested_a {"a"};
@@ -79,7 +79,7 @@ TEST_F(order_utility_test, hierarchical)
     ob.add("y", nested_b);
     ob.add("x", nested_a);
     ASSERT_EQ( SDD(1, SDD(0, {0}, one), SDD(0, SDD(0, {0}, one), one))
-             , sdd::sdd_from_order(order(ob), initializer()));
+             , SDD(order(ob), initializer()));
   }
 }
 

@@ -217,7 +217,7 @@ main(int argc, char** argv)
   sdd::order<conf> o(ob);
 
   /// Initial state
-  SDD m0 = sdd::order::sdd(o, [](unsigned int){return Values {0};});
+  SDD m0(o, [](unsigned int){return Values {0};});
 
   /// Events
   std::set<hom> union_swap_pole;

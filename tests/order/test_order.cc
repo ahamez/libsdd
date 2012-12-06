@@ -4,7 +4,6 @@
 #include "gtest/gtest.h"
 
 #include "tests/hom/common.hh"
-#include "sdd/order/utility.hh"
 
 /*-------------------------------------------------------------------------------------------*/
 

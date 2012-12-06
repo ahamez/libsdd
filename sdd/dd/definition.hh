@@ -11,6 +11,7 @@
 #include "sdd/mem/ptr.hh"
 #include "sdd/mem/ref_counted.hh"
 #include "sdd/mem/variant.hh"
+#include "sdd/order/order.hh"
 #include "sdd/util/print_sizes_fwd.hh"
 
 namespace sdd {
@@ -178,6 +179,27 @@ public:
   SDD(const variable_type& var, const SDD& val, const SDD& succ)
     : ptr_(create_node(var, val, succ))
   {
+  }
+
+  /// @brief Construct an SDD with an order.
+  template <typename Initializer>
+  SDD(const order<C>& o, const Initializer& init)
+    : ptr_(one_ptr())
+  {
+    if (o.empty())
+    {
+      return;
+    }
+    // flat
+    else if (o.nested().empty())
+    {
+      ptr_ = create_node(o.variable(), init(o.identifier()), SDD(o.next(), init));
+    }
+    // hierarchical
+    else
+    {
+      ptr_ = create_node(o.variable(), SDD(o.nested(), init), SDD(o.next(), init));
+    }
   }
 
   /// @brief  Indicate if the SDD is |0|.
