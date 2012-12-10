@@ -102,7 +102,6 @@ public:
   {
     if (load_factor() >= 0.9)
     {
-      ++rehash_;
       rehash();
     }
 
@@ -177,6 +176,7 @@ private:
   void
   rehash()
   {
+    ++rehash_;
     const std::size_t new_size = set_type::suggested_upper_bucket_count(set_->bucket_count() * 2);
     bucket_type* new_buckets = new bucket_type[new_size];
     set_->rehash(bucket_traits(new_buckets, new_size));
