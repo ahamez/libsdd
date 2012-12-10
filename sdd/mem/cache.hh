@@ -320,7 +320,6 @@ public:
   /// @brief Remove half of the cache (LFU strategy).
   void
   cleanup()
-  noexcept
   {
     typedef typename set_type::const_iterator const_iterator;
 
