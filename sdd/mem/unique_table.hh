@@ -112,7 +112,7 @@ public:
       u_ptr->~Unique();
       if (blocks_.size() == nb_blocks)
       {
-        // erase last block
+        // Erase last block (the biggest one).
         auto it = blocks_.end() - 1;
         delete[] it->second;
         blocks_.erase(it);
