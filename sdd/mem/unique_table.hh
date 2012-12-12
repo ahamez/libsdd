@@ -57,7 +57,7 @@ private:
   std::size_t rehash_;
 
   /// The number of re-usable memory blocks to keep.
-  static constexpr std::size_t nb_blocks = 2048;
+  static constexpr std::size_t nb_blocks = 4096;
 
   /// Index re-usable memory blocks by size.
   boost::container::flat_multimap<std::size_t, char*> blocks_;
@@ -130,8 +130,8 @@ public:
   char*
   allocate(std::size_t size)
   {
-    const auto it = blocks_.find(size);
-    if (it != blocks_.end())
+    const auto it = blocks_.lower_bound(size);
+    if (it != blocks_.end() and it->first <= (2 * size))
     {
       // re-use allocated blocks
       char* addr = it->second;
