@@ -145,7 +145,14 @@ template <typename C>
 homomorphism<C>
 Fixpoint(const homomorphism<C>& h)
 {
-  return apply_visitor(hom::fixpoint_builder_helper<C>(), h->data(), h);
+  if (h.selector())
+  {
+    return h;
+  }
+  else
+  {
+    return apply_visitor(hom::fixpoint_builder_helper<C>(), h->data(), h);
+  }
 }
 
 /*------------------------------------------------------------------------------------------------*/
