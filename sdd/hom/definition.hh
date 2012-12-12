@@ -107,7 +107,8 @@ public:
 
   /// @internal
   /// @brief Tell if this homomorphism skips a given identifier.
-  /// @brief Tell if this homomorphism skips a given variable.
+  ///
+  /// The identifier considered is the head of the given order (order::identifier()).
   bool
   skip(const order<C>& o)
   const noexcept
