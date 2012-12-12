@@ -22,14 +22,8 @@ class LIBSDD_ATTRIBUTE_PACKED local
 {
 private:
 
-  /// @brief The variable type.
-  typedef typename C::Variable variable_type;
-
   /// @brief The identifier type.
   typedef typename C::Identifier identifier_type;
-
-  /// @brief The hierarchical node where the nested homomorphism will be carried to.
-  const variable_type variable_;
 
   ///
   const identifier_type identifier_;
@@ -41,8 +35,7 @@ public:
 
   /// @brief Constructor.
   local(const identifier_type& id, const order<C>& o, const homomorphism<C>& h)
-    : variable_(o.identifier_variable(id))
-    , identifier_(id)
+    : identifier_(id)
     , h_(h)
   {
   }
@@ -57,7 +50,7 @@ public:
     /// @brief Hierarhical nodes case.
     SDD<C>
     operator()( const hierarchical_node<C>& node
-              , context<C>& cxt, const order<C>& o, const variable_type& var
+              , context<C>& cxt, const order<C>& o
               , const homomorphism<C>& h, const SDD<C>& s)
     const
     {
@@ -69,7 +62,7 @@ public:
           su.reserve(node.size());
           for (const auto& arc : node)
           {
-            SDD<C> new_valuation = h(cxt, o.nested(), arc.valuation());
+            const SDD<C> new_valuation = h(cxt, o.nested(), arc.valuation());
             if (not new_valuation.empty())
             {
               su.add(arc.successor(), new_valuation);
@@ -77,12 +70,13 @@ public:
           }
           return SDD<C>(node.variable(), su(cxt.sdd_context()));
         }
-        else
+        else // partition will change
         {
           dd::sum_builder<C, SDD<C>> sum_operands(node.size());
           for (const auto& arc : node)
           {
-            sum_operands.add(SDD<C>(var, h(cxt, o.nested(), arc.valuation()), arc.successor()));
+            const SDD<C> new_valuation = h(cxt, o.nested(), arc.valuation());
+            sum_operands.add(SDD<C>(node.variable(), new_valuation, arc.successor()));
           }
           return dd::sum(cxt.sdd_context(), std::move(sum_operands));
         }
@@ -98,7 +92,7 @@ public:
     /// @brief Error case: Local only applies on hierarhical nodes.
     template <typename T>
     SDD<C>
-    operator()( const T&, context<C>&, const order<C>&, const variable_type&
+    operator()( const T&, context<C>&, const order<C>&
               , const homomorphism<C>&, const SDD<C> s)
     const
     {
@@ -111,7 +105,7 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    return apply_visitor(evaluation(), s->data(), cxt, o, variable_, h_, s);
+    return apply_visitor(evaluation(), s->data(), cxt, o, h_, s);
   }
 
   /// @brief Skip predicate.
@@ -119,7 +113,7 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return o.variable() != variable_;
+    return o.identifier() != identifier_;
   }
 
   /// @brief Selector predicate
@@ -128,14 +122,6 @@ public:
   const noexcept
   {
     return h_.selector();
-  }
-
-  /// @brief Return the target.
-  const variable_type&
-  variable()
-  const noexcept
-  {
-    return variable_;
   }
 
   /// @brief Return the target.
@@ -166,7 +152,7 @@ bool
 operator==(const local<C>& lhs, const local<C>& rhs)
 noexcept
 {
-  return lhs.variable() == rhs.variable() and lhs.hom() == rhs.hom();
+  return lhs.identifier() == rhs.identifier() and lhs.hom() == rhs.hom();
 }
 
 /// @internal
@@ -175,7 +161,7 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const local<C>& l)
 {
-  return os << "@(" << l.variable() << ", " << l.hom() << ")";
+  return os << "@(" << l.identifier() << ", " << l.hom() << ")";
 }
 
 } // namespace hom
@@ -216,7 +202,7 @@ struct hash<sdd::hom::local<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::util::hash_combine(seed, l.variable());
+    sdd::util::hash_combine(seed, l.identifier());
     sdd::util::hash_combine(seed, l.hom());
     return seed;
   }
