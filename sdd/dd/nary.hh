@@ -203,6 +203,8 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
   typedef typename set_type::const_iterator const_iterator;
 
   /// @brief The policy to add new operands.
+  ///
+  /// An instance is needed for builders with a state (intersection).
   Builder builder_;
 
   /// @brief Sorted container of operands.
