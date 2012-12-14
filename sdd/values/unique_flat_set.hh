@@ -52,6 +52,12 @@ private:
     {
     }
 
+    /// @brief Move constructor.
+    entry(entry&& other)
+      : data(std::move(other.data))
+    {
+    }
+
     /// @brief Comparison.
     bool
     operator==(const entry& other)
@@ -275,13 +281,17 @@ private:
   const flat_set_type*
   unify(Args&&... args)
   {
-    entry* ptr = new entry(std::forward<Args>(args)...);
-    const auto insertion = set().insert(*ptr);
-    if (not insertion.second)
+    entry e(std::forward<Args>(args)...);
+    const auto cit = set().find(e);
+    if (cit == set().end())
     {
-      delete ptr;
+      entry* ptr = new entry(std::move(e));
+      return &(set().insert(*ptr).first->data);
     }
-    return &(insertion.first->data);
+    else
+    {
+      return &(cit->data);
+    }
   }
 };
 
