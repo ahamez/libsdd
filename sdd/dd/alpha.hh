@@ -148,7 +148,7 @@ public:
   ///
   /// Once performed, all subsequent calls to this instance are invalid.  
   void
-  consolidate(void* addr)
+  consolidate(char* addr)
   noexcept
   {
     arc<C, Valuation>* base = reinterpret_cast<arc<C, Valuation>*>(addr);

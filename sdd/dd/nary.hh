@@ -315,7 +315,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
   ///
   /// Once performed, all subsequent calls to this instance are invalid.
   void
-  consolidate(void* addr)
+  consolidate(char* addr)
   noexcept
   {
     Valuation* base = reinterpret_cast<Valuation*>(addr);

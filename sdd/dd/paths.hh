@@ -21,7 +21,7 @@ struct count_paths_visitor
   /// @brief A cache is used to speed up the computation.
   ///
   /// We use the addresses of nodes as key. It's legit because nodes are unified.
-  mutable std::unordered_map<const void*, result_type> cache_;
+  mutable std::unordered_map<const char*, result_type> cache_;
 
   /// @brief Error case.
   ///
@@ -49,7 +49,7 @@ struct count_paths_visitor
   operator()(const flat_node<C>& n)
   const noexcept
   {
-    const auto insertion = cache_.emplace(&n, 0);
+    const auto insertion = cache_.emplace(reinterpret_cast<const char*>(&n), 0);
     if (insertion.second)
     {
       for (const auto& arc : n)
@@ -66,7 +66,7 @@ struct count_paths_visitor
   operator()(const hierarchical_node<C>& n)
   const noexcept
   {
-    const auto insertion = cache_.emplace(&n, 0);
+    const auto insertion = cache_.emplace(reinterpret_cast<const char*>(&n), 0);
     if (insertion.second)
     {
       for (const auto& arc : n)
