@@ -2,10 +2,12 @@
 #define _SDD_VALUES_UNIQUE_FLAT_SET_HH_
 
 #include <algorithm>  // copy, set_difference, set_intersection, set_union
+#include <forward_list>
 #include <functional> // hash
 #include <initializer_list>
 #include <iosfwd>
 #include <iterator>   // inserter
+#include <memory>     // unique_ptr
 #include <utility>    // pair
 
 #include <boost/container/flat_set.hpp>
@@ -237,33 +239,49 @@ public:
 
 private:
 
-  /// @brief Help cleaning the static set.
-  struct set_disposer
+  /// @brief The number of pre-allocated entries.
+  static constexpr std::size_t block_size = 1024;
+
+  /// @brief Help cleaning the static set at exit and managing memory.
+  struct disposer
   {
     bucket_type* buckets;
     set_type* set;
 
-    set_disposer(std::size_t size)
+    std::forward_list<std::unique_ptr<entry[]>> mem;
+    std::size_t used_mem;
+
+    disposer(std::size_t size)
       : buckets(new bucket_type[size])
       , set(new set_type(bucket_traits(buckets, size)))
+      , mem()
+      , used_mem(block_size)
     {
     }
 
-    ~set_disposer()
+    ~disposer()
     {
-      set->clear_and_dispose([](entry* e){delete e;});
+      set->clear_and_dispose([](entry*){});
       delete set;
       delete[] buckets;
     }
   };
+
+  /// @brief Get the static disposer.
+  static
+  disposer&
+  disposer()
+  {
+    static struct disposer d(32000);
+    return d;
+  }
 
   /// @brief Get the static set of flat sets.
   static
   set_type&
   set()
   {
-    static set_disposer disposer(32000);
-    return *disposer.set;
+    return *disposer().set;
   }
 
   /// @brief Get the static empty flat set.
@@ -273,6 +291,23 @@ private:
   {
     static auto e = unify(flat_set_type());
     return e;
+  }
+
+  /// @brief Return an allocated pointer for an entry.
+  ///
+  /// As we never delete unified entries, we use a very simple scheme: an ever-growing list
+  /// of memory blocks.
+  static
+  entry*
+  allocate()
+  {
+    if (disposer().used_mem == block_size)
+    {
+      disposer().mem.emplace_front(new entry[block_size]);
+      disposer().used_mem = 0;
+    }
+
+    return &disposer().mem.front()[disposer().used_mem++];
   }
 
   /// @brief Unify a flat_set_type using a unique table.
@@ -285,7 +320,7 @@ private:
     const auto cit = set().find(e);
     if (cit == set().end())
     {
-      entry* ptr = new entry(std::move(e));
+      entry* ptr = new (allocate()) entry(std::move(e));
       return &(set().insert(*ptr).first->data);
     }
     else
