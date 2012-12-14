@@ -81,26 +81,32 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_base
   nary_base(const nary_base&) = delete;
   nary_base& operator=(const nary_base&) = delete;
 
-  /// Used by the cache to know the type of the result.
+  /// @brief Used by the cache to know the type of the result.
   typedef SDD<C> result_type;
 
-  /// To iterate on operands.
+  /// @brief Define an iterator on operands.
   typedef const SDD<C>* const_iterator;
 
-  /// The dynamically allocated array of operands.
+  /// @brief The dynamically allocated array of operands.
+  ///
+  /// The concrete type will always be an SDD<C>. But we need a raw memory storage as SDD<C> doesn't
+  /// have a default constructor. This storage will be filled by the constructor.
   char* operands;
 
-  /// The number of operands.
+  /// @brief The number of operands.
   const typename C::operands_size_type size;
 
+  /// @brief Constructor from an nary_builder.
   template <typename Builder>
   nary_base(Builder& builder)
     : operands(new char[builder.size_to_allocate()])
     , size(static_cast<typename C::operands_size_type>(builder.size()))
   {
+    // Will place (with a placement new combine with a move) operands in the raw storage.
     builder.consolidate(operands);
   }
 
+  /// @brief Move constructor.
   nary_base(nary_base&& other)
   noexcept
     : operands(other.operands)
@@ -109,6 +115,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_base
     other.operands = nullptr;
   }
 
+  /// @brief Destructor.
   ~nary_base()
   {
     if (operands != nullptr)
@@ -121,6 +128,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_base
     }
   }
 
+  /// @brief Get an iterator to the first operand.
   const_iterator
   begin()
   const noexcept
@@ -128,6 +136,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_base
     return reinterpret_cast<const SDD<C>*>(operands);
   }
 
+  /// @brief Get an iterator to the end.
   const_iterator
   end()
   const noexcept
@@ -135,6 +144,9 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_base
     return reinterpret_cast<const SDD<C>*>(operands) + size;
   }
 
+  /// @brief Apply the operation.
+  ///
+  /// Called by the cache.
   SDD<C>
   operator()(context<C>& cxt)
   const
@@ -204,7 +216,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
 
   /// @brief The policy to add new operands.
   ///
-  /// An instance is needed for builders with a state (intersection).
+  /// An instance is needed for builders with a state (actually, the intersection builder).
   Builder builder_;
 
   /// @brief Sorted container of operands.
@@ -257,6 +269,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
     set_.reserve(size);
   }
 
+  /// @brief Get an iterator to the first operand.
   const_iterator
   begin()
   const noexcept
@@ -264,6 +277,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
     return set_.begin();
   }
 
+  /// @brief Get an iterator to the end.
   const_iterator
   end()
   const noexcept
@@ -279,6 +293,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
     return set_.empty();
   }
 
+  /// @brief Get the number of contained elements.
   std::size_t
   size()
   const noexcept
