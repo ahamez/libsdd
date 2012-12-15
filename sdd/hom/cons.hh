@@ -70,7 +70,7 @@ public:
 
   /// @brief Return the order of this Cons.
   const order<C>&
-  order()
+  get_order()
   const noexcept
   {
     return order_;
@@ -115,7 +115,7 @@ operator==(const cons<C, Valuation>& lhs, const cons<C, Valuation>& rhs)
 noexcept
 {
   return lhs.valuation() == rhs.valuation() and lhs.next() == rhs.next()
-     and lhs.order() == rhs.order();
+     and lhs.get_order() == rhs.get_order();
 }
 
 /// @internal
@@ -124,7 +124,7 @@ template <typename C, typename Valuation>
 std::ostream&
 operator<<(std::ostream& os, const cons<C, Valuation>& c)
 {
-  return os << "Cons(" << c.order().identifier() << ", " << c.valuation() << ", " << c.next()
+  return os << "Cons(" << c.get_order().identifier() << ", " << c.valuation() << ", " << c.next()
             << ")";
 }
 
@@ -159,7 +159,7 @@ struct hash<sdd::hom::cons<C, Valuation>>
   const noexcept
   {
     std::size_t seed = 0;
-    sdd::util::hash_combine(seed, h.order());
+    sdd::util::hash_combine(seed, h.get_order());
     sdd::util::hash_combine(seed, h.valuation());
     sdd::util::hash_combine(seed, h.next());
     return seed;
