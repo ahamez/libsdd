@@ -201,11 +201,9 @@ public:
   homomorphism
   create(mem::construct<T>, Args&&... args)
   {
-    const std::size_t size = sizeof(unique_type);
-    char* addr = mem::allocate<unique_type>(size);
-    unique_type* u =
-      new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
-    return homomorphism(mem::unify(u, size));
+    char* addr = mem::allocate<unique_type>();
+    unique_type* u = new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
+    return homomorphism(mem::unify(u));
   }
 
   /// @internal

@@ -122,6 +122,16 @@ public:
     return size_;
   }
 
+  /// @brief Get the number of extra bytes.
+  ///
+  /// This extra extra bytes correspond to the arcs allocated right after this node.
+  std::size_t
+  extra_bytes()
+  const noexcept
+  {
+    return size_ * sizeof(arc<C, Valuation>);
+  }
+
 private:
 
   /// @internal

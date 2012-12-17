@@ -297,8 +297,9 @@ public:
   ptr_type
   zero_ptr()
   {
-    static unique_type* z = new unique_type(mem::construct<zero_terminal<C>>());
-    static const ptr_type zero(mem::unify(z, sizeof(unique_type)));
+    static char* addr = mem::allocate<unique_type>();
+    static unique_type* z = new (addr) unique_type(mem::construct<zero_terminal<C>>());
+    static const ptr_type zero(mem::unify(z));
     return zero;
   }
 
@@ -310,8 +311,9 @@ public:
   ptr_type
   one_ptr()
   {
-    static unique_type* o = new unique_type(mem::construct<one_terminal<C>>());
-    static const ptr_type one(mem::unify(o, sizeof(unique_type)));
+    static char* addr = mem::allocate<unique_type>();
+    static unique_type* o = new (addr) unique_type(mem::construct<one_terminal<C>>());
+    static const ptr_type one(mem::unify(o));
     return one;
   }
 
@@ -392,11 +394,10 @@ private:
     // Note that the alpha function is allocated right behind the node, thus extra care must be
     // taken. This is also why we use Boost.Intrusive in order to be able to manage memory
     // exactly the way we want.
-    const std::size_t size = sizeof(unique_type) + builder.size_to_allocate();
-    char* addr = mem::allocate<unique_type>(size);
+    char* addr = mem::allocate<unique_type>(builder.size_to_allocate());
     unique_type* u =
       new (addr) unique_type(mem::construct<node<C, Valuation>>(), var, builder);
-    return mem::unify(u, size);
+    return mem::unify(u);
   }
 
   friend void util::print_sizes<C>(std::ostream&);

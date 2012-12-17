@@ -98,18 +98,19 @@ public:
   /// @param size The size of the data. It must be the same as the one given to allocate().
   /// @return A reference to the unified data.
   const Unique&
-  operator()(Unique* u_ptr, std::size_t size)
+  operator()(Unique* ptr)
   {
     if (load_factor() >= 0.9)
     {
       rehash();
     }
 
-    auto insertion = set_->insert(*u_ptr);
+    auto insertion = set_->insert(*ptr);
     if (not insertion.second)
     {
       ++hit_;
-      u_ptr->~Unique();
+      const std::size_t size = sizeof(Unique) + ptr->extra_bytes();
+      ptr->~Unique();
       if (blocks_.size() == nb_blocks)
       {
         // Erase last block (the biggest one).
@@ -117,7 +118,7 @@ public:
         delete[] it->second;
         blocks_.erase(it);
       }
-      blocks_.emplace(size, reinterpret_cast<char*>(u_ptr));
+      blocks_.emplace(size, reinterpret_cast<char*>(ptr));
     }
     else
     {
@@ -128,8 +129,9 @@ public:
 
   /// @brief Allocate a memory block large enough for the given size.
   char*
-  allocate(std::size_t size)
+  allocate(std::size_t extra_bytes)
   {
+    const std::size_t size = sizeof(Unique) + extra_bytes;
     const auto it = blocks_.lower_bound(size);
     if (it != blocks_.end() and it->first <= (2 * size))
     {
@@ -211,9 +213,9 @@ noexcept
 template <typename Unique>
 inline
 char*
-allocate(std::size_t size)
+allocate(std::size_t extra_bytes = 0)
 {
-  return global_unique_table<Unique>().allocate(size);
+  return global_unique_table<Unique>().allocate(extra_bytes);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -227,9 +229,9 @@ allocate(std::size_t size)
 template <typename Unique>
 inline
 const Unique&
-unify(Unique* u_ptr, std::size_t size)
+unify(Unique* ptr)
 {
-  return global_unique_table<Unique>()(u_ptr, size);
+  return global_unique_table<Unique>()(ptr);
 }
 
 /*------------------------------------------------------------------------------------------------*/

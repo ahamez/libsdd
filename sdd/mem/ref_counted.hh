@@ -75,6 +75,14 @@ public:
     return data_;
   }
 
+  /// @brief Get the number of extra bytes that may be used by the contained type.
+  std::size_t
+  extra_bytes()
+  const noexcept
+  {
+    return data_.extra_bytes();
+  }
+
 private:
 
   /// A ptr should be able to access and modify the reference counter.
