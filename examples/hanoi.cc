@@ -243,7 +243,8 @@ main(int argc, char** argv)
   std::size_t elapsed;
 
   // Apply events
-  start = std::chrono::system_clock::now();  SDD final = events(o, m0);
+  start = std::chrono::system_clock::now();
+  SDD final = events(o, m0);
   end = std::chrono::system_clock::now();
   elapsed = std::chrono::duration_cast<std::chrono::seconds>(end-start).count();
   std::cout << "Time: " << elapsed << "s" << std::endl;
@@ -252,19 +253,12 @@ main(int argc, char** argv)
 
   // Apply saturated events
   start = std::chrono::system_clock::now();
-  try
-  {
-    SDD sat_final = sat_events(o, m0);
-  }
-  catch (std::exception& e)
-  {
-    std::cout << e.what() << std::endl;
-  }
+  SDD sat_final = sat_events(o, m0);
   end = std::chrono::system_clock::now();
   elapsed = std::chrono::duration_cast<std::chrono::seconds>(end-start).count();
   std::cout << "Time: " << elapsed << "s" << std::endl;
   // Number of distinct paths
-  std::cout << "Number of states : " << sdd::count_paths(final) << std::endl;
+  std::cout << "Number of states : " << sdd::count_paths(sat_final) << std::endl;
 
   return 0;
 }
