@@ -1,5 +1,5 @@
-#ifndef _SDD_VALUES_UNIQUE_FLAT_SET_HH_
-#define _SDD_VALUES_UNIQUE_FLAT_SET_HH_
+#ifndef _SDD_VALUES_FLAT_SET_HH_
+#define _SDD_VALUES_FLAT_SET_HH_
 
 #include <algorithm>  // copy, set_difference, set_intersection, set_union
 #include <forward_list>
@@ -21,12 +21,12 @@ namespace sdd { namespace values {
 
 /// @brief A unified set of values, implemented with a sorted vector.
 template <typename Value>
-class unique_flat_set
+class flat_set
 {
 public:
 
   /// @brief The type of the real container.
-  typedef boost::container::flat_set<Value> flat_set_type;
+  typedef boost::container::flat_set<Value> internal_flat_set_type;
 
   /// @brief The type of the contained value.
   typedef Value value_type;
@@ -45,7 +45,7 @@ private:
     entry& operator=(const entry&) = delete;
 
     /// @brief The unified flat set.
-    const flat_set_type data;
+    const internal_flat_set_type data;
 
     /// @brief Constructor.
     template <typename... Args>
@@ -92,48 +92,48 @@ private:
   typedef typename set_type::bucket_traits bucket_traits;
 
   /// @brief A pointer to the unified set of values.
-  const flat_set_type* data_;
+  const internal_flat_set_type* data_;
 
 public:
 
   /// @brief The type of an iterator on a flat set of values.
-  typedef typename flat_set_type::const_iterator const_iterator;
+  typedef typename internal_flat_set_type::const_iterator const_iterator;
 
   /// @brief Default constructor.
-  unique_flat_set()
+  flat_set()
     : data_(empty_set())
   {
   }
 
   /// @brief Constructor with a range.
   template <typename InputIterator>
-  unique_flat_set(InputIterator begin, InputIterator end)
+  flat_set(InputIterator begin, InputIterator end)
     : data_(unify(begin, end))
   {
   }
 
   /// @brief Constructor with a initializer_list.
-  unique_flat_set(std::initializer_list<Value> values)
-    : unique_flat_set(values.begin(), values.end())
+  flat_set(std::initializer_list<Value> values)
+    : flat_set(values.begin(), values.end())
   {
   }
 
-  /// @brief Constructor from a temporary flat_set_type.
-  unique_flat_set(flat_set_type&& fs)
+  /// @brief Constructor from a temporary internal_flat_set_type.
+  flat_set(internal_flat_set_type&& fs)
     : data_(unify(std::move(fs)))
   {
   }
 
-  unique_flat_set(const unique_flat_set&) = default;
-  unique_flat_set& operator=(const unique_flat_set&) = default;
-  unique_flat_set(unique_flat_set&&) = default;
-  unique_flat_set& operator=(unique_flat_set&&) = default;
+  flat_set(const flat_set&) = default;
+  flat_set& operator=(const flat_set&) = default;
+  flat_set(flat_set&&) = default;
+  flat_set& operator=(flat_set&&) = default;
 
   /// @brief Insert a value.
   std::pair<const_iterator, bool>
   insert(const Value& x)
   {
-    flat_set_type s(*data_);
+    internal_flat_set_type s(*data_);
     const auto insertion = s.insert(x);
     if (insertion.second)
     {
@@ -147,7 +147,7 @@ public:
   const_iterator
   insert(const_iterator position, const Value& x)
   {
-    flat_set_type s(*data_);
+    internal_flat_set_type s(*data_);
     const auto cit = s.insert(position, x);
     s.shrink_to_fit();
     data_ = unify(std::move(s));
@@ -214,7 +214,7 @@ public:
   std::size_t
   erase(const Value& x)
   {
-    flat_set_type fs(*data_);
+    internal_flat_set_type fs(*data_);
     const std::size_t nb_erased = fs.erase(x);
     unify(std::move(fs));
     return nb_erased;
@@ -230,7 +230,7 @@ public:
 
   /// @internal
   /// @brief Get the pointer to the unified data.
-  const flat_set_type* const
+  const internal_flat_set_type* const
   data()
   const noexcept
   {
@@ -286,10 +286,10 @@ private:
 
   /// @brief Get the static empty flat set.
   static
-  const flat_set_type*
+  const internal_flat_set_type*
   empty_set()
   {
-    static auto e = unify(flat_set_type());
+    static auto e = unify(internal_flat_set_type());
     return e;
   }
 
@@ -310,10 +310,10 @@ private:
     return &disposer().mem.front()[disposer().used_mem++];
   }
 
-  /// @brief Unify a flat_set_type using a unique table.
+  /// @brief Unify a internal_flat_set_type using a unique table.
   template <typename... Args>
   static
-  const flat_set_type*
+  const internal_flat_set_type*
   unify(Args&&... args)
   {
     entry e(std::forward<Args>(args)...);
@@ -332,12 +332,14 @@ private:
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Equality of unique_flat_set
-/// @related unique_flat_set
+/// @brief Equality of flat_set
+/// @related flat_set
+///
+/// O(1).
 template <typename Value>
 inline
 bool
-operator==(const unique_flat_set<Value>& lhs, const unique_flat_set<Value>& rhs)
+operator==(const flat_set<Value>& lhs, const flat_set<Value>& rhs)
 noexcept
 {
   // Pointer equality.
@@ -346,14 +348,14 @@ noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Comparison of unique_flat_set
-/// @related unique_flat_set
+/// @brief Comparison of flat_set
+/// @related flat_set
 ///
-/// The order on unique_flat_set is arbitrary. 
+/// O(1). The order on flat_set is arbitrary. 
 template <typename Value>
 inline
 bool
-operator<(const unique_flat_set<Value>& lhs, const unique_flat_set<Value>& rhs)
+operator<(const flat_set<Value>& lhs, const flat_set<Value>& rhs)
 noexcept
 {
   // Pointer comparison.
@@ -362,11 +364,11 @@ noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Textual output of a unique_flat_set
-/// @related unique_flat_set
+/// @brief Textual output of a flat_set
+/// @related flat_set
 template <typename Value>
 std::ostream&
-operator<<(std::ostream& os, const unique_flat_set<Value>& fs)
+operator<<(std::ostream& os, const flat_set<Value>& fs)
 {
   os << "{";
   if (not fs.empty())
@@ -379,47 +381,47 @@ operator<<(std::ostream& os, const unique_flat_set<Value>& fs)
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @related unique_flat_set
+/// @related flat_set
 template <typename Value>
 inline
-unique_flat_set<Value>
-difference(const unique_flat_set<Value>& lhs, const unique_flat_set<Value>& rhs)
+flat_set<Value>
+difference(const flat_set<Value>& lhs, const flat_set<Value>& rhs)
 noexcept
 {
-  typename unique_flat_set<Value>::flat_set_type res;
+  typename flat_set<Value>::internal_flat_set_type res;
   std::set_difference( lhs.cbegin(), lhs.cend(), rhs.cbegin(), rhs.cend()
                      , std::inserter(res, res.begin()));
-  return unique_flat_set<Value>(std::move(res));
+  return flat_set<Value>(std::move(res));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @related unique_flat_set
+/// @related flat_set
 template <typename Value>
 inline
-unique_flat_set<Value>
-intersection(const unique_flat_set<Value>& lhs, const unique_flat_set<Value>& rhs)
+flat_set<Value>
+intersection(const flat_set<Value>& lhs, const flat_set<Value>& rhs)
 noexcept
 {
-  typename unique_flat_set<Value>::flat_set_type res;
+  typename flat_set<Value>::internal_flat_set_type res;
   std::set_intersection( lhs.cbegin(), lhs.cend(), rhs.cbegin(), rhs.cend()
                        , std::inserter(res, res.begin()));
-  return unique_flat_set<Value>(std::move(res));
+  return flat_set<Value>(std::move(res));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @related unique_flat_set
+/// @related flat_set
 template <typename Value>
 inline
-unique_flat_set<Value>
-sum(const unique_flat_set<Value>& lhs, const unique_flat_set<Value>& rhs)
+flat_set<Value>
+sum(const flat_set<Value>& lhs, const flat_set<Value>& rhs)
 noexcept
 {
-  typename unique_flat_set<Value>::flat_set_type res;
+  typename flat_set<Value>::internal_flat_set_type res;
   std::set_union( lhs.cbegin(), lhs.cend(), rhs.cbegin(), rhs.cend()
                 , std::inserter(res, res.begin()));
-  return unique_flat_set<Value>(std::move(res));
+  return flat_set<Value>(std::move(res));
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -430,10 +432,10 @@ namespace std {
 
 /// @brief Hash specialization for sdd::values::flat_set
 template <typename Value>
-struct hash<sdd::values::unique_flat_set<Value>>
+struct hash<sdd::values::flat_set<Value>>
 {
   std::size_t
-  operator()(const sdd::values::unique_flat_set<Value>& fs)
+  operator()(const sdd::values::flat_set<Value>& fs)
   const noexcept
   {
     return std::hash<decltype(fs.data())>()(fs.data());
@@ -444,4 +446,4 @@ struct hash<sdd::values::unique_flat_set<Value>>
 
 /*------------------------------------------------------------------------------------------------*/
 
-#endif // _SDD_VALUES_UNIQUE_FLAT_SET_HH_
+#endif // _SDD_VALUES_flat_set_HH_

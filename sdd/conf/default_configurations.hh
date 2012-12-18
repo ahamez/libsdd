@@ -4,7 +4,7 @@
 #include <string>
 
 #include "sdd/values/bitset.hh"
-#include "sdd/values/unique_flat_set.hh"
+#include "sdd/values/flat_set.hh"
 
 namespace sdd {
 
@@ -33,7 +33,7 @@ struct conf1
 {
   typedef std::string Identifier;
   typedef unsigned int Variable;
-  typedef values::unique_flat_set<unsigned int> Values;
+  typedef values::flat_set<unsigned int> Values;
 };
 
 /*------------------------------------------------------------------------------------------------*/

@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 
-#include "sdd/values/unique_flat_set.hh"
+#include "sdd/values/flat_set.hh"
 
-typedef sdd::values::unique_flat_set<unsigned int> flat_set;
+typedef sdd::values::flat_set<unsigned int> flat_set;
 
 /*------------------------------------------------------------------------------------------------*/
 

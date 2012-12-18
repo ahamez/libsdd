@@ -32,7 +32,7 @@ set(SOURCES
     order/test_order.cc
     order/test_utility.cc
     values/test_bitset.cc
-    values/test_unique_flat_set.cc
+    values/test_flat_set.cc
     )
 
 add_executable(tests ${SOURCES})
