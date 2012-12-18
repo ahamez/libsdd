@@ -89,6 +89,7 @@
 		2B0197C515BDF18800CE5F70 /* nary_fwd.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = nary_fwd.hh; sourceTree = "<group>"; };
 		2B037A1D15C6B26B00395E2C /* visit.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = visit.hh; sourceTree = "<group>"; };
 		2B04D093163454D900CB57A3 /* test_order.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_order.cc; sourceTree = "<group>"; };
+		2B07606A1680BE8F001CE761 /* consolidate.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = consolidate.hh; sourceTree = "<group>"; };
 		2B0EA1321615D0A10019EB04 /* order.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = order.hh; sourceTree = "<group>"; };
 		2B0EA138161640450019EB04 /* test_utility.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_utility.cc; sourceTree = "<group>"; };
 		2B19AF0615C5D75800C4ABB0 /* paths.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; path = paths.hh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -261,6 +262,7 @@
 			children = (
 				2B5F99771623149000BAA8D4 /* composition.hh */,
 				2BE71C62161C2CBA00B22084 /* cons.hh */,
+				2B07606A1680BE8F001CE761 /* consolidate.hh */,
 				2B454E8F162C2BE50086989F /* constant.hh */,
 				2B1A26981619D56A005D6BB0 /* context.hh */,
 				2B1A26991619D5DB005D6BB0 /* context_fwd.hh */,

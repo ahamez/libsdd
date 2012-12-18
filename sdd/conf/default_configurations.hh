@@ -13,7 +13,7 @@ namespace sdd {
 struct default_parameters
 {
   typedef unsigned short alpha_size_type;
-  typedef unsigned short operands_size_type;
+  typedef unsigned int operands_size_type;
 };
 
 /*------------------------------------------------------------------------------------------------*/

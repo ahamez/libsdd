@@ -207,6 +207,18 @@ public:
   }
 
   /// @internal
+  /// @brief Create an homomorphism from a concrete type (e.g. Id, Cons, etc.) of variable size.
+  template<typename T, typename... Args>
+  static
+  homomorphism
+  create2(mem::construct<T>, std::size_t extra_bytes, Args&&... args)
+  {
+    char* addr = mem::allocate<unique_type>(extra_bytes);
+    unique_type* u = new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
+    return homomorphism(mem::unify(u));
+  }
+
+  /// @internal
   /// @brief Dispatch the skip predicate call to concrete homomorphisms.
   struct skip_helper
   {

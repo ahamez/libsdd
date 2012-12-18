@@ -1,7 +1,7 @@
 #ifndef _SDD_HOM_SUM_HH_
 #define _SDD_HOM_SUM_HH_
 
-#include <algorithm>  // all_of, copy
+#include <algorithm>  // all_of, copy, equal
 #include <deque>
 #include <initializer_list>
 #include <iosfwd>
@@ -12,6 +12,7 @@
 
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/top.hh"
+#include "sdd/hom/consolidate.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
@@ -27,24 +28,38 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief Sum homomorphism.
 template <typename C>
-class sum
+class LIBSDD_ATTRIBUTE_PACKED sum
 {
 public:
 
-  /// @brief The type of the homomorphism operands' set.
-  typedef boost::container::flat_set<homomorphism<C>> operands_type;
+  /// @brief The type of a const iterator on this sum's operands.
+  typedef const homomorphism<C>* const_iterator;
 
 private:
 
-  /// @brief The homomorphism operands' set.
-  const operands_type operands_;
+  /// @brief The type deduced from configuration of the number of operands.
+  typedef typename C::operands_size_type operands_size_type;
+
+  /// @brief The homomorphism's number of operands.
+  const operands_size_type size_;
 
 public:
 
   /// @brief Constructor.
-  sum(operands_type&& operands)
-    : operands_(std::move(operands))
+  sum(boost::container::flat_set<homomorphism<C>>& operands)
+    : size_(static_cast<operands_size_type>(operands.size()))
   {
+    // Put all homomorphisms operands right after this sum instance.
+    hom::consolidate(operands_addr(), operands.begin(), operands.end());
+  }
+
+  /// @brief Destructor.
+  ~sum()
+  {
+    for (auto& h : *this)
+    {
+      h.~homomorphism<C>();
+    }
   }
 
   /// @brief Evaluation.
@@ -52,8 +67,8 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
-    dd::sum_builder<C, SDD<C>> sum_operands(operands_.size());
-    for (const auto& op : operands_)
+    dd::sum_builder<C, SDD<C>> sum_operands(size_);
+    for (const auto& op : *this)
     {
       sum_operands.add(op(cxt, o, x));
     }
@@ -74,7 +89,7 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return std::all_of( operands_.begin(), operands_.end()
+    return std::all_of( begin(), end()
                       , [&o](const homomorphism<C>& h){return h.skip(o);});
   }
 
@@ -84,15 +99,58 @@ public:
   selector()
   const noexcept
   {
-    return std::all_of( operands_.begin(), operands_.end()
+    return std::all_of( begin(), end()
                       , [](const homomorphism<C>& h){return h.selector();});
   }
 
-  const operands_type&
-  operands()
+  /// @brief Get an iterator to the first operand.
+  ///
+  /// O(1).
+  const_iterator
+  begin()
   const noexcept
   {
-    return operands_;
+    return reinterpret_cast<const homomorphism<C>*>(operands_addr());
+  }
+
+  /// @brief Get an iterator to the end of operands.
+  ///
+  /// O(1).
+  const_iterator
+  end()
+  const noexcept
+  {
+    return reinterpret_cast<const homomorphism<C>*>(operands_addr()) + size_;
+  }
+  
+  /// @brief Get the number of operands.
+  ///
+  /// O(1).
+  std::size_t
+  size()
+  const noexcept
+  {
+    return size_;
+  }
+
+  /// @brief Get the number of extra bytes.
+  ///
+  /// These extra extra bytes correspond to the operands allocated right after this homomorphism.
+  std::size_t
+  extra_bytes()
+  const noexcept
+  {
+    return size_ * sizeof(homomorphism<C>);
+  }
+
+private:
+
+  /// @brief Return the address of the beginning of the operands.
+  char*
+  operands_addr()
+  const noexcept
+  {
+    return reinterpret_cast<char*>(const_cast<sum*>(this)) + sizeof(sum);
   }
 };
 
@@ -107,7 +165,7 @@ bool
 operator==(const sum<C>& lhs, const sum<C>& rhs)
 noexcept
 {
-  return lhs.operands() == rhs.operands();
+  return lhs.size() == rhs.size() and std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 /// @internal
@@ -117,9 +175,9 @@ std::ostream&
 operator<<(std::ostream& os, const sum<C>& s)
 {
   os << "(";
-  std::copy( s.operands().begin(), std::prev(s.operands().end())
+  std::copy( s.begin(), std::prev(s.end())
            , std::ostream_iterator<homomorphism<C>>(os, " + "));
-  return os << *std::prev(s.operands().end()) << ")";
+  return os << *std::prev(s.end()) << ")";
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -130,7 +188,7 @@ template <typename C>
 struct sum_builder_helper
 {
   typedef void result_type;
-  typedef typename sum<C>::operands_type operands_type;
+  typedef boost::container::flat_set<homomorphism<C>> operands_type;
   typedef std::deque<homomorphism<C>> hom_list_type;
   typedef std::unordered_map<typename C::Identifier, hom_list_type> locals_type;
 
@@ -140,7 +198,7 @@ struct sum_builder_helper
             , const homomorphism<C>& h, operands_type& operands, locals_type& locals)
   const
   {
-    for (const auto& op : s.operands())
+    for (const auto& op : s)
     {
       apply_visitor(*this, op->data(), op, operands, locals);
     }
@@ -164,7 +222,6 @@ struct sum_builder_helper
   {
     operands.insert(h);
   }
-
 };
 
 } // namespace hom
@@ -184,7 +241,7 @@ Sum(const order<C>& o, InputIterator begin, InputIterator end)
     throw std::invalid_argument("Empty operands at Sum construction.");
   }
 
-  typename hom::sum<C>::operands_type operands;
+  boost::container::flat_set<homomorphism<C>> operands;
   operands.reserve(size);
 
   hom::sum_builder_helper<C> sbv;
@@ -206,8 +263,8 @@ Sum(const order<C>& o, InputIterator begin, InputIterator end)
   }
   else
   {
-    operands.shrink_to_fit();
-    return homomorphism<C>::create(mem::construct<hom::sum<C>>(), std::move(operands));
+    const std::size_t extra_bytes = operands.size() * sizeof(homomorphism<C>);
+    return homomorphism<C>::create2(mem::construct<hom::sum<C>>(), extra_bytes, operands);
   }
 }
 
@@ -240,7 +297,7 @@ struct hash<sdd::hom::sum<C>>
   const noexcept
   {
     std::size_t seed = 0;
-    for (const auto& op : s.operands())
+    for (const auto& op : s)
     {
       sdd::util::hash_combine(seed, op);
     }

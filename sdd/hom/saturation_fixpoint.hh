@@ -1,13 +1,14 @@
 #ifndef _SDD_HOM_SATURATION_FIXPOINT_HH_
 #define _SDD_HOM_SATURATION_FIXPOINT_HH_
 
-#include <algorithm>  // all_of, copy
+#include <algorithm>  // all_of, copy, equal
 #include <iosfwd>
-#include <stdexcept>  //invalid_argument
+#include <stdexcept>  // invalid_argument
 
 #include <boost/container/flat_set.hpp>
 
 #include "sdd/dd/definition.hh"
+#include "sdd/hom/consolidate.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
@@ -27,13 +28,16 @@ class LIBSDD_ATTRIBUTE_PACKED saturation_fixpoint
 {
 public:
 
+  /// @brief The type of a const iterator on this saturation_fixpoint's G operands.
+  typedef const homomorphism<C>* const_iterator;
+
   /// @brief The variable type.
   typedef typename C::Variable variable_type;
 
-  /// @brief The type of the homomorphism G part.
-  typedef boost::container::flat_set<homomorphism<C>> g_type;
-
 private:
+
+  /// @brief The type deduced from configuration of the number of operands.
+  typedef typename C::operands_size_type operands_size_type;
 
   /// @brief The variable on which this sum works.
   const variable_type variable_;
@@ -41,8 +45,8 @@ private:
   /// @brief The homomorphism's F part.
   const homomorphism<C> F_;
 
-  /// @brief The homomorphism's G part.
-  const g_type G_;
+  /// @brief The homomorphism's G part size.
+  const operands_size_type G_size_;
 
   /// @brief The homomorphism's L part.
   const homomorphism<C> L_;
@@ -50,13 +54,25 @@ private:
 public:
 
   /// @brief Constructor.
-  saturation_fixpoint( const variable_type& var, const homomorphism<C>& f, g_type&& g
+  saturation_fixpoint( const variable_type& var, const homomorphism<C>& f
+                     , boost::container::flat_set<homomorphism<C>>& g
                      , const homomorphism<C>& l)
     : variable_(var)
     , F_(f)
-    , G_(std::move(g))
+    , G_size_(static_cast<operands_size_type>(g.size()))
     , L_(l)
   {
+    // Put all homomorphisms operands right after this sum instance.
+    hom::consolidate(G_operands_addr(), g.begin(), g.end());
+  }
+
+  /// @brief Destructor.
+  ~saturation_fixpoint()
+  {
+    for (auto it = G_begin(); it != G_end(); ++it)
+    {
+      it->~homomorphism<C>();
+    }
   }
 
   /// @brief Evaluation.
@@ -74,8 +90,9 @@ public:
       s2 = F_(cxt, o, s2); // apply (F + Id)*
       s2 = L_(cxt, o, s2); // apply (L + Id)*
 
-      for (const auto& g : G_)
+      for (auto cit = G_begin(); cit != G_end(); ++cit)
       {
+        const auto& g = *cit;
         try
         {
           // chain applications of G
@@ -108,7 +125,7 @@ public:
   {
     return F_.selector()
        and L_.selector()
-       and std::all_of( G_.begin(), G_.end()
+       and std::all_of( G_begin(), G_end()
                       , [](const homomorphism<C>& h){return h.selector();});
   }
 
@@ -128,12 +145,32 @@ public:
     return F_;
   }
 
-  /// @brief Get the global part.
-  const g_type&
-  G()
+  /// @brief Get the number of G operands.
+  std::size_t
+  G_size()
   const noexcept
   {
-    return G_;
+    return G_size_;
+  }
+
+  /// @brief Get an iterator to the first operand of G.
+  ///
+  /// O(1).
+  const_iterator
+  G_begin()
+  const noexcept
+  {
+    return reinterpret_cast<const homomorphism<C>*>(G_operands_addr());
+  }
+
+  /// @brief Get an iterator to the end of operands of G.
+  ///
+  /// O(1).
+  const_iterator
+  G_end()
+  const noexcept
+  {
+    return reinterpret_cast<const homomorphism<C>*>(G_operands_addr()) + G_size_;
   }
 
   /// @brief Get the local part.
@@ -142,6 +179,17 @@ public:
   const noexcept
   {
     return L_;
+  }
+
+private:
+
+  /// @brief Return the address of the beginning of the operands of G.
+  char*
+  G_operands_addr()
+  const noexcept
+  {
+    return reinterpret_cast<char*>(const_cast<saturation_fixpoint*>(this))
+         + sizeof(saturation_fixpoint);
   }
 };
 
@@ -159,7 +207,8 @@ noexcept
   return lhs.variable() == rhs.variable()
      and lhs.F() == rhs.F()
      and lhs.L() == rhs.L()
-     and lhs.G() == rhs.G();
+     and lhs.G_size() == rhs.G_size()
+     and std::equal(lhs.G_begin(), lhs.G_end(), rhs.G_begin());
 }
 
 /// @internal
@@ -169,12 +218,12 @@ std::ostream&
 operator<<(std::ostream& os, const saturation_fixpoint<C>& s)
 {
   os << "Sat(@" << s.variable() << ",  " << s.F() << " + " << s.L();
-  if (not s.G().empty())
+  if (not (s.G_size() == 0))
   {
     os << " + ";
-    std::copy( s.G().begin(), std::prev(s.G().end())
+    std::copy( s.G_begin(), std::prev(s.G_end())
              , std::ostream_iterator<homomorphism<C>>(os, " + "));
-    os << *std::prev(s.G().end()) << ")*";
+    os << *std::prev(s.G_end()) << ")*";
   }
   return os;
 }
@@ -194,6 +243,19 @@ SaturationFixpoint( const typename C::Variable& var
                   , InputIterator gbegin, InputIterator gend
                   , const homomorphism<C>& l)
 {
+  // Avoid to reallocate a new set of operands each time.
+  struct static_init
+  {
+    boost::container::flat_set<homomorphism<C>> data;
+
+    static_init()
+      : data()
+    {
+      data.reserve(2028);
+    }
+  };
+  static static_init g;
+
   const std::size_t gsize = std::distance(gbegin, gend);
 
   if (f != Id<C>() and gsize == 0 and l == Id<C>())
@@ -206,11 +268,11 @@ SaturationFixpoint( const typename C::Variable& var
     return l;
   }
 
-  return homomorphism<C>::create( mem::construct<saturation_fixpoint<C>>()
-                                , var
-                                , f
-                                , typename saturation_fixpoint<C>::g_type(gbegin, gend)
-                                , l);
+  g.data.clear();
+  g.data.insert(gbegin, gend);
+  const std::size_t extra_bytes = g.data.size() * sizeof(homomorphism<C>);
+  return homomorphism<C>::create2( mem::construct<saturation_fixpoint<C>>()
+                                 , extra_bytes, var, f, g.data, l);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -234,9 +296,9 @@ struct hash<sdd::hom::saturation_fixpoint<C>>
     sdd::util::hash_combine(seed, s.variable());
     sdd::util::hash_combine(seed, s.F());
     sdd::util::hash_combine(seed, s.L());
-    for (const auto& g : s.G())
+    for (auto cit = s.G_begin(); cit != s.G_end(); ++cit)
     {
-      sdd::util::hash_combine(seed, g);
+      sdd::util::hash_combine(seed, *cit);
     }
     return seed;
   }

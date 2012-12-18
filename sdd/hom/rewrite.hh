@@ -125,7 +125,7 @@ struct rewriter
             , const homomorphism<C>& h, const order<C>& o)
   const
   {
-    auto&& p = partition(o, s.operands().begin(), s.operands().end());
+    auto&& p = partition(o, s.begin(), s.end());
     auto& F = std::get<0>(p);
     auto& G = std::get<1>(p);
     auto& L = std::get<2>(p);
@@ -167,7 +167,7 @@ struct rewriter
 
     const sum<C>& s = mem::variant_cast<const sum<C>>(f.hom()->data());
 
-    auto&& p = partition(o, s.operands().begin(), s.operands().end());
+    auto&& p = partition(o, s.begin(), s.end());
     auto& F = std::get<0>(p);
     auto& G = std::get<1>(p);
     auto& L = std::get<2>(p);
