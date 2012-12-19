@@ -27,9 +27,9 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op
 {
   typedef nary_base<C, sum_op<C>> base_type;
 
-  template <typename... Args>
-  sum_op(Args&&... args)
-    : base_type(std::forward<Args>(args)...)
+  /// @brief Constructor.
+  sum_op(sum_builder<C, SDD<C>>& builder)
+    : base_type(builder)
   {
   }
 

@@ -24,9 +24,9 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op
 {
   typedef nary_base<C, intersection_op<C>> base_type;
 
-  template <typename... Args>
-  intersection_op(Args&&... args)
-    : base_type(std::forward<Args>(args)...)
+  /// @brief Constructor.
+  intersection_op(intersection_builder<C, SDD<C>>& builder)
+    : base_type(builder)
   {
   }
 
