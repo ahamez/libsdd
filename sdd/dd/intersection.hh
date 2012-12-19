@@ -19,17 +19,8 @@ namespace dd {
 /// @internal
 /// @brief The intersection operation in the cache.
 template <typename C>
-struct LIBSDD_ATTRIBUTE_PACKED intersection_op
-  : nary_base<C, intersection_op<C>>
+struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
 {
-  typedef nary_base<C, intersection_op<C>> base_type;
-
-  /// @brief Constructor.
-  intersection_op(intersection_builder<C, SDD<C>>& builder)
-    : base_type(builder)
-  {
-  }
-
   /// @brief Get the textual representation of the intersection operator.
   ///
   /// Called by top to export a textual description.
@@ -41,17 +32,18 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op
     return '&';
   }
 
-  template <enum node_tag tag>
+  /// @brief Perform the SDD intersection algorithm.
+  template <typename InputIterator, enum node_tag tag>
+  static
   SDD<C>
-  work(context<C>& cxt)
-  const
+  work(InputIterator begin, InputIterator end, context<C>& cxt)
   {
     typedef typename node_for_tag<C, tag>::type node_type;
     typedef typename node_type::valuation_type valuation_type;
     typedef typename node_type::variable_type variable_type;
 
-    auto operands_cit = base_type::begin();
-    const auto operands_end = base_type::end();
+    auto operands_cit = begin;
+    const auto operands_end = end;
 
     // Result accumulator, initialized with the first operand.
     SDD<C> res = *operands_cit;
@@ -266,31 +258,5 @@ intersection(std::initializer_list<SDD<C>> operands)
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-namespace std {
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Hash specialization for sdd::dd::intersection_op
-template <typename C>
-struct hash<sdd::dd::intersection_op<C>>
-{
-  std::size_t
-  operator()(const sdd::dd::intersection_op<C>& inter)
-  const noexcept
-  {
-    std::size_t seed = 0;
-    for (auto& operand : inter)
-    {
-      sdd::util::hash_combine(seed, operand);
-    }
-    return seed;
-  }
-};
-
-/*------------------------------------------------------------------------------------------------*/
-
-} // namespace std
 
 #endif // _SDD_DD_INTERSECTION_HH_

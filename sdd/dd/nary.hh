@@ -70,16 +70,16 @@ struct check_visitor
 
 /// @internal
 /// @brief Base class for sum and intersection operations, used by the cache.
+/// @tparam Operation The implementation of the sum or intersection algorithm.
 ///
 /// It manages the allocation and deallocation of operands, as well as the dispatch on the
-/// correct type (flat or hierarchical node). Use CRTP.
-/// As it's an internally used structure, we don't bother with private and public sections.
+/// correct type (flat or hierarchical node).
 template <typename C, typename Operation>
-struct LIBSDD_ATTRIBUTE_PACKED nary_base
+struct LIBSDD_ATTRIBUTE_PACKED nary_op
 {
-  // Can't copy a nary_base.
-  nary_base(const nary_base&) = delete;
-  nary_base& operator=(const nary_base&) = delete;
+  // Can't copy a nary_op.
+  nary_op(const nary_op&) = delete;
+  nary_op& operator=(const nary_op&) = delete;
 
   /// @brief Used by the cache to know the type of the result.
   typedef SDD<C> result_type;
@@ -98,16 +98,16 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_base
 
   /// @brief Constructor from an nary_builder.
   template <typename Builder>
-  nary_base(Builder& builder)
+  nary_op(Builder& builder)
     : operands(new char[builder.size_to_allocate()])
     , size(static_cast<typename C::operands_size_type>(builder.size()))
   {
-    // Will place (with a placement new combine with a move) operands in the raw storage.
+    // Will place (with a placement new combined with a move) operands in the raw storage.
     builder.consolidate(operands);
   }
 
   /// @brief Move constructor.
-  nary_base(nary_base&& other)
+  nary_op(nary_op&& other)
   noexcept
     : operands(other.operands)
     , size(other.size)
@@ -116,7 +116,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_base
   }
 
   /// @brief Destructor.
-  ~nary_base()
+  ~nary_op()
   {
     if (operands != nullptr)
     {
@@ -161,15 +161,14 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_base
                                 , (*cit)->data(), (*(cit + 1))->data()
                                 , *cit, *(cit + 1));
     }
-    // Dispatch on the function that does the real work with the deduced type.
-    const Operation* impl = static_cast<const Operation*>(this);
+
     if (tag == node_tag::flat)
     {
-      return impl->template work<node_tag::flat>(cxt);
+      return Operation::template work<const_iterator, node_tag::flat>(begin(), end(), cxt);
     }
     else
     {
-      return impl->template work<node_tag::hierarchical>(cxt);
+      return Operation::template work<const_iterator, node_tag::hierarchical>(begin(), end(), cxt);
     }
   }
 };
@@ -177,22 +176,22 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_base
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Equality of two operations based on nary_base.
-/// @related nary_base
+/// @brief Equality of two operations based on nary_op.
+/// @related nary_op
 template <typename C, typename Operation>
 inline
 bool
-operator==(const nary_base<C, Operation>& lhs, const nary_base<C, Operation>& rhs)
+operator==(const nary_op<C, Operation>& lhs, const nary_op<C, Operation>& rhs)
 noexcept
 {
   return lhs.size == rhs.size and std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 /// @internal
-/// @related nary_base
+/// @related nary_op
 template <typename C, typename Operation>
 std::ostream&
-operator<<(std::ostream& os, const nary_base<C, Operation>& x)
+operator<<(std::ostream& os, const nary_op<C, Operation>& x)
 {
   os << Operation::symbol() << " (";
   std::copy(x.begin(), std::prev(x.end()), std::ostream_iterator<SDD<C>>(os, ", "));
@@ -207,7 +206,7 @@ operator<<(std::ostream& os, const nary_base<C, Operation>& x)
 /// The goal of a this builder is ensure that operands are always stored in the same order
 /// (to improve cache hits); and to know the exact number of operands in order to allocate the
 /// smallest possible memory to store all of them (this allocation is performed in the
-/// construction of operations in nary_base).
+/// construction of operations in nary_op).
 template <typename Valuation, typename Builder>
 struct LIBSDD_ATTRIBUTE_PACKED nary_builder
 {
@@ -330,5 +329,31 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::dd
+
+namespace std {
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+/// @brief Hash specialization for sdd::dd::nary_op
+template <typename C, typename Operation>
+struct hash<sdd::dd::nary_op<C, Operation>>
+{
+  std::size_t
+  operator()(const sdd::dd::nary_op<C, Operation>& op)
+  const noexcept
+  {
+    std::size_t seed = 0;
+    for (const auto& operand : op)
+    {
+      sdd::util::hash_combine(seed, operand);
+    }
+    return seed;
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+} // namespace std
 
 #endif // _SDD_DD_NARY_HH_

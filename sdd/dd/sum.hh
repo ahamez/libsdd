@@ -22,17 +22,8 @@ namespace dd {
 /// @internal
 /// @brief The sum operation in the cache.
 template <typename C>
-struct LIBSDD_ATTRIBUTE_PACKED sum_op
-  : nary_base<C, sum_op<C>>
+struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
 {
-  typedef nary_base<C, sum_op<C>> base_type;
-
-  /// @brief Constructor.
-  sum_op(sum_builder<C, SDD<C>>& builder)
-    : base_type(builder)
-  {
-  }
-
   /// @brief Get the textual representation of the union operator.
   ///
   /// Called by top to export a textual description.
@@ -44,20 +35,20 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op
     return '+';
   }
 
-  /// @brief Perform the union algorithm.
+  /// @brief Perform the SDD union algorithm.
   ///
   /// It's a so-called 'n-ary' union in the sense that we don't create intermediary SDD.
   /// Also, a lot of tests permit to break loops as soon as possible.
-  template <enum node_tag tag>
+  template <typename InputInterator, enum node_tag tag>
+  static
   SDD<C>
-  work(context<C>& cxt)
-  const
+  work(InputInterator begin, InputInterator end, context<C>& cxt)
   {
     typedef typename node_for_tag<C, tag>::type node_type;
     typedef typename node_type::valuation_type valuation_type;
 
-    auto operands_cit = base_type::begin();
-    const auto operands_end = base_type::end();
+    auto operands_cit = begin;
+    const auto operands_end = end;
 
     // Get the first operand as a node, we need it to initialize the algorithm.
     const node_type& head = mem::variant_cast<node_type>((*operands_cit)->data());
@@ -348,31 +339,5 @@ sum(std::initializer_list<SDD<C>> operands)
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-namespace std {
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Hash specialization for sdd::dd::sum_op
-template <typename C>
-struct hash<sdd::dd::sum_op<C>>
-{
-  std::size_t
-  operator()(const sdd::dd::sum_op<C>& sum)
-  const noexcept
-  {
-    std::size_t seed = 0;
-    for (const auto& operand : sum)
-    {
-      sdd::util::hash_combine(seed, operand);
-    }
-    return seed;
-  }
-};
-
-/*------------------------------------------------------------------------------------------------*/
-
-} // namespace std
 
 #endif // _SDD_DD_SUM_HH_
