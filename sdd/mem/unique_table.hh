@@ -93,9 +93,8 @@ public:
   }
 
   /// @brief Unify a data.
-  /// @param u_ptr A pointer to a data constructed with a placement new into the storage returned by
+  /// @param ptr A pointer to a data constructed with a placement new into the storage returned by
   /// allocate().
-  /// @param size The size of the data. It must be the same as the one given to allocate().
   /// @return A reference to the unified data.
   const Unique&
   operator()(Unique* ptr)
