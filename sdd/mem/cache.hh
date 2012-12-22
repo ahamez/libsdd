@@ -2,6 +2,7 @@
 #define _SDD_MEM_CACHE_HH_
 
 #include <algorithm> // count_if, for_each, nth_element
+#include <cstdint>   // uint32_t
 #include <forward_list>
 #include <numeric>   // accumulate
 #include <tuple>
@@ -160,21 +161,25 @@ private:
     cache_entry& operator=(const cache_entry&) = delete;
 
     /// @brief The cached operation.
-    const Operation operation_;
+    const Operation operation;
 
-    /// @brief The result of the evaluation of operation_.
-    const result_type result_;
+    /// @brief The result of the evaluation of operation.
+    const result_type result;
 
     /// @brief Count the number of times this entry has been accessed.
     ///
     /// Used by the LFU cache cleanup strategy.
-    unsigned int nb_hits_;
+    std::uint32_t nb_hits_;
 
+    /// brief The 'in use' bit position in nb_hits_.
+    static constexpr std::uint32_t in_use_bit = (1u << 31);
+
+    /// @brief Constructor.
     template <typename... Args>
     cache_entry(Operation&& op, Args&&... args)
-      : operation_(std::move(op))
-      , result_(std::forward<Args>(args)...)
-      , nb_hits_(0)
+      : operation(std::move(op))
+      , result(std::forward<Args>(args)...)
+      , nb_hits_(in_use_bit) // initially in use
     {
     }
 
@@ -183,7 +188,47 @@ private:
     operator==(const cache_entry& other)
     const noexcept
     {
-      return operation_ == other.operation_;
+      return operation == other.operation;
+    }
+
+    /// @brief Get the number of hits, with the 'in use' bit set or not.
+    unsigned int
+    raw_nb_hits()
+    const noexcept
+    {
+      return nb_hits_;
+    }
+
+    /// @brief Set this cache entry to a 'not in use' and 'never used' state.
+    void
+    reset()
+    noexcept
+    {
+      nb_hits_ = 0;
+    }
+
+    /// @brief Increment the number of hits.
+    void
+    increment_nb_hits()
+    noexcept
+    {
+      ++nb_hits_;
+    }
+
+    /// @brief Set this cache entry to a 'not in use' state.
+    void
+    reset_in_use()
+    noexcept
+    {
+      nb_hits_ &= ~in_use_bit;
+    }
+
+    /// @brief Set this cache entry to an 'in use' state.
+    bool
+    in_use()
+    const noexcept
+    {
+      return nb_hits_ & in_use_bit;
     }
   };
 
@@ -197,7 +242,7 @@ private:
     operator()(const cache_entry& x)
     const noexcept
     {
-      return std::hash<Operation>()(x.operation_);
+      return std::hash<Operation>()(x.operation);
     }
   };
 
@@ -244,7 +289,7 @@ public:
   cache(context_type& context, const std::string& name, std::size_t size)
     : cxt_(context)
     , name_(name)
-    , max_size_(set_type::suggested_upper_bucket_count(size))
+    , max_size_(2/*set_type::suggested_upper_bucket_count(size)*/)
     , buckets_(new bucket_type[max_size_])
     , set_(new set_type(bucket_traits(buckets_, max_size_)))
     , stats_()
@@ -284,15 +329,15 @@ public:
     auto insertion = set_->insert_check( op
                                        , std::hash<Operation>()
                                        , [](const Operation& lhs, const cache_entry& rhs)
-                                           {return lhs == rhs.operation_;}
+                                           {return lhs == rhs.operation;}
                                        , commit_data);
 
     // Check if op has already been computed.
     if (not insertion.second)
     {
       ++stats_.rounds.front().hits;
-      ++insertion.first->nb_hits_;
-      return insertion.first->result_;
+      insertion.first->increment_nb_hits();
+      return insertion.first->result;
     }
 
     ++stats_.rounds.front().misses;
@@ -306,8 +351,10 @@ public:
     try
     {
       cache_entry* entry = new cache_entry(std::move(op), op(cxt_));
+      // A cache entry is constructed with the 'in use' bit set.
+      entry->reset_in_use();
       set_->insert_commit(*entry, commit_data); // doesn't throw
-      return entry->result_;
+      return entry->result;
     }
     catch (EvaluationError& e)
     {
@@ -321,11 +368,11 @@ public:
   void
   cleanup()
   {
-    typedef typename set_type::const_iterator const_iterator;
+    typedef typename set_type::iterator iterator;
 
     stats_.rounds.emplace_front(cache_statistics::round());
 
-    std::vector<const_iterator> vec;
+    std::vector<iterator> vec;
     vec.reserve(set_->size());
 
     for (auto cit = set_->begin(); cit != set_->end(); ++cit)
@@ -336,13 +383,31 @@ public:
     // We remove an half of the cache.
     const std::size_t cut_size = vec.size() / 2;
 
-    std::nth_element( vec.begin(), vec.begin() + cut_size, vec.end(),
-                      [](const_iterator lhs, const_iterator rhs)
-                        {return lhs->nb_hits_ < rhs->nb_hits_;});
+    // Find the median of the number of hits.
+    std::nth_element( vec.begin(), vec.begin() + cut_size, vec.end()
+                    , [](iterator lhs, iterator rhs)
+                        {
+                          // We sort using the raw nb_hits counter, with the 'in use' possibily bit
+                          // set. As this is the higher bit, the value of nb_hits may be large.
+                          // Thus, it's very unlikely that cache entries currently in use will be
+                          // put below the median.
+                          return lhs->raw_nb_hits() < rhs->raw_nb_hits();
+                        });
 
+    // Delete all cache entries with a number of entries smaller than the median.
     std::for_each( vec.begin(), vec.begin() + cut_size
-                 , [&](const_iterator cit)
-                      {const cache_entry* x = &*cit; set_->erase(cit); delete x;});
+                 , [&](iterator cit)
+                      {
+                        if (not cit->in_use())
+                        {
+                          const cache_entry* x = &*cit;
+                          set_->erase(cit);
+                          delete x;
+                        }
+                      });
+
+    // Reset the number of hits of all remaining cache entries.
+    std::for_each(vec.begin() + cut_size, vec.end(), [](iterator it){it->reset();});
   }
 
   /// @brief Remove all entries of the cache.
