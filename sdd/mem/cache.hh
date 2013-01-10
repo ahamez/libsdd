@@ -289,7 +289,7 @@ public:
   cache(context_type& context, const std::string& name, std::size_t size)
     : cxt_(context)
     , name_(name)
-    , max_size_(2/*set_type::suggested_upper_bucket_count(size)*/)
+    , max_size_(set_type::suggested_upper_bucket_count(size))
     , buckets_(new bucket_type[max_size_])
     , set_(new set_type(bucket_traits(buckets_, max_size_)))
     , stats_()
