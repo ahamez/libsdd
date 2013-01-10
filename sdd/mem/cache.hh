@@ -172,14 +172,14 @@ private:
     std::uint32_t nb_hits_;
 
     /// brief The 'in use' bit position in nb_hits_.
-    static constexpr std::uint32_t in_use_bit = (1u << 31);
+    static constexpr std::uint32_t in_use_mask = (1u << 31);
 
     /// @brief Constructor.
     template <typename... Args>
     cache_entry(Operation&& op, Args&&... args)
       : operation(std::move(op))
       , result(std::forward<Args>(args)...)
-      , nb_hits_(in_use_bit) // initially in use
+      , nb_hits_(in_use_mask) // initially in use
     {
     }
 
@@ -199,12 +199,12 @@ private:
       return nb_hits_;
     }
 
-    /// @brief Set this cache entry to a 'not in use' and 'never used' state.
+    /// @brief Set this cache entry to a 'never used' state.
     void
-    reset()
+    reset_nb_hits()
     noexcept
     {
-      nb_hits_ = 0;
+      nb_hits_ &= in_use_mask;
     }
 
     /// @brief Increment the number of hits.
@@ -220,7 +220,7 @@ private:
     reset_in_use()
     noexcept
     {
-      nb_hits_ &= ~in_use_bit;
+      nb_hits_ &= ~in_use_mask;
     }
 
     /// @brief Set this cache entry to an 'in use' state.
@@ -228,7 +228,7 @@ private:
     in_use()
     const noexcept
     {
-      return nb_hits_ & in_use_bit;
+      return nb_hits_ & in_use_mask;
     }
   };
 
@@ -407,7 +407,7 @@ public:
                       });
 
     // Reset the number of hits of all remaining cache entries.
-    std::for_each(vec.begin() + cut_size, vec.end(), [](iterator it){it->reset();});
+    std::for_each(vec.begin() + cut_size, vec.end(), [](iterator it){it->reset_nb_hits();});
   }
 
   /// @brief Remove all entries of the cache.
