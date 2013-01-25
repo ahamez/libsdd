@@ -56,6 +56,8 @@ struct evaluation
 
     if (h.skip(o))
     {
+      // The evaluated homomorphism skips the current level. We can thus forward its application
+      // to the following levels.
       dd::square_union<C, typename Node::valuation_type> su;
       su.reserve(node.size());
       for (const auto& arc : node)
@@ -162,7 +164,7 @@ struct should_cache
     return homomorphism_traits<T>::should_cache;
   }
 
-  /// @brief Application.
+  /// @brief Application of should_cache.
   bool
   operator()(const cached_homomorphism<C>& ch)
   const noexcept

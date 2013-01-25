@@ -223,7 +223,7 @@ private:
       nb_hits_ &= ~in_use_mask;
     }
 
-    /// @brief Set this cache entry to an 'in use' state.
+    /// @brief Tell if this cache entry is in an 'in use' state.
     bool
     in_use()
     const noexcept
