@@ -5,10 +5,10 @@
 #define LIBSDD_VARIANT_SIZE 14
 #endif
 
-#include <climits>     // USHRT_MAX
 #include <cstdint>     // uint8_t
 #include <functional>  // hash
 #include <iosfwd>
+#include <limits>      // numeric_limits
 #include <type_traits> // is_nothrow_constructible
 #include <utility>     // forward
 
@@ -77,7 +77,7 @@ private:
   static_assert( sizeof...(Types) >= 1
                , "A variant should contain at least one type.");
 
-  static_assert( sizeof...(Types) <= UCHAR_MAX
+  static_assert( sizeof...(Types) <= std::numeric_limits<unsigned char>::max()
                , "A variant can't hold more than UCHAR_MAX types.");
 
   static_assert( sizeof...(Types) <= LIBSDD_VARIANT_SIZE
