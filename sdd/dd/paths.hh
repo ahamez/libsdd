@@ -3,6 +3,8 @@
 
 #include <unordered_map>
 
+#include <boost/multiprecision/cpp_int.hpp>
+
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/visit.hh"
 
@@ -16,7 +18,7 @@ template <typename C>
 struct count_paths_visitor
 {
 
-  typedef long double result_type;
+  typedef boost::multiprecision::cpp_int result_type;
 
   /// @brief A cache is used to speed up the computation.
   ///
@@ -36,7 +38,6 @@ struct count_paths_visitor
   }
 
   /// @brief Terminal case of the recursion.
-  constexpr
   result_type
   operator()(const one_terminal<C>&)
   const noexcept
@@ -86,7 +87,7 @@ struct count_paths_visitor
 /// O(N) where N is the number of nodes in x.
 template <typename C>
 inline
-long double
+boost::multiprecision::cpp_int
 count_paths(const SDD<C>& x)
 noexcept
 {
