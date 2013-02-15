@@ -89,8 +89,7 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return std::all_of( begin(), end()
-                      , [&o](const homomorphism<C>& h){return h.skip(o);});
+    return std::all_of(begin(), end(), [&o](const homomorphism<C>& h){return h.skip(o);});
   }
 
 
@@ -99,8 +98,7 @@ public:
   selector()
   const noexcept
   {
-    return std::all_of( begin(), end()
-                      , [](const homomorphism<C>& h){return h.selector();});
+    return std::all_of(begin(), end(), [](const homomorphism<C>& h){return h.selector();});
   }
 
   /// @brief Get an iterator to the first operand.
@@ -175,8 +173,7 @@ std::ostream&
 operator<<(std::ostream& os, const sum<C>& s)
 {
   os << "(";
-  std::copy( s.begin(), std::prev(s.end())
-           , std::ostream_iterator<homomorphism<C>>(os, " + "));
+  std::copy(s.begin(), std::prev(s.end()), std::ostream_iterator<homomorphism<C>>(os, " + "));
   return os << *std::prev(s.end()) << ")";
 }
 
@@ -187,9 +184,16 @@ operator<<(std::ostream& os, const sum<C>& s)
 template <typename C>
 struct sum_builder_helper
 {
+  /// @brief Used by mem::variant.
   typedef void result_type;
+
+  /// @brief The type of th flat sorted set of operands.
   typedef boost::container::flat_set<homomorphism<C>> operands_type;
+
+  /// @brief We use a deque to store the list of homomorphisms as the needed size is unknown.
   typedef std::deque<homomorphism<C>> hom_list_type;
+
+  /// @brief Map Local homomorphisms to the identifiers they work on.
   typedef std::unordered_map<typename C::Identifier, hom_list_type> locals_type;
 
   /// @brief Flatten nested sums.
