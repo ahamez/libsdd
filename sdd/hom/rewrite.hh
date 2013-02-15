@@ -121,8 +121,7 @@ struct rewriter
 
   /// @brief Rewrite Sum into a Saturation Sum, if possible.
   homomorphism<C>
-  operator()( const sum<C>& s
-            , const homomorphism<C>& h, const order<C>& o)
+  operator()(const sum<C>& s, const homomorphism<C>& h, const order<C>& o)
   const
   {
     auto&& p = partition(o, s.begin(), s.end());
@@ -156,8 +155,7 @@ struct rewriter
 
   /// @brief Rewrite a Fixpoint into a Saturation Fixpoint, if possible.
   homomorphism<C>
-  operator()( const fixpoint<C>& f
-            , const homomorphism<C>& h, const order<C>& o)
+  operator()(const fixpoint<C>& f, const homomorphism<C>& h, const order<C>& o)
   const
   {
     if (not apply_visitor(is_sum(), f.hom()->data()))
