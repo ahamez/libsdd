@@ -20,6 +20,10 @@ struct evaluation
   /// @brief Used by util::variant.
   typedef SDD<C> result_type;
 
+  /// @brief Terminal |0| case.
+  ///
+  /// It shall never be called as the |0| case is handled by the evaluation of
+  /// homomorphism::operator().
   template <typename H>
   bool
   operator()( const H& h, const zero_terminal<C>&
@@ -30,6 +34,7 @@ struct evaluation
     __builtin_unreachable();
   }
 
+  /// @brief Terminal |1| case.
   template <typename H>
   SDD<C>
   operator()( const H& h, const one_terminal<C>&

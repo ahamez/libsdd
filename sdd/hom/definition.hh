@@ -102,7 +102,7 @@ public:
   operator()(const order<C>& o, const SDD<C>& x)
   const
   {
-    return (*this)(hom::initial_context<C>(), o, x);
+    return this->operator()(hom::initial_context<C>(), o, x);
   }
 
   /// @internal
