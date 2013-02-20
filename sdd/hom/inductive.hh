@@ -23,9 +23,10 @@ class inductive_base
 {
 public:
 
-  typedef typename C::Variable  variable_type;
-  typedef typename C::Values    values_type;
+  /// @brief The type of a set of values.
+  typedef typename C::Values values_type;
 
+  /// @brief Required virtual destructor.
   virtual
   ~inductive_base()
   {
@@ -87,11 +88,8 @@ private:
 
 public:
 
-  /// @brief The type of a variable.
-  typedef typename C::Variable  variable_type;
-
   /// @brief The type of a set of values.
-  typedef typename C::Values    values_type;
+  typedef typename C::Values values_type;
 
   /// @brief Constructor.
   inductive_derived(const User& h)
@@ -110,7 +108,7 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return h_.skip(o.identifier());
+    return skip_impl(h_, o, 0);
   }
 
   /// @brief Tell if the user's inductive is a selector.
@@ -177,21 +175,21 @@ private:
   /// @brief Called when the user's inductive has skip().
   ///
   /// Compile-time dispatch.
-  template <typename T>
+  template <typename H>
   static auto
-  skip_impl(const T& x, const variable_type& v, int)
+  skip_impl(const H& h, const order<C>& o, int)
   noexcept
-  -> decltype(x.skip(v))
+  -> decltype(h.skip(o.identifier()))
   {
-    return x.skip(v);
+    return h.skip(o.identifier());
   }
 
   /// @brief Called when the user's inductive doesn't have skip().
   ///
   /// Compile-time dispatch.
-  template <typename T>
+  template <typename H>
   static auto
-  skip_impl(const T&, const variable_type&, long)
+  skip_impl(const H&, const order<C>&, long)
   noexcept
   -> decltype(false)
   {
@@ -201,21 +199,21 @@ private:
   /// @brief Called when the user's inductive has selector().
   ///
   /// Compile-time dispatch.
-  template <typename T>
+  template <typename H>
   static auto
-  selector_impl(const T& x, int)
+  selector_impl(const H& h, int)
   noexcept
-  -> decltype(x.selector())
+  -> decltype(h.selector())
   {
-    return x.selector();
+    return h.selector();
   }
 
   /// @brief Called when the user's inductive doesn't have selector().
   ///
   /// Compile-time dispatch.
-  template <typename T>
+  template <typename H>
   static auto
-  selector_impl(const T&, long)
+  selector_impl(const H&, long)
   noexcept
   -> decltype(false)
   {
