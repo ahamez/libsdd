@@ -203,7 +203,7 @@ public:
   {
     char* addr = mem::allocate<unique_type>();
     unique_type* u = new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
-    return homomorphism(mem::unify(u));
+    return {mem::unify(u)};
   }
 
   /// @internal
@@ -215,7 +215,7 @@ public:
   {
     char* addr = mem::allocate<unique_type>(extra_bytes);
     unique_type* u = new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
-    return homomorphism(mem::unify(u));
+    return {mem::unify(u)};
   }
 
   /// @internal

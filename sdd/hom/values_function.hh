@@ -227,17 +227,17 @@ private:
     {
       if (fun.selector())
       {
-        dd::alpha_builder<C, values_type> ab;
-        ab.reserve(node.size());
+        dd::alpha_builder<C, values_type> alpha_buidler;
+        alpha_buidler.reserve(node.size());
         for (const auto& arc : node)
         {
           values_type val = fun(arc.valuation());
           if (not val.empty())
           {
-            ab.add(std::move(val), arc.successor());
+            alpha_buidler.add(std::move(val), arc.successor());
           }
         }
-        return SDD<C>(o.variable(), std::move(ab));
+        return {o.variable(), std::move(alpha_buidler)};
       }
       else
       {

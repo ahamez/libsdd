@@ -391,7 +391,7 @@ noexcept
   typename flat_set<Value>::internal_flat_set_type res;
   std::set_difference( lhs.cbegin(), lhs.cend(), rhs.cbegin(), rhs.cend()
                      , std::inserter(res, res.begin()));
-  return flat_set<Value>(std::move(res));
+  return {std::move(res)};
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -406,7 +406,7 @@ noexcept
   typename flat_set<Value>::internal_flat_set_type res;
   std::set_intersection( lhs.cbegin(), lhs.cend(), rhs.cbegin(), rhs.cend()
                        , std::inserter(res, res.begin()));
-  return flat_set<Value>(std::move(res));
+  return {std::move(res)};
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -421,7 +421,7 @@ noexcept
   typename flat_set<Value>::internal_flat_set_type res;
   std::set_union( lhs.cbegin(), lhs.cend(), rhs.cbegin(), rhs.cend()
                 , std::inserter(res, res.begin()));
-  return flat_set<Value>(std::move(res));
+  return {std::move(res)};
 }
 
 /*------------------------------------------------------------------------------------------------*/

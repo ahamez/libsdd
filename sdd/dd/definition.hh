@@ -467,7 +467,7 @@ SDD<C>
 zero()
 noexcept
 {
-  return SDD<C>(false);
+  return {false};
 }
 
 /// @brief Return the |1| terminal.
@@ -480,7 +480,7 @@ SDD<C>
 one()
 noexcept
 {
-  return SDD<C>(true);
+  return {true};
 }
 
 /*------------------------------------------------------------------------------------------------*/

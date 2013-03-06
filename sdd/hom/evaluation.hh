@@ -73,7 +73,7 @@ struct evaluation
           su.add(new_successor, arc.valuation());
         }
       }
-      return SDD<C>(node.variable(), su(cxt.sdd_context()));
+      return {node.variable(), su(cxt.sdd_context())};
     }
     else
     {

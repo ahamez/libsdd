@@ -134,7 +134,7 @@ bitset<Size>
 sum(const bitset<Size>& lhs, const bitset<Size>& rhs)
 noexcept
 {
-  return bitset<Size>(lhs.content() | rhs.content());
+  return {lhs.content() | rhs.content()};
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -145,7 +145,7 @@ bitset<Size>
 intersection(const bitset<Size>& lhs, const bitset<Size>& rhs)
 noexcept
 {
-  return bitset<Size>(lhs.content() & rhs.content());
+  return {lhs.content() & rhs.content()};
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -156,7 +156,7 @@ bitset<Size>
 difference(const bitset<Size>& lhs, const bitset<Size>& rhs)
 noexcept
 {
-  return bitset<Size>(lhs.content() & ~rhs.content());
+  return {lhs.content() & ~rhs.content()};
 }
 
 /*------------------------------------------------------------------------------------------------*/
