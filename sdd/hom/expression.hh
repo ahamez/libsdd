@@ -89,6 +89,7 @@ public:
   ///
   void
   update(const identifier_type& id, const values_type& values)
+  override
   {
     eval_.update(id, values);
   }
@@ -96,6 +97,7 @@ public:
   ///
   values_type
   evaluate()
+  override
   {
     return eval_.evaluate();
   }
@@ -103,7 +105,7 @@ public:
   /// @brief Compare evaluator_derived.
   bool
   operator==(const evaluator_base<C>& other)
-  const noexcept
+  const noexcept override
   {
     return typeid(*this) == typeid(other)
          ? eval_ == reinterpret_cast<const evaluator_derived&>(other).eval_
@@ -114,7 +116,7 @@ public:
   /// @brief Get the user's evaluator hash value.
   std::size_t
   hash()
-  const noexcept
+  const noexcept override
   {
     return std::hash<User>()(eval_);
   }
@@ -122,7 +124,7 @@ public:
   /// @brief Get the user's evaluator textual representation.
   void
   print(std::ostream& os)
-  const
+  const override
   {
     os << eval_;
   }

@@ -97,7 +97,7 @@ public:
   /// @brief Tell if the user's function is a selector.
   bool
   selector()
-  const noexcept
+  const noexcept override
   {
     return selector_impl(fun_, 0);
   }
@@ -105,7 +105,7 @@ public:
   /// @brief Apply the user function.
   values_type
   operator()(const values_type& val)
-  const
+  const override
   {
     return fun_(val);
   }
@@ -113,7 +113,7 @@ public:
   /// @brief Compare values_derived.
   bool
   operator==(const values_function_base<C>& other)
-  const noexcept
+  const noexcept override
   {
     return typeid(*this) == typeid(other)
          ? fun_ == reinterpret_cast<const values_function_derived&>(other).fun_
@@ -124,7 +124,7 @@ public:
   /// @brief Get the user's function hash value.
   std::size_t
   hash()
-  const noexcept
+  const noexcept override
   {
     return std::hash<User>()(fun_);
   }
@@ -132,7 +132,7 @@ public:
   /// @brief Get the user's values function textual representation.
   void
   print(std::ostream& os)
-  const
+  const override
   {
     os << fun_;
   }

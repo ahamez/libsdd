@@ -106,7 +106,7 @@ public:
   /// @brief Tell if the user's inductive skip the current variable.
   bool
   skip(const order<C>& o)
-  const noexcept
+  const noexcept override
   {
     return skip_impl(h_, o, 0);
   }
@@ -114,7 +114,7 @@ public:
   /// @brief Tell if the user's inductive is a selector.
   bool
   selector()
-  const noexcept
+  const noexcept override
   {
     return selector_impl(h_, 0);
   }
@@ -122,7 +122,7 @@ public:
   /// @brief Get the next homomorphism to apply from the user.
   homomorphism<C>
   operator()(const order<C>& o, const SDD<C>& x)
-  const
+  const override
   {
     return h_(o, x);
   }
@@ -130,7 +130,7 @@ public:
   /// @brief Get the next homomorphism to apply from the user.
   homomorphism<C>
   operator()(const order<C>& o, const values_type& val)
-  const
+  const override
   {
     return h_(o, val);
   }
@@ -138,7 +138,7 @@ public:
   /// @brief Get the terminal case from the user.
   SDD<C>
   operator()(const one_terminal<C>&)
-  const
+  const override
   {
     return h_();
   }
@@ -146,7 +146,7 @@ public:
   /// @brief Compare inductive_derived.
   bool
   operator==(const inductive_base<C>& other)
-  const noexcept
+  const noexcept override
   {
     return typeid(*this) == typeid(other)
          ? h_ == reinterpret_cast<const inductive_derived&>(other).h_
@@ -157,7 +157,7 @@ public:
   /// @brief Get the user's inductive hash value.
   std::size_t
   hash()
-  const noexcept
+  const noexcept override
   {
     return std::hash<User>()(h_);
   }
@@ -165,7 +165,7 @@ public:
   /// @brief Get the user's inductive textual representation.
   void
   print(std::ostream& os)
-  const
+  const override
   {
     os << h_;
   }
