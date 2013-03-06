@@ -12,7 +12,7 @@ namespace sdd {
 
 /// @brief Represent an arc of an alpha.
 template <typename C, typename Valuation>
-class arc
+class arc final
 {
 private:
 

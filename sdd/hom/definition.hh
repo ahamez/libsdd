@@ -31,7 +31,7 @@ namespace sdd {
 
 /// @brief An homomorphism operation.
 template <typename C>
-class homomorphism
+class homomorphism final
 {
 private:
 

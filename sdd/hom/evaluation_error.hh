@@ -86,7 +86,7 @@ struct operation_wrapper<top<C>>
 /// @exception evaluation_error
 /// @brief Raised when an error is encountered by an evaluated homomorphism.
 template <typename C>
-class evaluation_error
+class evaluation_error final
   : public std::exception
 {
 private:

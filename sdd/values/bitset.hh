@@ -14,7 +14,7 @@ namespace sdd { namespace values {
 
 /// @brief Encode a set of values using bits.
 template <std::size_t Size>
-class bitset
+class bitset final
 {
 private:
   

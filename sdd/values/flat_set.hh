@@ -21,7 +21,7 @@ namespace sdd { namespace values {
 
 /// @brief A unified set of values, implemented with a sorted vector.
 template <typename Value>
-class flat_set
+class flat_set final
 {
 public:
 

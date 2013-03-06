@@ -63,7 +63,7 @@ struct operation_wrapper
 ///
 /// The top terminal is represented with an exception thrown when encoutering incompatible SDD.
 template <typename C>
-class top
+class top final
   : public std::exception
 {
 private:

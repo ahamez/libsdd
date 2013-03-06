@@ -58,7 +58,7 @@ struct node_for_tag<C, node_tag::hierarchical>
 
 /// @brief Hierarchical Set Decision Diagram.
 template <typename C>
-class SDD
+class SDD final
 {
 
   static_assert( std::is_integral<typename C::Variable>::value

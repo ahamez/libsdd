@@ -11,7 +11,7 @@ namespace sdd {
 ///
 /// It represents the complement of paths leading to |1|.
 template <typename C>
-struct zero_terminal
+struct zero_terminal final
 {
 };
 
@@ -39,7 +39,7 @@ operator<<(std::ostream& os, const zero_terminal<C>&)
 ///
 /// It indicates the end of a path in an SDD.
 template <typename C>
-struct one_terminal
+struct one_terminal final
 {
 };
 
