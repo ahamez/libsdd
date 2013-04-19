@@ -24,6 +24,7 @@ namespace sdd { namespace mem {
 template <typename T, typename... Filters>
 struct apply_filters;
 
+// All filters have been applied and they all accepted the operation.
 template <typename T>
 struct apply_filters<T>
 {
@@ -36,6 +37,7 @@ struct apply_filters<T>
   }
 };
 
+// Chain filters calls: as soon as a filter reject an operation, the evaluation is stopped.
 template <typename T, typename Filter, typename... Filters>
 struct apply_filters<T, Filter, Filters...>
 {
