@@ -9,13 +9,8 @@
 #include <utility>   // pair
 #include <vector>
 
-#include <boost/iterator/transform_iterator.hpp>
-
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/hashed_index.hpp>
-#include <boost/multi_index/identity.hpp>
-#include <boost/multi_index/key_extractors.hpp>
-#include <boost/multi_index/ordered_index.hpp>
+#include "sdd/order/order_builder.hh"
+#include "sdd/util/boost_no_warnings.hh"
 
 namespace sdd {
 

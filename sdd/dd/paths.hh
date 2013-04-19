@@ -3,10 +3,9 @@
 
 #include <unordered_map>
 
-#include <boost/multiprecision/cpp_int.hpp>
-
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/visit.hh"
+#include "sdd/util/boost_no_warnings.hh"
 
 namespace sdd {
 
