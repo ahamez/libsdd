@@ -94,9 +94,9 @@ TEST(cache, creation)
   cache<context, operation, error> c(cxt, "c", 100);
   const auto& stats = c.statistics().rounds.front();
 
-  ASSERT_EQ(static_cast<std::size_t>(0), stats.hits);
-  ASSERT_EQ(static_cast<std::size_t>(0), stats.misses);
-  ASSERT_EQ(static_cast<std::size_t>(0), stats.filtered);
+  ASSERT_EQ(0u, stats.hits);
+  ASSERT_EQ(0u, stats.misses);
+  ASSERT_EQ(0u, stats.filtered);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -106,36 +106,36 @@ TEST(cache, insertion)
   cache<context, operation, error> c(cxt, "c", 100);
   const auto& stats = c.statistics().rounds.front();
 
-  ASSERT_EQ(static_cast<std::size_t>(2), c(operation(1)));
+  ASSERT_EQ(2u, c(operation(1)));
 
-  ASSERT_EQ(static_cast<std::size_t>(0), stats.hits);
-  ASSERT_EQ(static_cast<std::size_t>(1), stats.misses);
-  ASSERT_EQ(static_cast<std::size_t>(0), stats.filtered);
+  ASSERT_EQ(0u, stats.hits);
+  ASSERT_EQ(1u, stats.misses);
+  ASSERT_EQ(0u, stats.filtered);
 
-  ASSERT_EQ(static_cast<std::size_t>(2), c(operation(1)));
-  ASSERT_EQ(static_cast<std::size_t>(1), stats.hits);
-  ASSERT_EQ(static_cast<std::size_t>(1), stats.misses);
-  ASSERT_EQ(static_cast<std::size_t>(0), stats.filtered);
+  ASSERT_EQ(2u, c(operation(1)));
+  ASSERT_EQ(1u, stats.hits);
+  ASSERT_EQ(1u, stats.misses);
+  ASSERT_EQ(0u, stats.filtered);
 
-  ASSERT_EQ(static_cast<std::size_t>(3), c(operation(2)));
-  ASSERT_EQ(static_cast<std::size_t>(1), stats.hits);
-  ASSERT_EQ(static_cast<std::size_t>(2), stats.misses);
-  ASSERT_EQ(static_cast<std::size_t>(0), stats.filtered);
+  ASSERT_EQ(3u, c(operation(2)));
+  ASSERT_EQ(1u, stats.hits);
+  ASSERT_EQ(2u, stats.misses);
+  ASSERT_EQ(0u, stats.filtered);
 
-  ASSERT_EQ(static_cast<std::size_t>(3), c(operation(2)));
-  ASSERT_EQ(static_cast<std::size_t>(2), stats.hits);
-  ASSERT_EQ(static_cast<std::size_t>(2), stats.misses);
-  ASSERT_EQ(static_cast<std::size_t>(0), stats.filtered);
+  ASSERT_EQ(3u, c(operation(2)));
+  ASSERT_EQ(2u, stats.hits);
+  ASSERT_EQ(2u, stats.misses);
+  ASSERT_EQ(0u, stats.filtered);
 
-  ASSERT_EQ(static_cast<std::size_t>(4), c(operation(3)));
-  ASSERT_EQ(static_cast<std::size_t>(2), stats.hits);
-  ASSERT_EQ(static_cast<std::size_t>(3), stats.misses);
-  ASSERT_EQ(static_cast<std::size_t>(0), stats.filtered);
+  ASSERT_EQ(4u, c(operation(3)));
+  ASSERT_EQ(2u, stats.hits);
+  ASSERT_EQ(3u, stats.misses);
+  ASSERT_EQ(0u, stats.filtered);
 
-  ASSERT_EQ(static_cast<std::size_t>(4), c(operation(3)));
-  ASSERT_EQ(static_cast<std::size_t>(3), stats.hits);
-  ASSERT_EQ(static_cast<std::size_t>(3), stats.misses);
-  ASSERT_EQ(static_cast<std::size_t>(0), stats.filtered);
+  ASSERT_EQ(4u, c(operation(3)));
+  ASSERT_EQ(3u, stats.hits);
+  ASSERT_EQ(3u, stats.misses);
+  ASSERT_EQ(0u, stats.filtered);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -247,6 +247,7 @@ TEST(cache, filters)
     reset_used();
     ASSERT_TRUE((apply_filters<dummy, true_filter_1>()(d)));
     ASSERT_TRUE((true_filter_1::used));
+
     reset_used();
     ASSERT_TRUE((apply_filters<dummy, true_filter_1, true_filter_2>()(d)));
     ASSERT_TRUE((true_filter_1::used));
@@ -276,49 +277,49 @@ TEST(cache, filters)
     cache<context, operation, error, filter_0> c(cxt, "c", 100);
     const auto& stats = c.statistics().rounds.front();
 
-    ASSERT_EQ(static_cast<std::size_t>(2), c(operation(1)));
-    ASSERT_EQ(static_cast<std::size_t>(0), stats.hits);
-    ASSERT_EQ(static_cast<std::size_t>(1), stats.misses);
-    ASSERT_EQ(static_cast<std::size_t>(0), stats.filtered);
+    ASSERT_EQ(2u, c(operation(1)));
+    ASSERT_EQ(0u, stats.hits);
+    ASSERT_EQ(1u, stats.misses);
+    ASSERT_EQ(0u, stats.filtered);
 
-    ASSERT_EQ(static_cast<std::size_t>(1), c(operation(0)));
-    ASSERT_EQ(static_cast<std::size_t>(0), stats.hits);
-    ASSERT_EQ(static_cast<std::size_t>(1), stats.misses);
-    ASSERT_EQ(static_cast<std::size_t>(1), stats.filtered);
+    ASSERT_EQ(1u, c(operation(0)));
+    ASSERT_EQ(0u, stats.hits);
+    ASSERT_EQ(1u, stats.misses);
+    ASSERT_EQ(1u, stats.filtered);
 
-    ASSERT_EQ(static_cast<std::size_t>(1), c(operation(0)));
-    ASSERT_EQ(static_cast<std::size_t>(0), stats.hits);
-    ASSERT_EQ(static_cast<std::size_t>(1), stats.misses);
-    ASSERT_EQ(static_cast<std::size_t>(2), stats.filtered);
+    ASSERT_EQ(1u, c(operation(0)));
+    ASSERT_EQ(0u, stats.hits);
+    ASSERT_EQ(1u, stats.misses);
+    ASSERT_EQ(2u, stats.filtered);
   }
   {
     cache<context, operation, error, filter_0, filter_1> c(cxt, "c", 100);
     const auto& stats = c.statistics().rounds.front();
 
-    ASSERT_EQ(static_cast<std::size_t>(2), c(operation(1)));
-    ASSERT_EQ(static_cast<std::size_t>(0), stats.hits);
-    ASSERT_EQ(static_cast<std::size_t>(0), stats.misses);
-    ASSERT_EQ(static_cast<std::size_t>(1), stats.filtered);
+    ASSERT_EQ(2u, c(operation(1)));
+    ASSERT_EQ(0u, stats.hits);
+    ASSERT_EQ(0u, stats.misses);
+    ASSERT_EQ(1u, stats.filtered);
 
-    ASSERT_EQ(static_cast<std::size_t>(1), c(operation(0)));
-    ASSERT_EQ(static_cast<std::size_t>(0), stats.hits);
-    ASSERT_EQ(static_cast<std::size_t>(0), stats.misses);
-    ASSERT_EQ(static_cast<std::size_t>(2), stats.filtered);
+    ASSERT_EQ(1u, c(operation(0)));
+    ASSERT_EQ(0u, stats.hits);
+    ASSERT_EQ(0u, stats.misses);
+    ASSERT_EQ(2u, stats.filtered);
 
-    ASSERT_EQ(static_cast<std::size_t>(1), c(operation(0)));
-    ASSERT_EQ(static_cast<std::size_t>(0), stats.hits);
-    ASSERT_EQ(static_cast<std::size_t>(0), stats.misses);
-    ASSERT_EQ(static_cast<std::size_t>(3), stats.filtered);
+    ASSERT_EQ(1u, c(operation(0)));
+    ASSERT_EQ(0u, stats.hits);
+    ASSERT_EQ(0u, stats.misses);
+    ASSERT_EQ(3u, stats.filtered);
 
-    ASSERT_EQ(static_cast<std::size_t>(3), c(operation(2)));
-    ASSERT_EQ(static_cast<std::size_t>(0), stats.hits);
-    ASSERT_EQ(static_cast<std::size_t>(1), stats.misses);
-    ASSERT_EQ(static_cast<std::size_t>(3), stats.filtered);
+    ASSERT_EQ(3u, c(operation(2)));
+    ASSERT_EQ(0u, stats.hits);
+    ASSERT_EQ(1u, stats.misses);
+    ASSERT_EQ(3u, stats.filtered);
 
-    ASSERT_EQ(static_cast<std::size_t>(3), c(operation(2)));
-    ASSERT_EQ(static_cast<std::size_t>(1), stats.hits);
-    ASSERT_EQ(static_cast<std::size_t>(1), stats.misses);
-    ASSERT_EQ(static_cast<std::size_t>(3), stats.filtered);
+    ASSERT_EQ(3u, c(operation(2)));
+    ASSERT_EQ(1u, stats.hits);
+    ASSERT_EQ(1u, stats.misses);
+    ASSERT_EQ(3u, stats.filtered);
   }
 }
 
