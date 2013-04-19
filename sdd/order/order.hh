@@ -9,8 +9,10 @@
 #include <utility>   // pair
 #include <vector>
 
+#include <boost/iterator/transform_iterator.hpp>
+
 #include "sdd/order/order_builder.hh"
-#include "sdd/util/boost_no_warnings.hh"
+#include "sdd/util/boost_multiindex_no_warnings.hh"
 
 namespace sdd {
 
