@@ -170,10 +170,108 @@ struct filter_6666
   }
 };
 
+struct dummy {};
+
+struct true_filter_1
+{
+  static bool used;
+
+  bool
+  operator()(const dummy&)
+  {
+    used = true;
+    return true;
+  }
+};
+
+struct true_filter_2
+{
+  static bool used;
+
+  bool
+  operator()(const dummy&)
+  {
+    used = true;
+    return true;
+  }
+};
+
+
+struct false_filter_1
+{
+  static bool used;
+
+  bool
+  operator()(const dummy&)
+  {
+    used = true;
+    return false;
+  }
+};
+
+struct false_filter_2
+{
+  static bool used;
+
+  bool
+  operator()(const dummy&)
+  {
+    used = true;
+    return false;
+  }
+};
+
+
+bool true_filter_1::used = false;
+bool true_filter_2::used = false;
+bool false_filter_1::used = false;
+bool false_filter_2::used = false;
+
+void reset_used()
+{
+  true_filter_1::used = false;
+  true_filter_2::used = false;
+  false_filter_1::used = false;
+  false_filter_2::used = false;
+}
+
 /*------------------------------------------------------------------------------------------------*/
 
 TEST(cache, filters)
 {
+  {
+    dummy d;
+    reset_used();
+    ASSERT_TRUE(apply_filters<dummy>()(d));
+
+    reset_used();
+    ASSERT_TRUE((apply_filters<dummy, true_filter_1>()(d)));
+    ASSERT_TRUE((true_filter_1::used));
+    reset_used();
+    ASSERT_TRUE((apply_filters<dummy, true_filter_1, true_filter_2>()(d)));
+    ASSERT_TRUE((true_filter_1::used));
+    ASSERT_TRUE((true_filter_2::used));
+
+    reset_used();
+    ASSERT_FALSE((apply_filters<dummy, false_filter_1>()(d)));
+    ASSERT_TRUE((false_filter_1::used));
+
+    reset_used();
+    ASSERT_FALSE((apply_filters<dummy, false_filter_1, false_filter_2>()(d)));
+    ASSERT_TRUE((false_filter_1::used));
+    ASSERT_FALSE((false_filter_2::used));
+
+    reset_used();
+    ASSERT_FALSE((apply_filters<dummy, false_filter_1, true_filter_1>()(d)));
+    ASSERT_TRUE((false_filter_1::used));
+    ASSERT_FALSE((true_filter_1::used));
+
+    reset_used();
+    ASSERT_FALSE((apply_filters<dummy, true_filter_1, false_filter_1, true_filter_2>()(d)));
+    ASSERT_TRUE((true_filter_1::used));
+    ASSERT_TRUE((false_filter_1::used));
+    ASSERT_FALSE((true_filter_2::used));
+  }
   {
     cache<context, operation, error, filter_0> c(cxt, "c", 100);
     const auto& stats = c.statistics().rounds.front();
@@ -249,5 +347,6 @@ TEST(cache, cleanup)
   }
   ASSERT_EQ(static_cast<std::size_t>(1), c.statistics().cleanups());
 }
+
 
 /*------------------------------------------------------------------------------------------------*/
