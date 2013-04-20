@@ -42,16 +42,12 @@ private:
   /// It already implements cheap-copy, we don't need to use a shared_ptr.
   sdd_context_type sdd_context_;
 
-  /// @brief The context's cache size.
-  const std::size_t size_;
-
 public:
 
   /// @brief Construct a new context.
   context(std::size_t size, sdd_context_type& sdd_cxt)
    	: cache_(std::make_shared<cache_type>(*this, "homomorphism_cache", size))
     , sdd_context_(sdd_cxt)
-    , size_(size)
   {
   }
 
@@ -74,13 +70,6 @@ public:
     return sdd_context_;
   }
 
-  /// @brief Return this context's cache size.
-  std::size_t
-  size()
-  const noexcept
-  {
-    return size_;
-  }
 };
 
 /*------------------------------------------------------------------------------------------------*/
