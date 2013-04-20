@@ -254,6 +254,9 @@ private:
   /// @brief The cache name.
   const std::string name_;
 
+  /// @brief The wanted load factor.
+  static constexpr double load_factor_ = 0.85;
+
   /// @brief The maximum size this cache is authorized to grow to.
   const std::size_t max_size_;
 
@@ -344,8 +347,8 @@ public:
 
     ++stats_.rounds.front().misses;
 
-    // Remove half of the cache if it's full.
-    if (set_->size() >= max_size_)
+    // Remove half of the cache if there are too much entries.
+    if (load_factor() > load_factor_)
     {
       cleanup();
     }
@@ -366,10 +369,23 @@ public:
     }
   }
 
+  /// @brief The load factor of the underlying hash table.
+  double
+  load_factor()
+  const noexcept
+  {
+    return static_cast<double>(set_->size()) / static_cast<double>(max_size_);
+  }
+
   /// @brief Remove half of the cache (LFU strategy).
   void
   cleanup()
   {
+    if (load_factor() < load_factor_)
+    {
+      return;
+    }
+
     typedef typename set_type::iterator iterator;
 
     stats_.rounds.emplace_front(cache_statistics::round());
@@ -382,22 +398,23 @@ public:
       vec.push_back(cit);
     }
 
-    // We remove an half of the cache.
-    const std::size_t cut_size = vec.size() / 2;
+    // Compute the number of elements to keep in order to reduce the load factor by a factor of 2.
+    const std::size_t to_keep = max_size_ * load_factor_/2;
+    const std::size_t cut_point = vec.size() - to_keep;
 
     // Find the median of the number of hits.
-    std::nth_element( vec.begin(), vec.begin() + cut_size, vec.end()
+    std::nth_element( vec.begin(), vec.begin() + cut_point, vec.end()
                     , [](iterator lhs, iterator rhs)
                         {
-                          // We sort using the raw nb_hits counter, with the 'in use' possibily bit
-                          // set. As this is the higher bit, the value of nb_hits may be large.
+                          // We sort using the raw nb_hits counter, with the 'in use' bit possibly
+                          // set. As this is the highest bit, the value of nb_hits may be large.
                           // Thus, it's very unlikely that cache entries currently in use will be
                           // put below the median.
                           return lhs->raw_nb_hits() < rhs->raw_nb_hits();
                         });
 
     // Delete all cache entries with a number of entries smaller than the median.
-    std::for_each( vec.begin(), vec.begin() + cut_size
+    std::for_each( vec.begin(), vec.begin() + cut_point
                  , [&](iterator cit)
                       {
                         if (not cit->in_use())
@@ -409,7 +426,7 @@ public:
                       });
 
     // Reset the number of hits of all remaining cache entries.
-    std::for_each(vec.begin() + cut_size, vec.end(), [](iterator it){it->reset_nb_hits();});
+    std::for_each(vec.begin() + cut_point, vec.end(), [](iterator it){it->reset_nb_hits();});
   }
 
   /// @brief Remove all entries of the cache.
