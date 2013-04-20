@@ -255,10 +255,10 @@ private:
   const std::string name_;
 
   /// @brief The wanted load factor.
-  static constexpr double load_factor_ = 0.85;
+  double max_load_factor_;
 
   /// @brief The maximum size this cache is authorized to grow to.
-  const std::size_t max_size_;
+  std::size_t max_size_;
 
   /// @brief We use Boost.Intrusive to store the cache entries.
   typedef typename boost::intrusive::make_unordered_set< cache_entry
@@ -294,6 +294,7 @@ public:
   cache(context_type& context, const std::string& name, std::size_t size)
     : cxt_(context)
     , name_(name)
+    , max_load_factor_(0.85)
     , max_size_(set_type::suggested_upper_bucket_count(size))
     , buckets_(new bucket_type[max_size_])
     , set_(new set_type(bucket_traits(buckets_, max_size_)))
@@ -347,11 +348,8 @@ public:
 
     ++stats_.rounds.front().misses;
 
-    // Remove half of the cache if there are too much entries.
-    if (load_factor() > load_factor_)
-    {
-      cleanup();
-    }
+    // Clean up the cache, if necessary.
+    cleanup();
 
     try
     {
@@ -377,11 +375,20 @@ public:
     return static_cast<double>(set_->size()) / static_cast<double>(max_size_);
   }
 
+  /// @brief Get the max load factor.
+  void
+  set_max_load_factor(double factor)
+  noexcept
+  {
+    max_load_factor_ = factor;
+    cleanup();
+  }
+
   /// @brief Remove half of the cache (LFU strategy).
   void
   cleanup()
   {
-    if (load_factor() < load_factor_)
+    if (load_factor() < max_load_factor_)
     {
       return;
     }
@@ -399,7 +406,7 @@ public:
     }
 
     // Compute the number of elements to keep in order to reduce the load factor by a factor of 2.
-    const std::size_t to_keep = max_size_ * load_factor_/2;
+    const std::size_t to_keep = max_size_ * max_load_factor_/2;
     const std::size_t cut_point = vec.size() - to_keep;
 
     // Find the median of the number of hits.
@@ -443,6 +450,22 @@ public:
   const noexcept
   {
     return set_->size();
+  }
+
+  /// @brief Set the maximal size of the cache.
+  void
+  set_max_size(std::size_t size)
+  {
+    size = set_type::suggested_upper_bucket_count(size);
+    if (size != max_size_)
+    {
+      bucket_type* new_buckets = new bucket_type[size];
+      set_->rehash(bucket_traits(new_buckets, size));
+      delete[] buckets_;
+      buckets_ = new_buckets;
+      max_size_ = size;
+      cleanup();
+    }
   }
 
   /// @brief Get the statistics of this cache.
