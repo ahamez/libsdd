@@ -13,15 +13,11 @@ struct sum_test
 {
   typedef sdd::conf0 conf;
   typedef sdd::SDD<conf> SDD;
-  sdd::dd::context<conf> cxt;
+  sdd::dd::context<conf> cxt= sdd::dd::context<conf>(100, 100, 100);
   typedef sdd::dd::alpha_builder<conf, conf::Values> flat_alpha_builder;
   typedef sdd::dd::alpha_builder<conf, SDD> hier_alpha_builder;
   const SDD zero = sdd::zero<conf>();
   const SDD one = sdd::one<conf>();
-
-  sum_test()
-  {
-  }
 };
 
 /*------------------------------------------------------------------------------------------------*/

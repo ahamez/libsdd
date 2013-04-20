@@ -55,18 +55,6 @@ public:
   {
   }
 
-  /// @brief Default constructor.
-  context()
-	  : context(100000, dd::initial_context<C>())
-  {
-  }
-
-  /// @brief Construct a context with an existing SDD context.
-  context(sdd_context_type& sdd_cxt)
-    : context(10000, sdd_cxt)
-  {
-  }
-
   /// @brief Copy constructor.
   context(const context& other) = default;
 
@@ -105,7 +93,7 @@ template <typename C>
 context<C>&
 initial_context()
 {
-  static context<C> initial_context;
+  static context<C> initial_context(C::initial_homomorphism_cache_size, dd::initial_context<C>());
   return initial_context;
 }
 

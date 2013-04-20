@@ -13,7 +13,7 @@ struct intersection_test
 {
   typedef sdd::conf0 conf;
   typedef sdd::SDD<conf> SDD;
-  sdd::dd::context<conf> cxt;
+  sdd::dd::context<conf> cxt = sdd::dd::context<conf>(100, 100, 100);
   const SDD zero = sdd::zero<conf>();
   const SDD one = sdd::one<conf>();
 };

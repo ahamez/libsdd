@@ -15,7 +15,7 @@ const hom id = sdd::Id<conf>();
 struct rewriting_test
   : public testing::Test
 {
-  sdd::hom::context<conf> cxt;
+  sdd::hom::context<conf> cxt = sdd::hom::context<conf>(100, sdd::dd::initial_context<conf>());
 };
 
 /*------------------------------------------------------------------------------------------------*/

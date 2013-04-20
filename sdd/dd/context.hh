@@ -58,15 +58,6 @@ public:
   {
   }
 
-  /// @brief Default constructor.
-  ///
-  /// There are usually more sum operations than intersections and differencies, thus we choose
-  /// a bigger default size for it.
-  context()
-  	: context(10000, 10000, 20000)
-  {
-  }
-
   /// @brief Copy constructor.
   context(const context& other)
     : difference_cache_(other.difference_cache_)
@@ -119,7 +110,12 @@ template <typename C>
 context<C>&
 initial_context()
 {
-  static context<C> initial_context;
+  // There are usually more sum operations than intersections and differencies, thus we choose
+  // a bigger default size for it.
+  static context<C> initial_context( 500000   // difference
+                                   , 500000   // intersection
+                                   , 1000000  // sum
+                                   );
   return initial_context;
 }
 

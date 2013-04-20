@@ -73,7 +73,7 @@ TEST_F(hom_cons_test, no_cache)
 {
   order o(order_builder {"a"});
   const hom h = Cons<conf>(o, conf::Values {0,1,2}, id);
-  sdd::hom::context<conf> cxt;
+  sdd::hom::context<conf> cxt(10, sdd::dd::initial_context<conf>());
   ASSERT_EQ(static_cast<std::size_t>(0), cxt.cache().size());
   ASSERT_EQ(SDD(0, {0,1,2}, one), h(cxt, o, one));
   ASSERT_EQ(static_cast<std::size_t>(0), cxt.cache().size());
