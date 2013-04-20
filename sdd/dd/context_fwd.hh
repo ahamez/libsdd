@@ -12,7 +12,7 @@ class context;
 // Forward declaration needed by operations.
 template <typename C>
 context<C>&
-initial_context() noexcept;
+initial_context();
 
 /*------------------------------------------------------------------------------------------------*/
 

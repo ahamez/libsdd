@@ -104,7 +104,6 @@ public:
 template <typename C>
 context<C>&
 initial_context()
-noexcept
 {
   static context<C> initial_context;
   return initial_context;
