@@ -92,7 +92,7 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const constant<C>& c)
 {
-  return os << c.sdd();
+  return os << "Constant(" << c.sdd() << ")";
 }
 
 } // namespace hom
