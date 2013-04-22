@@ -1,6 +1,8 @@
 #ifndef _SDD_MEM_UNIQUE_TABLE_HH_
 #define _SDD_MEM_UNIQUE_TABLE_HH_
 
+#include <cassert>
+
 #include <boost/container/flat_map.hpp>
 #include <boost/intrusive/unordered_set.hpp>
 
@@ -107,6 +109,8 @@ public:
     auto insertion = set_->insert(*ptr);
     if (not insertion.second)
     {
+      // The inserted Unique already exists. We keep its allocated memory to avoid deallocating
+      // each time there is a hit.
       ++hit_;
       const std::size_t size = sizeof(Unique) + ptr->extra_bytes();
       ptr->~Unique();
@@ -152,13 +156,13 @@ public:
   erase(Unique& x)
   noexcept
   {
+    assert(x.is_not_referenced() && "Unique still referenced.");
     set_->erase_and_dispose(x, [](Unique* ptr){delete ptr;});
   }
 
   /// @brief Get the load factor of the internal hash table.
   double
   load_factor()
-    assert(x.is_not_referenced() && "Unique still referenced.");
   const noexcept
   {
     return static_cast<double>(set_->size()) / static_cast<double>(set_->bucket_count());
