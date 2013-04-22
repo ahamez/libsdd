@@ -4,6 +4,7 @@
 #include <cassert>
 #include <cstdint>     // uint32_t
 #include <functional>  // hash
+#include <limits>      // numeric_limits
 #include <type_traits> // is_nothrow_constructible
 #include <utility>     // forward
 
@@ -97,6 +98,7 @@ private:
   increment_reference_counter()
   const noexcept
   {
+    assert(ref_count_ < std::numeric_limits<uint32_t>::max());
     ++ref_count_;
   }
   
@@ -104,6 +106,7 @@ private:
   decrement_reference_counter()
   const noexcept
   {
+    assert(ref_count_ > 0);
     --ref_count_;
   }
 
