@@ -158,6 +158,7 @@ public:
   /// @brief Get the load factor of the internal hash table.
   double
   load_factor()
+    assert(x.is_not_referenced() && "Unique still referenced.");
   const noexcept
   {
     return static_cast<double>(set_->size()) / static_cast<double>(set_->bucket_count());
