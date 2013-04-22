@@ -2,6 +2,7 @@
 #define _SDD_MEM_REF_COUNTED_HH_
 
 #include <cassert>
+#include <cstdint>     // uint32_t
 #include <functional>  // hash
 #include <type_traits> // is_nothrow_constructible
 #include <utility>     // forward
@@ -49,7 +50,7 @@ private:
 
   /// The number of time the encapsulated a data is referenced to implement reference-counting
   /// garbage collection.
-  mutable unsigned int ref_count_;
+  mutable uint32_t ref_count_;
 
   /// @brief The garbage collected data.
   ///
