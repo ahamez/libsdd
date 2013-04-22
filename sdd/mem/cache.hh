@@ -193,7 +193,7 @@ private:
       return operation == other.operation;
     }
 
-    /// @brief Get the number of hits, with the 'in use' bit set or not.
+    /// @brief Get the number of hits, with the 'in use' bit possibly set.
     unsigned int
     raw_nb_hits()
     const noexcept

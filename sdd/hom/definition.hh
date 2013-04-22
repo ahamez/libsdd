@@ -195,7 +195,7 @@ public:
   }
 
   /// @internal
-  /// @brief Create an homomorphism from a concrete type (e.g. Id, Cons, etc.).
+  /// @brief Create an homomorphism from a concrete type of fixed size (e.g. Id, Cons, etc.).
   template<typename T, typename... Args>
   static
   homomorphism
@@ -207,7 +207,7 @@ public:
   }
 
   /// @internal
-  /// @brief Create an homomorphism from a concrete type (e.g. Id, Cons, etc.) of variable size.
+  /// @brief Create an homomorphism from a concrete type of variable size (e.g. Sum).
   template<typename T, typename... Args>
   static
   homomorphism
