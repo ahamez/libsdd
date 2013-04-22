@@ -56,7 +56,7 @@ public:
       if (x_ != nullptr)
       {
         x_->decrement_reference_counter();
-        erase_x_if_dereferenced();
+        erase_x_if_necessary();
       }
       x_ = other.x_;
       if (x_ != nullptr)
@@ -85,7 +85,7 @@ public:
       if (x_ != nullptr)
       {
         x_->decrement_reference_counter();
-        erase_x_if_dereferenced();
+        erase_x_if_necessary();
       }
       x_ = other.x_;
       other.x_ = nullptr;
@@ -99,7 +99,7 @@ public:
     if (x_ != nullptr)
     {
       x_->decrement_reference_counter();
-      erase_x_if_dereferenced();
+      erase_x_if_necessary();
     }
   }
 
@@ -130,12 +130,12 @@ public:
 
 private:
 
-  /// @brief If the managed data is dereferenced, erase it.
+  /// @brief If the managed data is no longer referenced, erase it.
   void
-  erase_x_if_dereferenced()
+  erase_x_if_necessary()
   noexcept
   {
-    if (x_->reference_counter() == 0)
+    if (x_->is_not_referenced())
     {
       typedef typename std::remove_const<Unique>::type U;
       U& x = *const_cast<U*>(x_);

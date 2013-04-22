@@ -1,6 +1,7 @@
 #ifndef _SDD_MEM_REF_COUNTED_HH_
 #define _SDD_MEM_REF_COUNTED_HH_
 
+#include <cassert>
 #include <functional>  // hash
 #include <type_traits> // is_nothrow_constructible
 #include <utility>     // forward
@@ -105,11 +106,11 @@ private:
     --ref_count_;
   }
 
-  unsigned int
-  reference_counter()
+  bool
+  is_not_referenced()
   const noexcept
   {
-    return ref_count_;
+    return ref_count_ == 0;
   }
 };
 
