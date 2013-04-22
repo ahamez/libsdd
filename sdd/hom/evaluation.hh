@@ -112,7 +112,7 @@ struct cached_homomorphism
   const SDD<C> sdd;
 
   /// @brief Constructor.
-  cached_homomorphism(context<C>& cxt, const order<C>& o, const homomorphism<C>& h, const SDD<C>& s)
+  cached_homomorphism(const order<C>& o, const homomorphism<C>& h, const SDD<C>& s)
     : ord(o)
     , hom(h)
     , sdd(s)

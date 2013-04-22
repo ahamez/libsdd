@@ -191,7 +191,7 @@ public:
     {
       return x;
     }
-    return cxt.cache()(hom::cached_homomorphism<C>(cxt, o, *this, x));
+    return cxt.cache()(hom::cached_homomorphism<C>(o, *this, x));
   }
 
   /// @internal
