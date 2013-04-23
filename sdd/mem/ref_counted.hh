@@ -49,13 +49,12 @@ private:
   /// Used by Boost.Intrusive to manage the unicity table.
   boost::intrusive::unordered_set_member_hook<link_mode> member_hook_;
 
-  /// The number of time the encapsulated a data is referenced to implement reference-counting
-  /// garbage collection.
+  /// The number of time the encapsulated data is referenced (reference-counting garbage collection)
   mutable uint32_t ref_count_;
 
   /// @brief The garbage collected data.
   ///
-  /// The ptr class is responsible for the detection of an dereferenced data and for
+  /// The ptr class is responsible for the detection of dereferenced data and for
   /// instructing the unicity table to erase it.
   const T data_;
 

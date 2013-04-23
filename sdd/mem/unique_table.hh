@@ -110,7 +110,7 @@ public:
     if (not insertion.second)
     {
       // The inserted Unique already exists. We keep its allocated memory to avoid deallocating
-      // each time there is a hit.
+      // memory each time there is a hit.
       ++hit_;
       const std::size_t size = sizeof(Unique) + ptr->extra_bytes();
       ptr->~Unique();
