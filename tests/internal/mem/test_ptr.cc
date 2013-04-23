@@ -30,11 +30,11 @@ struct unique
     --ref_counter_;
   }
 
-  std::size_t
-  reference_counter()
+  bool
+  is_not_referenced()
   const
   {
-    return ref_counter_;
+    return ref_counter_ == 0;
   }
 
   int
