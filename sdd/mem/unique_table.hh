@@ -153,11 +153,11 @@ public:
   ///
   /// All subsequent uses of the erased data are invalid.
   void
-  erase(Unique& x)
+  erase(const Unique& x)
   noexcept
   {
     assert(x.is_not_referenced() && "Unique still referenced.");
-    set_->erase_and_dispose(x, [](Unique* ptr){delete ptr;});
+    set_->erase_and_dispose(x, [](const Unique* ptr){delete ptr;});
   }
 
   /// @brief Get the load factor of the internal hash table.
