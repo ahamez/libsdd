@@ -268,7 +268,8 @@ Sum(const order<C>& o, InputIterator begin, InputIterator end)
   else
   {
     const std::size_t extra_bytes = operands.size() * sizeof(homomorphism<C>);
-    return homomorphism<C>::create2(mem::construct<hom::sum<C>>(), extra_bytes, operands);
+    return homomorphism<C>::create_variable_size( mem::construct<hom::sum<C>>()
+                                                , extra_bytes, operands);
   }
 }
 

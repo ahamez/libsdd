@@ -211,7 +211,7 @@ public:
   template<typename T, typename... Args>
   static
   homomorphism
-  create2(mem::construct<T>, std::size_t extra_bytes, Args&&... args)
+  create_variable_size(mem::construct<T>, std::size_t extra_bytes, Args&&... args)
   {
     char* addr = mem::allocate<unique_type>(extra_bytes);
     unique_type* u = new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
