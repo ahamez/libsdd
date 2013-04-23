@@ -59,12 +59,7 @@ public:
   }
 
   /// @brief Copy constructor.
-  context(const context& other)
-    : difference_cache_(other.difference_cache_)
-    , intersection_cache_(other.intersection_cache_)
-    , sum_cache_(other.sum_cache_)
-  {
-  }
+  context(const context&) = default;
 
   /// @brief Get the difference cache.
   difference_cache_type&
