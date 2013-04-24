@@ -400,8 +400,6 @@ TEST_F(hom_inductive_test, evaluation_hierarchical)
     order o (order_builder {"1", "0"});
     const hom h0 = Inductive<conf>(f0());
     const hom h1 = Inductive<conf>(f1());
-    std::cout << h0 << std::endl;
-    std::cout << h1 << std::endl;
     ASSERT_NE(h0, h1);
     ASSERT_EQ(       SDD(1, {1,2,3}, SDD(0, {2,3,4}, one))
              , h0(o, SDD(1, {1,2,3}, SDD(0, {1,2,3}, one))));
