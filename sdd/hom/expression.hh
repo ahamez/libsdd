@@ -13,6 +13,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
+#include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
 
@@ -610,7 +611,7 @@ operator<<(std::ostream& os, const expression<C>& e)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Expression homomorphism.
-/// @related homomorphism.
+/// @related homomorphism
 template <typename C, typename User, typename InputIterator>
 homomorphism<C>
 Expression( const order<C>& o, const User& u, InputIterator begin, InputIterator end
