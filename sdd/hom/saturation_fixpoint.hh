@@ -7,6 +7,7 @@
 
 #include <boost/container/flat_set.hpp>
 
+#include "sdd/manager_fwd.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/consolidate.hh"
 #include "sdd/hom/context_fwd.hh"
@@ -243,18 +244,8 @@ SaturationFixpoint( const typename C::Variable& var
                   , InputIterator gbegin, InputIterator gend
                   , const homomorphism<C>& l)
 {
-  // Avoid to reallocate a new set of operands each time.
-  struct static_init
-  {
-    boost::container::flat_set<homomorphism<C>> data;
-
-    static_init()
-      : data()
-    {
-      data.reserve(2028);
-    }
-  };
-  static static_init g;
+  // A global flat_set to avoid to reallocate a new set of operands each time.
+  auto& g = global<C>().saturation_fixpoint_data;
 
   const std::size_t gsize = std::distance(gbegin, gend);
 
@@ -268,11 +259,11 @@ SaturationFixpoint( const typename C::Variable& var
     return l;
   }
 
-  g.data.clear();
-  g.data.insert(gbegin, gend);
-  const std::size_t extra_bytes = g.data.size() * sizeof(homomorphism<C>);
+  g.clear();
+  g.insert(gbegin, gend);
+  const std::size_t extra_bytes = g.size() * sizeof(homomorphism<C>);
   return homomorphism<C>::create_variable_size( mem::construct<saturation_fixpoint<C>>()
-                                              , extra_bytes, var, f, g.data, l);
+                                              , extra_bytes, var, f, g, l);
 }
 
 /*------------------------------------------------------------------------------------------------*/

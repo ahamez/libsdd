@@ -4,6 +4,8 @@
 #include <cassert>
 #include <memory> // unique_ptr
 
+#include <boost/container/flat_set.hpp>
+
 #include "sdd/manager_fwd.hh"
 #include "sdd/dd/context.hh"
 #include "sdd/dd/definition.hh"
@@ -79,6 +81,9 @@ struct internal_manager
   /// @brief The cached Id homomorphism.
   const hom_ptr_type id;
 
+  /// @brief Used to avoid frequent useless reallocations in SaturationFixpoint().
+  boost::container::flat_set<homomorphism<C>> saturation_fixpoint_data;
+
   /// @brief Default constructor.
   internal_manager(const C& configuration)
     : handlers(sdd_unique_table, hom_unique_table)
@@ -91,6 +96,7 @@ struct internal_manager
     , zero(mk_terminal<zero_terminal<C>>())
     , one(mk_terminal<one_terminal<C>>())
     , id(mk_id())
+    , saturation_fixpoint_data()
   {
   }
 
