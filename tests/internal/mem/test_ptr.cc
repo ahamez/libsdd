@@ -90,13 +90,13 @@ struct ptr_test
   ptr_test()
     : table_()
   {
+    table_.reset();
     sdd::mem::set_deletion_handler<unique>([&](const unique& u){table_.erase(u);});
   }
 
-  void
-  SetUp()
+  ~ptr_test()
   {
-    table_.reset();
+    sdd::mem::reset_deletion_handler<unique>();
   }
 };
 
