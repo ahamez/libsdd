@@ -15,6 +15,8 @@ namespace sdd { namespace hom {
 
 /// @internal
 /// @brief The Identity homomorphism which returns its operand.
+///
+/// Its evaluation is done in homomorphism<C>::operator().
 template <typename C>
 struct identity
 {
