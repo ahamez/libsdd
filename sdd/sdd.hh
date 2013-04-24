@@ -13,26 +13,33 @@
 namespace sdd
 {
 
+/// @internal
 /// @brief Internal stuff related to the library configuration.
 namespace conf {}
 
+/// @internal
 /// @brief Internal stuff for decision diagrams.
 namespace dd {}
 
+/// @internal
 /// @brief Internal stuff for homomorphisms.
 namespace hom {}
 
+/// @internal
 /// @brief Internal stuff necessary for the memory management.
 namespace mem {}
 
+/// @internal
 /// @brief Contain miscellaneous utilities.
 namespace util {}
 
+/// @internal
 /// @brief Definition of values to be stored on arcs.
 namespace values {}
 
+} // namespace sdd
+
 /// @brief Essentially hash specialization.
 namespace std {}
-}
 
 #endif // _SDD_SDD_HH_
