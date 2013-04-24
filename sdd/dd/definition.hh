@@ -291,6 +291,8 @@ public:
 
   /// @internal
   /// @brief Create the |0| terminal.
+private:
+
   ///
   /// O(1). The |0| is cached in a static variable.
   static
@@ -316,8 +318,6 @@ public:
     static const ptr_type one(mem::unify(o));
     return one;
   }
-
-private:
 
   /// @internal
   /// @brief Helper function to create a node, flat or hierarchical, with only one arc.
