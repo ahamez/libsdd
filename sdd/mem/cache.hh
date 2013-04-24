@@ -1,9 +1,10 @@
 #ifndef _SDD_MEM_CACHE_HH_
 #define _SDD_MEM_CACHE_HH_
 
-#include <algorithm> // count_if, for_each, nth_element
+#include <algorithm> // for_each, nth_element
 #include <cstdint>   // uint32_t
 #include <forward_list>
+#include <iterator>  // distance
 #include <numeric>   // accumulate
 #include <tuple>
 #include <utility>   // forward
@@ -93,7 +94,7 @@ struct cache_statistics
   size()
   const noexcept
   {
-    return std::count_if(rounds.begin(), rounds.end(), [](const round&){return true;});
+    return std::distance(rounds.begin(), rounds.end()); // forward_list lacks a size() function
   }
 
   /// @brief Get the number of performed cleanups.
