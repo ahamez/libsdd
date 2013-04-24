@@ -3,6 +3,7 @@
 
 #include <iosfwd>
 
+#include "sdd/manager_fwd.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/sum.hh"
 #include "sdd/hom/composition.hh"
@@ -53,16 +54,22 @@ private:
                       >
           data_type;
 
+public:
+
+  /// @internal
   /// @brief A unified and canonized homomorphism, meant to be stored in a unique table.
   ///
   /// It is automatically erased when there is no more reference to it.
   typedef mem::ref_counted<const data_type> unique_type;
 
+  /// @internal
   /// @brief Define the smart pointer around a unified homomorphism.
   ///
   /// It handles the reference counting as well as the deletion of the homomorphism when it is
   /// no longer referenced.
   typedef mem::ptr<const unique_type> ptr_type;
+
+private:
 
   /// @brief The real smart pointer around a unified homomorphism.
   ptr_type ptr_;
@@ -102,7 +109,7 @@ public:
   operator()(const order<C>& o, const SDD<C>& x)
   const
   {
-    return this->operator()(hom::initial_context<C>(), o, x);
+    return this->operator()(global<C>().hom_context, o, x);
   }
 
   /// @internal
@@ -201,9 +208,10 @@ public:
   homomorphism
   create(mem::construct<T>, Args&&... args)
   {
-    char* addr = mem::allocate<unique_type>();
+    auto& ut = global<C>().hom_unique_table;
+    char* addr = ut.allocate(0 /*extra_bytes*/);
     unique_type* u = new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
-    return {mem::unify(u)};
+    return {ptr_type(ut(u))};
   }
 
   /// @internal
@@ -213,9 +221,10 @@ public:
   homomorphism
   create_variable_size(mem::construct<T>, std::size_t extra_bytes, Args&&... args)
   {
-    char* addr = mem::allocate<unique_type>(extra_bytes);
+    auto& ut = global<C>().hom_unique_table;
+    char* addr = ut.allocate(extra_bytes);
     unique_type* u = new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
-    return {mem::unify(u)};
+    return {ptr_type(ut(u))};
   }
 
   /// @internal

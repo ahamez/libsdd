@@ -6,13 +6,22 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-const SDD one = sdd::one<conf>();
-const SDD zero = sdd::zero<conf>();
-const hom id = sdd::Id<conf>();
-
 struct hom_values_function_test
   : public testing::Test
 {
+  sdd::manager<conf> m;
+
+  const SDD zero;
+  const SDD one;
+  const hom id;
+
+  hom_values_function_test()
+    : m(sdd::init<conf>())
+    , zero(sdd::zero<conf>())
+    , one(sdd::one<conf>())
+    , id(sdd::Id<conf>())
+  {
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/

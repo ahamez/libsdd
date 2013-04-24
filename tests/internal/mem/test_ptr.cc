@@ -62,7 +62,7 @@ struct unique_table<unique>
   }
 
   void
-  erase(unique&)
+  erase(const unique&)
   {
     ++nb_deletions_;
   }
@@ -73,19 +73,6 @@ struct unique_table<unique>
     nb_deletions_ = 0;
   }
 };
-
-namespace {
-
-template <>
-mem::unique_table<unique>&
-global_unique_table()
-noexcept
-{
-  static mem::unique_table<unique> unique_table;
-  return unique_table;
-}
-
-}
 
 }} // namespace sdd::mem
 
@@ -98,11 +85,12 @@ struct ptr_test
 {
   typedef ptr<unique> ptr_type;
 
-  sdd::mem::unique_table<unique>& table_;
+  sdd::mem::unique_table<unique> table_;
 
   ptr_test()
-    : table_(global_unique_table<unique>())
+    : table_()
   {
+    sdd::mem::set_deletion_handler<unique>([&](const unique& u){table_.erase(u);});
   }
 
   void

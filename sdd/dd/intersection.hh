@@ -3,6 +3,7 @@
 
 #include <boost/container/flat_set.hpp>
 
+#include "sdd/manager_fwd.hh"
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/nary.hh"
@@ -214,7 +215,7 @@ inline
 SDD<C>
 operator&(const SDD<C>& lhs, const SDD<C>& rhs)
 {
-  return dd::intersection(dd::initial_context<C>(), {lhs, rhs});
+  return dd::intersection(global<C>().sdd_context, {lhs, rhs});
 }
 
 /// @brief Perform the intersection of two SDD.
@@ -224,7 +225,7 @@ inline
 SDD<C>&
 operator&=(SDD<C>& lhs, const SDD<C>& rhs)
 {
-  SDD<C> tmp = dd::intersection(dd::initial_context<C>(), {lhs, rhs});
+  SDD<C> tmp = dd::intersection(global<C>().sdd_context, {lhs, rhs});
   using std::swap;
   swap(tmp, lhs);
   return lhs;
@@ -242,7 +243,7 @@ intersection(InputIterator begin, InputIterator end)
   {
     builder.add(*begin);
   }
-  return dd::intersection(dd::initial_context<C>(), std::move(builder));
+  return dd::intersection(global<C>().sdd_context, std::move(builder));
 }
 
 /// @brief Perform the intersection of an initializer list of SDD.

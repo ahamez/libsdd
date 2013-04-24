@@ -1,15 +1,23 @@
 #include "gtest/gtest.h"
 
 #include "tests/hom/common.hh"
-#include "sdd/sdd.hh"
 
 /*-------------------------------------------------------------------------------------------*/
-
-const SDD one = sdd::one<conf>();
 
 struct order_utility_test
   : public testing::Test
 {
+  sdd::manager<conf> m;
+
+  const SDD zero;
+  const SDD one;
+
+  order_utility_test()
+    : m(sdd::init<conf>())
+    , zero(sdd::zero<conf>())
+    , one(sdd::one<conf>())
+  {
+  }
 };
 
 /*-------------------------------------------------------------------------------------------*/

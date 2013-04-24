@@ -6,6 +6,8 @@
 #include "sdd/dd/context.hh"
 #include "sdd/dd/definition.hh"
 
+#include "sdd/manager.hh"
+
 /*------------------------------------------------------------------------------------------------*/
 
 struct sum_test
@@ -13,11 +15,22 @@ struct sum_test
 {
   typedef sdd::conf0 conf;
   typedef sdd::SDD<conf> SDD;
-  sdd::dd::context<conf> cxt= sdd::dd::context<conf>(100, 100, 100);
   typedef sdd::dd::alpha_builder<conf, conf::Values> flat_alpha_builder;
   typedef sdd::dd::alpha_builder<conf, SDD> hier_alpha_builder;
-  const SDD zero = sdd::zero<conf>();
-  const SDD one = sdd::one<conf>();
+
+  sdd::manager<conf> m;
+  sdd::dd::context<conf>& cxt;
+
+  const SDD zero;
+  const SDD one;
+
+  sum_test()
+    : m(sdd::init<conf>())
+    , cxt(sdd::global<conf>().sdd_context)
+    , zero(sdd::zero<conf>())
+    , one(sdd::one<conf>())
+  {
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/

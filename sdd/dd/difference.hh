@@ -4,6 +4,7 @@
 #include <cassert>
 #include <iosfwd>
 
+#include "sdd/manager_fwd.hh"
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/operations_fwd.hh"
@@ -232,24 +233,24 @@ difference(context<C>&, const Values& lhs, const Values& rhs)
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief   Perform the difference of two SDD.
+/// @brief Perform the difference of two SDD.
 /// @related SDD
 template <typename C>
 inline
 SDD<C>
 operator-(const SDD<C>& lhs, const SDD<C>& rhs)
 {
-  return dd::difference(dd::initial_context<C>(), lhs, rhs);
+  return dd::difference(global<C>().sdd_context, lhs, rhs);
 }
 
-/// @brief   Perform the difference of two SDD.
+/// @brief Perform the difference of two SDD.
 /// @related SDD
 template <typename C>
 inline
 SDD<C>&
 operator-=(SDD<C>& lhs, const SDD<C>& rhs)
 {
-  SDD<C> tmp = dd::difference(dd::initial_context<C>(), lhs, rhs);
+  SDD<C> tmp = dd::difference(global<C>().sdd_context, lhs, rhs);
   using std::swap;
   swap(tmp, lhs);
   return lhs;

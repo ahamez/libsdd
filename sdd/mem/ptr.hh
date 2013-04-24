@@ -1,7 +1,9 @@
 #ifndef _SDD_MEM_PTR_HH_
 #define _SDD_MEM_PTR_HH_
 
-#include <functional> // hash
+#include <cassert>
+#include <functional>  // hash, function
+#include <type_traits> // remove_const
 
 #include "sdd/mem/unique_table.hh"
 
@@ -10,7 +12,45 @@ namespace sdd { namespace mem {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief  A smart pointer to manage unified ressources.
+/// @brief Define the type of a deletion handler.
+///
+/// A deletion handler is called by ptr whenever a data is no longer referenced.
+template <typename Unique>
+using handler_type = std::function<void (const Unique&)>;
+
+/// @internal
+/// @brief Get the deletion handler for a given Unique type.
+template <typename Unique>
+handler_type<Unique>&
+get_deletion_handler()
+{
+  static handler_type<Unique> handler = [](const Unique&){assert(false && "Unset handler .");};
+  return handler;
+}
+
+/// @internal
+/// @brief Get the deletion handler for a given Unique type.
+template <typename Unique>
+void
+reset_deletion_handler()
+{
+  get_deletion_handler<Unique>() = [](const Unique&){assert(false && "Reset handler.");};
+}
+
+
+/// @internal
+/// @brief Set the deletion handler for a given Unique type.
+template <typename Unique>
+void
+set_deletion_handler(const handler_type<Unique>& h)
+{
+  get_deletion_handler<Unique>() = h;
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+/// @brief A smart pointer to manage unified ressources.
 /// @tparam Unique the type of the unified ressource.
 ///
 /// Unified ressources are ref_counted elements constructed with an unique_table.
@@ -27,7 +67,10 @@ private:
 
 public:
 
+  typedef Unique unique_type;
+
   /// @brief Constructor with a unified data.
+  explicit
   ptr(const Unique& p)
   noexcept
   	: x_(&p)
@@ -139,7 +182,7 @@ private:
     {
       typedef typename std::remove_const<Unique>::type U;
       U& x = *const_cast<U*>(x_);
-      global_unique_table<U>().erase(x);
+      get_deletion_handler<U>()(x);
     }
   }
 };
@@ -189,7 +232,7 @@ struct hash<sdd::mem::ptr<Unique>>
   operator()(const sdd::mem::ptr<Unique>& x)
   const noexcept
   {
-    return std::hash<Unique*>()(x.operator->());
+    return std::hash<const Unique*>()(x.operator->());
   }
 };
 

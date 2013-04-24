@@ -8,14 +8,24 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-const SDD zero = sdd::zero<conf>();
-const SDD one = sdd::one<conf>();
-const hom id = sdd::Id<conf>();
-
 struct rewriting_test
   : public testing::Test
 {
-  sdd::hom::context<conf> cxt = sdd::hom::context<conf>(100, sdd::dd::initial_context<conf>());
+  sdd::manager<conf> m;
+  sdd::hom::context<conf>& cxt;
+
+  const SDD zero;
+  const SDD one;
+  const hom id;
+
+  rewriting_test()
+    : m(sdd::init<conf>())
+    , cxt(sdd::global<conf>().hom_context)
+    , zero(sdd::zero<conf>())
+    , one(sdd::one<conf>())
+    , id(sdd::Id<conf>())
+  {
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/
@@ -31,9 +41,9 @@ TEST_F(rewriting_test, partition)
                           };
 
     const auto&& p = sdd::hom::rewriter<conf>::partition(o, homs.begin(), homs.end());
-    ASSERT_EQ(static_cast<std::size_t>(1), std::get<0>(p).size()); // F size
-    ASSERT_EQ(static_cast<std::size_t>(1), std::get<1>(p).size()); // G size
-    ASSERT_EQ(static_cast<std::size_t>(1), std::get<2>(p).size()); // L size
+    ASSERT_EQ(1u, std::get<0>(p).size()); // F size
+    ASSERT_EQ(1u, std::get<1>(p).size()); // G size
+    ASSERT_EQ(1u, std::get<2>(p).size()); // L size
     ASSERT_EQ(true, std::get<3>(p)); // has_id
   }
 }

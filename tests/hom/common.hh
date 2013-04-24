@@ -10,6 +10,8 @@
 #include "sdd/hom/definition.hh"
 #include "sdd/order/order.hh"
 
+#include "sdd/manager.hh"
+
 /*------------------------------------------------------------------------------------------------*/
 
 typedef sdd::conf0 conf;

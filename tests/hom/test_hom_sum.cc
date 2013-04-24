@@ -6,13 +6,25 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-const SDD zero = sdd::zero<conf>();
-const SDD one = sdd::one<conf>();
-const hom id = sdd::Id<conf>();
-
 struct hom_sum_test
   : public testing::Test
 {
+  typedef sdd::conf0 conf;
+  typedef sdd::SDD<conf> SDD;
+
+  sdd::manager<conf> m;
+
+  const SDD zero;
+  const SDD one;
+  const hom id;
+
+  hom_sum_test()
+    : m(sdd::init<conf>())
+    , zero(sdd::zero<conf>())
+    , one(sdd::one<conf>())
+    , id(sdd::Id<conf>())
+  {
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/
@@ -44,21 +56,21 @@ struct ind
   operator()(const order&, const SDD&)
   const
   {
-    return id;
+    return sdd::Id<conf>();
   }
 
   hom
   operator()(const order&, const bitset& val)
   const
   {
-    return id;
+    return sdd::Id<conf>();
   }
 
   SDD
   operator()()
   const noexcept
   {
-    return one;
+    return sdd::one<conf>();
   }
 
   bool

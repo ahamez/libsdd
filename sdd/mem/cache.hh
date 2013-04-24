@@ -375,15 +375,6 @@ public:
     return static_cast<double>(set_->size()) / static_cast<double>(max_size_);
   }
 
-  /// @brief Get the max load factor.
-  void
-  set_max_load_factor(double factor)
-  noexcept
-  {
-    max_load_factor_ = factor;
-    cleanup();
-  }
-
   /// @brief Remove half of the cache (LFU strategy).
   void
   cleanup()
@@ -450,22 +441,6 @@ public:
   const noexcept
   {
     return set_->size();
-  }
-
-  /// @brief Set the maximal size of the cache.
-  void
-  set_max_size(std::size_t size)
-  {
-    size = set_type::suggested_upper_bucket_count(size);
-    if (size != max_size_)
-    {
-      bucket_type* new_buckets = new bucket_type[size];
-      set_->rehash(bucket_traits(new_buckets, size));
-      delete[] buckets_;
-      buckets_ = new_buckets;
-      max_size_ = size;
-      cleanup();
-    }
   }
 
   /// @brief Get the statistics of this cache.

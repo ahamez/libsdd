@@ -74,20 +74,6 @@ public:
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @internal
-/// @brief Return the context that serves as an entry point for the evaluation of
-/// homomorphisms.
-/// @related context
-template <typename C>
-context<C>&
-initial_context()
-{
-  static context<C> initial_context(C::initial_homomorphism_cache_size, dd::initial_context<C>());
-  return initial_context;
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
 }} // namespace sdd::hom
 
 #endif // _SDD_HOM_CONTEXT_HH_

@@ -6,6 +6,8 @@
 #include "sdd/dd/context.hh"
 #include "sdd/dd/definition.hh"
 
+#include "sdd/manager.hh"
+
 /*------------------------------------------------------------------------------------------------*/
 
 struct definition_test
@@ -13,10 +15,16 @@ struct definition_test
 {
   typedef sdd::conf0 conf;
   typedef sdd::SDD<conf> SDD;
-  const SDD zero = sdd::zero<conf>();
-  const SDD one = sdd::one<conf>();
+
+  sdd::manager<conf> m;
+
+  const SDD zero;
+  const SDD one;
 
   definition_test()
+    : m(sdd::init<conf>())
+    , zero(sdd::zero<conf>())
+    , one(sdd::one<conf>())
   {
   }
 };
@@ -38,6 +46,7 @@ TEST_F(definition_test, empty_valuation)
   ASSERT_EQ(zero, SDD('a', {}, one));
   conf::Values val;
   ASSERT_EQ(zero, SDD('a', val, one));
+  ASSERT_EQ(zero, SDD('a', zero, one));
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -47,29 +56,29 @@ TEST_F(definition_test, print)
   {
     std::stringstream ss;
     ss << zero;
-    ASSERT_NE(static_cast<std::size_t>(0), ss.str().size());
+    ASSERT_NE(0u, ss.str().size());
   }
   {
     std::stringstream ss;
     ss << one;
-    ASSERT_NE(static_cast<std::size_t>(0), ss.str().size());
+    ASSERT_NE(0u, ss.str().size());
   }
   {
     std::stringstream ss;
     ss << SDD('a', {0}, one);
-    ASSERT_NE(static_cast<std::size_t>(0), ss.str().size());
+    ASSERT_NE(0u, ss.str().size());
   }
   {
     std::stringstream ss;
     ss << SDD('a', {0,1}, one);
-    ASSERT_NE(static_cast<std::size_t>(0), ss.str().size());
+    ASSERT_NE(0u, ss.str().size());
   }
   {
     std::stringstream ss;
     SDD x('x', SDD('a', {0}, one), SDD('y', SDD('b', {0}, one), one));
     SDD y('x', SDD('a', {1}, one), SDD('y', SDD('b', {1}, one), one));
     ss << x + y;
-    ASSERT_NE(static_cast<std::size_t>(0), ss.str().size());
+    ASSERT_NE(0u, ss.str().size());
   }
 }
 

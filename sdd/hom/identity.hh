@@ -4,6 +4,7 @@
 #include <cassert>
 #include <iosfwd>
 
+#include "sdd/manager_fwd.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
@@ -22,7 +23,7 @@ struct identity
 {
   /// @brief Evaluation.
   ///
-  /// This is an error to arrive here as the identity is computed before calling the cache.
+  /// This is an error to call this function, as the identity is computed before calling the cache.
   SDD<C>
   operator()(context<C>&, const order<C>&, const SDD<C>&)
   const noexcept
@@ -78,11 +79,12 @@ operator<<(std::ostream& os, const identity<C>&)
 /// @brief Create the Identity homomorphism.
 /// @related homomorphism
 template <typename C>
+inline
 homomorphism<C>
 Id()
+noexcept
 {
-  static homomorphism<C> id = homomorphism<C>::create(mem::construct<hom::identity<C>>());
-  return id;
+  return global<C>().id;
 }
 
 /*------------------------------------------------------------------------------------------------*/

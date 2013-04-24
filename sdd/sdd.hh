@@ -9,6 +9,8 @@
 #include "sdd/hom/definition.hh"
 #include "sdd/hom/rewrite.hh"
 
+#include "sdd/manager.hh"
+
 /// @brief The main namespace for the library.
 namespace sdd
 {

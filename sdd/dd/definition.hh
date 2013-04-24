@@ -74,18 +74,20 @@ private:
                       , const flat_node<C>, const hierarchical_node<C>>
           data_type;
 
+public:
+
+  /// @internal
   /// @brief A unified and canonized SDD, meant to be stored in a unique table.
   ///
   /// It is automatically erased when there is no more reference to it.
   typedef mem::ref_counted<const data_type> unique_type;
 
-  /// @brief Define the smart pointer around a unified SDD.
+  /// @internal
+  /// @brief The type of the smart pointer around a unified SDD.
   ///
   /// It handles the reference counting as well as the deletion of the SDD when it is no longer
   /// referenced.
   typedef mem::ptr<const unique_type> ptr_type;
-
-public:
 
   /// @brief The type of variables.
   typedef typename C::Variable variable_type;
@@ -138,7 +140,7 @@ public:
 
   /// @brief Construct a hierarchical SDD.
   /// @param var  The SDD's variable.
-  /// @param val  The SDD's valuation, a set of values constructed from an initialization list.
+  /// @param values  The SDD's valuation, a set of values constructed from an initialization list.
   /// @param succ The SDD's successor.
   ///
   /// O(1), for the creation of the SDD itself, but the complexity of the construction of the
@@ -202,7 +204,7 @@ public:
     }
   }
 
-  /// @brief  Indicate if the SDD is |0|.
+  /// @brief Indicate if the SDD is |0|.
   /// @return true if the SDD is |0|, false otherwise.
   ///
   /// O(1).
@@ -289,20 +291,17 @@ public:
     return ptr_;
   }
 
-  /// @internal
-  /// @brief Create the |0| terminal.
 private:
 
+  /// @internal
+  /// @brief Create the |0| terminal.
   ///
   /// O(1). The |0| is cached in a static variable.
   static
   ptr_type
   zero_ptr()
   {
-    static char* addr = mem::allocate<unique_type>();
-    static unique_type* z = new (addr) unique_type(mem::construct<zero_terminal<C>>());
-    static const ptr_type zero(mem::unify(z));
-    return zero;
+    return global<C>().zero;
   }
 
   /// @internal
@@ -313,10 +312,7 @@ private:
   ptr_type
   one_ptr()
   {
-    static char* addr = mem::allocate<unique_type>();
-    static unique_type* o = new (addr) unique_type(mem::construct<one_terminal<C>>());
-    static const ptr_type one(mem::unify(o));
-    return one;
+    return global<C>().one;
   }
 
   /// @internal
@@ -336,7 +332,7 @@ private:
     {
       dd::alpha_builder<C, Valuation> builder;
       builder.add(std::move(val), succ);
-      return unify_node<Valuation>(var, std::move(builder));
+      return ptr_type(unify_node<Valuation>(var, std::move(builder)));
     }
   }
 
@@ -357,7 +353,7 @@ private:
     {
       dd::alpha_builder<C, Valuation> builder;
       builder.add(val, succ);
-      return unify_node<Valuation>(var, std::move(builder));
+      return ptr_type(unify_node<Valuation>(var, std::move(builder)));
     }
   }
 
@@ -376,7 +372,7 @@ private:
     }
     else
     {
-      return unify_node<Valuation>(var, std::move(builder));
+      return ptr_type(unify_node<Valuation>(var, std::move(builder)));
     }
   }
 
@@ -394,10 +390,11 @@ private:
     // Note that the alpha function is allocated right behind the node, thus extra care must be
     // taken. This is also why we use Boost.Intrusive in order to be able to manage memory
     // exactly the way we want.
-    char* addr = mem::allocate<unique_type>(builder.size_to_allocate());
+    auto& ut = global<C>().sdd_unique_table;
+    char* addr = ut.allocate(builder.size_to_allocate());
     unique_type* u =
       new (addr) unique_type(mem::construct<node<C, Valuation>>(), var, builder);
-    return mem::unify(u);
+    return ut(u);
   }
 
   friend void util::print_sizes<C>(std::ostream&);

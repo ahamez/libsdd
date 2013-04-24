@@ -5,6 +5,8 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/paths.hh"
 
+#include "sdd/manager.hh"
+
 /*------------------------------------------------------------------------------------------------*/
 
 struct paths_test
@@ -12,10 +14,16 @@ struct paths_test
 {
   typedef sdd::conf0 conf;
   typedef sdd::SDD<conf> SDD;
-  const SDD zero = sdd::zero<conf>();
-  const SDD one = sdd::one<conf>();
+
+  sdd::manager<conf> m;
+
+  const SDD zero;
+  const SDD one;
 
   paths_test()
+    : m(sdd::init<conf>())
+    , zero(sdd::zero<conf>())
+    , one(sdd::one<conf>())
   {
   }
 };

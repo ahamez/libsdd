@@ -27,6 +27,14 @@ struct foo
   {
     return 0;
   }
+
+  // Needed by an assertion in unique_table.
+  bool
+  is_not_referenced()
+  const noexcept
+  {
+    return true;
+  }
 };
 
 namespace std {
@@ -49,7 +57,7 @@ struct hash<foo>
 TEST(unique_table_test, insertion)
 {
   {
-    sdd::mem::unique_table<foo> ut;
+    sdd::mem::unique_table<foo> ut(100);
 
     char* addr1 = ut.allocate(0);
     foo* i1_ptr = new (addr1) foo(42);
@@ -63,7 +71,7 @@ TEST(unique_table_test, insertion)
     ut.erase(const_cast<foo&>(i1));
   }
   {
-    sdd::mem::unique_table<foo> ut;
+    sdd::mem::unique_table<foo> ut(100);
 
     char* addr1 = ut.allocate(0);
     foo* i1_ptr = new (addr1) foo(42);

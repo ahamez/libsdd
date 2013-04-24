@@ -15,9 +15,6 @@ typedef sdd::SDD<conf> SDD;
 typedef sdd::homomorphism<conf> hom;
 typedef sdd::conf1::Values Values;
 
-SDD one = sdd::one<conf>();
-SDD zero = sdd::zero<conf>();
-
 using sdd::Cons;
 using sdd::Constant;
 using sdd::Fixpoint;
@@ -67,7 +64,7 @@ struct no_ring_above
   operator()()
   const noexcept
   {
-    return one;
+    return sdd::one<conf>();
   }
 
   bool
@@ -121,7 +118,7 @@ struct swap_pole
   {
     if (val.find(source) == val.cend())
     {
-      return Constant<conf>(zero);
+      return Constant<conf>(sdd::zero<conf>());
     }
     else
     {
@@ -135,7 +132,7 @@ struct swap_pole
   operator()()
   const noexcept
   {
-    return one;
+    return sdd::one<conf>();
   }
 
   bool
@@ -159,7 +156,6 @@ namespace std {
 template <>
 struct hash<no_ring_above>
 {
-
   std::size_t
   operator()(const no_ring_above& x)
   const noexcept
@@ -174,7 +170,6 @@ struct hash<no_ring_above>
 template <>
 struct hash<swap_pole>
 {
-
   std::size_t
   operator()(const swap_pole& x)
   const noexcept
@@ -187,13 +182,15 @@ struct hash<swap_pole>
   }
 };
 
-}
+} // namespace std
 
 /*------------------------------------------------------------------------------------------------*/
 
 int
 main(int argc, char** argv)
 {
+  auto manager = sdd::init<conf>();
+
   // The default number of rings
   unsigned int nb_rings = 5;
   if (argc >= 2)

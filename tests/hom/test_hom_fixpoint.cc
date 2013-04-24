@@ -5,13 +5,20 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-const SDD one = sdd::one<conf>();
-const hom id = sdd::Id<conf>();
-
 struct hom_fixpoint_test
   : public testing::Test
 {
+  sdd::manager<conf> m;
+
+  const SDD zero;
+  const SDD one;
+  const hom id;
+
   hom_fixpoint_test()
+    : m(sdd::init<conf>())
+    , zero(sdd::zero<conf>())
+    , one(sdd::one<conf>())
+    , id(sdd::Id<conf>())
   {
   }
 };

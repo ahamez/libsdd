@@ -98,24 +98,6 @@ public:
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @internal
-/// @brief Get the context that serves as the entry point for the evaluation of operations on SDD.
-/// @related context
-template <typename C>
-context<C>&
-initial_context()
-{
-  // There are usually more sum operations than intersections and differencies, thus we choose
-  // a bigger default size for it.
-  static context<C> initial_context( 500000   // difference
-                                   , 500000   // intersection
-                                   , 1000000  // sum
-                                   );
-  return initial_context;
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
 }} // namespace sdd::dd
 
 #endif // _SDD_DD_CONTEXT_HH_

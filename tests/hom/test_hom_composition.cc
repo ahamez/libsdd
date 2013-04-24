@@ -1,16 +1,25 @@
 #include "gtest/gtest.h"
 
-#include "tests/hom/common.hh"
 #include "tests/hom/common_inductives.hh"
 
 /*------------------------------------------------------------------------------------------------*/
 
-const SDD one = sdd::one<conf>();
-const hom id = sdd::Id<conf>();
-
 struct hom_composition_test
   : public testing::Test
 {
+  sdd::manager<conf> m;
+
+  const SDD zero;
+  const SDD one;
+  const hom id;
+
+  hom_composition_test()
+    : m(sdd::init<conf>())
+    , zero(sdd::zero<conf>())
+    , one(sdd::one<conf>())
+    , id(sdd::Id<conf>())
+  {
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/

@@ -9,11 +9,6 @@ namespace sdd { namespace hom {
 template <typename C>
 class context;
 
-// Forward declaration needed for homomorphism evaluation.
-template <typename C>
-context<C>&
-initial_context();
-
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::hom

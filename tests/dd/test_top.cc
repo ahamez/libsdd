@@ -4,6 +4,8 @@
 #include "sdd/dd/context.hh"
 #include "sdd/dd/definition.hh"
 
+#include "sdd/manager.hh"
+
 /*------------------------------------------------------------------------------------------------*/
 
 struct top_test
@@ -11,10 +13,15 @@ struct top_test
 {
   typedef sdd::conf0 conf;
   typedef sdd::SDD<conf> SDD;
-  const SDD zero = sdd::zero<conf>();
-  const SDD one = sdd::one<conf>();
+
+  sdd::manager<conf> m;
+  const SDD zero;
+  const SDD one;
 
   top_test()
+    : m(sdd::init<conf>())
+    , zero(sdd::zero<conf>())
+    , one(sdd::one<conf>())
   {
   }
 };
@@ -383,6 +390,5 @@ TEST_F(top_test, intersection)
     }
   }
 }
-
 
 /*------------------------------------------------------------------------------------------------*/

@@ -77,12 +77,6 @@ public:
     blocks_.reserve(nb_blocks);
   }
 
-  /// @brief Default constructor.
-  unique_table()
-    : unique_table(1000000)
-  {
-  }
-
   /// @brief Destructor.
   ~unique_table()
   {
@@ -156,7 +150,7 @@ public:
   erase(const Unique& x)
   noexcept
   {
-    assert(x.is_not_referenced() && "Unique still referenced.");
+    assert(x.is_not_referenced() && "Unique still referenced");
     set_->erase_and_dispose(x, [](const Unique* ptr){delete ptr;});
   }
 
@@ -190,53 +184,6 @@ private:
     buckets_ = new_buckets;
   }
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-namespace /* anonymous */ {
-
-/// @internal
-/// @related unique_table
-template <typename Unique>
-inline
-mem::unique_table<Unique>&
-global_unique_table()
-noexcept
-{
-  static mem::unique_table<Unique> unique_table;
-  return unique_table;
-}
-
-} // namespace anonymous
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Allocate a memory block large enough for the given size, in the global unique table.
-/// @related unique_table
-template <typename Unique>
-inline
-char*
-allocate(std::size_t extra_bytes = 0)
-{
-  return global_unique_table<Unique>().allocate(extra_bytes);
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Unify a data in the global unique table.
-/// @param u_ptr A pointer to a data constructed with a placement new into the storage returned by
-/// allocate().
-/// @param size The size of the data. It must be the same as the one given to allocate().
-/// @related unique_table
-template <typename Unique>
-inline
-const Unique&
-unify(Unique* ptr)
-{
-  return global_unique_table<Unique>()(ptr);
-}
 
 /*------------------------------------------------------------------------------------------------*/
 

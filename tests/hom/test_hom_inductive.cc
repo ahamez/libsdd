@@ -4,17 +4,27 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-const SDD zero = sdd::zero<conf>();
-const SDD one = sdd::one<conf>();
-const hom id = sdd::Id<conf>();
-
 struct hom_inductive_test
   : public testing::Test
 {
+  sdd::manager<conf> m;
+
+  const SDD zero;
+  const SDD one;
+  const hom id;
+
+  hom_inductive_test()
+    : m(sdd::init<conf>())
+    , zero(sdd::zero<conf>())
+    , one(sdd::one<conf>())
+    , id(sdd::Id<conf>())
+  {
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
+// Increment by 1 the variable "0"
 struct f0
 {
   bool
@@ -35,21 +45,21 @@ struct f0
   operator()(const order&, const SDD&)
   const
   {
-    return id;
+    return sdd::Id<conf>();
   }
 
   hom
   operator()(const order& o, const bitset& val)
   const
   {
-    return Cons<conf>(o, val << 1, id);
+    return Cons<conf>(o, val << 1, sdd::Id<conf>());
   }
 
   SDD
   operator()()
   const noexcept
   {
-    return one;
+    return sdd::one<conf>();
   }
 
   bool
@@ -66,6 +76,7 @@ operator<<(std::ostream& os, const f0&)
   return os << "f0";
 }
 
+// Increment by 2 the variable "1"
 struct f1
 {
   bool
@@ -86,21 +97,21 @@ struct f1
   operator()(const order&, const SDD&)
   const
   {
-    return id;
+    return sdd::Id<conf>();
   }
 
   hom
   operator()(const order& o, const bitset& val)
   const
   {
-    return Cons<conf>(o, val << 2, id);
+    return Cons<conf>(o, val << 2, sdd::Id<conf>());
   }
 
   SDD
   operator()()
   const noexcept
   {
-    return one;
+    return sdd::one<conf>();
   }
 
   bool
@@ -110,12 +121,6 @@ struct f1
     return true;
   }
 };
-
-std::ostream&
-operator<<(std::ostream& os, const f1&)
-{
-  return os << "f1";
-}
 
 struct cut
 {
@@ -137,21 +142,21 @@ struct cut
   operator()(const order& o, const SDD&)
   const
   {
-    return Cons<conf>(o, zero, id);
+    return Cons<conf>(o, sdd::zero<conf>(), sdd::Id<conf>());
   }
 
   hom
   operator()(const order& o, const bitset&)
   const
   {
-    return Cons<conf>(o, bitset {}, id);
+    return Cons<conf>(o, bitset {}, sdd::Id<conf>());
   }
 
   SDD
   operator()()
   const noexcept
   {
-    return zero;
+    return sdd::zero<conf>();
   }
 
   bool
@@ -202,7 +207,7 @@ struct id_prime
   operator()()
   const noexcept
   {
-    return one;
+    return sdd::one<conf>();
   }
 
   bool
@@ -253,7 +258,7 @@ struct consume
   operator()()
   const noexcept
   {
-    return one;
+    return sdd::one<conf>();
   }
 
   bool
@@ -393,12 +398,25 @@ TEST_F(hom_inductive_test, evaluation_hierarchical)
   }
   {
     order o (order_builder {"1", "0"});
+    const hom h0 = Inductive<conf>(f0());
+    const hom h1 = Inductive<conf>(f1());
+    std::cout << h0 << std::endl;
+    std::cout << h1 << std::endl;
+    ASSERT_NE(h0, h1);
+    ASSERT_EQ(       SDD(1, {1,2,3}, SDD(0, {2,3,4}, one))
+             , h0(o, SDD(1, {1,2,3}, SDD(0, {1,2,3}, one))));
+    ASSERT_EQ(       SDD(1, {3,4,5}, SDD(0, {1,2,3}, one))
+             , h1(o, SDD(1, {1,2,3}, SDD(0, {1,2,3}, one))));
+  }
+  {
+    order o (order_builder {"1", "0"});
     const hom h1 = Inductive<conf>(f0());
     const hom h2 = Inductive<conf>(f1());
-    ASSERT_EQ( SDD(1, {1,2,3}, SDD(0, {2,3,4}, one))
-              , h2(o, h1(o, SDD(1, {0,1,2}, SDD(0, {0,1,2}, one)))));
-    ASSERT_EQ( SDD(1, {1,2,3}, SDD(0, {2,3,4}, one))
-              , h1(o, h2(o, SDD(1, {0,1,2}, SDD(0, {0,1,2}, one)))));
+    ASSERT_NE(h1, h2);
+    ASSERT_EQ(             SDD(1, {2,3,4}, SDD(0, {1,2,3}, one))
+             , h2(o, h1(o, SDD(1, {0,1,2}, SDD(0, {0,1,2}, one)))));
+    ASSERT_EQ(             SDD(1, {2,3,4}, SDD(0, {1,2,3}, one))
+             , h1(o, h2(o, SDD(1, {0,1,2}, SDD(0, {0,1,2}, one)))));
   }
   {
     order o (order_builder {"0", "1"});

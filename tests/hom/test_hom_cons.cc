@@ -4,13 +4,24 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-const SDD zero = sdd::zero<conf>();
-const SDD one = sdd::one<conf>();
-const hom id = sdd::Id<conf>();
-
 struct hom_cons_test
   : public testing::Test
 {
+  sdd::manager<conf> m;
+  sdd::hom::context<conf>& cxt;
+
+  const SDD zero;
+  const SDD one;
+  const hom id;
+
+  hom_cons_test()
+    : m(sdd::init<conf>())
+    , cxt(sdd::global<conf>().hom_context)
+    , zero(sdd::zero<conf>())
+    , one(sdd::one<conf>())
+    , id(sdd::Id<conf>())
+  {
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/
@@ -73,7 +84,6 @@ TEST_F(hom_cons_test, no_cache)
 {
   order o(order_builder {"a"});
   const hom h = Cons<conf>(o, conf::Values {0,1,2}, id);
-  sdd::hom::context<conf> cxt(10, sdd::dd::initial_context<conf>());
   ASSERT_EQ(static_cast<std::size_t>(0), cxt.cache().size());
   ASSERT_EQ(SDD(0, {0,1,2}, one), h(cxt, o, one));
   ASSERT_EQ(static_cast<std::size_t>(0), cxt.cache().size());

@@ -10,16 +10,33 @@ namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
-struct default_parameters
+struct default_configuration
 {
   typedef unsigned short alpha_size_type;
   typedef unsigned int operands_size_type;
+
+  const std::size_t sdd_unique_table_size;
+  const std::size_t sdd_difference_cache_size;
+  const std::size_t sdd_intersection_cache_size;
+  const std::size_t sdd_sum_cache_size;
+  const std::size_t hom_unique_table_size;
+  const std::size_t hom_cache_size;
+
+  default_configuration()
+    : sdd_unique_table_size(1000000)
+    , sdd_difference_cache_size(500000)
+    , sdd_intersection_cache_size(500000)
+    , sdd_sum_cache_size(1000000)
+    , hom_unique_table_size(1000000)
+    , hom_cache_size(1000000)
+  {
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
 struct conf0
-  : public default_parameters
+  : public default_configuration
 {
   typedef std::string        Identifier;
   typedef unsigned char      Variable;
@@ -29,10 +46,10 @@ struct conf0
 /*------------------------------------------------------------------------------------------------*/
 
 struct conf1
-  : public default_parameters
+  : public default_configuration
 {
-  typedef std::string Identifier;
-  typedef unsigned int Variable;
+  typedef std::string                    Identifier;
+  typedef unsigned int                   Variable;
   typedef values::flat_set<unsigned int> Values;
 };
 

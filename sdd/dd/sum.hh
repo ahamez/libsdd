@@ -6,6 +6,7 @@
 
 #include <boost/container/flat_set.hpp>
 
+#include "sdd/manager_fwd.hh"
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/nary.hh"
@@ -295,7 +296,7 @@ inline
 SDD<C>
 operator+(const SDD<C>& lhs, const SDD<C>& rhs)
 {
-  return dd::sum(dd::initial_context<C>(), {lhs, rhs});
+  return dd::sum(global<C>().sdd_context, {lhs, rhs});
 }
 
 /// @brief Perform the union of two SDD.
@@ -305,7 +306,7 @@ inline
 SDD<C>&
 operator+=(SDD<C>& lhs, const SDD<C>& rhs)
 {
-  SDD<C> tmp = dd::sum(dd::initial_context<C>(), {lhs, rhs});
+  SDD<C> tmp = dd::sum(global<C>().sdd_context, {lhs, rhs});
   using std::swap;
   swap(tmp, lhs);
   return lhs;
@@ -323,10 +324,10 @@ sum(InputIterator begin, InputIterator end)
   {
     builder.add(*begin);
   }
-  return dd::sum(dd::initial_context<C>(), std::move(builder));
+  return dd::sum(global<C>().sdd_context, std::move(builder));
 }
 
-/// @brief   Perform the union of an initializer list of SDD.
+/// @brief Perform the union of an initializer list of SDD.
 /// @related SDD
 template <typename C>
 SDD<C>

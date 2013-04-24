@@ -9,11 +9,6 @@ namespace sdd { namespace dd {
 template <typename C>
 class context;
 
-// Forward declaration needed by operations.
-template <typename C>
-context<C>&
-initial_context();
-
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::dd
