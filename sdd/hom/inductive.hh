@@ -167,10 +167,32 @@ public:
   print(std::ostream& os)
   const override
   {
-    os << h_;
+    print_impl(os, h_, 0);
   }
 
 private:
+
+  /// @brief Called when the user's inductive is printable.
+  ///
+  /// Compile-time dispatch.
+  template <typename H>
+  static auto
+  print_impl(std::ostream& os, const H& h, int)
+  -> decltype(operator<<(os, h))
+  {
+    return os << h;
+  }
+
+  /// @brief Called when the user's inductive is not printable.
+  ///
+  /// Compile-time dispatch.
+  template <typename H>
+  static auto
+  print_impl(std::ostream& os, const H& h, long)
+  -> decltype(void())
+  {
+    os << "UserInductive(" << &h << ")";
+  }
 
   /// @brief Called when the user's inductive has skip().
   ///
