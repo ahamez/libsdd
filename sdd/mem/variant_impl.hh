@@ -251,7 +251,7 @@ dispatch( const Visitor& v
         , const Storage& storage, const Tuple<Types...>&, const uint8_t index
         , Args&&... args)
 {
-  void* table[LIBSDD_VARIANT_SIZE] = {BOOST_PP_ENUM_PARAMS(LIBSDD_VARIANT_SIZE, &&lab)};
+  static void* table[LIBSDD_VARIANT_SIZE] = {BOOST_PP_ENUM_PARAMS(LIBSDD_VARIANT_SIZE, &&lab)};
   goto *table[index];
 
 # define BOOST_PP_LOCAL_MACRO(n)                        \
@@ -314,7 +314,7 @@ inner_dispatch( const Visitor& v
               , const Storage& storage, const Tuple<Types...>&, const uint8_t index
               , Args&&... args)
 {
-  void* table[LIBSDD_VARIANT_SIZE] = {BOOST_PP_ENUM_PARAMS(LIBSDD_VARIANT_SIZE, &&lab)};
+  static void* table[LIBSDD_VARIANT_SIZE] = {BOOST_PP_ENUM_PARAMS(LIBSDD_VARIANT_SIZE, &&lab)};
   goto *table[index];
 
 # define BOOST_PP_LOCAL_MACRO(n)                                \
@@ -346,7 +346,7 @@ binary_dispatch( const Visitor& v
                , const Storage2& storage2, const Tuple2<Types2...>& tuple2, const uint8_t index2
                , Args&&... args)
 {
-  void* table[LIBSDD_VARIANT_SIZE] = {BOOST_PP_ENUM_PARAMS(LIBSDD_VARIANT_SIZE, &&lab)};
+  static void* table[LIBSDD_VARIANT_SIZE] = {BOOST_PP_ENUM_PARAMS(LIBSDD_VARIANT_SIZE, &&lab)};
   goto *table[index1];
 
 # define BOOST_PP_LOCAL_MACRO(n)                                                        \
