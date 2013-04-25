@@ -132,6 +132,7 @@ struct cached_homomorphism
 
 /// @internal
 /// @related cached_homomorphism
+/// We don't need to compare orders as the SDD operands bring the same information.
 template <typename C>
 inline
 bool
@@ -188,6 +189,8 @@ namespace std {
 
 /// @internal
 /// @brief Hash specialization for sdd::hom::cached_homomorphism
+///
+/// We don't need to hash order as the SDD operand brings the same information.
 template <typename C>
 struct hash<sdd::hom::cached_homomorphism<C>>
 {
