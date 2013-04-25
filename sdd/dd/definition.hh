@@ -127,17 +127,6 @@ public:
   SDD&
   operator=(const SDD&) noexcept = default;
 
-  /// @internal
-  /// @brief  Construct a terminal.
-  /// @param  terminal If true, create the |1| terminal; the |0| terminal otherwise.
-  /// @return The terminal |0| or |1|.
-  ///
-  /// O(1).
-  SDD(bool terminal)
-    : ptr_(terminal ? one_ptr() : zero_ptr())
-  {
-  }
-
   /// @brief Construct a hierarchical SDD.
   /// @param var  The SDD's variable.
   /// @param values  The SDD's valuation, a set of values constructed from an initialization list.
@@ -291,12 +280,10 @@ public:
     return ptr_;
   }
 
-private:
-
   /// @internal
-  /// @brief Create the |0| terminal.
+  /// @brief Return the globally cached |0| terminal.
   ///
-  /// O(1). The |0| is cached in a static variable.
+  /// O(1).
   static
   ptr_type
   zero_ptr()
@@ -305,15 +292,17 @@ private:
   }
 
   /// @internal
-  /// @brief Create the |1| terminal.
+  /// @brief Return the globally cached |1| terminal.
   ///
-  /// O(1). The |1| is cached in a static variable.
+  /// O(1).
   static
   ptr_type
   one_ptr()
   {
     return global<C>().one;
   }
+
+private:
 
   /// @internal
   /// @brief Helper function to create a node, flat or hierarchical, with only one arc.
@@ -464,7 +453,7 @@ SDD<C>
 zero()
 noexcept
 {
-  return {false};
+  return {SDD<C>::zero_ptr()};
 }
 
 /// @brief Return the |1| terminal.
@@ -477,7 +466,7 @@ SDD<C>
 one()
 noexcept
 {
-  return {true};
+  return {SDD<C>::one_ptr()};
 }
 
 /*------------------------------------------------------------------------------------------------*/
