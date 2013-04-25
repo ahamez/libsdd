@@ -227,7 +227,7 @@ namespace std {
 /// @internal
 /// @brief Hash specialization for sdd::mem::variant
 template <typename... Types>
-struct hash<const sdd::mem::variant<Types...>>
+struct hash<sdd::mem::variant<Types...>>
 {
   std::size_t
   operator()(const sdd::mem::variant<Types...>& x)

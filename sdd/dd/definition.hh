@@ -80,14 +80,14 @@ public:
   /// @brief A unified and canonized SDD, meant to be stored in a unique table.
   ///
   /// It is automatically erased when there is no more reference to it.
-  typedef mem::ref_counted<const data_type> unique_type;
+  typedef mem::ref_counted<data_type> unique_type;
 
   /// @internal
   /// @brief The type of the smart pointer around a unified SDD.
   ///
   /// It handles the reference counting as well as the deletion of the SDD when it is no longer
   /// referenced.
-  typedef mem::ptr<const unique_type> ptr_type;
+  typedef mem::ptr<unique_type> ptr_type;
 
   /// @brief The type of variables.
   typedef typename C::Variable variable_type;

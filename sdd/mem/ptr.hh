@@ -22,9 +22,9 @@ using handler_type = std::function<void (const Unique&)>;
 /// @brief Get the deletion handler for a given Unique type.
 template <typename Unique>
 handler_type<Unique>&
-get_deletion_handler()
+deletion_handler()
 {
-  static handler_type<Unique> handler = [](const Unique&){assert(false && "Unset handler .");};
+  static handler_type<Unique> handler = [](const Unique&){assert(false && "Unset handler");};
   return handler;
 }
 
@@ -34,7 +34,7 @@ template <typename Unique>
 void
 reset_deletion_handler()
 {
-  get_deletion_handler<Unique>() = [](const Unique&){assert(false && "Reset handler.");};
+  deletion_handler<Unique>() = [](const Unique&){assert(false && "Reset handler");};
 }
 
 
@@ -44,7 +44,7 @@ template <typename Unique>
 void
 set_deletion_handler(const handler_type<Unique>& h)
 {
-  get_deletion_handler<Unique>() = h;
+  deletion_handler<Unique>() = h;
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -180,9 +180,7 @@ private:
   {
     if (x_->is_not_referenced())
     {
-      typedef typename std::remove_const<Unique>::type U;
-      U& x = *const_cast<U*>(x_);
-      get_deletion_handler<U>()(x);
+      deletion_handler<Unique>()(*x_);
     }
   }
 };
@@ -232,7 +230,7 @@ struct hash<sdd::mem::ptr<Unique>>
   operator()(const sdd::mem::ptr<Unique>& x)
   const noexcept
   {
-    return std::hash<const Unique*>()(x.operator->());
+    return std::hash<decltype(x.operator->())>()(x.operator->());
   }
 };
 
