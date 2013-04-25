@@ -29,7 +29,7 @@ deletion_handler()
 }
 
 /// @internal
-/// @brief Get the deletion handler for a given Unique type.
+/// @brief Reset the deletion handler for a given Unique type.
 template <typename Unique>
 void
 reset_deletion_handler()
