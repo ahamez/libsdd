@@ -142,19 +142,19 @@ TEST_F(sum_test, flat_no_successors)
 {
   {
     flat_alpha_builder builder;
-    builder.add({0,1}, SDD(true));
+    builder.add({0,1}, one);
     ASSERT_EQ( SDD(0, std::move(builder))
              , sum(cxt, {SDD(0, {0}, one), SDD(0, {1}, one)}));
   }
   {
     flat_alpha_builder builder;
-    builder.add({0,1}, SDD(true));
+    builder.add({0,1}, one);
     ASSERT_EQ( SDD(0, std::move(builder))
              , sum(cxt, {SDD(0, {0,1}, one), SDD(0, {1}, one)}));
   }
   {
     flat_alpha_builder builder;
-    builder.add({0,1}, SDD(true));
+    builder.add({0,1}, one);
     ASSERT_EQ( SDD(0, std::move(builder))
              , sum(cxt, {SDD(0, {0,1}, one), SDD(0, {0,1}, one)}));
   }
@@ -173,21 +173,21 @@ TEST_F(sum_test, hierarchical_no_successors)
 {
   {
     hier_alpha_builder builder;
-    builder.add(SDD(0, {0,1}, one), SDD(true));
+    builder.add(SDD(0, {0,1}, one), one);
     ASSERT_EQ( SDD(10, std::move(builder))
              , sum(cxt, { SDD(10, SDD(0, {0}, one), one)
                         , SDD(10, SDD(0, {1}, one), one)}));
   }
   {
     hier_alpha_builder builder;
-    builder.add(SDD(0, {0,1}, one), SDD(true));
+    builder.add(SDD(0, {0,1}, one), one);
     ASSERT_EQ( SDD(10, std::move(builder))
              , sum(cxt, { SDD(10, SDD(0, {0,1}, one), one)
                         , SDD(10, SDD(0, {1}, one), one)}));
   }
   {
     hier_alpha_builder builder;
-    builder.add(SDD(0, {0,1}, one), SDD(true));
+    builder.add(SDD(0, {0,1}, one), one);
     ASSERT_EQ( SDD(10, std::move(builder))
              , sum(cxt, { SDD(10, SDD(0, {0,1}, one), one)
              , SDD(10, SDD(0, {0,1}, one), one)}));
