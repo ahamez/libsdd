@@ -25,7 +25,7 @@ struct evaluation
   /// It shall never be called as the |0| case is handled by the evaluation of
   /// homomorphism::operator().
   template <typename H>
-  bool
+  SDD<C>
   operator()( const H& h, const zero_terminal<C>&
             , const SDD<C>&, context<C>&, const order<C>& o, const homomorphism<C>&)
   const noexcept
