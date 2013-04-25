@@ -67,8 +67,6 @@ private:
 
 public:
 
-  typedef Unique unique_type;
-
   /// @brief Constructor with a unified data.
   explicit
   ptr(const Unique& p)
@@ -83,10 +81,7 @@ public:
   noexcept
     : x_(other.x_)
   {
-    if (x_ != nullptr)
-    {
-      x_->increment_reference_counter();
-    }
+    x_->increment_reference_counter();
   }
 
   /// @brief Copy operator.
@@ -94,56 +89,18 @@ public:
   operator=(const ptr& other)
   noexcept
   {
-    if (not (*this == other))
-    {
-      if (x_ != nullptr)
-      {
-        x_->decrement_reference_counter();
-        erase_x_if_necessary();
-      }
-      x_ = other.x_;
-      if (x_ != nullptr)
-      {
-        x_->increment_reference_counter();
-      }
-    }
-    return *this;
-  }
-
-  /// @brief Move constructor.
-  ptr(ptr&& other)
-  noexcept
-  	: x_(other.x_)
-  {
-    other.x_ = nullptr;
-  }
-
-  /// @brief Move operator.
-  ptr&
-  operator=(ptr&& other)
-  noexcept
-  {
-    if (not (*this == other))
-    {
-      if (x_ != nullptr)
-      {
-        x_->decrement_reference_counter();
-        erase_x_if_necessary();
-      }
-      x_ = other.x_;
-      other.x_ = nullptr;
-    }
+    other.x_->increment_reference_counter();
+    x_->decrement_reference_counter();
+    erase_if_necessary(x_);
+    x_ = other.x_;
     return *this;
   }
 
   /// @brief Destructor.
   ~ptr()
   {
-    if (x_ != nullptr)
-    {
-      x_->decrement_reference_counter();
-      erase_x_if_necessary();
-    }
+    x_->decrement_reference_counter();
+    erase_if_necessary(x_);
   }
 
   /// @brief Get a reference to the unified data.
@@ -174,14 +131,15 @@ public:
 private:
 
   /// @brief If the managed data is no longer referenced, erase it.
+  static
   void
-  erase_x_if_necessary()
+  erase_if_necessary(const Unique* x)
   noexcept
   {
-    if (x_->is_not_referenced())
-    {
-      deletion_handler<Unique>()(*x_);
-    }
+    static void* table[2] = {&&noop, &&erase};
+    goto *table[x->is_not_referenced()];
+    erase: deletion_handler<Unique>()(*x);
+    noop:;
   }
 };
 
