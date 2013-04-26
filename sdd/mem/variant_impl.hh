@@ -92,7 +92,7 @@ struct dtor_visitor
   template <typename T>
   result_type
   operator()(const T& x)
-  const noexcept(noexcept(x.~T()))
+  const noexcept // A destructor should never throw
   {
     x.~T();
   }
