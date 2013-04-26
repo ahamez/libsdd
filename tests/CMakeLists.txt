@@ -24,10 +24,10 @@ set(SOURCES
     hom/test_hom_sum.cc
     hom/test_hom_values_function.cc
     hom/test_rewriting.cc
-    internal/mem/test_cache.cc
-    internal/mem/test_ptr.cc
-    internal/mem/test_unique_table.cc
-    internal/mem/test_variant.cc
+    mem/test_cache.cc
+    mem/test_ptr.cc
+    mem/test_unique_table.cc
+    mem/test_variant.cc
     order/test_order.cc
     order/test_utility.cc
     util/test_typelist.cc
