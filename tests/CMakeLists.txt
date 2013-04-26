@@ -30,6 +30,7 @@ set(SOURCES
     internal/mem/test_variant.cc
     order/test_order.cc
     order/test_utility.cc
+    util/test_typelist.cc
     values/test_bitset.cc
     values/test_flat_set.cc
     )
