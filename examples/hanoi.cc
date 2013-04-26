@@ -239,15 +239,6 @@ main(int argc, char** argv)
   std::chrono::time_point<std::chrono::system_clock> start, end;
   std::size_t elapsed;
 
-  // Apply events
-  start = std::chrono::system_clock::now();
-  SDD final = events(o, m0);
-  end = std::chrono::system_clock::now();
-  elapsed = std::chrono::duration_cast<std::chrono::seconds>(end-start).count();
-  std::cout << "Time: " << elapsed << "s" << std::endl;
-  // Number of distinct paths
-  std::cout << "Number of states : " << sdd::count_paths(final) << std::endl;
-
   // Apply saturated events
   start = std::chrono::system_clock::now();
   SDD sat_final = sat_events(o, m0);
