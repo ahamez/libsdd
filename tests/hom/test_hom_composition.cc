@@ -14,7 +14,7 @@ struct hom_composition_test
   const hom id;
 
   hom_composition_test()
-    : m(sdd::manager<conf>::init())
+    : m(sdd::manager<conf>::init(small_conf()))
     , zero(sdd::zero<conf>())
     , one(sdd::one<conf>())
     , id(sdd::Id<conf>())

@@ -15,7 +15,7 @@ struct hom_cons_test
   const hom id;
 
   hom_cons_test()
-    : m(sdd::manager<conf>::init())
+    : m(sdd::manager<conf>::init(small_conf()))
     , cxt(sdd::global<conf>().hom_context)
     , zero(sdd::zero<conf>())
     , one(sdd::one<conf>())

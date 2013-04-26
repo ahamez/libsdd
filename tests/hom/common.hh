@@ -9,12 +9,12 @@
 #include "sdd/hom/context.hh"
 #include "sdd/hom/definition.hh"
 #include "sdd/order/order.hh"
-
 #include "sdd/manager.hh"
+
+#include "tests/configuration.hh"
 
 /*------------------------------------------------------------------------------------------------*/
 
-typedef sdd::conf0 conf;
 typedef sdd::SDD<conf> SDD;
 typedef sdd::homomorphism<conf> hom;
 typedef sdd::values::bitset<64> bitset;

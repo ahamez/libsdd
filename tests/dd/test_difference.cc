@@ -3,8 +3,9 @@
 #include "sdd/conf/default_configurations.hh"
 #include "sdd/dd/context.hh"
 #include "sdd/dd/definition.hh"
-
 #include "sdd/manager.hh"
+
+#include "tests/configuration.hh"
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -21,23 +22,13 @@ struct difference_test
   const SDD one;
 
   difference_test()
-    : m(sdd::manager<conf>::init())
+    : m(sdd::manager<conf>::init(small_conf()))
     , cxt(sdd::global<conf>().sdd_context)
     , zero(sdd::zero<conf>())
     , one(sdd::one<conf>())
   {
   }
 };
-
-//struct difference_test
-//  : public testing::Test
-//{
-//  typedef sdd::conf0 conf;
-//  typedef sdd::SDD<conf> SDD;
-//  dd::context<conf> cxt= sdd::dd::context<conf>(100, 100, 100);
-//  const SDD zero = sdd::zero<conf>();
-//  const SDD one = sdd::one<conf>();
-//};
 
 /*------------------------------------------------------------------------------------------------*/
 

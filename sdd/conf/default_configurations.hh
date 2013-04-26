@@ -15,12 +15,12 @@ struct default_configuration
   typedef unsigned short alpha_size_type;
   typedef unsigned int operands_size_type;
 
-  const std::size_t sdd_unique_table_size;
-  const std::size_t sdd_difference_cache_size;
-  const std::size_t sdd_intersection_cache_size;
-  const std::size_t sdd_sum_cache_size;
-  const std::size_t hom_unique_table_size;
-  const std::size_t hom_cache_size;
+  std::size_t sdd_unique_table_size;
+  std::size_t sdd_difference_cache_size;
+  std::size_t sdd_intersection_cache_size;
+  std::size_t sdd_sum_cache_size;
+  std::size_t hom_unique_table_size;
+  std::size_t hom_cache_size;
 
   default_configuration()
     : sdd_unique_table_size(1000000)

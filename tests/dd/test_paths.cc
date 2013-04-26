@@ -4,8 +4,9 @@
 #include "sdd/dd/context.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/paths.hh"
-
 #include "sdd/manager.hh"
+
+#include "tests/configuration.hh"
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -21,7 +22,7 @@ struct paths_test
   const SDD one;
 
   paths_test()
-    : m(sdd::manager<conf>::init())
+    : m(sdd::manager<conf>::init(small_conf()))
     , zero(sdd::zero<conf>())
     , one(sdd::one<conf>())
   {

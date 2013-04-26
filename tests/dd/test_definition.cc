@@ -5,8 +5,9 @@
 #include "sdd/conf/default_configurations.hh"
 #include "sdd/dd/context.hh"
 #include "sdd/dd/definition.hh"
-
 #include "sdd/manager.hh"
+
+#include "tests/configuration.hh"
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -22,7 +23,7 @@ struct definition_test
   const SDD one;
 
   definition_test()
-    : m(sdd::manager<conf>::init())
+    : m(sdd::manager<conf>::init(small_conf()))
     , zero(sdd::zero<conf>())
     , one(sdd::one<conf>())
   {

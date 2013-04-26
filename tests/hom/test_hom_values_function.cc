@@ -16,7 +16,7 @@ struct hom_values_function_test
   const hom id;
 
   hom_values_function_test()
-    : m(sdd::manager<conf>::init())
+    : m(sdd::manager<conf>::init(small_conf()))
     , zero(sdd::zero<conf>())
     , one(sdd::one<conf>())
     , id(sdd::Id<conf>())

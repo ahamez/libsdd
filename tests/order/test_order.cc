@@ -3,13 +3,17 @@
 
 #include "gtest/gtest.h"
 
-#include "tests/hom/common.hh"
+#include "sdd/conf/default_configurations.hh"
+#include "sdd/order/order.hh"
 
 /*-------------------------------------------------------------------------------------------*/
 
 struct order_test
   : public testing::Test
 {
+  typedef sdd::conf0 conf;
+  typedef sdd::order_builder<conf> order_builder;
+  typedef sdd::order<conf> order;
 };
 
 /*-------------------------------------------------------------------------------------------*/

@@ -19,7 +19,7 @@ struct rewriting_test
   const hom id;
 
   rewriting_test()
-    : m(sdd::manager<conf>::init())
+    : m(sdd::manager<conf>::init(small_conf()))
     , cxt(sdd::global<conf>().hom_context)
     , zero(sdd::zero<conf>())
     , one(sdd::one<conf>())

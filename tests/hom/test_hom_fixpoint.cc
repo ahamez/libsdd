@@ -15,7 +15,7 @@ struct hom_fixpoint_test
   const hom id;
 
   hom_fixpoint_test()
-    : m(sdd::manager<conf>::init())
+    : m(sdd::manager<conf>::init(small_conf()))
     , zero(sdd::zero<conf>())
     , one(sdd::one<conf>())
     , id(sdd::Id<conf>())
