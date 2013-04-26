@@ -13,6 +13,7 @@
 
 #include "sdd/order/order_builder.hh"
 #include "sdd/util/boost_multiindex_no_warnings.hh"
+#include "sdd/util/hash.hh"
 
 namespace sdd {
 
