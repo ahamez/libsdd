@@ -16,7 +16,7 @@ struct hom_saturation_fixpoint_test
   const hom id;
 
   hom_saturation_fixpoint_test()
-    : m(sdd::init<conf>())
+    : m(sdd::manager<conf>::init())
     , zero(sdd::zero<conf>())
     , one(sdd::one<conf>())
     , id(sdd::Id<conf>())

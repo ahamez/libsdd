@@ -2,7 +2,8 @@
 #define _SDD_MANAGER_HH_
 
 #include <cassert>
-#include <memory> // unique_ptr
+#include <memory>    // unique_ptr
+#include <stdexcept> // runtime_error
 
 #include <boost/container/flat_set.hpp>
 
@@ -133,7 +134,7 @@ internal_manager<C>**
 global_ptr()
 noexcept
 {
-  static internal_manager<C>* m;
+  static internal_manager<C>* m = nullptr;
   return &m;
 }
 
@@ -156,30 +157,6 @@ noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
-// Forward declaration for init().
-template <typename C>
-class manager;
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @brief Initialize the library for a specific configuration.
-/// @tparam C The configuration type.
-/// @param configuration An instance of the configuration with some parameters set.
-/// @related manager
-///
-/// It's must be the first function called before any other call to the library. It cannot be called
-/// again while an instance of the returned manager exists, for this specific configuration.
-template <typename C>
-manager<C>
-init(const C& configuration = C())
-{
-  std::unique_ptr<internal_manager<C>> g(new internal_manager<C>(configuration));
-  *global_ptr<C>() = g.get();
-  return manager<C>(std::move(g));
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
 /// @brief This class represents the global context of the library.
 ///
 /// It can only be created by the init() function. It is safe to use the library as long as an
@@ -196,9 +173,6 @@ private:
   /// @brief The real global context.
   std::unique_ptr<internal_manager<C>> m_;
 
-  /// @brief Only init() is allowed to construct a manager.
-  friend manager<C> init<C>(const C&);
-
   /// @brief Construct a manager from an internal manager.
   manager(std::unique_ptr<internal_manager<C>>&& m)
     : m_(std::move(m))
@@ -206,6 +180,37 @@ private:
   }
 
 public:
+
+  /// @brief Initialize the library for a specific configuration.
+  /// @tparam C The configuration type.
+  /// @param configuration An instance of the configuration with some parameters set.
+  /// @throw std::runtime_error if the library was already configured.
+  ///
+  /// It's must be the first function called before any other call to the library.
+  static
+  manager<C>
+  init(const C& configuration = C())
+  {
+    if (*global_ptr<C>() == nullptr)
+    {
+      std::unique_ptr<internal_manager<C>> g(new internal_manager<C>(configuration));
+      *global_ptr<C>() = g.get();
+      return manager<C>(std::move(g));
+    }
+    else
+    {
+      throw std::runtime_error("Library already initialized.");
+    }
+  }
+
+  /// @brief Destructor.
+  ~manager()
+  {
+    if (m_)
+    {
+      *global_ptr<C>() = nullptr;
+    }
+  }
 
   /// @brief Default move constructor.
   manager(manager&&) = default;

@@ -19,7 +19,7 @@ struct top_test
   const SDD one;
 
   top_test()
-    : m(sdd::init<conf>())
+    : m(sdd::manager<conf>::init())
     , zero(sdd::zero<conf>())
     , one(sdd::one<conf>())
   {

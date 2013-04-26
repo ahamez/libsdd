@@ -14,7 +14,7 @@ struct hom_id_test
   const SDD one;
 
   hom_id_test()
-    : m(sdd::init<conf>())
+    : m(sdd::manager<conf>::init())
     , cxt(sdd::global<conf>().hom_context)
     , zero(sdd::zero<conf>())
     , one(sdd::one<conf>())

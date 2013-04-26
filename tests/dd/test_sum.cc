@@ -25,7 +25,7 @@ struct sum_test
   const SDD one;
 
   sum_test()
-    : m(sdd::init<conf>())
+    : m(sdd::manager<conf>::init())
     , cxt(sdd::global<conf>().sdd_context)
     , zero(sdd::zero<conf>())
     , one(sdd::one<conf>())
