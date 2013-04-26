@@ -103,7 +103,7 @@ struct cached_homomorphism
   typedef SDD<C> result_type;
 
   /// @brief The current order position.
-  const order<C>& ord;
+  const order<C> ord;
 
   /// @brief The homomorphism to evaluate.
   const homomorphism<C> hom;
