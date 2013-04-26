@@ -136,10 +136,10 @@ private:
   erase_if_necessary(const Unique* x)
   noexcept
   {
-    static void* table[2] = {&&noop, &&erase};
-    goto *table[x->is_not_referenced()];
-    erase: deletion_handler<Unique>()(*x);
-    noop:;
+    if (x->is_not_referenced())
+    {
+      deletion_handler<Unique>()(*x);
+    }
   }
 };
 
