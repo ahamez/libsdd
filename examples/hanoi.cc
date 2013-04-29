@@ -234,14 +234,14 @@ main(int argc, char** argv)
 
   union_swap_pole.insert(Id<conf>());
   hom events = Fixpoint(Sum<conf>(o, union_swap_pole.begin(), union_swap_pole.end()));
-  hom sat_events = sdd::rewrite(events, o);
+  events = sdd::rewrite(events, o);
 
   std::chrono::time_point<std::chrono::system_clock> start, end;
   std::size_t elapsed;
 
   // Apply saturated events
   start = std::chrono::system_clock::now();
-  SDD sat_final = sat_events(o, m0);
+  SDD sat_final = events(o, m0);
   end = std::chrono::system_clock::now();
   elapsed = std::chrono::duration_cast<std::chrono::seconds>(end-start).count();
   std::cout << "Time: " << elapsed << "s" << std::endl;
