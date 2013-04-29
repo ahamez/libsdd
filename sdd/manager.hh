@@ -14,8 +14,64 @@
 #include "sdd/hom/definition.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/mem/unique_table.hh"
+#include "sdd/values/values_traits.hh"
 
 namespace sdd {
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+namespace detail {
+
+/// @brief Signature of the structure that will store, if necessary, the state needed by C::Values.
+template <typename C, bool>
+struct values_state_impl;
+
+/// @brief Specialization for a stateful set of values.
+template <typename C>
+struct values_state_impl<C, true>
+{
+  /// @brief The type of the state needed by set of values.
+  typedef typename values::values_traits<typename C::Values>::state_type state_type;
+
+  /// @brief The actual state.
+  state_type state;
+
+  /// @brief Constructor.
+  values_state_impl(const C& configuration)
+    : state(configuration)
+  {
+  }
+};
+
+/// @brief Specialization for a stateless set of values.
+template <typename C>
+struct values_state_impl<C, false>
+{
+  /// @brief Constructor.
+  values_state_impl(const C&)
+  {
+  }
+};
+
+///
+template <typename C>
+using values_impl_type = values_state_impl<C, values::values_traits<typename C::Values>::stateful>;
+
+/// @internal
+/// @brief Hold the state that the set of values may need.
+template <typename C>
+struct values_state
+  : public values_impl_type<C>
+{
+  /// @brief Constructor.
+  values_state(const C& configuration)
+    : values_impl_type<C>(configuration)
+  {
+  }
+};
+
+} // namespace detail
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -32,6 +88,9 @@ struct internal_manager
   internal_manager(const internal_manager&&) = delete;
   internal_manager& operator=(const internal_manager&&) = delete;
 
+  /// @brief
+  typedef detail::values_state<C> values_state_type;
+
   /// @brief The type of a unified SDD.
   typedef typename SDD<C>::unique_type sdd_unique_type;
 
@@ -43,6 +102,12 @@ struct internal_manager
 
   /// @brief The type of a smart pointer to a unified homomorphism.
   typedef typename homomorphism<C>::ptr_type hom_ptr_type;
+
+  /// @brief Store, if any, the state needed by C::Values.
+  ///
+  /// Access to state: global<C>().values.state.
+  /// It must be the first to be created as SDD rely on it, and thus it shall be the last destroyed.
+  values_state_type values;
 
   /// @brief Manage the handlers needed by ptr when a unified data is no longer referenced.
   struct ptr_handlers
@@ -85,9 +150,10 @@ struct internal_manager
   /// @brief Used to avoid frequent useless reallocations in SaturationFixpoint().
   boost::container::flat_set<homomorphism<C>> saturation_fixpoint_data;
 
-  /// @brief Default constructor.
+  /// @brief Constructor with a given configuration.
   internal_manager(const C& configuration)
-    : handlers(sdd_unique_table, hom_unique_table)
+    : values(configuration)
+    , handlers(sdd_unique_table, hom_unique_table)
     , sdd_unique_table(configuration.sdd_unique_table_size)
     , sdd_context( configuration.sdd_difference_cache_size
                  , configuration.sdd_intersection_cache_size

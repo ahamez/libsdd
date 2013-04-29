@@ -72,6 +72,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2B00B049172DC61800FF6B09 /* values_traits.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = values_traits.hh; sourceTree = "<group>"; };
 		2B0197B515BDE7D900CE5F70 /* alpha.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; path = alpha.hh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		2B0197B615BDE7D900CE5F70 /* context.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; path = context.hh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		2B0197B715BDE7D900CE5F70 /* context_fwd.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = context_fwd.hh; sourceTree = "<group>"; };
@@ -538,6 +539,7 @@
 			children = (
 				2BF0F988157A71B7005D1275 /* bitset.hh */,
 				2B429E82164C46C5008000C1 /* flat_set.hh */,
+				2B00B049172DC61800FF6B09 /* values_traits.hh */,
 			);
 			path = values;
 			sourceTree = "<group>";
