@@ -21,7 +21,7 @@ namespace sdd { namespace mem {
 ///
 /// This type is meant to be used by ptr, which takes care of incrementing and decrementing
 /// the reference counter, as well as the deletion of the held data.
-template <typename T>
+template <typename T, typename Hash = std::hash<T>>
 class
 #ifdef __clang__
 LIBSDD_ATTRIBUTE_PACKED
@@ -116,6 +116,7 @@ private:
   /// The unicity table needs to access member_hook_.
   template <typename U> friend class unique_table;
 
+  /// @brief A ptr references that unified data.
   void
   increment_reference_counter()
   const noexcept
@@ -123,7 +124,8 @@ private:
     assert(ref_count_ < std::numeric_limits<uint32_t>::max());
     ++ref_count_;
   }
-  
+
+  /// @brief A ptr no longer references that unified data.
   void
   decrement_reference_counter()
   const noexcept
@@ -132,6 +134,7 @@ private:
     --ref_count_;
   }
 
+  /// @brief Tell if the unified data is no longer referenced.
   bool
   is_not_referenced()
   const noexcept
@@ -144,10 +147,10 @@ private:
 
 /// @internal
 /// @related ref_counted
-template <typename T>
+template <typename T, typename Hash>
 inline
 bool
-operator==(const ref_counted<T>& lhs, const ref_counted<T>& rhs)
+operator==(const ref_counted<T, Hash>& lhs, const ref_counted<T, Hash>& rhs)
 noexcept
 {
   return lhs.data() == rhs.data();
@@ -163,14 +166,14 @@ namespace std {
 
 /// @internal
 /// @brief Hash specialization for sdd::mem::ref_counted
-template <typename T>
-struct hash<sdd::mem::ref_counted<T>>
+template <typename T, typename Hash>
+struct hash<sdd::mem::ref_counted<T,Hash>>
 {
   std::size_t
-  operator()(const sdd::mem::ref_counted<T>& x)
+  operator()(const sdd::mem::ref_counted<T, Hash>& x)
   const noexcept
   {
-    return std::hash<T>()(x.data());
+    return Hash()(x.data());
   }
 };
 
