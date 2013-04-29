@@ -1,14 +1,20 @@
-//
-//  values_traits.hh
-//  libsdd
-//
-//  Created by Alexandre Hamez on 28/04/13.
-//
-//
+#ifndef _SDD_VALUES_VALUES_TRAITS_HH_
+#define _SDD_VALUES_VALUES_TRAITS_HH_
 
-#ifndef libsdd_values_traits_hh
-#define libsdd_values_traits_hh
+namespace sdd { namespace values {
 
+/*------------------------------------------------------------------------------------------------*/
 
+/// @internal
+/// @brief Describe some properties of values.
+template <typename Values>
+struct values_traits
+{
+  static constexpr bool stateful = false;
+};
 
-#endif
+/*------------------------------------------------------------------------------------------------*/
+
+}} // namespace sdd::values
+
+#endif // _SDD_VALUES_VALUES_TRAITS_HH_
