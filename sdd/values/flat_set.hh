@@ -188,7 +188,7 @@ public:
   {
     data_type d(ptr_->data());
     const std::size_t nb_erased = d.erase(x);
-    create(std::move(d));
+    ptr_ = create(std::move(d));
     return nb_erased;
   }
 

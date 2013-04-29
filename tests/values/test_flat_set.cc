@@ -59,6 +59,30 @@ TEST_F(flat_set_test, insertion)
 
 /*------------------------------------------------------------------------------------------------*/
 
+TEST_F(flat_set_test, erase)
+{
+  flat_set fs{1, 33, 42};
+
+  fs.erase(1);
+  ASSERT_EQ(2u, fs.size());
+  ASSERT_EQ((flat_set {33, 42}), fs);
+
+  fs.erase(42);
+  ASSERT_EQ(1u, fs.size());
+  ASSERT_EQ((flat_set {33}), fs);
+
+  fs.erase(42);
+  ASSERT_EQ(1u, fs.size());
+  ASSERT_EQ((flat_set {33}), fs);
+
+  fs.erase(33);
+  ASSERT_EQ(0u, fs.size());
+  ASSERT_EQ((flat_set {}), fs);
+  ASSERT_TRUE(fs.empty());
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
 TEST_F(flat_set_test, unicity)
 {
   {
