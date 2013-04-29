@@ -1,6 +1,7 @@
 #ifndef _SDD_CONF_DEFAULT_CONFIGURATIONS_HH_
 #define _SDD_CONF_DEFAULT_CONFIGURATIONS_HH_
 
+#include <cstdint> // uint16_t, uint32_t
 #include <string>
 
 #include "sdd/values/bitset.hh"
@@ -12,8 +13,8 @@ namespace sdd {
 
 struct default_configuration
 {
-  typedef unsigned short alpha_size_type;
-  typedef unsigned int operands_size_type;
+  typedef std::uint16_t alpha_size_type;
+  typedef std::uint32_t operands_size_type;
 
   std::size_t sdd_unique_table_size;
   std::size_t sdd_difference_cache_size;
