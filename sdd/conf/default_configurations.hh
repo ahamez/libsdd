@@ -51,6 +51,14 @@ struct conf1
   typedef std::string                    Identifier;
   typedef unsigned int                   Variable;
   typedef values::flat_set<unsigned int> Values;
+
+  std::size_t flat_set_unique_table_size;
+
+  conf1()
+    : default_configuration()
+    , flat_set_unique_table_size(1000)
+  {
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/

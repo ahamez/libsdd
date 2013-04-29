@@ -6,7 +6,7 @@
 
 #include <boost/container/flat_set.hpp>
 
-#include "sdd/manager_fwd.hh"
+#include "sdd/internal_manager_fwd.hh"
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/nary.hh"

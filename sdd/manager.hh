@@ -1,232 +1,20 @@
 #ifndef _SDD_MANAGER_HH_
 #define _SDD_MANAGER_HH_
 
-#include <cassert>
 #include <memory>    // unique_ptr
 #include <stdexcept> // runtime_error
 
-#include <boost/container/flat_set.hpp>
-
-#include "sdd/manager_fwd.hh"
-#include "sdd/dd/context.hh"
-#include "sdd/dd/definition.hh"
-#include "sdd/hom/context.hh"
-#include "sdd/hom/definition.hh"
-#include "sdd/hom/identity.hh"
-#include "sdd/mem/unique_table.hh"
-#include "sdd/values/values_traits.hh"
+#include "sdd/internal_manager.hh"
+#include "sdd/values_manager.hh"
 
 namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @internal
-namespace detail {
-
-/// @brief Signature of the structure that will store, if necessary, the state needed by C::Values.
-template <typename C, bool>
-struct values_state_impl;
-
-/// @brief Specialization for a stateful set of values.
-template <typename C>
-struct values_state_impl<C, true>
-{
-  /// @brief The type of the state needed by set of values.
-  typedef typename values::values_traits<typename C::Values>::state_type state_type;
-
-  /// @brief The actual state.
-  state_type state;
-
-  /// @brief Constructor.
-  values_state_impl(const C& configuration)
-    : state(configuration)
-  {
-  }
-};
-
-/// @brief Specialization for a stateless set of values.
-template <typename C>
-struct values_state_impl<C, false>
-{
-  /// @brief Constructor.
-  values_state_impl(const C&)
-  {
-  }
-};
-
-///
-template <typename C>
-using values_impl_type = values_state_impl<C, values::values_traits<typename C::Values>::stateful>;
-
-/// @internal
-/// @brief Hold the state that the set of values may need.
-template <typename C>
-struct values_state
-  : public values_impl_type<C>
-{
-  /// @brief Constructor.
-  values_state(const C& configuration)
-    : values_impl_type<C>(configuration)
-  {
-  }
-};
-
-} // namespace detail
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Contains all global unique tables and caches.
-template <typename C>
-struct internal_manager
-{
-  // Can't copy an internal_manager.
-  internal_manager(const internal_manager&) = delete;
-  internal_manager& operator=(const internal_manager&) = delete;
-
-  // Can't move an internal_manager.
-  internal_manager(const internal_manager&&) = delete;
-  internal_manager& operator=(const internal_manager&&) = delete;
-
-  /// @brief
-  typedef detail::values_state<C> values_state_type;
-
-  /// @brief The type of a unified SDD.
-  typedef typename SDD<C>::unique_type sdd_unique_type;
-
-  /// @brief The type of a smart pointer to a unified SDD.
-  typedef typename SDD<C>::ptr_type sdd_ptr_type;
-
-  /// @brief The type of a unified homomorphism.
-  typedef typename homomorphism<C>::unique_type hom_unique_type;
-
-  /// @brief The type of a smart pointer to a unified homomorphism.
-  typedef typename homomorphism<C>::ptr_type hom_ptr_type;
-
-  /// @brief Store, if any, the state needed by C::Values.
-  ///
-  /// Access to state: global<C>().values.state.
-  /// It must be the first to be created as SDD rely on it, and thus it shall be the last destroyed.
-  values_state_type values;
-
-  /// @brief Manage the handlers needed by ptr when a unified data is no longer referenced.
-  struct ptr_handlers
-  {
-    ptr_handlers( mem::unique_table<sdd_unique_type>& sdd_ut
-                , mem::unique_table<hom_unique_type>& hom_ut)
-    {
-      mem::set_deletion_handler<sdd_unique_type>([&](const sdd_unique_type& u){sdd_ut.erase(u);});
-      mem::set_deletion_handler<hom_unique_type>([&](const hom_unique_type& u){hom_ut.erase(u);});
-    }
-
-    ~ptr_handlers()
-    {
-      mem::reset_deletion_handler<sdd_unique_type>();
-      mem::reset_deletion_handler<hom_unique_type>();
-    }
-  } handlers;
-
-  /// @brief The set of a unified SDD.
-  mem::unique_table<sdd_unique_type> sdd_unique_table;
-
-  /// @brief The SDD operations evaluation context.
-  dd::context<C> sdd_context;
-
-  /// @brief The set of unified homomorphisms.
-  mem::unique_table<hom_unique_type> hom_unique_table;
-
-  /// @brief The homomorphisms evaluation context.
-  hom::context<C> hom_context;
-
-  /// @brief The cached |0| terminal.
-  const sdd_ptr_type zero;
-
-  /// @brief The cached |1| terminal.
-  const sdd_ptr_type one;
-
-  /// @brief The cached Id homomorphism.
-  const hom_ptr_type id;
-
-  /// @brief Used to avoid frequent useless reallocations in SaturationFixpoint().
-  boost::container::flat_set<homomorphism<C>> saturation_fixpoint_data;
-
-  /// @brief Constructor with a given configuration.
-  internal_manager(const C& configuration)
-    : values(configuration)
-    , handlers(sdd_unique_table, hom_unique_table)
-    , sdd_unique_table(configuration.sdd_unique_table_size)
-    , sdd_context( configuration.sdd_difference_cache_size
-                 , configuration.sdd_intersection_cache_size
-                 , configuration.sdd_sum_cache_size)
-    , hom_unique_table(configuration.hom_unique_table_size)
-    , hom_context(configuration.hom_cache_size, sdd_context)
-    , zero(mk_terminal<zero_terminal<C>>())
-    , one(mk_terminal<one_terminal<C>>())
-    , id(mk_id())
-    , saturation_fixpoint_data()
-  {
-  }
-
-private:
-
-  /// brief Helper to construct terminals.
-  template <typename T>
-  sdd_ptr_type
-  mk_terminal()
-  {
-    char* addr = sdd_unique_table.allocate(0 /*extra bytes*/);
-    sdd_unique_type* u = new (addr) sdd_unique_type(mem::construct<T>());
-    return sdd_ptr_type(sdd_unique_table(u));
-  }
-
-  /// @brief Helper to construct Id.
-  hom_ptr_type
-  mk_id()
-  {
-    char* addr = hom_unique_table.allocate(0 /*extra bytes*/);
-    hom_unique_type* u = new (addr) hom_unique_type(mem::construct<hom::identity<C>>());
-    return hom_ptr_type(hom_unique_table(u));
-  }
-};
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Contains the global (static) internal manager.
-/// @related internal_manager
-template <typename C>
-inline
-internal_manager<C>**
-global_ptr()
-noexcept
-{
-  static internal_manager<C>* m = nullptr;
-  return &m;
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Get the global context as a reference.
-/// @related internal_manager
-///
-/// Make internal calls to the global internal_manager easier.
-template <typename C>
-inline
-internal_manager<C>&
-global()
-noexcept
-{
-  assert(*global_ptr<C>() != nullptr && "Uninitialized global internal_manager");
-  return **global_ptr<C>();
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
 /// @brief This class represents the global context of the library.
 ///
-/// It can only be created by the init() function. It is safe to use the library as long as an
-/// instance returned by init() exists.
+/// It can only be created by the init() function. It is safe to use the library as long as the
+/// instance returned by manager::init() exists.
 template <typename C>
 class manager final
 {
@@ -236,14 +24,20 @@ class manager final
 
 private:
 
-  /// @brief The real global context.
+  /// @brief The type of a set of values.
+  typedef typename C::Values values_type;
+
+  /// @brief The manager of Values.
+  std::unique_ptr<values_manager<values_type>> values_;
+
+  /// @brief The manager of SDD and homomorphisms.
   std::unique_ptr<internal_manager<C>> m_;
 
   /// @brief Construct a manager from an internal manager.
-  manager(std::unique_ptr<internal_manager<C>>&& m)
-    : m_(std::move(m))
-  {
-  }
+  manager(std::unique_ptr<values_manager<values_type>> v, std::unique_ptr<internal_manager<C>>&& m)
+    : values_(std::move(v))
+    , m_(std::move(m))
+  {}
 
 public:
 
@@ -257,11 +51,16 @@ public:
   manager<C>
   init(const C& configuration = C())
   {
-    if (*global_ptr<C>() == nullptr)
+    if (*global_ptr<C>() == nullptr and *global_ptr<values_type>() == nullptr)
     {
+      std::unique_ptr<values_manager<values_type>>
+        v(new values_manager<values_type>(configuration));
+      *global_values_ptr<values_type>() = v.get();
+
       std::unique_ptr<internal_manager<C>> g(new internal_manager<C>(configuration));
       *global_ptr<C>() = g.get();
-      return manager<C>(std::move(g));
+
+      return manager<C>(std::move(v), std::move(g));
     }
     else
     {
@@ -275,6 +74,10 @@ public:
     if (m_)
     {
       *global_ptr<C>() = nullptr;
+    }
+    if (values_)
+    {
+      *global_values_ptr<values_type>() = nullptr;
     }
   }
 

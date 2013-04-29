@@ -1,5 +1,5 @@
-#ifndef _SDD_MANAGER_FWD_HH_
-#define _SDD_MANAGER_FWD_HH_
+#ifndef _SDD_INTERNAL_MANAGER_FWD_HH_
+#define _SDD_INTERNAL_MANAGER_FWD_HH_
 
 namespace sdd {
 
@@ -18,4 +18,4 @@ global() noexcept;
 
 } // namespace sdd
 
-#endif // _SDD_MANAGER_FWD_HH_
+#endif // _SDD_INTERNAL_MANAGER_FWD_HH_

@@ -1,12 +1,42 @@
+#include <memory> // unique_ptr
+
 #include "gtest/gtest.h"
 
 #include "sdd/values/flat_set.hh"
-
-typedef sdd::values::flat_set<unsigned int> flat_set;
+#include "sdd/values_manager.hh"
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST(flat_set_test, empty)
+struct flat_set_test
+  : public testing::Test
+{
+  struct conf
+  {
+    std::size_t flat_set_unique_table_size;
+    conf()
+      : flat_set_unique_table_size(100)
+    {
+    }
+  };
+
+  typedef sdd::values::flat_set<unsigned int> flat_set;
+  sdd::values_manager<flat_set> m_;
+
+  flat_set_test()
+    : m_(conf())
+  {
+    *sdd::global_values_ptr<flat_set>() = &m_;
+  }
+
+  ~flat_set_test()
+  {
+    *sdd::global_values_ptr<flat_set>() = nullptr;
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+TEST_F(flat_set_test, empty)
 {
   flat_set fs;
   ASSERT_TRUE(fs.empty());
@@ -14,7 +44,7 @@ TEST(flat_set_test, empty)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST(flat_set_test, insertion)
+TEST_F(flat_set_test, insertion)
 {
   flat_set fs;
   ASSERT_TRUE(fs.empty());
@@ -29,25 +59,25 @@ TEST(flat_set_test, insertion)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST(flat_set_test, unicity)
+TEST_F(flat_set_test, unicity)
 {
   {
     flat_set fs1;
     ASSERT_TRUE(fs1.empty());
     flat_set fs2;
     ASSERT_TRUE(fs2.empty());
-    ASSERT_EQ(fs1.data(), fs2.data());
+    ASSERT_EQ(fs1, fs2);
   }
   {
     flat_set fs1 {1,2,3};
     flat_set fs2 {1,2,3};
-    ASSERT_EQ(fs1.data(), fs2.data());
+    ASSERT_EQ(fs1, fs2);
   }
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST(flat_set_test, difference)
+TEST_F(flat_set_test, difference)
 {
   {
     flat_set fs1;
@@ -74,7 +104,7 @@ TEST(flat_set_test, difference)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST(flat_set_test, intersection)
+TEST_F(flat_set_test, intersection)
 {
   {
     flat_set fs1;
@@ -100,7 +130,7 @@ TEST(flat_set_test, intersection)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST(flat_set_test, sum)
+TEST_F(flat_set_test, sum)
 {
   {
     flat_set fs1;
