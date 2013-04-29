@@ -187,7 +187,7 @@ struct extra_bytes_visitor
     return impl(x, 0);
   }
 
-  /// brief Called when the actual type defines extra_bytes.
+  /// @brief Called when the actual type defines extra_bytes.
   template <typename U>
   static auto
   impl(const U& x, int)
@@ -197,7 +197,7 @@ struct extra_bytes_visitor
     return x.extra_bytes();
   }
 
-  /// brief Called when the actual type doesn't define extra_bytes.
+  /// @brief Called when the actual type doesn't define extra_bytes.
   template <typename U>
   static constexpr auto
   impl(const U&, long)
