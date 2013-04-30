@@ -192,6 +192,37 @@ public:
     return nb_erased;
   }
 
+private:
+
+  /// @brief Recursive implementation of erase_keys when only one value is left.
+  template <typename Head>
+  void
+  erase_keys_impl(data_type& d, Head&& val)
+  {
+    d.erase(val);
+  }
+
+  /// @brief Recursive implementation of erase_keys.
+  template <typename Head, typename... Tail>
+  void
+  erase_keys_impl(data_type& d, Head&& val, Tail&&... tail)
+  {
+    d.erase(val);
+    erase_keys_impl<Tail...>(d, std::forward<Tail>(tail)...);
+  }
+
+public:
+
+  /// @brief Erase several values.
+  template <typename... Values>
+  void
+  erase_keys(Values&&... values)
+  {
+    data_type d(ptr_->data());
+    erase_keys_impl(d, std::forward<Values>(values)...);
+    ptr_ = create(std::move(d));
+  }
+
   /// @brief
   const_iterator
   lower_bound(const Value& x)
