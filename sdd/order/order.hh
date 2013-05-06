@@ -194,6 +194,14 @@ public:
     }
   }
 
+  /// @brief
+  const typename nodes_type::template index<by_identifier>::type&
+  identifiers()
+  const noexcept
+  {
+    return nodes_ptr_->template get<by_identifier>();
+  }
+
   /// @brief Beginning of identifiers.
   const_iterator
   cbegin()

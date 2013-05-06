@@ -27,6 +27,7 @@ set(SOURCES
     mem/test_ptr.cc
     mem/test_unique_table.cc
     mem/test_variant.cc
+    order/test_carrier.cc
     order/test_order.cc
     order/test_utility.cc
     util/test_typelist.cc
