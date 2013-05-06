@@ -34,7 +34,7 @@ private:
 public:
 
   /// @brief Constructor.
-  local(const identifier_type& id, const order<C>& o, const homomorphism<C>& h)
+  local(const identifier_type& id, const order<C>&, const homomorphism<C>& h)
     : identifier_(id)
     , h_(h)
   {
@@ -47,7 +47,7 @@ public:
     /// @brief Used by variant.
     typedef SDD<C> result_type;
 
-    /// @brief Hierarhical nodes case.
+    /// @brief Hierarchical nodes case.
     SDD<C>
     operator()( const hierarchical_node<C>& node
               , context<C>& cxt, const order<C>& o
@@ -89,7 +89,7 @@ public:
       }
     }
 
-    /// @brief Error case: Local only applies on hierarhical nodes.
+    /// @brief Error case: Local only applies on hierarchical nodes.
     template <typename T>
     SDD<C>
     operator()( const T&, context<C>&, const order<C>&
