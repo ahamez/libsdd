@@ -247,5 +247,7 @@ main(int argc, char** argv)
   // Number of distinct paths
   std::cout << "Number of states : " << sdd::count_paths(sat_final) << std::endl;
 
+  std::cout << manager << std::endl;
+
   return 0;
 }

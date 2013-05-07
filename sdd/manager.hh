@@ -11,6 +11,50 @@ namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
+// Foward declaration
+template <typename C>
+class manager;
+
+/// @brief Show some statistics of the library
+/// @related manager
+template <typename C>
+std::ostream&
+operator<<(std::ostream& os, const manager<C>& m)
+{
+  const auto sdd_stats = m.m_->sdd_unique_table.stats();
+  const auto hom_stats = m.m_->hom_unique_table.stats();
+
+  os << "SDD" << std::endl;
+  os << "size        : " << sdd_stats.size << std::endl;
+  os << "load_factor : " << sdd_stats.load_factor << std::endl;
+  os << "access      : " << sdd_stats.access << std::endl;
+  os << "hit         : " << sdd_stats.hit << std::endl;
+  os << "miss        : " << sdd_stats.miss << std::endl;
+  os << "rehash      : " << sdd_stats.rehash << std::endl;
+#ifdef LIBSDD_PROFILE
+  os << "collisions  : " << sdd_stats.collisions << std::endl;
+  os << "tcollisions : " << sdd_stats.total_collisions << std::endl;
+#endif // LIBSDD_PROFILE
+
+  os << std::endl;
+
+  os << "Hom" << std::endl;
+  os << "size        : " << hom_stats.size << std::endl;
+  os << "load_factor : " << hom_stats.load_factor << std::endl;
+  os << "access      : " << hom_stats.access << std::endl;
+  os << "hit         : " << hom_stats.hit << std::endl;
+  os << "miss        : " << hom_stats.miss << std::endl;
+  os << "rehash      : " << hom_stats.rehash << std::endl;
+#ifdef LIBSDD_PROFILE
+  os << "collisions  : " << hom_stats.collisions << std::endl;
+  os << "tcollisions : " << hom_stats.total_collisions << std::endl;
+#endif // LIBSDD_PROFILE
+
+  return os;
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
 /// @brief This class represents the global context of the library.
 ///
 /// It can only be created by the init() function. It is safe to use the library as long as the
@@ -38,6 +82,11 @@ private:
     : values_(std::move(v))
     , m_(std::move(m))
   {}
+
+  ///
+  friend
+  std::ostream&
+  operator<< <C>(std::ostream&, const manager&);
 
 public:
 
