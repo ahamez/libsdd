@@ -19,6 +19,38 @@ class unique_table
   unique_table(const unique_table&) = delete;
   unique_table& operator=(const unique_table&) = delete;
 
+public:
+
+  /// @brief Some statistics.
+  struct statistics
+  {
+    /// @brief The actual number of unified elements.
+    std::size_t size;
+
+    /// @brief The actual load factor.
+    double load_factor;
+
+    /// @brief The total number of access.
+    std::size_t access;
+
+    /// @brief The number of hits.
+    std::size_t hit;
+
+    /// @brief The number of misses.
+    std::size_t miss;
+
+    /// @brief The number of rehash.
+    std::size_t rehash;
+
+#ifdef LIBSDD_PROFILE
+    /// @brief The number of collisions during the whole life of this unique_table.
+    std::size_t total_collisions;
+
+    /// @brief The actual number of collisions.
+    std::size_t collisions;
+#endif // LIBSDD_PROFILE
+  };
+
 private:
 
   /// @brief We choose a faster, unsafe mode.
@@ -49,14 +81,8 @@ private:
   /// @brief The actual container of unified data.
   set_type* set_;
 
-  /// @brief The number of hits.
-  std::size_t hit_;
-
-  /// @brief The number of misses.
-  std::size_t miss_;
-
-  /// @brief The number of rehash.
-  std::size_t rehash_;
+  /// @brief The statistics of this unique_table.
+  mutable statistics stats_;
 
   /// The number of re-usable memory blocks to keep.
   static constexpr std::size_t nb_blocks = 4096;
@@ -72,6 +98,7 @@ public:
   	: buckets_(new bucket_type[set_type::suggested_upper_bucket_count(initial_size)])
     , set_(new set_type(bucket_traits( buckets_
                                      , set_type::suggested_upper_bucket_count(initial_size))))
+    , stats_()
     , blocks_()
   {
     blocks_.reserve(nb_blocks);
@@ -95,6 +122,8 @@ public:
   const Unique&
   operator()(Unique* ptr)
   {
+    ++stats_.access;
+
     if (load_factor() >= 0.9)
     {
       rehash();
@@ -105,7 +134,7 @@ public:
     {
       // The inserted Unique already exists. We keep its allocated memory to avoid deallocating
       // memory each time there is a hit.
-      ++hit_;
+      ++stats_.hit;
       const std::size_t size = sizeof(Unique) + ptr->extra_bytes();
       ptr->~Unique();
       if (blocks_.size() == nb_blocks)
@@ -119,7 +148,13 @@ public:
     }
     else
     {
-      ++miss_;
+      ++stats_.miss;
+#ifdef LIBSDD_PROFILE
+      if (set_->bucket_size(set_->bucket(*ptr)) > 1)
+      {
+        ++stats_.total_collisions;
+      }
+#endif // LIBSDD_PROFILE
     }
     return *insertion.first;
   }
@@ -162,12 +197,22 @@ public:
     return static_cast<double>(set_->size()) / static_cast<double>(set_->bucket_count());
   }
 
-  /// @brief Get the number of unified elements.
-  std::size_t
-  size()
+  /// @brief Get the statistics of this unique_table.
+  statistics
+  stats()
   const noexcept
   {
-    return set_->size();
+    stats_.size = set_->size();
+    stats_.load_factor = load_factor();
+    stats_.collisions = 0;
+    for (std::size_t nb = 0; nb < set_->bucket_count(); ++nb)
+    {
+      if (set_->bucket_size(nb) > 1)
+      {
+        ++stats_.collisions;
+      }
+    }
+    return stats_;
   }
 
 private:
@@ -176,7 +221,7 @@ private:
   void
   rehash()
   {
-    ++rehash_;
+    ++stats_.rehash;
     const std::size_t new_size = set_type::suggested_upper_bucket_count(set_->bucket_count() * 2);
     bucket_type* new_buckets = new bucket_type[new_size];
     set_->rehash(bucket_traits(new_buckets, new_size));
