@@ -204,6 +204,7 @@ public:
   {
     stats_.size = set_->size();
     stats_.load_factor = load_factor();
+#ifdef LIBSDD_PROFILE
     stats_.collisions = 0;
     for (std::size_t nb = 0; nb < set_->bucket_count(); ++nb)
     {
@@ -212,6 +213,7 @@ public:
         ++stats_.collisions;
       }
     }
+#endif // LIBSDD_PROFILE
     return stats_;
   }
 
