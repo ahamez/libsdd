@@ -34,12 +34,12 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
   }
 
   /// @brief Perform the SDD intersection algorithm.
-  template <typename InputIterator, enum node_tag tag>
+  template <typename InputIterator, typename NodeType>
   static
   SDD<C>
   work(InputIterator begin, InputIterator end, context<C>& cxt)
   {
-    typedef typename node_for_tag<C, tag>::type node_type;
+    typedef NodeType node_type;
     typedef typename node_type::valuation_type valuation_type;
     typedef typename node_type::variable_type variable_type;
 

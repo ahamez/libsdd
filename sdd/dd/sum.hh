@@ -40,12 +40,12 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
   ///
   /// It's a so-called 'n-ary' union in the sense that we don't create intermediary SDD.
   /// Also, a lot of tests permit to break loops as soon as possible.
-  template <typename InputInterator, enum node_tag tag>
+  template <typename InputInterator, typename NodeType>
   static
   SDD<C>
   work(InputInterator begin, InputInterator end, context<C>& cxt)
   {
-    typedef typename node_for_tag<C, tag>::type node_type;
+    typedef NodeType node_type;
     typedef typename node_type::valuation_type valuation_type;
 
     auto operands_cit = begin;

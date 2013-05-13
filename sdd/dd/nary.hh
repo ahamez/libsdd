@@ -164,11 +164,13 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_op
 
     if (tag == node_tag::flat)
     {
-      return Operation::template work<const_iterator, node_tag::flat>(begin(), end(), cxt);
+      typedef typename node_for_tag<C, node_tag::flat>::type node_type;
+      return Operation::template work<const_iterator, node_type>(begin(), end(), cxt);
     }
     else
     {
-      return Operation::template work<const_iterator, node_tag::hierarchical>(begin(), end(), cxt);
+      typedef typename node_for_tag<C, node_tag::hierarchical>::type node_type;
+      return Operation::template work<const_iterator, node_type>(begin(), end(), cxt);
     }
   }
 };
