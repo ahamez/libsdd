@@ -120,7 +120,7 @@ struct fixpoint_builder_helper
   }
 
   homomorphism<C>
-  operator()(const fixpoint<C>& f, const homomorphism<C>& h)
+  operator()(const fixpoint<C>&, const homomorphism<C>& h)
   const noexcept
   {
     return h;

@@ -211,7 +211,7 @@ private:
     }
 
     SDD<C>
-    operator()( const hierarchical_node<C>& node
+    operator()( const hierarchical_node<C>&
               , const values_function_base<C>&, context<C>&, const SDD<C>& s
               , const order<C>&)
     const

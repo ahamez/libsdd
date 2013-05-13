@@ -26,8 +26,8 @@ struct evaluation
   /// homomorphism::operator().
   template <typename H>
   SDD<C>
-  operator()( const H& h, const zero_terminal<C>&
-            , const SDD<C>&, context<C>&, const order<C>& o, const homomorphism<C>&)
+  operator()( const H&, const zero_terminal<C>&
+            , const SDD<C>&, context<C>&, const order<C>&, const homomorphism<C>&)
   const noexcept
   {
     assert(false);

@@ -199,7 +199,7 @@ struct sum_builder_helper
   /// @brief Flatten nested sums.
   void
   operator()( const sum<C>& s
-            , const homomorphism<C>& h, operands_type& operands, locals_type& locals)
+            , const homomorphism<C>&, operands_type& operands, locals_type& locals)
   const
   {
     for (const auto& op : s)
@@ -211,7 +211,7 @@ struct sum_builder_helper
   /// @brief Regroup locals.
   void
   operator()( const local<C>& l
-            , const homomorphism<C>& h, operands_type& operands, locals_type& locals)
+            , const homomorphism<C>&, operands_type&, locals_type& locals)
   const
   {
     auto insertion = locals.emplace(l.identifier(), hom_list_type());
