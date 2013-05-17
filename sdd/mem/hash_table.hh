@@ -161,8 +161,8 @@ private:
 public:
 
   /// @brief Constructor
-  hash_table(std::uint32_t size)
-    : nb_buckets_(util::next_power_of_2(size))
+  hash_table(std::size_t size)
+    : nb_buckets_(util::next_power_of_2(static_cast<std::uint32_t>(size)))
     , size_(0)
     , buckets_(new Data*[nb_buckets_])
   {
@@ -286,7 +286,7 @@ public:
 
   /// @brief
   std::size_t
-  nb_buckets()
+  bucket_count()
   const noexcept
   {
     return nb_buckets_;
@@ -323,7 +323,7 @@ public:
 
   /// @brief
   iterator
-  find(Data& x)
+  find(const Data& x)
   noexcept
   {
     const std::uint32_t pos = Hash()(x) & (nb_buckets_ - 1);

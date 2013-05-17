@@ -283,8 +283,8 @@ public:
     : cxt_(context)
     , name_(name)
     , max_load_factor_(0.9)
-    , set_(static_cast<std::uint32_t>(size))
-    , max_size_(set_.nb_buckets())
+    , set_(size)
+    , max_size_(set_.bucket_count())
     , stats_()
   {
   }

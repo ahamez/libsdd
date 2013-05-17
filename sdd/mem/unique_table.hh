@@ -4,7 +4,8 @@
 #include <cassert>
 
 #include <boost/container/flat_map.hpp>
-#include <boost/intrusive/unordered_set.hpp>
+
+#include "sdd/mem/hash_table.hh"
 
 namespace sdd { namespace mem {
 
@@ -41,45 +42,12 @@ public:
 
     /// @brief The number of rehash.
     std::size_t rehash;
-
-#ifdef LIBSDD_PROFILE
-    /// @brief The number of collisions during the whole life of this unique_table.
-    std::size_t total_collisions;
-
-    /// @brief The actual number of collisions.
-    std::size_t collisions;
-#endif // LIBSDD_PROFILE
   };
 
 private:
 
-  /// @brief We choose a faster, unsafe mode.
-  typedef boost::intrusive::link_mode<boost::intrusive::normal_link> link_mode;
-
-  /// @brief Tell Boost.Intrusive how to access to the member hook.
-  typedef boost::intrusive::member_hook< Unique
-                                       , boost::intrusive::unordered_set_member_hook<link_mode>
-                                       , &Unique::member_hook_>
-          member_hook;
-
-  /// @brief Tell Boost.Intrusive we want to use the standard hash mechanism.
-  typedef boost::intrusive::hash<std::hash<Unique>> hash_option;
-
-  /// @brief The type of the set that helps to unify data.
-  typedef typename boost::intrusive::make_unordered_set<Unique, member_hook, hash_option>::type
-          set_type;
-
-  /// @brief A type needed by Boost.Intrusive.
-  typedef typename set_type::bucket_type bucket_type;
-
-  /// @brief A type needed by Boost.Intrusive.
-  typedef typename set_type::bucket_traits bucket_traits;
-
-  /// @brief The buckets needed by Boost.Intrusive.
-  bucket_type* buckets_;
-
   /// @brief The actual container of unified data.
-  set_type* set_;
+  mem::hash_table<Unique> set_;
 
   /// @brief The statistics of this unique_table.
   mutable statistics stats_;
@@ -95,9 +63,7 @@ public:
   /// @brief Constructor.
   /// @param initial_size Initial capacity of the container.
   unique_table(std::size_t initial_size)
-  	: buckets_(new bucket_type[set_type::suggested_upper_bucket_count(initial_size)])
-    , set_(new set_type(bucket_traits( buckets_
-                                     , set_type::suggested_upper_bucket_count(initial_size))))
+    : set_(initial_size)
     , stats_()
     , blocks_()
   {
@@ -107,8 +73,6 @@ public:
   /// @brief Destructor.
   ~unique_table()
   {
-    delete set_;
-    delete[] buckets_;
     for (auto& b : blocks_)
     {
       delete[] b.second;
@@ -124,12 +88,7 @@ public:
   {
     ++stats_.access;
 
-    if (load_factor() >= 0.9)
-    {
-      rehash();
-    }
-
-    auto insertion = set_->insert(*ptr);
+    auto insertion = set_.insert(*ptr);
     if (not insertion.second)
     {
       // The inserted Unique already exists. We keep its allocated memory to avoid deallocating
@@ -149,12 +108,6 @@ public:
     else
     {
       ++stats_.miss;
-#ifdef LIBSDD_PROFILE
-      if (set_->bucket_size(set_->bucket(*ptr)) > 1)
-      {
-        ++stats_.total_collisions;
-      }
-#endif // LIBSDD_PROFILE
     }
     return *insertion.first;
   }
@@ -186,7 +139,9 @@ public:
   noexcept
   {
     assert(x.is_not_referenced() && "Unique still referenced");
-    set_->erase_and_dispose(x, [](const Unique* ptr){delete ptr;});
+    const auto cit = set_.find(x);
+    set_.erase(cit);
+    delete &x;
   }
 
   /// @brief Get the load factor of the internal hash table.
@@ -194,7 +149,7 @@ public:
   load_factor()
   const noexcept
   {
-    return static_cast<double>(set_->size()) / static_cast<double>(set_->bucket_count());
+    return static_cast<double>(set_.size()) / static_cast<double>(set_.bucket_count());
   }
 
   /// @brief Get the statistics of this unique_table.
@@ -202,33 +157,9 @@ public:
   stats()
   const noexcept
   {
-    stats_.size = set_->size();
+    stats_.size = set_.size();
     stats_.load_factor = load_factor();
-#ifdef LIBSDD_PROFILE
-    stats_.collisions = 0;
-    for (std::size_t nb = 0; nb < set_->bucket_count(); ++nb)
-    {
-      if (set_->bucket_size(nb) > 1)
-      {
-        ++stats_.collisions;
-      }
-    }
-#endif // LIBSDD_PROFILE
     return stats_;
-  }
-
-private:
-
-  /// @brief Rehash the internal hash table.
-  void
-  rehash()
-  {
-    ++stats_.rehash;
-    const std::size_t new_size = set_type::suggested_upper_bucket_count(set_->bucket_count() * 2);
-    bucket_type* new_buckets = new bucket_type[new_size];
-    set_->rehash(bucket_traits(new_buckets, new_size));
-    delete[] buckets_;
-    buckets_ = new_buckets;
   }
 };
 
