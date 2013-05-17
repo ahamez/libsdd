@@ -125,27 +125,14 @@ private:
   }
 };
 
-//template <typename Data, typename HashTable>
-//std::ostream&
-//operator<<(std::ostream& os, const hash_table_iterator<Data, HashTable>& it)
-//{
-//  os << "it(" << it.pos_ << ", " << it.previous_;
-//  if (it.previous_)
-//    os << ":" << *(it.previous_);
-//  os << ", " << it.data_;
-//  if (it.data_)
-//    os << ":" << *(it.data_);
-//  return os << ")";
-//}
-
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-template <typename Data>
+template <typename Data, typename Hash = std::hash<Data>>
 class hash_table
 {
 public:
-  
+
   /// @brief Used by insert_check
   struct insert_commit_data
   {
@@ -153,14 +140,14 @@ public:
   };
 
   /// @brief
-  typedef hash_table_iterator<Data, hash_table<Data>> iterator;
+  typedef hash_table_iterator<Data, hash_table<Data, Hash>> iterator;
 
   /// @brief
-  typedef hash_table_iterator<const Data, hash_table<Data>> const_iterator;
+  typedef hash_table_iterator<const Data, hash_table<Data, Hash>> const_iterator;
 
 private:
 
-  friend class hash_table_iterator<Data, hash_table<Data>>;
+  friend class hash_table_iterator<Data, hash_table<Data, Hash>>;
 
   /// @brief
   std::uint32_t nb_buckets_;
@@ -189,13 +176,13 @@ public:
   }
 
   /// @brief
-  template <typename T, typename Hash, typename Eq>
+  template <typename T, typename HashT, typename EqT>
   std::pair<iterator, bool>
-  insert_check(const T& x, Hash hash, Eq eq, insert_commit_data& commit_data)
+  insert_check(const T& x, HashT hash, EqT eq, insert_commit_data& commit_data)
   const noexcept
   {
     commit_data.hash = hash(x);
-    // same as commit_data.h % nb_buckets_, but much more efficient (it works only with power of 2)
+    // same as commit_data.h % nb_buckets_, but much more efficient (works only with powers of 2)
     const std::uint32_t pos = commit_data.hash & (nb_buckets_ - 1);
 
     Data* current = buckets_[pos];
@@ -254,7 +241,7 @@ public:
   insert(Data& x)
   noexcept
   {
-    const std::uint32_t pos = std::hash<Data>()(x) & (nb_buckets_ - 1);
+    const std::uint32_t pos = Hash()(x) & (nb_buckets_ - 1);
 
     Data* previous = nullptr;
     Data* current = buckets_[pos];
@@ -298,6 +285,14 @@ public:
   }
 
   /// @brief
+  std::size_t
+  nb_buckets()
+  const noexcept
+  {
+    return nb_buckets_;
+  }
+
+  /// @brief
   iterator
   begin()
   noexcept
@@ -331,7 +326,7 @@ public:
   find(Data& x)
   noexcept
   {
-    const std::uint32_t pos = std::hash<Data>()(x) & (nb_buckets_ - 1);
+    const std::uint32_t pos = Hash()(x) & (nb_buckets_ - 1);
     Data* current = buckets_[pos];
     bool found = false;
     while (current != nullptr)

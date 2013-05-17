@@ -346,7 +346,7 @@ TEST(cache, cleanup)
   {
     ASSERT_EQ(static_cast<std::size_t>(i + 1), c(operation(i)));
   }
-  ASSERT_EQ(2u, c.statistics().cleanups());
+  ASSERT_EQ(3u, c.statistics().cleanups());
 }
 
 
