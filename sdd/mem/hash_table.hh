@@ -16,11 +16,14 @@ namespace sdd { namespace mem {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+/// @brief It must be stored by the hash table's data as a member named 'hook'.
 template <typename Data>
 struct intrusive_member_hook
 {
+  /// @brief Store the next data in a bucket.
   mutable Data* next;
 
+  /// @brief Default constructor.
   intrusive_member_hook()
     : next(nullptr)
   {}
@@ -29,21 +32,21 @@ struct intrusive_member_hook
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+/// @brief A iterator on the hash_table.
 template <typename Data, typename HashTable>
 class LIBSDD_ATTRIBUTE_PACKED hash_table_iterator
   : public boost::iterator_facade< hash_table_iterator<Data, HashTable>
                                  , Data, boost::forward_traversal_tag>
 {
-//private:
-public:
+private:
 
-  /// @brief
+  /// @brief A link to the hash table.
   const HashTable* container_;
 
-  /// @brief
+  /// @brief The current position in the buckets.
   std::uint32_t pos_;
 
-  /// @brief
+  /// @brief The actual data this iterator points to.
   Data* data_;
 
 public:
@@ -73,8 +76,13 @@ public:
 
 private:
 
+  // Required by boost::iterator.
   friend class boost::iterator_core_access;
+
+  // The hash table need to access internal elements of this iterator.
   friend HashTable;
+
+  // Friend with const/non-const iterators.
   template <typename, typename> friend class hash_table_iterator;
 
   /// @brief For boost::iterator.
@@ -128,6 +136,10 @@ private:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+/// @brief An intrusive hash table.
+///
+/// It's modeled after boost::intrusive. Only the interfaces needed by this library are implemented.
+/// It uses chaning to handle collisions.
 template <typename Data, typename Hash = std::hash<Data>>
 class hash_table
 {
@@ -139,17 +151,19 @@ public:
     std::size_t hash;
   };
 
-  /// @brief
+  /// @brief The type of an iterator on this hash table.
   typedef hash_table_iterator<Data, hash_table<Data, Hash>> iterator;
 
-  /// @brief
+  /// @brief The type of a const iterator on this hash table.
   typedef hash_table_iterator<const Data, hash_table<Data, Hash>> const_iterator;
 
 private:
 
+  // Iterators need to access buckets_.
   friend class hash_table_iterator<Data, hash_table<Data, Hash>>;
+  friend class hash_table_iterator<const Data, hash_table<Data, Hash>>;
 
-  /// @brief
+  /// @brief 
   std::uint32_t nb_buckets_;
 
   /// @brief
@@ -236,7 +250,7 @@ public:
     ++size_;
   }
 
-  /// @brief
+  /// @brief Insert an element.
   std::pair<iterator, bool>
   insert(Data& x)
   noexcept
@@ -284,7 +298,7 @@ public:
     return size_;
   }
 
-  /// @brief
+  /// @brief Return the number of buckets.
   std::size_t
   bucket_count()
   const noexcept
@@ -292,7 +306,7 @@ public:
     return nb_buckets_;
   }
 
-  /// @brief
+  /// @brief Get an itertor to the beginning of this hast table.
   iterator
   begin()
   noexcept
@@ -313,7 +327,7 @@ public:
     }
   }
 
-  /// @brief
+  /// @brief Get an itertor to the end of this hast table.
   iterator
   end()
   noexcept
@@ -321,7 +335,7 @@ public:
     return iterator(this, nb_buckets_, nullptr);
   }
 
-  /// @brief
+  /// @brief Find an element.
   iterator
   find(const Data& x)
   noexcept
@@ -349,7 +363,7 @@ public:
     }
   }
 
-  /// @brief
+  /// @brief Erase an element given its iterator.
   void
   erase(const_iterator cit)
   noexcept
@@ -376,7 +390,7 @@ public:
     --size_;
   }
 
-  /// @brief
+  /// @brief Clear the whole table.
   template <typename Disposer>
   void
   clear_and_dispose(Disposer disposer)

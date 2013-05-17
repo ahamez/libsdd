@@ -40,12 +40,10 @@ ref_counted
   // indirection, to avoid a pointer. Thus, the address of the alpha function is computed
   // knowing this is right after the node.
 
-public:
-
-  /// @brief
-  mem::intrusive_member_hook<ref_counted> hook;
-
 private:
+
+  /// @brief Used by mem::hash_table to store some informations.
+  mem::intrusive_member_hook<ref_counted> hook;
 
   /// The number of time the encapsulated data is referenced (reference-counting garbage collection)
   mutable uint32_t ref_count_;
@@ -116,8 +114,14 @@ public:
 
 private:
 
-  /// A ptr should be able to access and modify the reference counter.
-  template <typename U> friend class ptr;
+  // A ptr should be able to access and modify the reference counter.
+  template <typename> friend class ptr;
+
+  // hash_table_iterator needs to access the hook.
+  template <typename, typename> friend class hash_table_iterator;
+
+  // hash_table needs to access the hook.
+  template <typename, typename> friend class hash_table;
 
   /// @brief A ptr references that unified data.
   void
