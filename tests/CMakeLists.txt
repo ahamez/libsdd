@@ -24,12 +24,14 @@ set(SOURCES
     hom/test_hom_values_function.cc
     hom/test_rewriting.cc
     mem/test_cache.cc
+    mem/test_hash_table.cc
     mem/test_ptr.cc
     mem/test_unique_table.cc
     mem/test_variant.cc
     order/test_carrier.cc
     order/test_order.cc
     order/test_utility.cc
+    util/test_next_power.cc
     util/test_typelist.cc
     values/test_bitset.cc
     values/test_flat_set.cc

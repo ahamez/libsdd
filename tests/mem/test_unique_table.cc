@@ -6,6 +6,8 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
+namespace {
+
 struct foo
 {
   typedef boost::intrusive::link_mode<boost::intrusive::normal_link> link_mode;
@@ -36,6 +38,8 @@ struct foo
     return true;
   }
 };
+
+}
 
 namespace std {
 
