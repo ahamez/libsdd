@@ -138,8 +138,8 @@ private:
 /// @internal
 /// @brief An intrusive hash table.
 ///
-/// It's modeled after boost::intrusive. Only the interfaces needed by this library are implemented.
-/// It uses chaning to handle collisions.
+/// It's modeled after boost::intrusive. Only the interfaces needed by the libsdd are implemented.
+/// It uses chaining to handle collisions.
 template <typename Data, typename Hash = std::hash<Data>>
 class hash_table
 {
