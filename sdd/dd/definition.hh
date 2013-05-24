@@ -105,17 +105,6 @@ private:
 
 public:
 
-  /// @brief Move constructor.
-  ///
-  /// O(1).
-  SDD(SDD&&) noexcept = default;
-
-  /// @brief Move operator.
-  ///
-  /// O(1).
-  SDD&
-  operator=(SDD&&) noexcept = default;
-
   /// @brief Copy constructor.
   ///
   /// O(1).

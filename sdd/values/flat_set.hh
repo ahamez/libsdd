@@ -70,36 +70,26 @@ public:
   /// @brief Default copy operator.
   flat_set& operator=(const flat_set&) = default;
 
-  /// @brief Default move constructor.
-  flat_set(flat_set&&) = default;
-
-  /// @brief Defautl move operator.
-  flat_set& operator=(flat_set&&) = default;
-
   /// @brief Default constructor.
   flat_set()
     : ptr_(empty_set())
-  {
-  }
+  {}
 
   /// @brief Constructor with a range.
   template <typename InputIterator>
   flat_set(InputIterator begin, InputIterator end)
     : ptr_(create(begin, end))
-  {
-  }
+  {}
 
   /// @brief Constructor with a initializer_list.
   flat_set(std::initializer_list<Value> values)
     : flat_set(values.begin(), values.end())
-  {
-  }
+  {}
 
   /// @brief Constructor from a temporary internal_flat_set_type.
   flat_set(data_type&& fs)
     : ptr_(create(std::move(fs)))
-  {
-  }
+  {}
 
   /// @brief Insert a value.
   std::pair<const_iterator, bool>

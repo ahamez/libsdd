@@ -82,17 +82,6 @@ public:
   /// @brief The identifier type.
   typedef typename C::Identifier identifier_type;
 
-  /// @brief Move constructor.
-  ///
-  /// O(1).
-  homomorphism(homomorphism&&) noexcept = default;
-
-  /// @brief Move operator.
-  ///
-  /// O(1).
-  homomorphism&
-  operator=(homomorphism&&) noexcept = default;
-
   /// @brief Copy constructor.
   ///
   /// O(1).
