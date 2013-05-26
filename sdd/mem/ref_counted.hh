@@ -52,7 +52,7 @@ private:
   /// @brief The number of time the encapsulated data is referenced
   ///
   /// Implements a reference-counting garbage collection.
-  mutable std::uint32_t ref_count_;
+  std::uint32_t ref_count_;
 
   /// @brief The garbage collected data.
   ///
