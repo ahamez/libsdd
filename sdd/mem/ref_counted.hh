@@ -49,8 +49,10 @@ private:
   /// Used by Boost.Intrusive to manage the unicity table.
   boost::intrusive::unordered_set_member_hook<link_mode> member_hook_;
 
-  /// The number of time the encapsulated data is referenced (reference-counting garbage collection)
-  mutable uint32_t ref_count_;
+  /// @brief The number of time the encapsulated data is referenced
+  ///
+  /// Implements a reference-counting garbage collection.
+  mutable std::uint32_t ref_count_;
 
   /// @brief The garbage collected data.
   ///
