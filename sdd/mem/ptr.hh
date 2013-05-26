@@ -63,13 +63,13 @@ class ptr
 private:
 
   /// @brief Pointer to the managed ressource, a unified data.
-  const Unique* x_;
+  Unique* x_;
 
 public:
 
   /// @brief Constructor with a unified data.
   explicit
-  ptr(const Unique& p)
+  ptr(Unique& p)
   noexcept
   	: x_(&p)
   {

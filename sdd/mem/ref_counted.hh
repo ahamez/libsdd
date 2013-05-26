@@ -45,8 +45,10 @@ private:
   /// @brief Used by mem::hash_table to store some informations.
   mem::intrusive_member_hook<ref_counted> hook;
 
-  /// The number of time the encapsulated data is referenced (reference-counting garbage collection)
-  mutable uint32_t ref_count_;
+  /// @brief The number of time the encapsulated data is referenced
+  ///
+  /// Implements a reference-counting garbage collection.
+  std::uint32_t ref_count_;
 
   /// @brief The garbage collected data.
   ///
@@ -126,7 +128,7 @@ private:
   /// @brief A ptr references that unified data.
   void
   increment_reference_counter()
-  const noexcept
+  noexcept
   {
     assert(ref_count_ < std::numeric_limits<uint32_t>::max());
     ++ref_count_;
@@ -135,7 +137,7 @@ private:
   /// @brief A ptr no longer references that unified data.
   void
   decrement_reference_counter()
-  const noexcept
+  noexcept
   {
     assert(ref_count_ > 0);
     --ref_count_;

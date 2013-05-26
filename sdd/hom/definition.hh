@@ -37,20 +37,20 @@ class homomorphism final
 private:
 
   /// @brief A canonized homomorphism.
-  typedef mem::variant< const hom::composition<C>
-                      , const hom::cons<C, SDD<C>>
-                      , const hom::cons<C, typename C::Values>
-                      , const hom::constant<C>
-                      , const hom::expression<C>
-                      , const hom::fixpoint<C>
-                      , const hom::identity<C>
-                      , const hom::inductive<C>
-                      , const hom::intersection<C>
-                      , const hom::local<C>
-                      , const hom::saturation_fixpoint<C>
-                      , const hom::saturation_sum<C>
-                      , const hom::sum<C>
-                      , const hom::values_function<C>
+  typedef mem::variant< hom::composition<C>
+                      , hom::cons<C, SDD<C>>
+                      , hom::cons<C, typename C::Values>
+                      , hom::constant<C>
+                      , hom::expression<C>
+                      , hom::fixpoint<C>
+                      , hom::identity<C>
+                      , hom::inductive<C>
+                      , hom::intersection<C>
+                      , hom::local<C>
+                      , hom::saturation_fixpoint<C>
+                      , hom::saturation_sum<C>
+                      , hom::sum<C>
+                      , hom::values_function<C>
                       >
           data_type;
 
@@ -81,17 +81,6 @@ public:
 
   /// @brief The identifier type.
   typedef typename C::Identifier identifier_type;
-
-  /// @brief Move constructor.
-  ///
-  /// O(1).
-  homomorphism(homomorphism&&) noexcept = default;
-
-  /// @brief Move operator.
-  ///
-  /// O(1).
-  homomorphism&
-  operator=(homomorphism&&) noexcept = default;
 
   /// @brief Copy constructor.
   ///
