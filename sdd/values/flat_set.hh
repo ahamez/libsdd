@@ -273,7 +273,7 @@ private:
 
   /// @brief Return the unfied version of a boost::container::flat_set.
   static
-  const unique_type&
+  unique_type&
   unify(data_type&& x)
   {
     auto& ut = global_values<flat_set<Value>>().state.unique_table;
@@ -322,8 +322,7 @@ struct flat_set_manager
     : handler(unique_table)
     , unique_table(configuration.flat_set_unique_table_size)
     , empty(mk_empty())
-  {
-  }
+  {}
 
 private:
 

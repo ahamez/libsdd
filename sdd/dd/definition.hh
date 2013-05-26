@@ -70,8 +70,7 @@ private:
   ///
   /// This is the real recursive definition of an SDD: it can be a |0| or |1| terminal, or it
   /// can be a flat or an hierachical node.
-  typedef mem::variant< const zero_terminal<C>, const one_terminal<C>
-                      , const flat_node<C>, const hierarchical_node<C>>
+  typedef mem::variant<zero_terminal<C>, one_terminal<C>, flat_node<C>,hierarchical_node<C>>
           data_type;
 
 public:
@@ -360,7 +359,7 @@ private:
   /// O(n) where n is the number of arcs in the builder.
   template <typename Valuation>
   static
-  const unique_type&
+  unique_type&
   unify_node(const variable_type& var, dd::alpha_builder<C, Valuation>&& builder)
   {
     // Will be erased by the unicity table, either it's an already existing node or a deletion

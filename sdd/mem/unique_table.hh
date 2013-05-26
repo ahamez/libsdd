@@ -119,7 +119,7 @@ public:
   /// @param ptr A pointer to a data constructed with a placement new into the storage returned by
   /// allocate().
   /// @return A reference to the unified data.
-  const Unique&
+  Unique&
   operator()(Unique* ptr)
   {
     ++stats_.access;
