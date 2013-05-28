@@ -161,18 +161,7 @@ public:
   homomorphism(const ptr_type& ptr)
   noexcept
     : ptr_(ptr)
-  {
-  }
-
-  /// @internal
-  /// @brief Construct an homomorphism from a moved ptr.
-  ///
-  /// O(1).
-  homomorphism(ptr_type&& ptr)
-  noexcept
-    : ptr_(std::move(ptr))
-  {
-  }
+  {}
 
   /// @internal
   /// @brief Apply this homomorphism on an SDD, in a given context.
