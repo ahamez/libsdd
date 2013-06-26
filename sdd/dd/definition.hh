@@ -124,8 +124,7 @@ public:
   /// set of values depends on values_type.
   SDD(const variable_type& var, std::initializer_list<value_type> values, const SDD& succ)
     : ptr_(create_node(var, values_type(values), SDD(succ)))
-  {
-  }
+  {}
 
   /// @brief Construct a flat SDD.
   /// @param var  The SDD's variable.
@@ -135,8 +134,7 @@ public:
   /// O(1).
   SDD(const variable_type& var, values_type&& val, const SDD& succ)
     : ptr_(create_node(var, std::move(val), succ))
-  {
-  }
+  {}
 
   /// @brief Construct a flat SDD.
   /// @param var  The SDD's variable.
@@ -146,8 +144,7 @@ public:
   /// O(1).
   SDD(const variable_type& var, const values_type& val, const SDD& succ)
     : ptr_(create_node(var, val, succ))
-  {
-  }
+  {}
 
   /// @brief Construct a hierarchical SDD.
   /// @param var  The SDD's variable.
@@ -157,8 +154,7 @@ public:
   /// O(1).
   SDD(const variable_type& var, const SDD& val, const SDD& succ)
     : ptr_(create_node(var, val, succ))
-  {
-  }
+  {}
 
   /// @brief Construct an SDD with an order.
   template <typename Initializer>
@@ -210,18 +206,7 @@ public:
   SDD(const ptr_type& ptr)
   noexcept
     : ptr_(ptr)
-  {
-  }
-
-  /// @internal
-  /// @brief Construct an SDD from a moved ptr.
-  ///
-  /// O(1).
-  SDD(ptr_type&& ptr)
-  noexcept
-    : ptr_(std::move(ptr))
-  {
-  }
+  {}
 
   /// @internal
   /// @brief  Construct an SDD, flat or hierarchical, with an alpha.
@@ -232,8 +217,7 @@ public:
   template <typename Valuation>
   SDD(const variable_type& var, dd::alpha_builder<C, Valuation>&& builder)
     : ptr_(create_node(var, std::move(builder)))
-  {
-  }
+  {}
 
   /// @internal
   /// @brief Get the content of the SDD (an mem::ref_counted).
