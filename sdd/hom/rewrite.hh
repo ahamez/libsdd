@@ -50,7 +50,7 @@ struct rewriter
 
     constexpr bool
     operator()(const local<C>&)
-    const
+    const noexcept
     {
       return true;
     }
@@ -58,7 +58,7 @@ struct rewriter
     template <typename T>
     constexpr bool
     operator()(const T&)
-    const
+    const noexcept
     {
       return false;
     }
@@ -72,7 +72,7 @@ struct rewriter
 
     constexpr bool
     operator()(const sum<C>&)
-    const
+    const noexcept
     {
       return true;
     }
@@ -80,7 +80,7 @@ struct rewriter
     template <typename T>
     constexpr bool
     operator()(const T&)
-    const
+    const noexcept
     {
       return false;
     }
@@ -106,7 +106,7 @@ struct rewriter
       {
         F.push_back(*begin);
       }
-      else if (apply_visitor(is_local(), (*begin)->data()))
+      else if (apply_visitor(is_local{}, (*begin)->data()))
       {
         const local<C>& l = mem::variant_cast<const local<C>>((*begin)->data());
         L.push_back(l.hom());
@@ -158,7 +158,7 @@ struct rewriter
   operator()(const fixpoint<C>& f, const homomorphism<C>& h, const order<C>& o)
   const
   {
-    if (not apply_visitor(is_sum(), f.hom()->data()))
+    if (not apply_visitor(is_sum{}, f.hom()->data()))
     {
       return h;
     }

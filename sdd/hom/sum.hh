@@ -196,35 +196,44 @@ struct sum_builder_helper
   /// @brief Map Local homomorphisms to the identifiers they work on.
   typedef std::unordered_map<typename C::Identifier, hom_list_type> locals_type;
 
+  /// @brief Store local homomorphisms.
+  locals_type& locals_;
+
+  /// @brief Store all other operands.
+  operands_type& operands_;
+
+  /// @bief Constructor.
+  sum_builder_helper(locals_type& locals, operands_type& operands)
+    : locals_(locals), operands_(operands)
+  {}
+
   /// @brief Flatten nested sums.
   void
-  operator()( const sum<C>& s
-            , const homomorphism<C>&, operands_type& operands, locals_type& locals)
+  operator()(const sum<C>& s, const homomorphism<C>&)
   const
   {
     for (const auto& op : s)
     {
-      apply_visitor(*this, op->data(), op, operands, locals);
+      apply_visitor(*this, op->data(), op);
     }
   }
 
   /// @brief Regroup locals.
   void
-  operator()( const local<C>& l
-            , const homomorphism<C>&, operands_type&, locals_type& locals)
+  operator()(const local<C>& l, const homomorphism<C>&)
   const
   {
-    auto insertion = locals.emplace(l.identifier(), hom_list_type());
+    auto insertion = locals_.emplace(l.identifier(), hom_list_type());
     insertion.first->second.emplace_back(l.hom());
   }
 
   /// @brief Insert normally all other operands.
   template <typename T>
   void
-  operator()(const T&, const homomorphism<C>& h, operands_type& operands, locals_type&)
+  operator()(const T&, const homomorphism<C>& orig)
   const
   {
-    operands.insert(h);
+    operands_.insert(orig);
   }
 };
 
@@ -247,12 +256,11 @@ Sum(const order<C>& o, InputIterator begin, InputIterator end)
 
   boost::container::flat_set<homomorphism<C>> operands;
   operands.reserve(size);
-
-  hom::sum_builder_helper<C> sbv;
   typename hom::sum_builder_helper<C>::locals_type locals;
+  hom::sum_builder_helper<C> sbv{locals, operands};
   for (; begin != end; ++begin)
   {
-    apply_visitor(sbv, (*begin)->data(), *begin, operands, locals);
+    apply_visitor(sbv, (*begin)->data(), *begin);
   }
 
   // insert remaining locals

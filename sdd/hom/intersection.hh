@@ -134,35 +134,42 @@ struct intersection_builder_helper
   typedef std::deque<homomorphism<C>> hom_list_type;
   typedef std::unordered_map<typename C::Identifier, hom_list_type> locals_type;
 
+  operands_type& operands_;
+  locals_type& locals_;
+
+  intersection_builder_helper(operands_type& operands, locals_type& locals)
+  noexcept
+    : operands_(operands)
+    , locals_(locals)
+  {}
+
   /// @brief Flatten nested intersections.
   void
-  operator()( const intersection<C>& s
-            , const homomorphism<C>&, operands_type& operands, locals_type& locals)
+  operator()(const intersection<C>& s, const homomorphism<C>&)
   const
   {
     for (const auto& op : s.operands())
     {
-      apply_visitor(*this, op->data(), op, operands, locals);
+      apply_visitor(*this, op->data(), op);
     }
   }
 
   /// @brief Regroup locals.
   void
-  operator()( const local<C>& l
-            , const homomorphism<C>&, operands_type&, locals_type& locals)
+  operator()(const local<C>& l, const homomorphism<C>&)
   const
   {
-    auto insertion = locals.emplace(l.identifier(), hom_list_type());
+    auto insertion = locals_.emplace(l.identifier(), hom_list_type());
     insertion.first->second.emplace_back(l.hom());
   }
 
   /// @brief Insert normally all other operands.
   template <typename T>
   void
-  operator()(const T&, const homomorphism<C>& h, operands_type& operands, locals_type&)
+  operator()(const T&, const homomorphism<C>& h)
   const
   {
-    operands.insert(h);
+    operands_.insert(h);
   }
 
 };
@@ -187,11 +194,11 @@ Intersection(const order<C>& o, InputIterator begin, InputIterator end)
   typename hom::intersection<C>::operands_type operands;
   operands.reserve(size);
 
-  hom::intersection_builder_helper<C> ib;
   typename hom::intersection_builder_helper<C>::locals_type locals;
+  hom::intersection_builder_helper<C> ib {operands, locals};
   for (; begin != end; ++begin)
   {
-    apply_visitor(ib, (*begin)->data(), *begin, operands, locals);
+    apply_visitor(ib, (*begin)->data(), *begin);
   }
 
   // insert remaining locals

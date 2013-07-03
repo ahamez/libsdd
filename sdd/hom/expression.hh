@@ -31,8 +31,7 @@ public:
 
   virtual
   ~evaluator_base()
-  {
-  }
+  {}
 
   ///
   virtual
@@ -525,8 +524,7 @@ public:
     : eval_ptr_(e_ptr)
     , identifiers_(std::move(identifiers))
     , target_(target)
-  {
-  }
+  {}
 
   /// @brief Skip variable predicate.
   bool
