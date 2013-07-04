@@ -85,14 +85,12 @@ public:
   /// @brief Constructor.
   values_function_derived(const User& f)
     : fun_(f)
-  {
-  }
+  {}
 
   /// @brief Constructor.
   values_function_derived(User&& f)
     : fun_(std::move(f))
-  {
-  }
+  {}
 
   /// @brief Tell if the user's function is a selector.
   bool
@@ -266,8 +264,7 @@ public:
   values_function(const identifier_type& id, const values_function_base<C>* f_ptr)
     : identifier_(id)
     , fun_ptr_(f_ptr)
-  {
-  }
+  {}
 
   /// @brief Skip variable predicate.
   bool

@@ -30,8 +30,7 @@ struct default_configuration
     , sdd_sum_cache_size(1000000)
     , hom_unique_table_size(1000000)
     , hom_cache_size(1000000)
-  {
-  }
+  {}
 };
 
 /*------------------------------------------------------------------------------------------------*/
@@ -58,12 +57,11 @@ struct conf1
   conf1()
     : default_configuration()
     , flat_set_unique_table_size(1000)
-  {
-  }
+  {}
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
-}
+} // namespace sdd
 
 #endif // _SDD_CONF_DEFAULT_CONFIGURATIONS_HH_

@@ -96,8 +96,7 @@ struct internal_manager
     , one(mk_terminal<one_terminal<C>>())
     , id(mk_id())
     , saturation_fixpoint_data()
-  {
-  }
+  {}
 
 private:
 

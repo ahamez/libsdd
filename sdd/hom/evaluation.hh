@@ -116,8 +116,7 @@ struct cached_homomorphism
     : ord(o)
     , hom(h)
     , sdd(s)
-  {
-  }
+  {}
 
   /// @brief Launch the evaluation.
   SDD<C>

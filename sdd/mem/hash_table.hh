@@ -306,7 +306,7 @@ public:
     return nb_buckets_;
   }
 
-  /// @brief Get an itertor to the beginning of this hast table.
+  /// @brief Get an iterator to the beginning of this hash table.
   iterator
   begin()
   noexcept
@@ -327,7 +327,7 @@ public:
     }
   }
 
-  /// @brief Get an itertor to the end of this hast table.
+  /// @brief Get an iterator to the end of this hash table.
   iterator
   end()
   noexcept
