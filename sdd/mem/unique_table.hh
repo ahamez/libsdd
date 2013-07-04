@@ -140,6 +140,7 @@ public:
   {
     assert(x.is_not_referenced() && "Unique still referenced");
     const auto cit = set_.find(x);
+    assert(cit != set_.end() && "Unique not found");
     set_.erase(cit);
     delete &x;
   }
