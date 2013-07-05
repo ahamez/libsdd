@@ -45,7 +45,6 @@ public:
   }
 
   bitset(std::initializer_list<std::size_t> values)
-  noexcept
     : content_(0)
   {
     for (auto v : values)
