@@ -73,8 +73,7 @@ private:
       , next(nxt)
       , nested(nst)
       , path_ptr(path)
-    {
-    }
+    {}
 
     /// @brief Compare two node using their abolute position.
     bool
@@ -143,8 +142,7 @@ public:
   order(const order_builder<C>& builder)
     : nodes_ptr_(mk_nodes_ptr(builder))
     , head_(mk_head())
-  {
-  }
+  {}
 
   /// @brief Tell if lhs is before rhs in this order.
   ///
