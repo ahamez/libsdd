@@ -649,7 +649,7 @@ Expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIte
 {
   if (std::distance(begin, end) == 0)
   {
-    throw std::invalid_argument("Empty set of variables at Expression construction.");
+    return Id<C>();
   }
 
   typedef typename C::Identifier identifier_type;
