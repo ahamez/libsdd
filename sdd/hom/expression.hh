@@ -666,6 +666,16 @@ Expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIte
                                 , target);
 }
 
+/// @brief Create the Expression homomorphism.
+/// @related homomorphism
+template <typename C, typename Evaluator>
+homomorphism<C>
+Expression( const order<C>& o, const Evaluator& u, std::initializer_list<typename C::Identifier> ids
+          , const typename C::Identifier& target)
+{
+  return Expression(o, u, ids.begin(), ids.end(), target);
+}
+
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
