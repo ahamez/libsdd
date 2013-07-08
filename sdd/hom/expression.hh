@@ -126,7 +126,31 @@ public:
   print(std::ostream& os)
   const override
   {
-    os << eval_;
+    print_impl(os, eval_, 0);
+  }
+
+private:
+
+  /// @brief Called when the user's evaluator is printable.
+  ///
+  /// Compile-time dispatch.
+  template <typename E>
+  static auto
+  print_impl(std::ostream& os, const E& e, int)
+  -> decltype(operator<<(os, e))
+  {
+    return os << e;
+  }
+
+  /// @brief Called when the user's evaluator is not printable.
+  ///
+  /// Compile-time dispatch.
+  template <typename E>
+  static auto
+  print_impl(std::ostream& os, const E& e, long)
+  -> decltype(void())
+  {
+    os << "UserEvaluator(" << &e << ")";
   }
 };
 
