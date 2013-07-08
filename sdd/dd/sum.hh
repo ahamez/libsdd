@@ -1,6 +1,7 @@
 #ifndef _SDD_DD_SUM_HH_
 #define _SDD_DD_SUM_HH_
 
+#include <initializer_list>
 #include <unordered_map>
 #include <vector>
 
