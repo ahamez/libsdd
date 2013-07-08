@@ -227,8 +227,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
   nary_builder()
     : builder_()
     , set_()
-  {
-  }
+  {}
 
   /// @brief Construction with a reserve request.
   nary_builder(std::size_t size)
