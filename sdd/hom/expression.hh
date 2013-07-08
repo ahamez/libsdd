@@ -4,6 +4,7 @@
 #include <algorithm> // any_of, copy, find
 #include <cassert>
 #include <iosfwd>
+#include <initializer_list>
 #include <memory>    // make_shared, shared_ptr
 #include <stdexcept> // invalid_argument
 #include <typeinfo>  // typeid
@@ -13,6 +14,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
+#include "sdd/hom/identity.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
@@ -63,14 +65,14 @@ public:
 
 /// @internal
 /// @brief Used to wrap user's evaluator.
-template <typename C, typename User>
+template <typename C, typename Evaluator>
 class evaluator_derived
   : public evaluator_base<C>
 {
 private:
 
   /// @brief The user's evaluator.
-  User eval_;
+  Evaluator eval_;
 
 public:
 
@@ -81,12 +83,11 @@ public:
   typedef typename C::Values values_type;
 
   /// @brief Constructor.
-  evaluator_derived(const User& eval)
+  evaluator_derived(const Evaluator& eval)
     : eval_(eval)
-  {
-  }
+  {}
 
-  ///
+  /// @brief Update an identifier with a set of values when it is encountered when walking the SDD.
   void
   update(const identifier_type& id, const values_type& values)
   override
@@ -94,7 +95,8 @@ public:
     eval_.update(id, values);
   }
 
-  ///
+  /// @brief Called when all identifiers have been updated, thus when the expression can be
+  /// evaluated on a path of the SDD.
   values_type
   evaluate()
   override
@@ -118,7 +120,7 @@ public:
   hash()
   const noexcept override
   {
-    return std::hash<User>()(eval_);
+    return std::hash<Evaluator>()(eval_);
   }
 
   /// @brief Get the user's evaluator textual representation.
@@ -177,7 +179,9 @@ public:
 
 private:
 
-  /// @brief Ownership of the user's evaluator.
+  /// @brief Shared pointer to the user evaluator.
+  ///
+  /// expression, pre_evaluation and post_evaluation share the same evaluator.
   const std::shared_ptr<evaluator_base<C>> eval_ptr_;
 
   /// @brief The set of the expression's variables.
@@ -189,58 +193,56 @@ private:
   /// @brief An iterator on a set of identifiers.
   typedef typename identifiers_type::const_iterator identifiers_iterator;
 
-  struct application_stack_node;
+  // Forward declaration.
+  struct application_stack_elt;
 
   /// @brief A pointer to a stack of successors.
-  typedef std::shared_ptr<application_stack_node> application_stack;
+  typedef std::shared_ptr<application_stack_elt> application_stack;
 
   /// @brief A stack of successors to apply visitor on.
-  struct application_stack_node
+  struct application_stack_elt
   {
     SDD<C> sdd;
     const order<C> ord;
     application_stack next;
 
-    application_stack_node(const SDD<C>& s, const order<C>& o, const application_stack& n)
-      : sdd(s)
-      , ord(o)
-      , next(n)
-    {
-    }
+    application_stack_elt(const SDD<C>& s, const order<C>& o, const application_stack& n)
+      : sdd(s), ord(o), next(n)
+    {}
   };
 
-  struct results_stack_node;
+  // Forward declaration.
+  struct results_stack_elt;
 
   /// @brief A pointer to a stack of results.
-  typedef std::shared_ptr<results_stack_node> results_stack;
+  typedef std::shared_ptr<results_stack_elt> results_stack;
 
   /// @brief A stack of results to create successors of hierarchical nodes.
-  struct results_stack_node
+  struct results_stack_elt
   {
     dd::sum_builder<C, SDD<C>> result;
     results_stack next;
 
-    results_stack_node(const results_stack& n)
-      : result()
-      , next(n)
-    {
-    }
+    results_stack_elt(const results_stack& n)
+      : result(), next(n)
+    {}
   };
 
   /// @brief Evaluation of the expression after the target is found.
-  struct post
+  struct post_evaluation
   {
     /// @brief Needed by variant.
     typedef void result_type;
 
-    /// @brief Shared pointer to the user evaluation function.
+    /// @brief Shared pointer to the user evaluator.
+    ///
+    /// expression, pre_evaluation and post_evaluation share the same evaluator.
     const std::shared_ptr<evaluator_base<C>> eval_ptr_;
 
     /// @brief Constructor.
-    post(std::shared_ptr<evaluator_base<C>> eval_ptr)
+    post_evaluation( std::shared_ptr<evaluator_base<C>> eval_ptr)
       : eval_ptr_(eval_ptr)
-    {
-    }
+    {}
 
     /// @brief Evaluation on hierarchical nodes.
     void
@@ -249,6 +251,7 @@ private:
               , identifiers_iterator begin, identifiers_iterator end)
     const noexcept
     {
+
       if (begin == end)
       {
         valuation = values::sum(valuation, eval_ptr_->evaluate());
@@ -267,7 +270,7 @@ private:
         for (const auto& arc : node)
         {
           // push on top of stack
-          app = std::make_shared<application_stack_node>(arc.successor(), o.next(), app);
+          app = std::make_shared<application_stack_elt>(arc.successor(), o.next(), app);
           apply_visitor(*this, arc.valuation()->data(), o.nested(), app, valuation, begin, end);
         }
       }
@@ -287,7 +290,7 @@ private:
               , identifiers_iterator begin, identifiers_iterator end)
     const noexcept
     {
-      if (begin == end)
+      if (begin == end) // all variables have been encoutered
       {
         valuation = values::sum(valuation, eval_ptr_->evaluate());
         return;
@@ -317,7 +320,7 @@ private:
               , identifiers_iterator begin, identifiers_iterator end)
     const noexcept
     {
-      if (begin == end)
+      if (begin == end) // all variables have been encoutered
       {
         valuation = values::sum(valuation, eval_ptr_->evaluate());
       }
@@ -337,35 +340,41 @@ private:
       assert(false);
       __builtin_unreachable();
     }
-  }; // struct post
+  }; // struct post_evaluation
 
   /// @brief Evaluation of the expression until the target is found.
-  struct pre
+  struct pre_evaluation
   {
     /// @brief Needed by variant.
     typedef SDD<C> result_type;
 
-    ///
+    /// @brief The evaluation's context.
+    context<C>& cxt_;
+
+    /// @brief The target of the evaluated expression.
     const identifier_type& target_;
 
-    /// @brief Shared pointer to the user evaluation function.
+    /// @brief Shared pointer to the user evaluator.
+    ///
+    /// expression, pre_evaluation and post_evaluation share the same evaluator.
     const std::shared_ptr<evaluator_base<C>> eval_ptr_;
 
-    /// @brief Avoid to construct several time the same visitor.
-    const post post_;
+    /// @brief Avoid to construct several times the same visitor.
+    const post_evaluation post_;
 
     /// @brief Constructor.
-    pre(const identifier_type& target, std::shared_ptr<evaluator_base<C>> eval_ptr)
-      : target_(target)
+    pre_evaluation( context<C>& cxt, const identifier_type& target
+                  , std::shared_ptr<evaluator_base<C>> eval_ptr)
+      : cxt_(cxt)
+      , target_(target)
       , eval_ptr_(eval_ptr)
       , post_(eval_ptr_)
-    {
-    }
+    {}
 
     /// @brief Evaluation on hierarchical nodes.
     SDD<C>
     operator()( const hierarchical_node<C>& node
-              , context<C>& cxt, const order<C>& o, const SDD<C>& s
+              , const order<C>& o, const SDD<C>& s
               , application_stack app, results_stack res
               , identifiers_iterator begin, identifiers_iterator end)
     const
@@ -378,19 +387,19 @@ private:
         for (const auto& arc : node)
         {
           // push on top of stacks
-          app = std::make_shared<application_stack_node>(arc.successor(), o.next(), app);
-          res = std::make_shared<results_stack_node>(res);
+          app = std::make_shared<application_stack_elt>(arc.successor(), o.next(), app);
+          res = std::make_shared<results_stack_elt>(res);
 
           const SDD<C> nested = apply_visitor( *this, arc.valuation()->data()
-                                             , cxt, o.nested(), arc.valuation(), app, res
+                                             , o.nested(), arc.valuation(), app, res
                                              , begin, end);
 
           assert(not res->result.empty() && "Invalid result");
           operands.add( SDD<C>(o.variable(), nested
-                      , dd::sum<C>(cxt.sdd_context(), std::move(res->result))));
+                      , dd::sum<C>(cxt_.sdd_context(), std::move(res->result))));
         }
 
-        return dd::sum<C>(cxt.sdd_context(), std::move(operands));
+        return dd::sum<C>(cxt_.sdd_context(), std::move(operands));
       }
 
       // Are there some values of interest in the current hierarchy?
@@ -407,18 +416,18 @@ private:
         for (const auto& arc : node)
         {
           // push on top of stacks
-          app = std::make_shared<application_stack_node>(arc.successor(), o.next(), app);
-          res = std::make_shared<results_stack_node>(res);
+          app = std::make_shared<application_stack_elt>(arc.successor(), o.next(), app);
+          res = std::make_shared<results_stack_elt>(res);
 
           const SDD<C> nested = apply_visitor( *this, arc.valuation()->data()
-                                             , cxt, o.nested(), arc.valuation(), app, res
+                                             , o.nested(), arc.valuation(), app, res
                                              , begin, end);
 
           assert(not res->result.empty() && "Invalid result");
-          su.add(dd::sum<C>(cxt.sdd_context(), std::move(res->result)), nested);
+          su.add(dd::sum<C>(cxt_.sdd_context(), std::move(res->result)), nested);
         }
 
-        return SDD<C>(o.variable(), su(cxt.sdd_context()));
+        return SDD<C>(o.variable(), su(cxt_.sdd_context()));
       }
 
       // We are not interested in this level, thus the visitor is propagated to the next level.
@@ -427,17 +436,17 @@ private:
       for (const auto& arc : node)
       {
         const SDD<C> successor = apply_visitor( *this, arc.successor()->data()
-                                              , cxt, o.next(), arc.successor(), app, res
+                                              , o.next(), arc.successor(), app, res
                                               , begin, end);
         su.add(successor, arc.valuation());
       }
-      return SDD<C>(o.variable(), su(cxt.sdd_context()));
+      return SDD<C>(o.variable(), su(cxt_.sdd_context()));
     }
 
     /// @brief Evaluation on flat nodes.
     SDD<C>
     operator()( const flat_node<C>& node
-              , context<C>& cxt, const order<C>& o, const SDD<C>& s
+              , const order<C>& o, const SDD<C>& s
               , application_stack app, results_stack res
               , identifiers_iterator begin, identifiers_iterator end)
     const
@@ -465,7 +474,6 @@ private:
         // The target of the expression is reached, a different visitor is needed.
 
         dd::sum_builder<C, SDD<C>> operands(node.size());
-
         for (const auto& arc : node)
         {
           update(arc.valuation());
@@ -474,7 +482,7 @@ private:
           operands.add(SDD<C>(o.variable(), std::move(valuation), arc.successor()));
         }
 
-        return dd::sum(cxt.sdd_context(), std::move(operands));
+        return dd::sum(cxt_.sdd_context(), std::move(operands));
       }
 
       if (o.same_hierarchy(o.identifier(), target_))
@@ -488,11 +496,11 @@ private:
         {
           update(arc.valuation());
           const SDD<C> next = apply_visitor( *this, arc.successor()->data()
-                                           , cxt, o.next(), arc.successor(), app, res, begin, end);
+                                           , o.next(), arc.successor(), app, res, begin, end);
           su.add(next, arc.valuation());
         }
 
-        return SDD<C>(o.variable(), su(cxt.sdd_context()));
+        return SDD<C>(o.variable(), su(cxt_.sdd_context()));
       }
 
       // Read-only, the identifier variable is above the target, but in a different hierarchy.
@@ -501,7 +509,7 @@ private:
       {
         update(arc.valuation());
         apply_visitor( *this, arc.successor()->data()
-                     , cxt, o.next(), arc.successor(), app, res, begin, end);
+                     , o.next(), arc.successor(), app, res, begin, end);
       }
       return s;
     }
@@ -509,7 +517,7 @@ private:
     /// @brief Evaluation on |1|.
     SDD<C>
     operator()( const one_terminal<C>&
-              , context<C>& cxt, const order<C>&, const SDD<C>& one
+              , const order<C>&, const SDD<C>& one
               , application_stack app, results_stack res
               , identifiers_iterator begin, identifiers_iterator end)
     const
@@ -520,7 +528,7 @@ private:
 
         // Still in a nested hierarchy.
         res->result.add(apply_visitor( *this, app->sdd->data()
-                                     , cxt, app->ord, app->sdd, app->next, res->next
+                                     , app->ord, app->sdd, app->next, res->next
                                      , begin, end));
       }
       return one;
@@ -529,7 +537,7 @@ private:
     /// @brief Evaluation on |0|.
     SDD<C>
     operator()( const zero_terminal<C>&
-              , context<C>&, const order<C>&, const SDD<C>&
+              , const order<C>&, const SDD<C>&
               , application_stack, results_stack
               , identifiers_iterator, identifiers_iterator)
     const noexcept
@@ -538,7 +546,7 @@ private:
       __builtin_unreachable();
     }
 
-  }; // struct pre
+  }; // struct pre_evaluation
 
 public:
 
@@ -573,8 +581,8 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    return apply_visitor( pre(target_, eval_ptr_), s->data()
-                        , cxt, o, s, nullptr, nullptr
+    return apply_visitor( pre_evaluation{cxt, target_, eval_ptr_}, s->data()
+                        , o, s, nullptr, nullptr
                         , identifiers_.cbegin(), identifiers_.cend());
   }
 
@@ -634,9 +642,9 @@ operator<<(std::ostream& os, const expression<C>& e)
 
 /// @brief Create the Expression homomorphism.
 /// @related homomorphism
-template <typename C, typename User, typename InputIterator>
+template <typename C, typename Evaluator, typename InputIterator>
 homomorphism<C>
-Expression( const order<C>& o, const User& u, InputIterator begin, InputIterator end
+Expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIterator end
           , const typename C::Identifier& target)
 {
   if (std::distance(begin, end) == 0)
@@ -649,11 +657,11 @@ Expression( const order<C>& o, const User& u, InputIterator begin, InputIterator
   std::sort( identifiers.begin(), identifiers.end()
            , [&](const identifier_type& lhs, const identifier_type& rhs)
                 {
-                  return o.compare(lhs, rhs);
+                  return o.compare(lhs, rhs); // use order to compare two identifiers
                 });
 
   return homomorphism<C>::create( mem::construct<hom::expression<C>>()
-                                , std::make_shared<hom::evaluator_derived<C, User>>(u)
+                                , std::make_shared<hom::evaluator_derived<C, Evaluator>>(u)
                                 , std::move(identifiers)
                                 , target);
 }
