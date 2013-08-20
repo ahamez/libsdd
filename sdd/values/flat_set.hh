@@ -105,17 +105,6 @@ public:
     return insertion;
   }
 
-  /// @brief Insert a value at a given position.
-  const_iterator
-  insert(const_iterator position, const Value& x)
-  {
-    data_type fs(ptr_->data());
-    const auto cit = fs.insert(position, x);
-    fs.shrink_to_fit();
-    ptr_ = create(std::move(fs));
-    return cit;
-  }
-
   /// @brief Get the beginning of this set of values.
   const_iterator
   begin()
