@@ -158,7 +158,7 @@ public:
     if (lhs_search == identifiers.end())
     {
       std::stringstream ss;
-      ss << "Identifier " << lhs << " not found";
+      ss << "order::compare: Identifier " << lhs << " not found";
       throw std::runtime_error(ss.str());
     }
 
@@ -166,7 +166,7 @@ public:
     if (rhs_search == identifiers.end())
     {
       std::stringstream ss;
-      ss << "Identifier " << rhs << " not found";
+      ss << "order::compare: Identifier " << rhs << " not found";
       throw std::runtime_error(ss.str());
     }
 
@@ -437,14 +437,14 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const order<C>& ord)
 {
-  std::function<std::ostream&(const order<C>&, unsigned int)> helper;
-  helper = [&helper, &os](const order<C>& o, unsigned int indent)
+  const std::function<std::ostream&(const order<C>&, unsigned int)> helper
+   = [&helper, &os](const order<C>& o, unsigned int indent)
   -> std::ostream&
   {
     if (not o.empty())
     {
       const std::string spaces(indent, ' ');
-      os << spaces << o.identifier()  << std::endl;
+      os << spaces << o.identifier() << std::endl;
       if (not o.nested().empty())
       {
         helper(o.nested(), indent + 2);

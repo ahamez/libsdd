@@ -286,8 +286,7 @@ public:
     , set_(size)
     , max_size_(set_.bucket_count())
     , stats_()
-  {
-  }
+  {}
 
   /// @brief Destructor.
   ~cache()
