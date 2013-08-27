@@ -150,6 +150,36 @@ TEST_F(top_test, sum)
 
 /*------------------------------------------------------------------------------------------------*/
 
+TEST_F(top_test, sum_different_node_types)
+{
+  SDD x('a', {0}, one);
+  SDD y('a', SDD('b', {0}, one), one);
+
+  ASSERT_THROW(x + y, sdd::top<conf>);
+  try
+  {
+    x + y;
+  }
+  catch(sdd::top<conf>& t)
+  {
+    ASSERT_NE(t.lhs(), t.rhs());
+    ASSERT_NE(nullptr, t.what());
+  }
+
+  ASSERT_THROW(y + x, sdd::top<conf>);
+  try
+  {
+    y + x;
+  }
+  catch(sdd::top<conf>& t)
+  {
+    ASSERT_NE(t.lhs(), t.rhs());
+    ASSERT_NE(nullptr, t.what());
+  }
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
 TEST_F(top_test, difference_terminal)
 {
   {
@@ -272,6 +302,37 @@ TEST_F(top_test, difference)
 
 /*------------------------------------------------------------------------------------------------*/
 
+TEST_F(top_test, difference_different_node_types)
+{
+
+  SDD x('a', {0}, one);
+  SDD y('a', SDD('b', {0}, one), one);
+
+  ASSERT_THROW(x - y, sdd::top<conf>);
+  try
+  {
+    x - y;
+  }
+  catch(sdd::top<conf>& t)
+  {
+    ASSERT_NE(t.lhs(), t.rhs());
+    ASSERT_NE(nullptr, t.what());
+  }
+
+  ASSERT_THROW(y - x, sdd::top<conf>);
+  try
+  {
+    y - x;
+  }
+  catch(sdd::top<conf>& t)
+  {
+    ASSERT_NE(t.lhs(), t.rhs());
+    ASSERT_NE(nullptr, t.what());
+  }
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
 TEST_F(top_test, intersection_terminal)
 {
   {
@@ -389,6 +450,37 @@ TEST_F(top_test, intersection)
       ASSERT_NE(t.lhs(), t.rhs());
       ASSERT_NE(nullptr, t.what());
     }
+  }
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+TEST_F(top_test, intersection_different_node_types)
+{
+
+  SDD x('a', {0}, one);
+  SDD y('a', SDD('b', {0}, one), one);
+
+  ASSERT_THROW(x & y, sdd::top<conf>);
+  try
+  {
+    x & y;
+  }
+  catch(sdd::top<conf>& t)
+  {
+    ASSERT_NE(t.lhs(), t.rhs());
+    ASSERT_NE(nullptr, t.what());
+  }
+
+  ASSERT_THROW(y & x, sdd::top<conf>);
+  try
+  {
+    y & x;
+  }
+  catch(sdd::top<conf>& t)
+  {
+    ASSERT_NE(t.lhs(), t.rhs());
+    ASSERT_NE(nullptr, t.what());
   }
 }
 

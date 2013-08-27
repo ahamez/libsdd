@@ -29,23 +29,19 @@ public:
   bitset()
   noexcept
   	: content_(0)
-  {
-  }
+  {}
 
   bitset(const bitset& b)
   noexcept
  	 : content_(b.content_)
-  {
-  }
+  {}
   
   bitset(const std::bitset<Size>& std_b)
   noexcept
  	 : content_(std_b)
-  {
-  }
+  {}
 
   bitset(std::initializer_list<std::size_t> values)
-  noexcept
     : content_(0)
   {
     for (auto v : values)

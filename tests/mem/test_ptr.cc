@@ -7,7 +7,7 @@ namespace sdd { namespace mem {
 
 struct unique
 {
-  mutable std::size_t ref_counter_;
+  std::size_t ref_counter_;
   const int data_;
 
   unique(int data)
@@ -18,14 +18,12 @@ struct unique
 
   void
   increment_reference_counter()
-  const
   {
     ++ref_counter_;
   }
   
   void
   decrement_reference_counter()
-  const
   {
     --ref_counter_;
   }
@@ -55,8 +53,8 @@ struct unique_table<unique>
   {
   }
 
-  const unique&
-  operator()(const unique& x)
+  unique&
+  operator()(unique& x)
   {
     return x;
   }

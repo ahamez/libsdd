@@ -11,7 +11,6 @@
 #include "sdd/hom/constant.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation.hh"
-#include "sdd/hom/expression.hh"
 #include "sdd/hom/fixpoint.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/inductive.hh"
@@ -37,20 +36,19 @@ class homomorphism final
 private:
 
   /// @brief A canonized homomorphism.
-  typedef mem::variant< const hom::composition<C>
-                      , const hom::cons<C, SDD<C>>
-                      , const hom::cons<C, typename C::Values>
-                      , const hom::constant<C>
-                      , const hom::expression<C>
-                      , const hom::fixpoint<C>
-                      , const hom::identity<C>
-                      , const hom::inductive<C>
-                      , const hom::intersection<C>
-                      , const hom::local<C>
-                      , const hom::saturation_fixpoint<C>
-                      , const hom::saturation_sum<C>
-                      , const hom::sum<C>
-                      , const hom::values_function<C>
+  typedef mem::variant< hom::composition<C>
+                      , hom::cons<C, SDD<C>>
+                      , hom::cons<C, typename C::Values>
+                      , hom::constant<C>
+                      , hom::fixpoint<C>
+                      , hom::identity<C>
+                      , hom::inductive<C>
+                      , hom::intersection<C>
+                      , hom::local<C>
+                      , hom::saturation_fixpoint<C>
+                      , hom::saturation_sum<C>
+                      , hom::sum<C>
+                      , hom::values_function<C>
                       >
           data_type;
 
@@ -82,17 +80,6 @@ public:
   /// @brief The identifier type.
   typedef typename C::Identifier identifier_type;
 
-  /// @brief Move constructor.
-  ///
-  /// O(1).
-  homomorphism(homomorphism&&) noexcept = default;
-
-  /// @brief Move operator.
-  ///
-  /// O(1).
-  homomorphism&
-  operator=(homomorphism&&) noexcept = default;
-
   /// @brief Copy constructor.
   ///
   /// O(1).
@@ -120,7 +107,7 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return apply_visitor(skip_helper(), ptr()->data(), o);
+    return visit(skip_helper(), *this, o);
   }
 
   /// @internal
@@ -129,7 +116,7 @@ public:
   selector()
   const noexcept
   {
-    return apply_visitor(selector_helper(), ptr()->data());
+    return visit(selector_helper(), *this);
   }
 
   /// @internal
@@ -172,18 +159,7 @@ public:
   homomorphism(const ptr_type& ptr)
   noexcept
     : ptr_(ptr)
-  {
-  }
-
-  /// @internal
-  /// @brief Construct an homomorphism from a moved ptr.
-  ///
-  /// O(1).
-  homomorphism(ptr_type&& ptr)
-  noexcept
-    : ptr_(std::move(ptr))
-  {
-  }
+  {}
 
   /// @internal
   /// @brief Apply this homomorphism on an SDD, in a given context.

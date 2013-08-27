@@ -120,7 +120,7 @@ struct fixpoint_builder_helper
   }
 
   homomorphism<C>
-  operator()(const fixpoint<C>& f, const homomorphism<C>& h)
+  operator()(const fixpoint<C>&, const homomorphism<C>& h)
   const noexcept
   {
     return h;
@@ -145,14 +145,9 @@ template <typename C>
 homomorphism<C>
 Fixpoint(const homomorphism<C>& h)
 {
-  if (h.selector())
-  {
-    return h;
-  }
-  else
-  {
-    return apply_visitor(hom::fixpoint_builder_helper<C>(), h->data(), h);
-  }
+  return h.selector()
+       ? h
+       : visit(hom::fixpoint_builder_helper<C>(), h, h);
 }
 
 /*------------------------------------------------------------------------------------------------*/

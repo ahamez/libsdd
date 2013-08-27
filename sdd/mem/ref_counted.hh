@@ -8,8 +8,6 @@
 #include <type_traits> // is_nothrow_constructible
 #include <utility>     // forward
 
-#include <boost/intrusive/unordered_set.hpp>
-
 #include "sdd/util/packed.hh"
 
 namespace sdd { namespace mem {
@@ -35,8 +33,6 @@ ref_counted
   // Can't move a ref_counted.
   ref_counted(ref_counted&&) = delete;
   ref_counted& operator=(ref_counted&&) = delete;
-  
-private:
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // The order is important here: data_ MUST be the last of all fields. This is necessary
@@ -44,13 +40,15 @@ private:
   // indirection, to avoid a pointer. Thus, the address of the alpha function is computed
   // knowing this is right after the node.
 
-  /// We choose a faster, unsafe mode.
-  typedef boost::intrusive::link_mode<boost::intrusive::normal_link> link_mode;
-  /// Used by Boost.Intrusive to manage the unicity table.
-  boost::intrusive::unordered_set_member_hook<link_mode> member_hook_;
+private:
 
-  /// The number of time the encapsulated data is referenced (reference-counting garbage collection)
-  mutable uint32_t ref_count_;
+  /// @brief Used by mem::hash_table to store some informations.
+  mem::intrusive_member_hook<ref_counted> hook;
+
+  /// @brief The number of time the encapsulated data is referenced
+  ///
+  /// Implements a reference-counting garbage collection.
+  std::uint32_t ref_count_;
 
   /// @brief The garbage collected data.
   ///
@@ -63,7 +61,7 @@ public:
   template <typename... Args>
   ref_counted(Args&&... args)
   noexcept(std::is_nothrow_constructible<T, Args...>::value)
-		: member_hook_()
+    : hook()
     , ref_count_(0)
     , data_(std::forward<Args>(args)...)
   {
@@ -108,18 +106,29 @@ public:
     return 0;
   }
 
+  /// @brief Tell if the unified data is no longer referenced.
+  bool
+  is_not_referenced()
+  const noexcept
+  {
+    return ref_count_ == 0;
+  }
+
 private:
 
-  /// A ptr should be able to access and modify the reference counter.
-  template <typename U> friend class ptr;
+  // A ptr should be able to access and modify the reference counter.
+  template <typename> friend class ptr;
 
-  /// The unicity table needs to access member_hook_.
-  template <typename U> friend class unique_table;
+  // hash_table_iterator needs to access the hook.
+  template <typename, typename> friend class hash_table_iterator;
+
+  // hash_table needs to access the hook.
+  template <typename, typename> friend class hash_table;
 
   /// @brief A ptr references that unified data.
   void
   increment_reference_counter()
-  const noexcept
+  noexcept
   {
     assert(ref_count_ < std::numeric_limits<uint32_t>::max());
     ++ref_count_;
@@ -128,18 +137,10 @@ private:
   /// @brief A ptr no longer references that unified data.
   void
   decrement_reference_counter()
-  const noexcept
+  noexcept
   {
     assert(ref_count_ > 0);
     --ref_count_;
-  }
-
-  /// @brief Tell if the unified data is no longer referenced.
-  bool
-  is_not_referenced()
-  const noexcept
-  {
-    return ref_count_ == 0;
   }
 };
 

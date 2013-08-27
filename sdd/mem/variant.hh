@@ -218,7 +218,59 @@ operator<<(std::ostream& os, const variant<Types...>& v)
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::mem
+} // namespace mem
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @brief
+/// @related variant
+template <typename Visitor, typename X, typename... Args>
+inline
+typename Visitor::result_type
+visit(const Visitor& v, const X& x, Args&&... args)
+{
+  return apply_visitor(v, x->data(), std::forward<Args>(args)...);
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @brief
+/// @related variant
+template <typename Visitor, typename X, typename... Args>
+inline
+typename Visitor::result_type
+visit_self(const Visitor& v, const X& x, Args&&... args)
+{
+  return apply_visitor(v, x->data(), x, std::forward<Args>(args)...);
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @brief
+/// @related variant
+template <typename Visitor, typename X, typename Y, typename... Args>
+inline
+typename Visitor::result_type
+binary_visit(const Visitor& v, const X& x, const Y& y, Args&&... args)
+{
+  return apply_binary_visitor(v, x->data(), y->data(), std::forward<Args>(args)...);
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @brief
+/// @related variant
+template <typename Visitor, typename X, typename Y, typename... Args>
+inline
+typename Visitor::result_type
+binary_visit_self(const Visitor& v, const X& x, const Y& y, Args&&... args)
+{
+  return apply_binary_visitor(v, x->data(), y->data(), x, y, std::forward<Args>(args)...);
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+} // namespace sdd
 
 namespace std {
 

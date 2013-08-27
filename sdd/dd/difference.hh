@@ -31,30 +31,22 @@ struct difference_visitor
   /// @brief The evaluation context.
   context<C>& cxt_;
 
-  /// @brief We store the left operand in case we need to throw a top.
-  const SDD<C> lhs_;
-
-  /// @brief We store the right operand in case we need to throw a top.
-  const SDD<C> rhs_;
-
-  difference_visitor(context<C>& cxt, const SDD<C>& lhs, const SDD<C>& rhs)
+  difference_visitor(context<C>& cxt)
   noexcept
   	: cxt_(cxt)
-    , lhs_(lhs)
-    , rhs_(rhs)
-  {
-  }
+  {}
 
   /// @brief Perform the difference operation.
   template <typename Valuation>
   SDD<C>
-  operator()(const node<C, Valuation>& lhs, const node<C, Valuation>& rhs)
+  operator()( const node<C, Valuation>& lhs, const node<C, Valuation>& rhs
+            , const SDD<C>& lhs_orig, const SDD<C>& rhs_orig)
   const
   {
     // Check if both operands are compatible.
     if (not (lhs.variable() == rhs.variable()))
     {
-      throw top<C>(lhs_, rhs_);
+      throw top<C>(lhs_orig, rhs_orig);
     }
 
     // Compute union of all rhs valuations.
@@ -109,7 +101,7 @@ struct difference_visitor
 
   /// @brief Always an error, difference with |0| as an operand is not cached.
   SDD<C>
-  operator()(const zero_terminal<C>&, const zero_terminal<C>&)
+  operator()(const zero_terminal<C>&, const zero_terminal<C>&, const SDD<C>&, const SDD<C>&)
   const noexcept
   {
     assert(false && "SDD difference: |0| in cache.");
@@ -118,7 +110,7 @@ struct difference_visitor
 
   /// @brief Always an error, difference with |1| as an operand is not cached.
   SDD<C>
-  operator()(const one_terminal<C>&, const one_terminal<C>&)
+  operator()(const one_terminal<C>&, const one_terminal<C>&, const SDD<C>&, const SDD<C>&)
   const noexcept
   {
     assert(false && "SDD difference: |1| in cache.");
@@ -129,10 +121,10 @@ struct difference_visitor
   template <typename T, typename U>
   __attribute__((noreturn))
   SDD<C>
-  operator()(const T&, const U&)
+  operator()(const T&, const U&, const SDD<C>& lhs_orig, const SDD<C>& rhs_orig)
   const
   {
-    throw top<C>(lhs_, rhs_);
+    throw top<C>(lhs_orig, rhs_orig);
   }
 };
 
@@ -156,8 +148,7 @@ struct difference_op
   difference_op(const SDD<C>& l, const SDD<C>& r)
   	: lhs(l)
 		, rhs(r)
-  {
-  }
+  {}
 
   /// @brief Apply this operation.
   ///
@@ -166,7 +157,7 @@ struct difference_op
   operator()(context<C>& cxt)
   const
   {
-    return apply_binary_visitor(difference_visitor<C>(cxt, lhs, rhs), lhs->data(), rhs->data());
+    return binary_visit_self(difference_visitor<C>(cxt), lhs, rhs);
   }
 };
 

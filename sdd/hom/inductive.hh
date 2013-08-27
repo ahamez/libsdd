@@ -260,9 +260,19 @@ private:
   {
     typedef SDD<C> result_type;
 
+    context<C>& cxt_;
+    const order<C>& order_;
+    const SDD<C> sdd_;
+
+    helper(context<C>& c, const order<C>& o, const SDD<C>& s)
+    noexcept
+      : cxt_(c)
+      , order_(o)
+      , sdd_(s)
+    {}
+
     SDD<C>
-    operator()( const zero_terminal<C>&
-              , const inductive_base<C>&, context<C>&, const SDD<C>&, const order<C>&)
+    operator()(const zero_terminal<C>&, const inductive_base<C>&)
     const noexcept
     {
       assert(false);
@@ -270,8 +280,7 @@ private:
     }
 
     SDD<C>
-    operator()( const one_terminal<C>& one
-              , const inductive_base<C>& i, context<C>&, const SDD<C>&, const order<C>&)
+    operator()(const one_terminal<C>& one, const inductive_base<C>& i)
     const
     {
       return i(one);
@@ -279,25 +288,23 @@ private:
 
     template <typename Node>
     SDD<C>
-    operator()( const Node& node
-              , const inductive_base<C>& i, context<C>& cxt, const SDD<C>& s
-              , const order<C>& o)
+    operator()(const Node& node, const inductive_base<C>& i)
     const
     {
       dd::sum_builder<C, SDD<C>> sum_operands(node.size());
       for (const auto& arc : node)
       {
-        const homomorphism<C> next_hom = i(o, arc.valuation());
-        sum_operands.add(next_hom(cxt, o.next(), arc.successor()));
+        const homomorphism<C> next_hom = i(order_, arc.valuation());
+        sum_operands.add(next_hom(cxt_, order_.next(), arc.successor()));
       }
 
       try
       {
-        return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+        return dd::sum(cxt_.sdd_context(), std::move(sum_operands));
       }
       catch (top<C>& t)
       {
-        evaluation_error<C> e(s);
+        evaluation_error<C> e(sdd_);
         e.add_top(t);
         throw e;
       }
@@ -309,15 +316,14 @@ public:
   /// @brief Constructor.
   inductive(const inductive_base<C>* i_ptr)
     : hom_ptr_(i_ptr)
-  {
-  }
+  {}
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
+  operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    return apply_visitor(helper(), x->data(), *hom_ptr_, cxt, x, o);
+    return visit(helper{cxt, o, s}, s, *hom_ptr_);
   }
 
   /// @brief Skip predicate.

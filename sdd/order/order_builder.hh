@@ -54,8 +54,7 @@ private:
       : identifier(std::move(id))
       , nested(nst)
       , next(nxt)
-    {
-    }
+    {}
   };
 
   /// @brief The concrete order.
@@ -66,8 +65,7 @@ public:
   /// @brief Default constructor.
   order_builder()
     : order_ptr_(nullptr)
-  {
-  }
+  {}
 
   /// @brief Constructor from a list of identifiers.
   template <typename InputIterator>
@@ -84,8 +82,7 @@ public:
   /// @brief Constructor from a list of identifiers.
   order_builder(std::initializer_list<identifier_type> list)
     : order_builder(list.begin(), list.end())
-  {
-  }
+  {}
 
   /// @brief Tell if this order is empty.
   ///
@@ -154,8 +151,7 @@ private:
   /// @brief Constructor from an already existing pointer.
   order_builder(const node_ptr& ptr)
     : order_ptr_(ptr)
-  {
-  }
+  {}
 
   /// @brief Actual implementation of add.
   order_builder&

@@ -4,7 +4,8 @@
 #include <cassert>
 
 #include <boost/container/flat_map.hpp>
-#include <boost/intrusive/unordered_set.hpp>
+
+#include "sdd/mem/hash_table.hh"
 
 namespace sdd { namespace mem {
 
@@ -19,44 +20,37 @@ class unique_table
   unique_table(const unique_table&) = delete;
   unique_table& operator=(const unique_table&) = delete;
 
+public:
+
+  /// @brief Some statistics.
+  struct statistics
+  {
+    /// @brief The actual number of unified elements.
+    std::size_t size;
+
+    /// @brief The actual load factor.
+    double load_factor;
+
+    /// @brief The total number of access.
+    std::size_t access;
+
+    /// @brief The number of hits.
+    std::size_t hit;
+
+    /// @brief The number of misses.
+    std::size_t miss;
+
+    /// @brief The number of rehash.
+    std::size_t rehash;
+  };
+
 private:
 
-  /// @brief We choose a faster, unsafe mode.
-  typedef boost::intrusive::link_mode<boost::intrusive::normal_link> link_mode;
-
-  /// @brief Tell Boost.Intrusive how to access to the member hook.
-  typedef boost::intrusive::member_hook< Unique
-                                       , boost::intrusive::unordered_set_member_hook<link_mode>
-                                       , &Unique::member_hook_>
-          member_hook;
-
-  /// @brief Tell Boost.Intrusive we want to use the standard hash mechanism.
-  typedef boost::intrusive::hash<std::hash<Unique>> hash_option;
-
-  /// @brief The type of the set that helps to unify data.
-  typedef typename boost::intrusive::make_unordered_set<Unique, member_hook, hash_option>::type
-          set_type;
-
-  /// @brief A type needed by Boost.Intrusive.
-  typedef typename set_type::bucket_type bucket_type;
-
-  /// @brief A type needed by Boost.Intrusive.
-  typedef typename set_type::bucket_traits bucket_traits;
-
-  /// @brief The buckets needed by Boost.Intrusive.
-  bucket_type* buckets_;
-
   /// @brief The actual container of unified data.
-  set_type* set_;
+  mem::hash_table<Unique> set_;
 
-  /// @brief The number of hits.
-  std::size_t hit_;
-
-  /// @brief The number of misses.
-  std::size_t miss_;
-
-  /// @brief The number of rehash.
-  std::size_t rehash_;
+  /// @brief The statistics of this unique_table.
+  mutable statistics stats_;
 
   /// The number of re-usable memory blocks to keep.
   static constexpr std::size_t nb_blocks = 4096;
@@ -69,9 +63,8 @@ public:
   /// @brief Constructor.
   /// @param initial_size Initial capacity of the container.
   unique_table(std::size_t initial_size)
-  	: buckets_(new bucket_type[set_type::suggested_upper_bucket_count(initial_size)])
-    , set_(new set_type(bucket_traits( buckets_
-                                     , set_type::suggested_upper_bucket_count(initial_size))))
+    : set_(initial_size)
+    , stats_()
     , blocks_()
   {
     blocks_.reserve(nb_blocks);
@@ -80,8 +73,6 @@ public:
   /// @brief Destructor.
   ~unique_table()
   {
-    delete set_;
-    delete[] buckets_;
     for (auto& b : blocks_)
     {
       delete[] b.second;
@@ -92,20 +83,17 @@ public:
   /// @param ptr A pointer to a data constructed with a placement new into the storage returned by
   /// allocate().
   /// @return A reference to the unified data.
-  const Unique&
+  Unique&
   operator()(Unique* ptr)
   {
-    if (load_factor() >= 0.9)
-    {
-      rehash();
-    }
+    ++stats_.access;
 
-    auto insertion = set_->insert(*ptr);
+    auto insertion = set_.insert(*ptr);
     if (not insertion.second)
     {
       // The inserted Unique already exists. We keep its allocated memory to avoid deallocating
       // memory each time there is a hit.
-      ++hit_;
+      ++stats_.hit;
       const std::size_t size = sizeof(Unique) + ptr->extra_bytes();
       ptr->~Unique();
       if (blocks_.size() == nb_blocks)
@@ -119,7 +107,7 @@ public:
     }
     else
     {
-      ++miss_;
+      ++stats_.miss;
     }
     return *insertion.first;
   }
@@ -151,7 +139,10 @@ public:
   noexcept
   {
     assert(x.is_not_referenced() && "Unique still referenced");
-    set_->erase_and_dispose(x, [](const Unique* ptr){delete ptr;});
+    const auto cit = set_.find(x);
+    assert(cit != set_.end() && "Unique not found");
+    set_.erase(cit);
+    delete &x;
   }
 
   /// @brief Get the load factor of the internal hash table.
@@ -159,29 +150,17 @@ public:
   load_factor()
   const noexcept
   {
-    return static_cast<double>(set_->size()) / static_cast<double>(set_->bucket_count());
+    return static_cast<double>(set_.size()) / static_cast<double>(set_.bucket_count());
   }
 
-  /// @brief Get the number of unified elements.
-  std::size_t
-  size()
+  /// @brief Get the statistics of this unique_table.
+  statistics
+  stats()
   const noexcept
   {
-    return set_->size();
-  }
-
-private:
-
-  /// @brief Rehash the internal hash table.
-  void
-  rehash()
-  {
-    ++rehash_;
-    const std::size_t new_size = set_type::suggested_upper_bucket_count(set_->bucket_count() * 2);
-    bucket_type* new_buckets = new bucket_type[new_size];
-    set_->rehash(bucket_traits(new_buckets, new_size));
-    delete[] buckets_;
-    buckets_ = new_buckets;
+    stats_.size = set_.size();
+    stats_.load_factor = load_factor();
+    return stats_;
   }
 };
 

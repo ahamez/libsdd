@@ -10,8 +10,7 @@
 #include <utility>   // forward
 #include <vector>
 
-#include <boost/intrusive/unordered_set.hpp>
-
+#include "sdd/mem/hash_table.hh"
 #include "sdd/util/packed.hh"
 
 namespace sdd { namespace mem {
@@ -146,9 +145,6 @@ private:
   /// @brief The type of the result of an operation stored in the cache.
   typedef typename Operation::result_type result_type;
 
-  /// @brief Faster, unsafe mode for Boost.Intrusive.
-  typedef boost::intrusive::link_mode<boost::intrusive::normal_link> link_mode;
-
   /// @brief Associate an operation to its result into the cache.
   ///
   /// The operation acts as a key and the associated result is the value counterpart.
@@ -157,11 +153,13 @@ private:
   LIBSDD_ATTRIBUTE_PACKED
 #endif
   cache_entry
-    : public boost::intrusive::unordered_set_base_hook<link_mode>
   {
     // Can't copy a cache_entry.
     cache_entry(const cache_entry&) = delete;
     cache_entry& operator=(const cache_entry&) = delete;
+
+    /// @brief
+    mem::intrusive_member_hook<cache_entry> hook;
 
     /// @brief The cached operation.
     const Operation operation;
@@ -180,7 +178,8 @@ private:
     /// @brief Constructor.
     template <typename... Args>
     cache_entry(Operation&& op, Args&&... args)
-      : operation(std::move(op))
+      : hook()
+      , operation(std::move(op))
       , result(std::forward<Args>(args)...)
       , nb_hits_(in_use_mask) // initially in use
     {
@@ -258,26 +257,14 @@ private:
   /// @brief The wanted load factor.
   double max_load_factor_;
 
-  /// @brief The maximum size this cache is authorized to grow to.
-  std::size_t max_size_;
-
-  /// @brief We use Boost.Intrusive to store the cache entries.
-  typedef typename boost::intrusive::make_unordered_set< cache_entry
-                                                       , boost::intrusive::hash<hash_key>
-                                                       >::type
-          set_type;
-
-  /// @brief Needed to use Boost.Intrusive.
-  typedef typename set_type::bucket_type bucket_type;
-
-  /// @brief Needed to use Boost.Intrusive.
-  typedef typename set_type::bucket_traits bucket_traits;
-
-  /// @brief Boost.Intrusive requires us to manage ourselves its buckets.
-  bucket_type* buckets_;
+  /// @brief An intrusive hash table.
+  typedef mem::hash_table<cache_entry, hash_key> set_type;
 
   /// @brief The actual storage of caches entries.
-  set_type* set_;
+  set_type set_;
+
+  /// @brief The maximum size this cache is authorized to grow to.
+  std::size_t max_size_;
 
   /// @brief The statistics of this cache.
   cache_statistics stats_;
@@ -295,20 +282,16 @@ public:
   cache(context_type& context, const std::string& name, std::size_t size)
     : cxt_(context)
     , name_(name)
-    , max_load_factor_(0.85)
-    , max_size_(set_type::suggested_upper_bucket_count(size))
-    , buckets_(new bucket_type[max_size_])
-    , set_(new set_type(bucket_traits(buckets_, max_size_)))
+    , max_load_factor_(0.9)
+    , set_(size)
+    , max_size_(set_.bucket_count())
     , stats_()
-  {
-  }
+  {}
 
   /// @brief Destructor.
   ~cache()
   {
     clear();
-    delete set_;
-    delete[] buckets_;
   }
 
   /// @brief Cache lookup.
@@ -333,11 +316,11 @@ public:
 
     // Lookup for op.
     typename set_type::insert_commit_data commit_data;
-    auto insertion = set_->insert_check( op
-                                       , std::hash<Operation>()
-                                       , [](const Operation& lhs, const cache_entry& rhs)
-                                           {return lhs == rhs.operation;}
-                                       , commit_data);
+    auto insertion = set_.insert_check( op
+                                      , std::hash<Operation>()
+                                      , [](const Operation& lhs, const cache_entry& rhs)
+                                          {return lhs == rhs.operation;}
+                                      , commit_data);
 
     // Check if op has already been computed.
     if (not insertion.second)
@@ -357,7 +340,7 @@ public:
       cache_entry* entry = new cache_entry(std::move(op), op(cxt_));
       // A cache entry is constructed with the 'in use' bit set.
       entry->reset_in_use();
-      set_->insert_commit(*entry, commit_data); // doesn't throw
+      set_.insert_commit(*entry, commit_data); // doesn't throw
       return entry->result;
     }
     catch (EvaluationError& e)
@@ -373,7 +356,7 @@ public:
   load_factor()
   const noexcept
   {
-    return static_cast<double>(set_->size()) / static_cast<double>(max_size_);
+    return static_cast<double>(set_.size()) / static_cast<double>(max_size_);
   }
 
   /// @brief Remove half of the cache (LFU strategy).
@@ -385,16 +368,13 @@ public:
       return;
     }
 
-    typedef typename set_type::iterator iterator;
-
     stats_.rounds.emplace_front(cache_statistics::round());
 
-    std::vector<iterator> vec;
-    vec.reserve(set_->size());
-
-    for (auto cit = set_->begin(); cit != set_->end(); ++cit)
+    std::vector<cache_entry*> vec;
+    vec.reserve(set_.size());
+    for (auto& e : set_)
     {
-      vec.push_back(cit);
+      vec.push_back(&e);
     }
 
     // Compute the number of elements to keep in order to reduce the load factor by a factor of 2.
@@ -403,7 +383,7 @@ public:
 
     // Find the median of the number of hits.
     std::nth_element( vec.begin(), vec.begin() + cut_point, vec.end()
-                    , [](iterator lhs, iterator rhs)
+                    , [](cache_entry* lhs, cache_entry* rhs)
                         {
                           // We sort using the raw nb_hits counter, with the 'in use' bit possibly
                           // set. As this is the highest bit, the value of nb_hits may be large.
@@ -414,18 +394,21 @@ public:
 
     // Delete all cache entries with a number of entries smaller than the median.
     std::for_each( vec.begin(), vec.begin() + cut_point
-                 , [&](iterator cit)
+                 , [&](cache_entry* e)
                       {
-                        if (not cit->in_use())
+                        if (not e->in_use())
                         {
-                          const cache_entry* x = &*cit;
-                          set_->erase(cit);
-                          delete x;
+                          const auto cit = set_.find(*e);
+                          if (cit != set_.end())
+                          {
+                            set_.erase(cit);
+                            delete e;
+                          }
                         }
                       });
 
     // Reset the number of hits of all remaining cache entries.
-    std::for_each(vec.begin() + cut_point, vec.end(), [](iterator it){it->reset_nb_hits();});
+    std::for_each(vec.begin() + cut_point, vec.end(), [](cache_entry* e){e->reset_nb_hits();});
   }
 
   /// @brief Remove all entries of the cache.
@@ -433,7 +416,7 @@ public:
   clear()
   noexcept
   {
-    set_->clear_and_dispose([](cache_entry* x){delete x;});
+    set_.clear_and_dispose([](cache_entry* x){delete x;});
   }
 
   /// @brief Get the number of cached operations.
@@ -441,7 +424,7 @@ public:
   size()
   const noexcept
   {
-    return set_->size();
+    return set_.size();
   }
 
   /// @brief Get the statistics of this cache.

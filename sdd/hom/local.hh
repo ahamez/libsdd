@@ -47,43 +47,50 @@ public:
     /// @brief Used by variant.
     typedef SDD<C> result_type;
 
+    context<C>& cxt_;
+    const order<C>& order_;
+    const homomorphism<C> h_;
+    const SDD<C> sdd_; // needed if an evaluation_error is throwed
+
+    evaluation(context<C>& cxt, const order<C>& o, const homomorphism<C>& h, const SDD<C>& s)
+      : cxt_(cxt), order_(o), h_(h), sdd_(s)
+    {}
+
     /// @brief Hierarchical nodes case.
     SDD<C>
-    operator()( const hierarchical_node<C>& node
-              , context<C>& cxt, const order<C>& o
-              , const homomorphism<C>& h, const SDD<C>& s)
+    operator()(const hierarchical_node<C>& node)
     const
     {
       try
       {
-        if (h.selector()) // partition won't change
+        if (h_.selector()) // partition won't change
         {
           dd::square_union<C, SDD<C>> su;
           su.reserve(node.size());
           for (const auto& arc : node)
           {
-            const SDD<C> new_valuation = h(cxt, o.nested(), arc.valuation());
+            const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
             if (not new_valuation.empty())
             {
               su.add(arc.successor(), new_valuation);
             }
           }
-          return {node.variable(), su(cxt.sdd_context())};
+          return {node.variable(), su(cxt_.sdd_context())};
         }
         else // partition will change
         {
           dd::sum_builder<C, SDD<C>> sum_operands(node.size());
           for (const auto& arc : node)
           {
-            const SDD<C> new_valuation = h(cxt, o.nested(), arc.valuation());
+            const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
             sum_operands.add(SDD<C>(node.variable(), new_valuation, arc.successor()));
           }
-          return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+          return dd::sum(cxt_.sdd_context(), std::move(sum_operands));
         }
       }
       catch (top<C>& t)
       {
-        evaluation_error<C> e(s);
+        evaluation_error<C> e(sdd_);
         e.add_top(t);
         throw e;
       }
@@ -92,11 +99,10 @@ public:
     /// @brief Error case: Local only applies on hierarchical nodes.
     template <typename T>
     SDD<C>
-    operator()( const T&, context<C>&, const order<C>&
-              , const homomorphism<C>&, const SDD<C> s)
+    operator()(const T&)
     const
     {
-      throw evaluation_error<C>(s);
+      throw evaluation_error<C>(sdd_);
     }
   };
 
@@ -105,7 +111,7 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    return apply_visitor(evaluation(), s->data(), cxt, o, h_, s);
+    return visit(evaluation{cxt, o, h_, s}, s);
   }
 
   /// @brief Skip predicate.

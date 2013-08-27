@@ -32,8 +32,7 @@ public:
   /// @brief Destructor.
   virtual
   ~values_function_base()
-  {
-  }
+  {}
 
   /// @brief Tell if the user's function is a selector.
   virtual
@@ -85,14 +84,12 @@ public:
   /// @brief Constructor.
   values_function_derived(const User& f)
     : fun_(f)
-  {
-  }
+  {}
 
   /// @brief Constructor.
   values_function_derived(User&& f)
     : fun_(std::move(f))
-  {
-  }
+  {}
 
   /// @brief Tell if the user's function is a selector.
   bool
@@ -117,8 +114,7 @@ public:
   {
     return typeid(*this) == typeid(other)
          ? fun_ == reinterpret_cast<const values_function_derived&>(other).fun_
-         : false
-         ;
+         : false;
   }
 
   /// @brief Get the user's function hash value.
@@ -194,8 +190,8 @@ private:
     typedef SDD<C> result_type;
 
     SDD<C>
-    operator()( const zero_terminal<C>&
-              , const values_function_base<C>&, context<C>&, const SDD<C>&, const order<C>&)
+    operator()( const zero_terminal<C>&, const SDD<C>&
+              , const values_function_base<C>&, context<C>&, const order<C>&)
     const noexcept
     {
       assert(false);
@@ -203,26 +199,24 @@ private:
     }
 
     SDD<C>
-    operator()( const one_terminal<C>&
-              , const values_function_base<C>&, context<C>&, const SDD<C>&, const order<C>&)
+    operator()( const one_terminal<C>&, const SDD<C>&
+              , const values_function_base<C>&, context<C>&, const order<C>&)
     const
     {
       return one<C>();
     }
 
     SDD<C>
-    operator()( const hierarchical_node<C>& node
-              , const values_function_base<C>&, context<C>&, const SDD<C>& s
-              , const order<C>&)
+    operator()( const hierarchical_node<C>&, const SDD<C>& s
+              , const values_function_base<C>&, context<C>&, const order<C>&)
     const
     {
       throw evaluation_error<C>(s);
     }
 
     SDD<C>
-    operator()( const flat_node<C>& node
-              , const values_function_base<C>& fun, context<C>& cxt, const SDD<C>& s
-              , const order<C>& o)
+    operator()( const flat_node<C>& node, const SDD<C>& s
+              , const values_function_base<C>& fun, context<C>& cxt, const order<C>& o)
     const
     {
       if (fun.selector())
@@ -266,8 +260,7 @@ public:
   values_function(const identifier_type& id, const values_function_base<C>* f_ptr)
     : identifier_(id)
     , fun_ptr_(f_ptr)
-  {
-  }
+  {}
 
   /// @brief Skip variable predicate.
   bool
@@ -290,7 +283,7 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
-    return apply_visitor(helper(), x->data(), *fun_ptr_, cxt, x, o);
+    return visit_self(helper(), x, *fun_ptr_, cxt, o);
   }
 
   /// @brief Get the variable on which the user's function is applied.

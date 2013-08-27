@@ -70,8 +70,7 @@ private:
   ///
   /// This is the real recursive definition of an SDD: it can be a |0| or |1| terminal, or it
   /// can be a flat or an hierachical node.
-  typedef mem::variant< const zero_terminal<C>, const one_terminal<C>
-                      , const flat_node<C>, const hierarchical_node<C>>
+  typedef mem::variant<zero_terminal<C>, one_terminal<C>, flat_node<C>,hierarchical_node<C>>
           data_type;
 
 public:
@@ -105,17 +104,6 @@ private:
 
 public:
 
-  /// @brief Move constructor.
-  ///
-  /// O(1).
-  SDD(SDD&&) noexcept = default;
-
-  /// @brief Move operator.
-  ///
-  /// O(1).
-  SDD&
-  operator=(SDD&&) noexcept = default;
-
   /// @brief Copy constructor.
   ///
   /// O(1).
@@ -136,8 +124,7 @@ public:
   /// set of values depends on values_type.
   SDD(const variable_type& var, std::initializer_list<value_type> values, const SDD& succ)
     : ptr_(create_node(var, values_type(values), SDD(succ)))
-  {
-  }
+  {}
 
   /// @brief Construct a flat SDD.
   /// @param var  The SDD's variable.
@@ -147,8 +134,7 @@ public:
   /// O(1).
   SDD(const variable_type& var, values_type&& val, const SDD& succ)
     : ptr_(create_node(var, std::move(val), succ))
-  {
-  }
+  {}
 
   /// @brief Construct a flat SDD.
   /// @param var  The SDD's variable.
@@ -158,8 +144,7 @@ public:
   /// O(1).
   SDD(const variable_type& var, const values_type& val, const SDD& succ)
     : ptr_(create_node(var, val, succ))
-  {
-  }
+  {}
 
   /// @brief Construct a hierarchical SDD.
   /// @param var  The SDD's variable.
@@ -169,8 +154,7 @@ public:
   /// O(1).
   SDD(const variable_type& var, const SDD& val, const SDD& succ)
     : ptr_(create_node(var, val, succ))
-  {
-  }
+  {}
 
   /// @brief Construct an SDD with an order.
   template <typename Initializer>
@@ -222,18 +206,7 @@ public:
   SDD(const ptr_type& ptr)
   noexcept
     : ptr_(ptr)
-  {
-  }
-
-  /// @internal
-  /// @brief Construct an SDD from a moved ptr.
-  ///
-  /// O(1).
-  SDD(ptr_type&& ptr)
-  noexcept
-    : ptr_(std::move(ptr))
-  {
-  }
+  {}
 
   /// @internal
   /// @brief  Construct an SDD, flat or hierarchical, with an alpha.
@@ -244,8 +217,7 @@ public:
   template <typename Valuation>
   SDD(const variable_type& var, dd::alpha_builder<C, Valuation>&& builder)
     : ptr_(create_node(var, std::move(builder)))
-  {
-  }
+  {}
 
   /// @internal
   /// @brief Get the content of the SDD (an mem::ref_counted).
@@ -371,7 +343,7 @@ private:
   /// O(n) where n is the number of arcs in the builder.
   template <typename Valuation>
   static
-  const unique_type&
+  unique_type&
   unify_node(const variable_type& var, dd::alpha_builder<C, Valuation>&& builder)
   {
     // Will be erased by the unicity table, either it's an already existing node or a deletion

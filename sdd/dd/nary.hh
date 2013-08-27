@@ -157,18 +157,18 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_op
     node_tag tag = node_tag::flat;
     for (; cit != last; ++cit)
     {
-      tag = apply_binary_visitor( check_visitor<C>()
-                                , (*cit)->data(), (*(cit + 1))->data()
-                                , *cit, *(cit + 1));
+      tag = binary_visit_self(check_visitor<C>(), *cit, *(cit + 1));
     }
 
     if (tag == node_tag::flat)
     {
-      return Operation::template work<const_iterator, node_tag::flat>(begin(), end(), cxt);
+      typedef typename node_for_tag<C, node_tag::flat>::type node_type;
+      return Operation::template work<const_iterator, node_type>(begin(), end(), cxt);
     }
     else
     {
-      return Operation::template work<const_iterator, node_tag::hierarchical>(begin(), end(), cxt);
+      typedef typename node_for_tag<C, node_tag::hierarchical>::type node_type;
+      return Operation::template work<const_iterator, node_type>(begin(), end(), cxt);
     }
   }
 };
@@ -225,8 +225,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
   nary_builder()
     : builder_()
     , set_()
-  {
-  }
+  {}
 
   /// @brief Construction with a reserve request.
   nary_builder(std::size_t size)
