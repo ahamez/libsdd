@@ -12,6 +12,7 @@
 #include "sdd/hom/saturation_fixpoint.hh"
 #include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
+#include "sdd/hom/visit.hh"
 
 namespace sdd {
 
@@ -106,7 +107,7 @@ struct rewriter
       {
         F.push_back(*begin);
       }
-      else if (apply_visitor(is_local{}, (*begin)->data()))
+      else if (visit(is_local{}, *begin))
       {
         const local<C>& l = mem::variant_cast<const local<C>>((*begin)->data());
         L.push_back(l.hom());
@@ -158,7 +159,7 @@ struct rewriter
   operator()(const fixpoint<C>& f, const homomorphism<C>& h, const order<C>& o)
   const
   {
-    if (not apply_visitor(is_sum{}, f.hom()->data()))
+    if (not visit(is_sum{}, f.hom()))
     {
       return h;
     }
@@ -222,7 +223,7 @@ rewrite(const homomorphism<C>& h, const order<C>& o)
   }
   else
   {
-    return apply_visitor(hom::rewriter<C>(), h->data(), h, o);
+    return visit(hom::rewriter<C>(), h, h, o);
   }
 }
 

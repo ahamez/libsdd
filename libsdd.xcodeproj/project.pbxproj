@@ -102,6 +102,7 @@
 		2B1182F6172AF7A7006CC0B0 /* test_ptr.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_ptr.cc; sourceTree = "<group>"; };
 		2B1182F7172AF7A7006CC0B0 /* test_unique_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_unique_table.cc; sourceTree = "<group>"; };
 		2B1182F8172AF7A7006CC0B0 /* test_variant.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_variant.cc; sourceTree = "<group>"; };
+		2B16986B17CC97F600F96C51 /* visit.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = visit.hh; sourceTree = "<group>"; };
 		2B19AF0615C5D75800C4ABB0 /* paths.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; path = paths.hh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		2B19AF0815C5E3CD00C4ABB0 /* test_paths.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_paths.cc; sourceTree = "<group>"; };
 		2B1A26941619BDB1005D6BB0 /* definition.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = definition.hh; sourceTree = "<group>"; };
@@ -299,6 +300,7 @@
 				2B4C609C16232FBA0065D7F3 /* saturation_sum.hh */,
 				2B1A26971619BEF1005D6BB0 /* sum.hh */,
 				2BCB2533163AF7D0002452D6 /* values_function.hh */,
+				2B16986B17CC97F600F96C51 /* visit.hh */,
 			);
 			path = hom;
 			sourceTree = "<group>";

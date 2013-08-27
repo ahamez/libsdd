@@ -9,6 +9,7 @@
 
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/top.hh"
+#include "sdd/dd/visit.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
@@ -287,7 +288,7 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
-    return apply_visitor(helper(), x->data(), *fun_ptr_, cxt, x, o);
+    return visit(helper(), x, *fun_ptr_, cxt, x, o);
   }
 
   /// @brief Get the variable on which the user's function is applied.

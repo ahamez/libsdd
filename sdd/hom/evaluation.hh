@@ -5,6 +5,7 @@
 #include <iosfwd>
 
 #include "sdd/hom/context_fwd.hh"
+#include "sdd/hom/visit.hh"
 #include "sdd/hom/rewrite.hh"
 #include "sdd/order/order.hh"
 
@@ -174,7 +175,7 @@ struct should_cache
   operator()(const cached_homomorphism<C>& ch)
   const noexcept
   {
-    return apply_visitor(*this, ch.hom->data());
+    return visit(*this, ch.hom);
   }
 };
 

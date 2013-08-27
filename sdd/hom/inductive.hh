@@ -6,6 +6,7 @@
 #include <typeinfo> // typeid
 
 #include "sdd/dd/definition.hh"
+#include "sdd/dd/visit.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
@@ -323,7 +324,7 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    return apply_visitor(helper{cxt, o, s}, s->data(), *hom_ptr_);
+    return visit(helper{cxt, o, s}, s, *hom_ptr_);
   }
 
   /// @brief Skip predicate.

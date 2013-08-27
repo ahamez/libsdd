@@ -4,6 +4,7 @@
 #include <iosfwd>
 
 #include "sdd/dd/definition.hh"
+#include "sdd/dd/visit.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
@@ -111,7 +112,7 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    return apply_visitor(evaluation{cxt, o, h_, s}, s->data());
+    return visit(evaluation{cxt, o, h_, s}, s);
   }
 
   /// @brief Skip predicate.
