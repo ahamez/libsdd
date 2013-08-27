@@ -8,7 +8,6 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
-#include "sdd/hom/visit.hh"
 #include "sdd/order/order.hh"
 #include "sdd/util/packed.hh"
 

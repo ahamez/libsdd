@@ -18,7 +18,6 @@
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
-#include "sdd/hom/visit.hh"
 #include "sdd/order/order.hh"
 #include "sdd/util/packed.hh"
 
@@ -215,7 +214,7 @@ struct sum_builder_helper
   {
     for (const auto& op : s)
     {
-      visit(*this, op, op);
+      visit_self(*this, op);
     }
   }
 
@@ -261,7 +260,7 @@ Sum(const order<C>& o, InputIterator begin, InputIterator end)
   hom::sum_builder_helper<C> sbv{locals, operands};
   for (; begin != end; ++begin)
   {
-    visit(sbv, *begin, *begin);
+    visit_self(sbv, *begin);
   }
 
   // insert remaining locals

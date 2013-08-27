@@ -4,7 +4,6 @@
 #include <unordered_map>
 
 #include "sdd/dd/definition.hh"
-#include "sdd/dd/visit.hh"
 #include "sdd/util/boost_multiprecision_no_warnings.hh"
 
 namespace sdd {

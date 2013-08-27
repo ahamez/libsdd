@@ -5,7 +5,6 @@
 #include <iosfwd>
 
 #include "sdd/hom/context_fwd.hh"
-#include "sdd/hom/visit.hh"
 #include "sdd/hom/rewrite.hh"
 #include "sdd/order/order.hh"
 
@@ -28,7 +27,8 @@ struct evaluation
   template <typename H>
   SDD<C>
   operator()( const H&, const zero_terminal<C>&
-            , const SDD<C>&, context<C>&, const order<C>&, const homomorphism<C>&)
+            , const homomorphism<C>&, const SDD<C>&
+            , context<C>&, const order<C>&)
   const noexcept
   {
     assert(false);
@@ -39,8 +39,8 @@ struct evaluation
   template <typename H>
   SDD<C>
   operator()( const H& h, const one_terminal<C>&
-            , const SDD<C>& x, context<C>& cxt, const order<C>& o
-            , const homomorphism<C>&)
+            , const homomorphism<C>&, const SDD<C>& x
+            , context<C>& cxt, const order<C>& o)
   const
   {
     return h(cxt, o, x);
@@ -53,8 +53,8 @@ struct evaluation
   template <typename H, typename Node>
   SDD<C>
   operator()( const H& h, const Node& node
-            , const SDD<C>& x, context<C>& cxt, const order<C>& o
-            , const homomorphism<C>& hom_proxy)
+            , const homomorphism<C>& hom, const SDD<C>& x
+            , context<C>& cxt, const order<C>& o)
   const
   {
     assert(not o.empty() && "Empty order.");
@@ -68,7 +68,7 @@ struct evaluation
       su.reserve(node.size());
       for (const auto& arc : node)
       {
-        SDD<C> new_successor = hom_proxy(cxt, o.next(), arc.successor());
+        SDD<C> new_successor = hom(cxt, o.next(), arc.successor());
         if (not new_successor.empty())
         {
           su.add(new_successor, arc.valuation());
@@ -120,11 +120,13 @@ struct cached_homomorphism
   {}
 
   /// @brief Launch the evaluation.
+  ///
+  /// Called by the cache.
   SDD<C>
   operator()(context<C>& cxt)
   const
   {
-    return apply_binary_visitor(evaluation<C>(), hom->data(), sdd->data(), sdd, cxt, ord, hom);
+    return binary_visit_self(evaluation<C>(), hom, sdd, cxt, ord);
   }
 };
 

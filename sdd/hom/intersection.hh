@@ -17,7 +17,6 @@
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
-#include "sdd/hom/visit.hh"
 #include "sdd/order/order.hh"
 #include "sdd/util/packed.hh"
 
@@ -151,7 +150,7 @@ struct intersection_builder_helper
   {
     for (const auto& op : s.operands())
     {
-      visit(*this, op, op);
+      visit_self(*this, op);
     }
   }
 
@@ -199,7 +198,7 @@ Intersection(const order<C>& o, InputIterator begin, InputIterator end)
   hom::intersection_builder_helper<C> ib {operands, locals};
   for (; begin != end; ++begin)
   {
-    visit(ib, *begin, *begin);
+    visit_self(ib, *begin);
   }
 
   // insert remaining locals

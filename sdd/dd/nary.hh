@@ -157,9 +157,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_op
     node_tag tag = node_tag::flat;
     for (; cit != last; ++cit)
     {
-      tag = apply_binary_visitor( check_visitor<C>()
-                                , (*cit)->data(), (*(cit + 1))->data()
-                                , *cit, *(cit + 1));
+      tag = binary_visit_self(check_visitor<C>(), *cit, *(cit + 1));
     }
 
     if (tag == node_tag::flat)

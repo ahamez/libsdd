@@ -21,7 +21,6 @@
 #include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
 #include "sdd/hom/values_function.hh"
-#include "sdd/hom/visit.hh"
 #include "sdd/mem/ptr.hh"
 #include "sdd/mem/ref_counted.hh"
 #include "sdd/mem/variant.hh"

@@ -12,7 +12,6 @@
 #include "sdd/hom/saturation_fixpoint.hh"
 #include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
-#include "sdd/hom/visit.hh"
 
 namespace sdd {
 
@@ -217,14 +216,9 @@ template <typename C>
 homomorphism<C>
 rewrite(const homomorphism<C>& h, const order<C>& o)
 {
-  if (o.empty())
-  {
-    return h;
-  }
-  else
-  {
-    return visit(hom::rewriter<C>(), h, h, o);
-  }
+  return o.empty()
+       ? h
+       : visit_self(hom::rewriter<C>(), h, o);
 }
 
 /*------------------------------------------------------------------------------------------------*/
