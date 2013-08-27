@@ -228,6 +228,10 @@ private:
     {}
   };
 
+//  => érire une structure qui représente un chemin (et un seul), possiblement hiérarchique,
+//  => le remplir au fur et à mesure de la descente : quand on arrive tout en bas, créer le SDD
+//  => correspondant à ce chemin, puis l ajouter dans la liste des résultats intermediaires
+
   /// @brief Evaluation of the expression after the target is found.
   struct post_evaluation
   {
