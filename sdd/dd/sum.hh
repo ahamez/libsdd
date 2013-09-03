@@ -75,6 +75,9 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     // (A).
     for (++operands_cit; operands_cit != operands_end; ++operands_cit)
     {
+      // Throw a Top if operands are incompatible (different types or different variables).
+      check_compatibility(*begin, *operands_cit);
+
       const auto res_end = res.end();
 
       const node_type& node = mem::variant_cast<node_type>((*operands_cit)->data());

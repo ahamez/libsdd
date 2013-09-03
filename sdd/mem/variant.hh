@@ -147,6 +147,16 @@ public:
   {
     return apply_visitor(extra_bytes_visitor(), *this);
   }
+
+  /// @brief Return the index for a type contained in Types
+  template <typename T>
+  static constexpr
+  std::size_t
+  index_for_type()
+  noexcept
+  {
+    return util::index_of<T, Types...>::value;
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/
