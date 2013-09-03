@@ -51,7 +51,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     // right before calling the square union.
     typedef sum_builder<C, SDD<C>> sum_builder_type;
 
-    /// TODO Use Boost.Intrusive to save on memory allocations?
+    /// @TODO Use Boost.Intrusive to save on memory allocations?
     // List all the successors for each valuation in the final alpha.
     std::unordered_map<valuation_type, sum_builder_type> res(head.size());
 
