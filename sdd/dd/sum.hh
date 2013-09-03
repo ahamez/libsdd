@@ -26,16 +26,8 @@ namespace dd {
 template <typename C>
 struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
 {
-  /// @brief Get the textual representation of the union operator.
-  ///
-  /// Called by top to export a textual description.
-  static
-  char
-  symbol()
-  noexcept
-  {
-    return '+';
-  }
+  /// @brief The textual representation of the union operator.
+  static constexpr char symbol = '+';
 
   /// @brief Perform the SDD union algorithm.
   ///

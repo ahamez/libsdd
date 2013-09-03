@@ -193,7 +193,7 @@ template <typename C, typename Operation>
 std::ostream&
 operator<<(std::ostream& os, const nary_op<C, Operation>& x)
 {
-  os << Operation::symbol() << " (";
+  os << Operation::symbol << " (";
   std::copy(x.begin(), std::prev(x.end()), std::ostream_iterator<SDD<C>>(os, ", "));
   return os << *std::prev(x.end()) << ")";
 }

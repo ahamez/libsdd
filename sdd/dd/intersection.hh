@@ -22,16 +22,8 @@ namespace dd {
 template <typename C>
 struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
 {
-  /// @brief Get the textual representation of the intersection operator.
-  ///
-  /// Called by top to export a textual description.
-  static
-  char
-  symbol()
-  noexcept
-  {
-    return '&';
-  }
+  /// @brief The textual representation of the intersection operator.
+  static constexpr char symbol = '&';
 
   /// @brief Perform the SDD intersection algorithm.
   template <typename InputIterator, typename NodeType>
@@ -90,7 +82,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
         return zero<C>();
       }
 
-      /// TODO avoid to create an intermediary SDD at each loop.
+      /// @TODO avoid to create an intermediary SDD at each loop.
       res = SDD<C>(variable, su(cxt));
     }
 
@@ -114,8 +106,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_builder_impl
   /// @brief Constructor.
   intersection_builder_impl()
     : has_zero(false)
-  {
-  }
+  {}
 
   /// @brief Add an rvalue operand.
   void
