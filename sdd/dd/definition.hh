@@ -259,6 +259,7 @@ public:
   static
   ptr_type
   zero_ptr()
+  noexcept
   {
     return global<C>().zero;
   }
@@ -270,6 +271,7 @@ public:
   static
   ptr_type
   one_ptr()
+  noexcept
   {
     return global<C>().one;
   }
