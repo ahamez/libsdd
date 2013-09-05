@@ -8,6 +8,7 @@
 #include "sdd/dd/definition_fwd.hh"
 #include "sdd/dd/node.hh"
 #include "sdd/dd/terminal.hh"
+#include "sdd/dd/top.hh"
 #include "sdd/mem/ptr.hh"
 #include "sdd/mem/ref_counted.hh"
 #include "sdd/mem/variant.hh"
@@ -25,34 +26,6 @@ using flat_node = node<C, typename C::Values>;
 /// @brief All but SDD at the deepest level.
 template <typename C>
 using hierarchical_node = node<C, SDD<C>>;
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Tag to describe the type of a node.
-enum class node_tag {flat, hierarchical};
-
-/// @internal
-/// @brief Signature of the meta-function that returns the node's type corresponding to the
-/// given tag.
-template <typename C, enum node_tag>
-struct node_for_tag;
-
-/// @internal
-/// @brief Specialization for flat node.
-template <typename C>
-struct node_for_tag<C, node_tag::flat>
-{
-  typedef flat_node<C> type;
-};
-
-/// @internal
-/// @brief Specialization for hierarchical node.
-template <typename C>
-struct node_for_tag<C, node_tag::hierarchical>
-{
-  typedef hierarchical_node<C> type;
-};
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -74,6 +47,14 @@ private:
           data_type;
 
 public:
+
+  /// @internal
+  static constexpr std::size_t flat_node_index
+    = data_type::template index_for_type<flat_node<C>>();
+
+  /// @internal
+  static constexpr std::size_t hierarchical_node_index
+    = data_type::template index_for_type<hierarchical_node<C>>();
 
   /// @internal
   /// @brief A unified and canonized SDD, meant to be stored in a unique table.
@@ -276,6 +257,14 @@ public:
     return global<C>().one;
   }
 
+  /// @internal
+  std::size_t
+  index()
+  const noexcept
+  {
+    return ptr_->data().index();
+  }
+
 private:
 
   /// @internal
@@ -441,6 +430,46 @@ one()
 noexcept
 {
   return {SDD<C>::one_ptr()};
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+/// @related SDD
+template <typename C>
+std::size_t
+check_compatibility(const SDD<C>& lhs, const SDD<C>& rhs)
+{
+  const auto lhs_index = lhs.index();
+  const auto rhs_index = rhs.index();
+
+  if (lhs_index != rhs_index)
+  {
+    // different type of nodes
+    throw top<C>(lhs, rhs);
+  }
+
+  typename SDD<C>::variable_type lhs_variable;
+  typename SDD<C>::variable_type rhs_variable;
+
+  // we must convert to the right type before comparing variables
+  if (lhs_index == SDD<C>::flat_node_index)
+  {
+    lhs_variable = mem::variant_cast<flat_node<C>>(lhs->data()).variable();
+    rhs_variable = mem::variant_cast<flat_node<C>>(rhs->data()).variable();
+  }
+  else
+  {
+    lhs_variable = mem::variant_cast<hierarchical_node<C>>(lhs->data()).variable();
+    rhs_variable = mem::variant_cast<hierarchical_node<C>>(rhs->data()).variable();
+  }
+
+  if (lhs_variable != rhs_variable)
+  {
+    throw top<C>(lhs, rhs);
+  }
+
+  return lhs_index;
 }
 
 /*------------------------------------------------------------------------------------------------*/

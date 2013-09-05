@@ -48,11 +48,14 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
     square_union<C, valuation_type> su;
 
     for (++operands_cit; operands_cit != operands_end; ++operands_cit)
-    {    
+    {
+      // Throw a Top if operands are incompatible (different types or different variables).
+      check_compatibility(res, *operands_cit);
+
       // Cleanup for the next usage.
       su.clear();
 
-      const node_type& lhs = mem::variant_cast<node_type>((res)->data());
+      const node_type& lhs = mem::variant_cast<node_type>(res->data());
       const node_type& rhs = mem::variant_cast<node_type>((*operands_cit)->data());
 
       for (auto& lhs_arc : lhs)
