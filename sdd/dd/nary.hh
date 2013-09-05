@@ -216,6 +216,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
   /// @brief The policy to add new operands.
   ///
   /// An instance is needed for builders with a state (actually, the intersection builder).
+  /// @todo Use empty base class optimisation?
   Builder builder_;
 
   /// @brief Sorted container of operands.

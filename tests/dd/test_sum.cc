@@ -30,8 +30,7 @@ struct sum_test
     , cxt(sdd::global<conf>().sdd_context)
     , zero(sdd::zero<conf>())
     , one(sdd::one<conf>())
-  {
-  }
+  {}
 };
 
 /*------------------------------------------------------------------------------------------------*/

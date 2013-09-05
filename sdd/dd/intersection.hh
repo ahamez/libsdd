@@ -82,7 +82,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
         return zero<C>();
       }
 
-      /// @TODO avoid to create an intermediary SDD at each loop.
+      /// @todo avoid to create an intermediary SDD at each loop.
       res = SDD<C>(variable, su(cxt));
     }
 
