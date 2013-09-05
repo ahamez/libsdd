@@ -214,9 +214,12 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     typedef sum_builder<C, SDD<C>> sum_builder_type;
     std::unordered_map<value_type, sum_builder_type> value_to_succ;
 
-    for (; begin != end; ++begin)
+    auto cit = begin;
+    for (; cit != end; ++cit)
     {
-      const auto& node = mem::variant_cast<flat_node<C>>((*begin)->data());
+      check_compatibility(*begin, *cit);
+
+      const auto& node = mem::variant_cast<flat_node<C>>((*cit)->data());
       for (const auto& arc : node)
       {
         const SDD<C> succ = arc.successor();
