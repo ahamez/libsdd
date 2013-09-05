@@ -9,39 +9,43 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
+template <typename C>
 struct difference_test
   : public testing::Test
 {
-  typedef sdd::conf0 conf;
-  typedef sdd::SDD<conf> SDD;
+  typedef C configuration_type;
 
-  sdd::manager<conf> m;
-  sdd::dd::context<conf>& cxt;
+  sdd::manager<C> m;
+  sdd::dd::context<C>& cxt;
 
-  const SDD zero;
-  const SDD one;
+  const sdd::SDD<C> zero;
+  const sdd::SDD<C> one;
 
   difference_test()
-    : m(sdd::manager<conf>::init(small_conf()))
-    , cxt(sdd::global<conf>().sdd_context)
-    , zero(sdd::zero<conf>())
-    , one(sdd::one<conf>())
-  {
-  }
+    : m(sdd::manager<C>::init(small_conf<C>()))
+    , cxt(sdd::global<C>().sdd_context)
+    , zero(sdd::zero<C>())
+    , one(sdd::one<C>())
+  {}
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(difference_test, x_minus_zero)
+TYPED_TEST_CASE(difference_test, configurations);
+#include "tests/macros.hh"
+
+/*------------------------------------------------------------------------------------------------*/
+
+TYPED_TEST(difference_test, x_minus_zero)
 {
   {
-    conf::Values val;
+    values_type val;
     val.insert(0);
     const SDD x(0, val, one);
     ASSERT_EQ(x, difference(cxt, x, zero));
   }
   {
-    conf::Values val;
+    values_type val;
     val.insert(0);
     const SDD x(0, val, SDD(1, val, one));
     ASSERT_EQ(x, difference(cxt, x, zero));
@@ -50,16 +54,16 @@ TEST_F(difference_test, x_minus_zero)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(difference_test, zero_minus_x)
+TYPED_TEST(difference_test, zero_minus_x)
 {
   {
-    conf::Values val;
+    values_type val;
     val.insert(0);
     const SDD x(0, val, one);
     ASSERT_EQ(zero, difference(cxt, zero, x));
   }
   {
-    conf::Values val;
+    values_type val;
     val.insert(0);
     const SDD x(0, val, SDD(1, val, one));
     ASSERT_EQ(zero, difference(cxt, zero, x));    
@@ -68,16 +72,16 @@ TEST_F(difference_test, zero_minus_x)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(difference_test, x_minus_x)
+TYPED_TEST(difference_test, x_minus_x)
 {
   {
-    conf::Values val;
+    values_type val;
     val.insert(0);
     const SDD x(0, val, one);
     ASSERT_EQ(zero, difference(cxt, x, x));
   }
   {
-    conf::Values val;
+    values_type val;
     val.insert(0);
     const SDD x(0, val, SDD(0, val, one));
     ASSERT_EQ(zero, difference(cxt, x, x));
@@ -86,14 +90,14 @@ TEST_F(difference_test, x_minus_x)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(difference_test, flat_x_minus_y)
+TYPED_TEST(difference_test, flat_x_minus_y)
 {
   {
-    conf::Values valx;
+    values_type valx;
     valx.insert(0);
     const SDD x(0, valx, one);
 
-    conf::Values valy;
+    values_type valy;
     valy.insert(1);
     const SDD y(0, valy, one);
 
@@ -101,11 +105,11 @@ TEST_F(difference_test, flat_x_minus_y)
     ASSERT_EQ(y, difference(cxt, y, x));
   }
   {
-    conf::Values valx;
+    values_type valx;
     valx.insert(0);
     const SDD x(0, valx, SDD(1, valx, one));
     
-    conf::Values valy;
+    values_type valy;
     valy.insert(1);
     const SDD y(0, valy, SDD(1, valy, one));
     
@@ -113,16 +117,16 @@ TEST_F(difference_test, flat_x_minus_y)
     ASSERT_EQ(y, difference(cxt, y, x));
   }
   {
-    conf::Values valx;
+    values_type valx;
     valx.insert(0);
     valx.insert(1);
     const SDD x(0, valx, one);
     
-    conf::Values valy;
+    values_type valy;
     valy.insert(1);
     const SDD y(0, valy, one);
 
-    conf::Values valref;
+    values_type valref;
     valref.insert(0);
     const SDD ref(0, valref, one);
 
@@ -130,18 +134,18 @@ TEST_F(difference_test, flat_x_minus_y)
     ASSERT_EQ(zero, difference(cxt, y, x));
   }
   {
-    conf::Values valx;
+    values_type valx;
     valx.insert(0);
     valx.insert(1);
     const SDD x(0, valx, SDD(1, valx, one));
     
-    conf::Values valy;
+    values_type valy;
     valy.insert(1);
     const SDD y(0, valy, SDD(1, valy, one));
     
-    conf::Values valref0;
+    values_type valref0;
     valref0.insert(0);
-    conf::Values valref1;
+    values_type valref1;
     valref1.insert(1);
 
     sdd::dd::sum_builder<conf, SDD> sum_ops;
@@ -154,11 +158,11 @@ TEST_F(difference_test, flat_x_minus_y)
     ASSERT_EQ(zero, difference(cxt, y, x));
   }
   {
-    conf::Values valx;
+    values_type valx;
     valx.insert(0);
     const SDD x(0, valx, one);
 
-    conf::Values valy;
+    values_type valy;
     valy.insert(1);
     const SDD y(0, valy, one);
 
@@ -174,14 +178,14 @@ TEST_F(difference_test, flat_x_minus_y)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(difference_test, hierarchical_x_minus_y)
+TYPED_TEST(difference_test, hierarchical_x_minus_y)
 {
   {
-    conf::Values valx;
+    values_type valx;
     valx.insert(0);
     const SDD x(10, SDD(0, valx, one), one);
     
-    conf::Values valy;
+    values_type valy;
     valy.insert(1);
     const SDD y(10, SDD(0, valy, one), one);
     
@@ -189,11 +193,11 @@ TEST_F(difference_test, hierarchical_x_minus_y)
     ASSERT_EQ(y, difference(cxt, y, x));
   }
   {
-    conf::Values valx;
+    values_type valx;
     valx.insert(0);
     const SDD x(10, SDD(0, valx, SDD(0, valx, one)), one);
     
-    conf::Values valy;
+    values_type valy;
     valy.insert(1);
     const SDD y(10, SDD(0, valy, SDD(0, valy, one)), one);
     
@@ -201,12 +205,12 @@ TEST_F(difference_test, hierarchical_x_minus_y)
     ASSERT_EQ(y, difference(cxt, y, x));
   }
   {
-    conf::Values valx;
+    values_type valx;
     valx.insert(0);
     const SDD nestedx(0, valx, one);
     const SDD x(10, nestedx, SDD(11, nestedx, one));
     
-    conf::Values valy;
+    values_type valy;
     valy.insert(1);
     const SDD nestedy(0, valy, one);
     const SDD y(10, nestedy, SDD(11, nestedy, one));
@@ -215,20 +219,20 @@ TEST_F(difference_test, hierarchical_x_minus_y)
     ASSERT_EQ(y, difference(cxt, y, x));
   }
   {
-    conf::Values valx;
+    values_type valx;
     valx.insert(0);
     valx.insert(1);
     const SDD nestedx(0, valx, SDD(1, valx, one));
     const SDD x(10, nestedx, one);
     
-    conf::Values valy;
+    values_type valy;
     valy.insert(1);
     const SDD nestedy(0, valy, SDD(1, valy, one));
     const SDD y(10, nestedy, one);
 
-    conf::Values valref0;
+    values_type valref0;
     valref0.insert(0);
-    conf::Values valref1;
+    values_type valref1;
     valref1.insert(1);
     sdd::dd::sum_builder<conf, SDD> nested_sum_ops;
     nested_sum_ops.add(SDD(0, valref0, SDD(1, valref0, one)));
@@ -241,20 +245,20 @@ TEST_F(difference_test, hierarchical_x_minus_y)
     ASSERT_EQ(zero, difference(cxt, y, x));
   }
   {
-    conf::Values valx;
+    values_type valx;
     valx.insert(0);
     valx.insert(1);
     const SDD nestedx(0, valx, SDD(1, valx, one));
     const SDD x(10, nestedx, SDD(11, nestedx, one));
 
-    conf::Values valy;
+    values_type valy;
     valy.insert(1);
     const SDD nestedy(0, valy, SDD(1, valy, one));
     const SDD y(10, nestedy, SDD(11, nestedy, one));
 
-    conf::Values valref0;
+    values_type valref0;
     valref0.insert(0);
-    conf::Values valref1;
+    values_type valref1;
     valref1.insert(1);
 
     const SDD nested00(0, valref0, SDD(1, valref0, one));
@@ -288,14 +292,14 @@ TEST_F(difference_test, hierarchical_x_minus_y)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(difference_test, values)
+TYPED_TEST(difference_test, values)
 {
-  ASSERT_EQ(conf::Values{0}, difference(cxt, conf::Values{0,1}, conf::Values{1}));
+  ASSERT_EQ(values_type{0}, difference(cxt, values_type{0,1}, values_type{1}));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(difference_test, operators)
+TYPED_TEST(difference_test, operators)
 {
   ASSERT_EQ(zero, SDD('a', {0}, one) - SDD('a', {0}, one));
   ASSERT_EQ(SDD('a', {1}, one), SDD('a', {1}, one) - SDD('a', {0}, one));

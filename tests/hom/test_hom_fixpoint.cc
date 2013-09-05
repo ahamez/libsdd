@@ -1,60 +1,74 @@
 #include "gtest/gtest.h"
 
+#include "sdd/hom/context.hh"
+#include "sdd/hom/definition.hh"
+#include "sdd/hom/rewrite.hh"
+#include "sdd/manager.hh"
+#include "sdd/order/order.hh"
+
+#include "tests/configuration.hh"
 #include "tests/hom/common.hh"
 #include "tests/hom/common_inductives.hh"
 
 /*------------------------------------------------------------------------------------------------*/
 
+template <typename C>
 struct hom_fixpoint_test
   : public testing::Test
 {
-  sdd::manager<conf> m;
+  typedef C configuration_type;
 
-  const SDD zero;
-  const SDD one;
-  const hom id;
+  sdd::manager<C> m;
+
+  const sdd::SDD<C> zero;
+  const sdd::SDD<C> one;
+  const sdd::homomorphism<C> id;
 
   hom_fixpoint_test()
-    : m(sdd::manager<conf>::init(small_conf()))
-    , zero(sdd::zero<conf>())
-    , one(sdd::one<conf>())
-    , id(sdd::Id<conf>())
-  {
-  }
+    : m(sdd::manager<C>::init(small_conf<C>()))
+    , zero(sdd::zero<C>())
+    , one(sdd::one<C>())
+    , id(sdd::Id<C>())
+  {}
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(hom_fixpoint_test, construction)
+TYPED_TEST_CASE(hom_fixpoint_test, configurations);
+#include "tests/macros.hh"
+
+/*------------------------------------------------------------------------------------------------*/
+
+TYPED_TEST(hom_fixpoint_test, construction)
 {
   {
     ASSERT_EQ(id, Fixpoint(id));
   }
   {
-    ASSERT_EQ( Fixpoint(Inductive<conf>(targeted_incr("0",1)))
-             , Fixpoint(Inductive<conf>(targeted_incr("0",1)))
+    ASSERT_EQ( Fixpoint(Inductive<conf>(targeted_incr<conf>("0",1)))
+             , Fixpoint(Inductive<conf>(targeted_incr<conf>("0",1)))
              );
   }
   {
-    ASSERT_NE( Fixpoint(Inductive<conf>(targeted_incr("0",1)))
-             , Fixpoint(Inductive<conf>(targeted_incr("0",2)))
+    ASSERT_NE( Fixpoint(Inductive<conf>(targeted_incr<conf>("0",1)))
+             , Fixpoint(Inductive<conf>(targeted_incr<conf>("0",2)))
              );
   }
   {
-    ASSERT_EQ( Fixpoint(Inductive<conf>(targeted_incr("0",1)))
-             , Fixpoint(Fixpoint(Inductive<conf>(targeted_incr("0",1))))
+    ASSERT_EQ( Fixpoint(Inductive<conf>(targeted_incr<conf>("0",1)))
+             , Fixpoint(Fixpoint(Inductive<conf>(targeted_incr<conf>("0",1))))
              );
   }
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(hom_fixpoint_test, evaluatione)
+TYPED_TEST(hom_fixpoint_test, evaluation)
 {
   {
     order o(order_builder {"0"});
     SDD s0(0, {0}, one);
-    hom h0 = Fixpoint(Sum(o, {Inductive<conf>(targeted_incr("0", 1)), id}));
+    homomorphism h0 = Fixpoint(Sum(o, {Inductive<conf>(targeted_incr<conf>("0", 1)), id}));
     ASSERT_EQ(SDD(0, {0,1,2}, one), h0(o, s0));
   }
 }

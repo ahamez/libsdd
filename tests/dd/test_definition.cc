@@ -11,48 +11,52 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
+template <typename C>
 struct definition_test
   : public testing::Test
 {
-  typedef sdd::conf0 conf;
-  typedef sdd::SDD<conf> SDD;
+  typedef C configuration_type;
 
-  sdd::manager<conf> m;
+  sdd::manager<C> m;
 
-  const SDD zero;
-  const SDD one;
+  const sdd::SDD<C> zero;
+  const sdd::SDD<C> one;
 
   definition_test()
-    : m(sdd::manager<conf>::init(small_conf()))
-    , zero(sdd::zero<conf>())
-    , one(sdd::one<conf>())
-  {
-  }
+    : m(sdd::manager<C>::init(small_conf<C>()))
+    , zero(sdd::zero<C>())
+    , one(sdd::one<C>())
+  {}
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(definition_test, empty_successor)
+TYPED_TEST_CASE(definition_test, configurations);
+#include "tests/macros.hh"
+
+/*------------------------------------------------------------------------------------------------*/
+
+TYPED_TEST(definition_test, empty_successor)
 {
   ASSERT_EQ(zero, SDD('a', {0}, zero));
-  conf::Values val;
+  values_type val;
   val.insert(0);
   ASSERT_EQ(zero, SDD('a', val, zero));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(definition_test, empty_valuation)
+TYPED_TEST(definition_test, empty_valuation)
 {
   ASSERT_EQ(zero, SDD('a', {}, one));
-  conf::Values val;
+  values_type val;
   ASSERT_EQ(zero, SDD('a', val, one));
   ASSERT_EQ(zero, SDD('a', zero, one));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(definition_test, print)
+TYPED_TEST(definition_test, print)
 {
   {
     std::stringstream ss;

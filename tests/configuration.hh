@@ -1,18 +1,21 @@
 #ifndef _SDD_TESTS_CONFIGURATION_HH_
 #define _SDD_TESTS_CONFIGURATION_HH_
 
+#include "gtest/gtest.h"
+
 #include "sdd/conf/default_configurations.hh"
 
 /*------------------------------------------------------------------------------------------------*/
 
-typedef sdd::conf0 conf;
+typedef sdd::conf0 conf0;
+typedef sdd::conf1 conf1;
 
-namespace /* anonymous */ {
-
-conf
+template <typename C>
+C
 small_conf()
+noexcept
 {
-  conf c;
+  C c;
   c.sdd_unique_table_size = 1000;
   c.sdd_difference_cache_size = 1000;
   c.sdd_intersection_cache_size = 1000;
@@ -22,7 +25,9 @@ small_conf()
   return c;
 }
 
-} // namespace anonymous
+/*------------------------------------------------------------------------------------------------*/
+
+typedef ::testing::Types<conf0, conf1> configurations;
 
 /*------------------------------------------------------------------------------------------------*/
 

@@ -1,37 +1,40 @@
 #include "gtest/gtest.h"
 
-#include "tests/hom/common_inductives.hh"
+#include "sdd/manager.hh"
 #include "sdd/order/carrier.hh"
+
+#include "tests/configuration.hh"
+#include "tests/hom/common.hh"
+#include "tests/hom/common_inductives.hh"
 
 /*------------------------------------------------------------------------------------------------*/
 
-struct carrier_test
+template <typename C>
+struct order_carrier_test
   : public testing::Test
 {
-  typedef sdd::conf0 conf;
-  typedef sdd::order_builder<conf> order_builder;
-  typedef sdd::order<conf> order;
-  typedef sdd::SDD<conf> SDD;
-  typedef sdd::homomorphism<conf> hom;
+  typedef C configuration_type;
 
-  sdd::manager<conf> m;
+  sdd::manager<C> m;
 
-  const SDD zero;
-  const SDD one;
-  const hom id;
+  const sdd::SDD<C> zero;
+  const sdd::SDD<C> one;
 
-  carrier_test()
-    : m(sdd::manager<conf>::init(small_conf()))
-    , zero(sdd::zero<conf>())
-    , one(sdd::one<conf>())
-    , id(sdd::Id<conf>())
-  {
-  }
+  order_carrier_test()
+    : m(sdd::manager<C>::init(small_conf<C>()))
+    , zero(sdd::zero<C>())
+    , one(sdd::one<C>())
+  {}
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(carrier_test, order_builder)
+TYPED_TEST_CASE(order_carrier_test, configurations);
+#include "tests/macros.hh"
+
+/*------------------------------------------------------------------------------------------------*/
+
+TYPED_TEST(order_carrier_test, inductive)
 {
   order_builder ob;
   ob.add("a");
@@ -39,25 +42,25 @@ TEST_F(carrier_test, order_builder)
   ob.add("c", order_builder().add("d").add("e", order_builder().add("f").add("g")));
   order o (ob);
   {
-    const auto h = Inductive<conf>(targeted_incr("a",1));
+    const auto h = Inductive<conf>(targeted_incr<conf>("a",1));
     ASSERT_EQ(h, carrier(o, "a", h));
   }
   {
-    const auto h = Inductive<conf>(targeted_incr("d",1));
+    const auto h = Inductive<conf>(targeted_incr<conf>("d",1));
     const auto c = carrier(o, "d", h);
-    const auto r = sdd::Local("c", o, h);
+    const auto r = Local("c", o, h);
     ASSERT_EQ(r, c);
   }
   {
-    const auto h = Inductive<conf>(targeted_incr("g",1));
+    const auto h = Inductive<conf>(targeted_incr<conf>("g",1));
     const auto c = carrier(o, "g", h);
-    const auto r = sdd::Local("c", o, sdd::Local("e", o, h));
+    const auto r = Local("c", o, Local("e", o, h));
     ASSERT_EQ(r, c);
   }
   {
-    const auto h = Inductive<conf>(targeted_incr("f",1));
+    const auto h = Inductive<conf>(targeted_incr<conf>("f",1));
     const auto c = carrier(o, "f", h);
-    const auto r = sdd::Local("c", o, sdd::Local("e", o, h));
+    const auto r = Local("c", o, Local("e", o, h));
     ASSERT_EQ(r, c);
   }
 }

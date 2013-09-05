@@ -4,22 +4,24 @@
 #include <functional> // hash
 #include <string>
 
-#include "tests/hom/common.hh"
+#include "sdd/dd/definition.hh"
+#include "sdd/hom/definition.hh"
+#include "sdd/values/bitset.hh"
 
 /*------------------------------------------------------------------------------------------------*/
 
-namespace /* anonymous */{
-
+template <typename C>
 struct targeted_incr
 {
+  typedef typename C::Values values_type;
+
   const std::string var_;
   const unsigned int value_;
 
   targeted_incr(const std::string& var, unsigned int val)
     : var_(var)
     , value_(val)
-  {
-  }
+  {}
 
   bool
   skip(const std::string& var)
@@ -28,33 +30,52 @@ struct targeted_incr
     return var != var_;
   }
 
-
-  hom
-  operator()(const order& o, const SDD& x)
+  sdd::homomorphism<C>
+  operator()(const sdd::order<C>& o, const sdd::SDD<C>& x)
   const
   {
-    return Cons(o, x, Inductive<conf>(*this));
+    return sdd::Cons(o, x, sdd::Inductive<C>(*this));
   }
 
-  hom
-  operator()(const order& o, const bitset& val)
+  template <typename T>
+  sdd::homomorphism<C>
+  operator()(const sdd::order<C>& o, const T& val)
+  const
+  {
+    if (val.find(2) != val.end())
+    {
+      return Cons(o, val, sdd::Id<C>());
+    }
+    else
+    {
+      T new_val;
+      for (const auto& v : val)
+      {
+        new_val.insert(v + value_);
+      }
+      return Cons(o, new_val, sdd::Id<C>());
+    }
+  }
+
+  sdd::homomorphism<C>
+  operator()(const sdd::order<C>& o, const sdd::values::bitset<64>& val)
   const
   {
     if (val.content().test(2))
     {
-      return Cons(o, val, sdd::Id<conf>());
+      return Cons(o, val, sdd::Id<C>());
     }
     else
     {
-      return Cons(o, val << value_, sdd::Id<conf>());
+      return Cons(o, val << value_, sdd::Id<C>());
     }
   }
 
-  SDD
+  sdd::SDD<C>
   operator()()
   const noexcept
   {
-    return sdd::one<conf>();
+    return sdd::one<C>();
   }
 
   bool
@@ -65,22 +86,25 @@ struct targeted_incr
   }
 };
 
+template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const targeted_incr& i)
+operator<<(std::ostream& os, const targeted_incr<C>& i)
 {
   return os << "target_incr(" << i.var_ << ", " << i.value_ << ")";
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
+template <typename C>
 struct incr
 {
+  typedef typename C::Values values_type;
+  
   const unsigned int value_;
 
   incr(unsigned int val)
     : value_(val)
-  {
-  }
+  {}
 
   bool
   skip(const std::string&)
@@ -96,32 +120,32 @@ struct incr
     return false;
   }
 
-  hom
-  operator()(const order& o, const SDD& x)
+  sdd::homomorphism<C>
+  operator()(const sdd::order<C>& o, const sdd::SDD<C>& x)
   const
   {
-    return Cons(o, x, Inductive<conf>(*this));
+    return Cons(o, x, Inductive<C>(*this));
   }
 
-  hom
-  operator()(const order& o, const bitset& val)
+  sdd::homomorphism<C>
+  operator()(const sdd::order<C>& o, const values_type& val)
   const
   {
     if (val.content().test(2))
     {
-      return Cons(o, val, sdd::Id<conf>());
+      return Cons(o, val, sdd::Id<C>());
     }
     else
     {
-      return Cons(o, val << value_, sdd::Id<conf>());
+      return Cons(o, val << value_, sdd::Id<C>());
     }
   }
 
-  SDD
+  sdd::SDD<C>
   operator()()
   const noexcept
   {
-    return sdd::one<conf>();
+    return sdd::one<C>();
   }
 
   bool
@@ -132,22 +156,25 @@ struct incr
   }
 };
 
+template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const incr& i)
+operator<<(std::ostream& os, const incr<C>& i)
 {
   return os << "incr(" << i.value_ << ")";
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
+template <typename C>
 struct targeted_noop
 {
+  typedef typename C::Values values_type;
+
   const std::string var_;
 
   targeted_noop(const std::string& v)
     : var_(v)
-  {
-  }
+  {}
 
   bool
   skip(const std::string& var)
@@ -163,25 +190,25 @@ struct targeted_noop
     return true;
   }
 
-  hom
-  operator()(const order& o, const SDD& val)
+  sdd::homomorphism<C>
+  operator()(const sdd::order<C>& o, const sdd::SDD<C>& val)
   const
   {
-    return Cons(o, val, sdd::Id<conf>());
+    return Cons(o, val, sdd::Id<C>());
   }
 
-  hom
-  operator()(const order& o, const bitset& val)
+  sdd::homomorphism<C>
+  operator()(const sdd::order<C>& o, const values_type& val)
   const
   {
-    return Cons(o, val, sdd::Id<conf>());
+    return Cons(o, val, sdd::Id<C>());
   }
 
-  SDD
+  sdd::SDD<C>
   operator()()
   const noexcept
   {
-    return sdd::one<conf>();
+    return sdd::one<C>();
   }
 
   bool
@@ -194,39 +221,109 @@ struct targeted_noop
 
 /*------------------------------------------------------------------------------------------------*/
 
-} // namespace anonymous
+template <typename C>
+struct ind
+{
+  const std::string var_;
+
+  ind(const std::string& v)
+    : var_(v)
+  {}
+
+  bool
+  skip(const std::string& var)
+  const noexcept
+  {
+    return var != var_;
+  }
+
+  bool
+  selector()
+  const noexcept
+  {
+    return false;
+  }
+
+  sdd::homomorphism<C>
+  operator()(const sdd::order<C>&, const sdd::SDD<C>&)
+  const
+  {
+    return sdd::Id<C>();
+  }
+
+  sdd::homomorphism<C>
+  operator()(const sdd::order<C>&, const typename C::Values&)
+  const
+  {
+    return sdd::Id<C>();
+  }
+
+  sdd::SDD<C>
+  operator()()
+  const noexcept
+  {
+    return sdd::one<C>();
+  }
+
+  bool
+  operator==(const ind& other)
+  const noexcept
+  {
+    return var_ == other.var_;
+  }
+};
+
+template <typename C>
+std::ostream&
+operator<<(std::ostream& os, const ind<C>& i)
+{
+  return os << "ind(" << i.var_ << ")";
+}
+
+/*------------------------------------------------------------------------------------------------*/
 
 namespace std {
 
 /*------------------------------------------------------------------------------------------------*/
 
-template <>
-struct hash<targeted_incr>
+template <typename C>
+struct hash<targeted_incr<C>>
 {
   std::size_t
-  operator()(const targeted_incr& i)
+  operator()(const targeted_incr<C>& i)
   const noexcept
   {
     return std::hash<std::string>()(i.var_) xor std::hash<unsigned int>()(i.value_);
   }
 };
 
-template <>
-struct hash<incr>
+template <typename C>
+struct hash<incr<C>>
 {
   std::size_t
-  operator()(const incr& i)
+  operator()(const incr<C>& i)
   const noexcept
   {
     return std::hash<unsigned int>()(i.value_);
   }
 };
 
-template <>
-struct hash<targeted_noop>
+template <typename C>
+struct hash<targeted_noop<C>>
 {
   std::size_t
-  operator()(const targeted_noop& i)
+  operator()(const targeted_noop<C>& i)
+  const noexcept
+  {
+    return std::hash<std::string>()(i.var_);
+  }
+};
+
+template <typename C>
+struct hash<ind<C>>
+{
+  std::size_t
+  operator()(const ind<C>& i)
   const noexcept
   {
     return std::hash<std::string>()(i.var_);
@@ -236,6 +333,5 @@ struct hash<targeted_noop>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
 
 #endif // _SDD_COMMON_INDUCTIVES_HH_

@@ -10,51 +10,55 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
+template <typename C>
 struct paths_test
   : public testing::Test
 {
-  typedef sdd::conf0 conf;
-  typedef sdd::SDD<conf> SDD;
+  typedef C configuration_type;
 
-  sdd::manager<conf> m;
+  sdd::manager<C> m;
 
-  const SDD zero;
-  const SDD one;
+  const sdd::SDD<C> zero;
+  const sdd::SDD<C> one;
 
   paths_test()
-    : m(sdd::manager<conf>::init(small_conf()))
-    , zero(sdd::zero<conf>())
-    , one(sdd::one<conf>())
-  {
-  }
+    : m(sdd::manager<C>::init(small_conf<C>()))
+    , zero(sdd::zero<C>())
+    , one(sdd::one<C>())
+  {}
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(paths_test, zero)
+TYPED_TEST_CASE(paths_test, configurations);
+#include "tests/macros.hh"
+
+/*------------------------------------------------------------------------------------------------*/
+
+TYPED_TEST(paths_test, terminal_zero)
 {
-  ASSERT_EQ(0, count_paths(zero));
+  ASSERT_EQ(0u, count_paths(zero));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(paths_test, one)
+TYPED_TEST(paths_test, terminal_one)
 {
-  ASSERT_EQ(1, count_paths(one));
+  ASSERT_EQ(1u, count_paths(one));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(paths_test, flat)
+TYPED_TEST(paths_test, flat)
 {
-  ASSERT_EQ(3, count_paths(SDD('a', {0,1,2}, one)));
-  ASSERT_EQ(9, count_paths(SDD('a', {0,1,2}, SDD('b', {0,1,2}, one))));
-  ASSERT_EQ(6, count_paths(SDD('a', {0,1,2}, one) + SDD('a', {3,4,5}, one)));
+  ASSERT_EQ(3u, count_paths(SDD('a', {0,1,2}, one)));
+  ASSERT_EQ(9u, count_paths(SDD('a', {0,1,2}, SDD('b', {0,1,2}, one))));
+  ASSERT_EQ(6u, count_paths(SDD('a', {0,1,2}, one) + SDD('a', {3,4,5}, one)));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(paths_test, hierarchical)
+TYPED_TEST(paths_test, hierarchical)
 {
   ASSERT_EQ(3, count_paths(SDD('a', SDD('b', {0,1,2}, one), one)));
   ASSERT_EQ(9, count_paths( SDD( 'a', SDD('b', {0,1,2}, one)

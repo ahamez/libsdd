@@ -1,76 +1,87 @@
 #include "gtest/gtest.h"
 
-#include "tests/hom/common.hh"
+#include "sdd/manager.hh"
+
+#include "tests/configuration.hh"
 
 /*-------------------------------------------------------------------------------------------*/
 
+template <typename C>
 struct order_utility_test
   : public testing::Test
 {
-  sdd::manager<conf> m;
+  typedef C configuration_type;
 
-  const SDD zero;
-  const SDD one;
+  sdd::manager<C> m;
+
+  const sdd::SDD<C> zero;
+  const sdd::SDD<C> one;
 
   order_utility_test()
-    : m(sdd::manager<conf>::init(small_conf()))
-    , zero(sdd::zero<conf>())
-    , one(sdd::one<conf>())
-  {
-  }
+    : m(sdd::manager<C>::init(small_conf<C>()))
+    , zero(sdd::zero<C>())
+    , one(sdd::one<C>())
+  {}
 };
 
 /*-------------------------------------------------------------------------------------------*/
 
+template <typename C>
 struct initializer
 {
-  sdd::conf0::Values
-  operator()(const std::string&)
+  template <typename T>
+  typename C::Values
+  operator()(const T&)
   const
   {
     return {0};
   }
 };
 
+/*------------------------------------------------------------------------------------------------*/
+
+TYPED_TEST_CASE(order_utility_test, configurations);
+#include "tests/macros.hh"
+
 /*-------------------------------------------------------------------------------------------*/
 
-TEST_F(order_utility_test, empty)
+TYPED_TEST(order_utility_test, empty)
 {
   auto o = order(order_builder());
-  ASSERT_EQ(one, SDD(o, initializer()));
+  ASSERT_EQ(one, SDD(o, initializer<conf>()));
 }
 
 /*-------------------------------------------------------------------------------------------*/
 
-TEST_F(order_utility_test, flat)
+TYPED_TEST(order_utility_test, flat)
 {
   {
     order_builder ob;
     ob.add("foo");
-    ASSERT_EQ(SDD(0, {0}, one), SDD(order(ob), initializer()));
+    ASSERT_EQ(SDD(0, {0}, one), SDD(order(ob), initializer<conf>()));
   }
   {
     order_builder ob;
     ob.add("foo", order_builder());
-    ASSERT_EQ(SDD(0, {0}, one), SDD(order(ob), initializer()));
+    ASSERT_EQ(SDD(0, {0}, one), SDD(order(ob), initializer<conf>()));
   }
   {
     order_builder ob;
     ob.add("foo1").add("foo2");
-    ASSERT_EQ(SDD(1, {0}, SDD(0, {0}, one)), SDD(order(ob), initializer()));
+    ASSERT_EQ(SDD(1, {0}, SDD(0, {0}, one)), SDD(order(ob), initializer<conf>()));
   }
 }
 
 /*-------------------------------------------------------------------------------------------*/
 
-TEST_F(order_utility_test, hierarchical)
+TYPED_TEST(order_utility_test, hierarchical)
 {
   {
     order_builder ob0;
     ob0.add("foo");
     order_builder ob1;
     ob1.add("bar", ob0);
-    ASSERT_EQ(SDD(0, SDD(0, {0}, one), one), SDD(order(ob1), initializer()));
+    ASSERT_EQ(SDD(0, SDD(0, {0}, one), one), SDD(order(ob1), initializer<conf>()));
   }
   {
     order_builder ob0;
@@ -78,7 +89,7 @@ TEST_F(order_utility_test, hierarchical)
     order_builder ob1;
     ob1.add("bar", ob0);
     ASSERT_EQ( SDD(0, SDD(1, {0}, SDD(0, {0}, one)), one)
-             , SDD(order(ob1), initializer()));
+             , SDD(order(ob1), initializer<conf>()));
   }
   {
     order_builder nested_a {"a"};
@@ -87,7 +98,7 @@ TEST_F(order_utility_test, hierarchical)
     ob.add("y", nested_b);
     ob.add("x", nested_a);
     ASSERT_EQ( SDD(1, SDD(0, {0}, one), SDD(0, SDD(0, {0}, one), one))
-             , SDD(order(ob), initializer()));
+             , SDD(order(ob), initializer<conf>()));
   }
 }
 
