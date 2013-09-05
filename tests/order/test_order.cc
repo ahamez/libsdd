@@ -3,22 +3,27 @@
 
 #include "gtest/gtest.h"
 
-#include "sdd/conf/default_configurations.hh"
 #include "sdd/order/order.hh"
+
+#include "tests/configuration.hh"
 
 /*-------------------------------------------------------------------------------------------*/
 
+template <typename C>
 struct order_test
   : public testing::Test
 {
-  typedef sdd::conf0 conf;
-  typedef sdd::order_builder<conf> order_builder;
-  typedef sdd::order<conf> order;
+  typedef C configuration_type;
 };
+
+/*------------------------------------------------------------------------------------------------*/
+
+TYPED_TEST_CASE(order_test, configurations);
+#include "tests/macros.hh"
 
 /*-------------------------------------------------------------------------------------------*/
 
-TEST_F(order_test, order_builder)
+TYPED_TEST(order_test, builder)
 {
   {
     order_builder ob;
@@ -69,7 +74,7 @@ TEST_F(order_test, order_builder)
 
 /*-------------------------------------------------------------------------------------------*/
 
-TEST_F(order_test, order)
+TYPED_TEST(order_test, constructed_order)
 {
   {
     order o(order_builder {});

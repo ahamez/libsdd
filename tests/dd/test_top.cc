@@ -9,27 +9,32 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
+template <typename C>
 struct top_test
   : public testing::Test
 {
-  typedef sdd::conf0 conf;
-  typedef sdd::SDD<conf> SDD;
+  typedef C configuration_type;
 
-  sdd::manager<conf> m;
-  const SDD zero;
-  const SDD one;
+  sdd::manager<C> m;
+
+  const sdd::SDD<C> zero;
+  const sdd::SDD<C> one;
 
   top_test()
-    : m(sdd::manager<conf>::init(small_conf()))
-    , zero(sdd::zero<conf>())
-    , one(sdd::one<conf>())
-  {
-  }
+    : m(sdd::manager<C>::init(small_conf<C>()))
+    , zero(sdd::zero<C>())
+    , one(sdd::one<C>())
+  {}
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(top_test, sum_terminal)
+TYPED_TEST_CASE(top_test, configurations);
+#include "tests/macros.hh"
+
+/*------------------------------------------------------------------------------------------------*/
+
+TYPED_TEST(top_test, sum_terminal)
 {
   {
     SDD x('a', {0}, one);
@@ -88,7 +93,7 @@ TEST_F(top_test, sum_terminal)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(top_test, sum)
+TYPED_TEST(top_test, sum)
 {
   {
     SDD x('a', {0}, one);
@@ -150,7 +155,7 @@ TEST_F(top_test, sum)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(top_test, sum_different_node_types)
+TYPED_TEST(top_test, sum_different_node_types)
 {
   SDD x('a', {0}, one);
   SDD y('a', SDD('b', {0}, one), one);
@@ -180,7 +185,7 @@ TEST_F(top_test, sum_different_node_types)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(top_test, difference_terminal)
+TYPED_TEST(top_test, difference_terminal)
 {
   {
     SDD x('a', {0}, one);
@@ -240,7 +245,7 @@ TEST_F(top_test, difference_terminal)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(top_test, difference)
+TYPED_TEST(top_test, difference)
 {
   {
     SDD x('a', {0}, one);
@@ -302,7 +307,7 @@ TEST_F(top_test, difference)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(top_test, difference_different_node_types)
+TYPED_TEST(top_test, difference_different_node_types)
 {
 
   SDD x('a', {0}, one);
@@ -333,7 +338,7 @@ TEST_F(top_test, difference_different_node_types)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(top_test, intersection_terminal)
+TYPED_TEST(top_test, intersection_terminal)
 {
   {
     SDD x('a', {0}, one);
@@ -393,7 +398,7 @@ TEST_F(top_test, intersection_terminal)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(top_test, intersection)
+TYPED_TEST(top_test, intersection)
 {
   {
     SDD x('a', {0}, one);
@@ -455,7 +460,7 @@ TEST_F(top_test, intersection)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(top_test, intersection_different_node_types)
+TYPED_TEST(top_test, intersection_different_node_types)
 {
 
   SDD x('a', {0}, one);

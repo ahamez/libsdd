@@ -2,7 +2,6 @@
 
 #include "gtest/gtest.h"
 
-#include "sdd/conf/default_configurations.hh"
 #include "sdd/dd/context.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/manager.hh"
@@ -11,39 +10,44 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
+template <typename C>
 struct sum_test
   : public testing::Test
 {
-  typedef sdd::conf0 conf;
-  typedef sdd::SDD<conf> SDD;
-  typedef sdd::dd::alpha_builder<conf, conf::Values> flat_alpha_builder;
-  typedef sdd::dd::alpha_builder<conf, SDD> hier_alpha_builder;
+  typedef C configuration_type;
 
-  sdd::manager<conf> m;
-  sdd::dd::context<conf>& cxt;
+  sdd::manager<C> m;
+  sdd::dd::context<C>& cxt;
 
-  const SDD zero;
-  const SDD one;
+  const sdd::SDD<C> zero;
+  const sdd::SDD<C> one;
 
   sum_test()
-    : m(sdd::manager<conf>::init(small_conf()))
-    , cxt(sdd::global<conf>().sdd_context)
-    , zero(sdd::zero<conf>())
-    , one(sdd::one<conf>())
-  {
-  }
+    : m(sdd::manager<C>::init(small_conf<C>()))
+    , cxt(sdd::global<C>().sdd_context)
+    , zero(sdd::zero<C>())
+    , one(sdd::one<C>())
+  {}
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(sum_test, empty_operands)
+TYPED_TEST_CASE(sum_test, configurations);
+#include "tests/macros.hh"
+#define flat_alpha_builder sdd::dd::alpha_builder<conf, values_type>
+#define hier_alpha_builder sdd::dd::alpha_builder<conf, SDD>
+#define flat_sum_builder sdd::dd::sum_builder<conf, values_type>
+
+/*------------------------------------------------------------------------------------------------*/
+
+TYPED_TEST(sum_test, empty_operands)
 {
   ASSERT_EQ(zero, sum(cxt, {}));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(sum_test, one_operand)
+TYPED_TEST(sum_test, one_operand)
 {
   {
     ASSERT_EQ(one, sum(cxt, {one}));
@@ -63,7 +67,7 @@ TEST_F(sum_test, one_operand)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(sum_test, any_with_zero)
+TYPED_TEST(sum_test, any_with_zero)
 {
   {
     ASSERT_EQ(one, sum(cxt, {zero, one}));
@@ -83,7 +87,7 @@ TEST_F(sum_test, any_with_zero)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(sum_test, same_operand_n_times)
+TYPED_TEST(sum_test, same_operand_n_times)
 {
   {
     ASSERT_EQ(one, sum(cxt, {one, one, one}));
@@ -105,7 +109,7 @@ TEST_F(sum_test, same_operand_n_times)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(sum_test, flat_same_partition_different_succesors)
+TYPED_TEST(sum_test, flat_same_partition_different_succesors)
 {
   SDD x0(0, {0}, SDD(1, {0}, one));
   SDD x1(0, {0}, SDD(1, {1}, one));
@@ -116,7 +120,7 @@ TEST_F(sum_test, flat_same_partition_different_succesors)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(sum_test, flat_commutativity)
+TYPED_TEST(sum_test, flat_commutativity)
 {
   SDD za(0, {1}  , SDD(1, {1}, one));
   SDD zb(0, {2,3}, SDD(1, {2,3}, one));
@@ -139,7 +143,7 @@ TEST_F(sum_test, flat_commutativity)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(sum_test, flat_no_successors)
+TYPED_TEST(sum_test, flat_no_successors)
 {
   {
     flat_alpha_builder builder;
@@ -170,7 +174,7 @@ TEST_F(sum_test, flat_no_successors)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(sum_test, hierarchical_no_successors)
+TYPED_TEST(sum_test, hierarchical_no_successors)
 {
   {
     hier_alpha_builder builder;
@@ -197,7 +201,7 @@ TEST_F(sum_test, hierarchical_no_successors)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(sum_test, flat_partition_changing)
+TYPED_TEST(sum_test, flat_partition_changing)
 {
   flat_alpha_builder builder;
   builder.add({1}, SDD(1, {4}, one));
@@ -210,7 +214,7 @@ TEST_F(sum_test, flat_partition_changing)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(sum_test, hierarchical_partition_changing)
+TYPED_TEST(sum_test, hierarchical_partition_changing)
 {
   hier_alpha_builder builder;
   builder.add(SDD('a', {1}, one), SDD('y', SDD('b', {4}, one), one));
@@ -223,25 +227,25 @@ TEST_F(sum_test, hierarchical_partition_changing)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(sum_test, values)
+TYPED_TEST(sum_test, values)
 {
   {
-    sdd::dd::sum_builder<conf, conf::Values> ops;
-    ASSERT_EQ(conf::Values(), sum(cxt, std::move(ops)));
+    flat_sum_builder ops;
+    ASSERT_EQ(values_type(), sum(cxt, std::move(ops)));
   }
   {
-    conf::Values val0 {0};
-    conf::Values val1 {1};
-    conf::Values val2 {2};
-    conf::Values ref {0,1,2};
-    sdd::dd::sum_builder<conf, conf::Values> ops {val0, val1, val2};
+    values_type val0 {0};
+    values_type val1 {1};
+    values_type val2 {2};
+    values_type ref {0,1,2};
+    flat_sum_builder ops {val0, val1, val2};
     ASSERT_EQ(ref, sum(cxt, std::move(ops)));
   }
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(sum_test, iterable)
+TYPED_TEST(sum_test, iterable)
 {
   std::vector<SDD> vec { SDD('a', {0,1}, one)
                        , SDD('a', {0,2}, one)
@@ -252,17 +256,17 @@ TEST_F(sum_test, iterable)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(sum_test, initializer_list)
+TYPED_TEST(sum_test, initializer_list)
 {
   ASSERT_EQ(SDD('a', {0,1,2}, one), sdd::sum({ SDD('a', {0,1}, one)
-                                                 , SDD('a', {0,2}, one)
-                                                 , SDD('a', {0,1}, one)
-                                                 , SDD('a', {1,2}, one)}));
+                                             , SDD('a', {0,2}, one)
+                                             , SDD('a', {0,1}, one)
+                                             , SDD('a', {1,2}, one)}));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(sum_test, operators)
+TYPED_TEST(sum_test, operators)
 {
   ASSERT_EQ(SDD('a', {0,1}, one), SDD('a', {0}, one) + SDD('a', {1}, one));
 

@@ -1,49 +1,62 @@
 #include "gtest/gtest.h"
 
+#include "sdd/hom/context.hh"
+#include "sdd/hom/definition.hh"
+#include "sdd/manager.hh"
+#include "sdd/order/order.hh"
+
+#include "tests/configuration.hh"
 #include "tests/hom/common.hh"
 
 /*------------------------------------------------------------------------------------------------*/
 
+template <typename C>
 struct hom_id_test
   : public testing::Test
 {
-  sdd::manager<conf> m;
-  sdd::hom::context<conf>& cxt;
+  typedef C configuration_type;
 
-  const SDD zero;
-  const SDD one;
+  sdd::manager<C> m;
+  sdd::hom::context<C>& cxt;
+
+  const sdd::SDD<C> zero;
+  const sdd::SDD<C> one;
 
   hom_id_test()
-    : m(sdd::manager<conf>::init(small_conf()))
-    , cxt(sdd::global<conf>().hom_context)
-    , zero(sdd::zero<conf>())
-    , one(sdd::one<conf>())
-  {
-  }
+    : m(sdd::manager<C>::init(small_conf<C>()))
+    , cxt(sdd::global<C>().hom_context)
+    , zero(sdd::zero<C>())
+    , one(sdd::one<C>())
+  {}
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(hom_id_test, construction)
+TYPED_TEST_CASE(hom_id_test, configurations);
+#include "tests/macros.hh"
+
+/*------------------------------------------------------------------------------------------------*/
+
+TYPED_TEST(hom_id_test, construction)
 {
-  hom h1 = sdd::Id<conf>();
-  hom h2 = sdd::Id<conf>();
+  homomorphism h1 = Id<conf>();
+  homomorphism h2 = Id<conf>();
   ASSERT_EQ(h1, h2);
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(hom_id_test, evaluation)
+TYPED_TEST(hom_id_test, evaluation)
 {
-  hom h = sdd::Id<conf>();
+  homomorphism h = Id<conf>();
   ASSERT_EQ(one, h(order(order_builder()), one));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(hom_id_test, no_cache)
+TYPED_TEST(hom_id_test, no_cache)
 {
-  hom h = sdd::Id<conf>();
+  homomorphism h = Id<conf>();
   ASSERT_EQ(0u, cxt.cache().size());
   ASSERT_EQ(one, h(cxt, order(order_builder()), one));
   ASSERT_EQ(0u, cxt.cache().size());
