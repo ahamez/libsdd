@@ -33,12 +33,12 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
   ///
   /// It's a so-called 'n-ary' union in the sense that we don't create intermediary SDD.
   /// Also, a lot of tests permit to break loops as soon as possible.
-  template <typename InputInterator, typename NodeType>
+  template <typename InputIterator, typename NodeType>
   static
   typename std::enable_if< std::is_same<NodeType, hierarchical_node<C>>::value
                          or not values::values_traits<typename C::Values>::fast_iterable
                          , SDD<C>>::type
-  work(InputInterator begin, InputInterator end, context<C>& cxt)
+  work(InputIterator begin, InputIterator end, context<C>& cxt)
   {
     typedef NodeType node_type;
     typedef typename node_type::valuation_type valuation_type;
@@ -196,13 +196,13 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     return SDD<C>(head.variable(), su(cxt));
   }
 
-
-  template <typename InputInterator, typename NodeType>
+  /// @brief Linear union of flat SDDs whose valuation are "fast iterable".
+  template <typename InputIterator, typename NodeType>
   static
   typename std::enable_if< std::is_same<NodeType, flat_node<C>>::value
                          and values::values_traits<typename C::Values>::fast_iterable
                          , SDD<C>>::type
-  work(InputInterator begin, InputInterator end, context<C>& cxt)
+  work(InputIterator begin, InputIterator end, context<C>& cxt)
   {
     const auto& variable = mem::variant_cast<flat_node<C>>((*begin)->data()).variable();
 
@@ -233,7 +233,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     }
 
     std::unordered_map<SDD<C>, values_type> succ_to_value(value_to_succ.bucket_count());
-    for (const auto& value_succs : value_to_succ)
+    for (auto& value_succs : value_to_succ)
     {
       const SDD<C> succ = sum(cxt, std::move(value_succs.second));
       const auto search = succ_to_value.find(succ);
@@ -249,7 +249,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
 
     alpha_builder<C, values_type> alpha;
     alpha.reserve(succ_to_value.size());
-    for (const auto& succ_values : succ_to_value)
+    for (auto& succ_values : succ_to_value)
     {
       alpha.add(std::move(succ_values.second), succ_values.first);
     }
