@@ -2,6 +2,7 @@
 #define _SDD_DD_SUM_HH_
 
 #include <initializer_list>
+#include <type_traits> // enable_if, is_same
 #include <unordered_map>
 #include <vector>
 
@@ -14,12 +15,11 @@
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
 #include "sdd/util/hash.hh"
+#include "sdd/values/values_traits.hh"
 
-namespace sdd {
+namespace sdd { namespace dd {
 
 /*------------------------------------------------------------------------------------------------*/
-
-namespace dd {
 
 /// @internal
 /// @brief The sum operation in the cache.
@@ -35,7 +35,9 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
   /// Also, a lot of tests permit to break loops as soon as possible.
   template <typename InputInterator, typename NodeType>
   static
-  SDD<C>
+  typename std::enable_if< std::is_same<NodeType, hierarchical_node<C>>::value
+                         or not values::values_traits<typename C::Values>::fast_iterable
+                         , SDD<C>>::type
   work(InputInterator begin, InputInterator end, context<C>& cxt)
   {
     typedef NodeType node_type;
@@ -192,6 +194,67 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     }
 
     return SDD<C>(head.variable(), su(cxt));
+  }
+
+
+  template <typename InputInterator, typename NodeType>
+  static
+  typename std::enable_if< std::is_same<NodeType, flat_node<C>>::value
+                         and values::values_traits<typename C::Values>::fast_iterable
+                         , SDD<C>>::type
+  work(InputInterator begin, InputInterator end, context<C>& cxt)
+  {
+    const auto& variable = mem::variant_cast<flat_node<C>>((*begin)->data()).variable();
+
+    typedef typename C::Values values_type;
+    typedef typename values_type::value_type value_type;
+    typedef sum_builder<C, SDD<C>> sum_builder_type;
+    std::unordered_map<value_type, sum_builder_type> value_to_succ;
+
+    for (; begin != end; ++begin)
+    {
+      const auto& node = mem::variant_cast<flat_node<C>>((*begin)->data());
+      for (const auto& arc : node)
+      {
+        const SDD<C> succ = arc.successor();
+        for (const auto& value : arc.valuation())
+        {
+          const auto search = value_to_succ.find(value);
+          if (search == value_to_succ.end())
+          {
+            value_to_succ.emplace_hint(search, value, sum_builder_type({succ}));
+          }
+          else
+          {
+            search->second.add(succ);
+          }
+        }
+      }
+    }
+
+    std::unordered_map<SDD<C>, values_type> succ_to_value(value_to_succ.bucket_count());
+    for (const auto& value_succs : value_to_succ)
+    {
+      const SDD<C> succ = sum(cxt, std::move(value_succs.second));
+      const auto search = succ_to_value.find(succ);
+      if (search == succ_to_value.end())
+      {
+        succ_to_value.emplace_hint(search, succ, values_type({value_succs.first}));
+      }
+      else
+      {
+        search->second.insert(value_succs.first);
+      }
+    }
+
+    alpha_builder<C, values_type> alpha;
+    alpha.reserve(succ_to_value.size());
+    for (const auto& succ_values : succ_to_value)
+    {
+      alpha.add(std::move(succ_values.second), succ_values.first);
+    }
+
+    return SDD<C>(variable, std::move(alpha));
   }
 };
 

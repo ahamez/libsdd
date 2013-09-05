@@ -11,6 +11,7 @@ template <typename Values>
 struct values_traits
 {
   static constexpr bool stateful = false;
+  static constexpr bool fast_iterable = false;
 };
 
 /*------------------------------------------------------------------------------------------------*/

@@ -336,6 +336,7 @@ struct values_traits<flat_set<Value>>
 {
   static constexpr bool stateful = true;
   typedef flat_set_manager<Value> state_type;
+  static constexpr bool fast_iterable = true;
 };
 
 /*------------------------------------------------------------------------------------------------*/
