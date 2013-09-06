@@ -317,14 +317,7 @@ public:
       ++pos;
     }
 
-    if (pos == nb_buckets_)
-    {
-      return end();
-    }
-    else
-    {
-      return iterator(this, pos, buckets_[pos]);
-    }
+    return pos == nb_buckets_ ? end() : iterator(this, pos, buckets_[pos]);
   }
 
   /// @brief Get an iterator to the end of this hash table.
@@ -353,14 +346,7 @@ public:
       current = current->hook.next;
     }
 
-    if (found)
-    {
-      return iterator(this, pos, current);
-    }
-    else
-    {
-      return end();
-    }
+    return found ? iterator(this, pos, current) : end();
   }
 
   /// @brief Erase an element given its iterator.
