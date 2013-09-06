@@ -123,22 +123,22 @@ public:
   /// @brief Get the content of the homomorphism (an mem::ref_counted).
   ///
   /// O(1).
-  const unique_type&
+  const data_type&
   operator*()
   const noexcept
   {
-    return *ptr_;
+    return ptr_->data();
   }
 
   /// @internal
   /// @brief Get a pointer to the content of the homomorphism (an mem::ref_counted).
   ///
   /// O(1).
-  const unique_type*
+  const data_type*
   operator->()
   const noexcept
   {
-    return ptr_.operator->();
+    return &ptr_->data();
   }
 
   /// @internal
@@ -283,7 +283,7 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const homomorphism<C>& h)
 {
-  return os << h->data();
+  return os << *h;
 }
 
 /*------------------------------------------------------------------------------------------------*/

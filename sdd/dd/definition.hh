@@ -201,25 +201,25 @@ public:
   {}
 
   /// @internal
-  /// @brief Get the content of the SDD (an mem::ref_counted).
+  /// @brief Get the content of the SDD (an mem::variant).
   ///
   /// O(1).
-  const unique_type&
+  const data_type&
   operator*()
   const noexcept
   {
-    return *ptr_;
+    return ptr_->data();
   }
 
   /// @internal
-  /// @brief Get a pointer to the content of the SDD (an mem::ref_counted).
+  /// @brief Get a pointer to the content of the SDD (an mem::variant).
   ///
   /// O(1).
-  const unique_type*
+  const data_type*
   operator->()
   const noexcept
   {
-    return ptr_.operator->();
+    return &ptr_->data();
   }
 
   /// @internal
@@ -401,7 +401,7 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const SDD<C>& x)
 {
-  return os << x->data();
+  return os << *x;
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -455,13 +455,13 @@ check_compatibility(const SDD<C>& lhs, const SDD<C>& rhs)
   // we must convert to the right type before comparing variables
   if (lhs_index == SDD<C>::flat_node_index)
   {
-    lhs_variable = mem::variant_cast<flat_node<C>>(lhs->data()).variable();
-    rhs_variable = mem::variant_cast<flat_node<C>>(rhs->data()).variable();
+    lhs_variable = mem::variant_cast<flat_node<C>>(*lhs).variable();
+    rhs_variable = mem::variant_cast<flat_node<C>>(*rhs).variable();
   }
   else
   {
-    lhs_variable = mem::variant_cast<hierarchical_node<C>>(lhs->data()).variable();
-    rhs_variable = mem::variant_cast<hierarchical_node<C>>(rhs->data()).variable();
+    lhs_variable = mem::variant_cast<hierarchical_node<C>>(*lhs).variable();
+    rhs_variable = mem::variant_cast<hierarchical_node<C>>(*rhs).variable();
   }
 
   if (lhs_variable != rhs_variable)

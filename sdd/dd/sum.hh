@@ -47,7 +47,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     const auto operands_end = end;
 
     // Get the first operand as a node, we need it to initialize the algorithm.
-    const node_type& head = mem::variant_cast<node_type>((*operands_cit)->data());
+    const node_type& head = mem::variant_cast<node_type>(**operands_cit);
 
     // Type of the list of successors for a valuation, to be merged with the union operation
     // right before calling the square union.
@@ -82,7 +82,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
 
       const auto res_end = res.end();
 
-      const node_type& node = mem::variant_cast<node_type>((*operands_cit)->data());
+      const node_type& node = mem::variant_cast<node_type>(**operands_cit);
       const auto alpha_end = node.end();
 
       // (B). For each arc of the current operand.
@@ -207,7 +207,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
                          , SDD<C>>::type
   work(InputIterator begin, InputIterator end, context<C>& cxt)
   {
-    const auto& variable = mem::variant_cast<flat_node<C>>((*begin)->data()).variable();
+    const auto& variable = mem::variant_cast<flat_node<C>>(**begin).variable();
 
     typedef typename C::Values values_type;
     typedef typename values_type::value_type value_type;
@@ -219,7 +219,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     {
       check_compatibility(*begin, *cit);
 
-      const auto& node = mem::variant_cast<flat_node<C>>((*cit)->data());
+      const auto& node = mem::variant_cast<flat_node<C>>(**cit);
       for (const auto& arc : node)
       {
         const SDD<C> succ = arc.successor();

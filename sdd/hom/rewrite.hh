@@ -108,7 +108,7 @@ struct rewriter
       }
       else if (visit(is_local{}, *begin))
       {
-        const local<C>& l = mem::variant_cast<const local<C>>((*begin)->data());
+        const local<C>& l = mem::variant_cast<const local<C>>(**begin);
         L.push_back(l.hom());
       }
       else
@@ -163,7 +163,7 @@ struct rewriter
       return h;
     }
 
-    const sum<C>& s = mem::variant_cast<const sum<C>>(f.hom()->data());
+    const sum<C>& s = mem::variant_cast<const sum<C>>(*f.hom());
 
     auto&& p = partition(o, s.begin(), s.end());
     auto& F = std::get<0>(p);

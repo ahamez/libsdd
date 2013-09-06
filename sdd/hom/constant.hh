@@ -27,8 +27,7 @@ public:
   /// @brief Constructor.
   constant(const SDD<C>& s)
     : sdd_(s)
-  {
-  }
+  {}
 
   /// @brief Evaluation.
   SDD<C>

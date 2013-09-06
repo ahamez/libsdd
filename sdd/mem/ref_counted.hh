@@ -64,8 +64,7 @@ public:
     : hook()
     , ref_count_(0)
     , data_(std::forward<Args>(args)...)
-  {
-  }
+  {}
 
   /// @brief Get a reference of the unified data.
   const T&
