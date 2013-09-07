@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include <boost/container/flat_map.hpp>
 #include <boost/container/flat_set.hpp>
 
 #include "sdd/internal_manager_fwd.hh"
@@ -212,7 +213,8 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     typedef typename C::Values values_type;
     typedef typename values_type::value_type value_type;
     typedef sum_builder<C, SDD<C>> sum_builder_type;
-    std::unordered_map<value_type, sum_builder_type> value_to_succ;
+    boost::container::flat_map<value_type, sum_builder_type> value_to_succ;
+    value_to_succ.reserve(std::distance(begin, end) * 2);
 
     auto cit = begin;
     for (; cit != end; ++cit)
@@ -238,7 +240,8 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       }
     }
 
-    std::unordered_map<SDD<C>, values_type> succ_to_value(value_to_succ.bucket_count());
+    boost::container::flat_map<SDD<C>, values_type> succ_to_value;
+    succ_to_value.reserve(value_to_succ.size());
     for (auto& value_succs : value_to_succ)
     {
       const SDD<C> succ = sum(cxt, std::move(value_succs.second));
