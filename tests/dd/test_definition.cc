@@ -11,48 +11,52 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
+template <typename C>
 struct definition_test
   : public testing::Test
 {
-  typedef sdd::conf0 conf;
-  typedef sdd::SDD<conf> SDD;
+  typedef C configuration_type;
 
-  sdd::manager<conf> m;
+  sdd::manager<C> m;
 
-  const SDD zero;
-  const SDD one;
+  const sdd::SDD<C> zero;
+  const sdd::SDD<C> one;
 
   definition_test()
-    : m(sdd::manager<conf>::init(small_conf()))
-    , zero(sdd::zero<conf>())
-    , one(sdd::one<conf>())
-  {
-  }
+    : m(sdd::manager<C>::init(small_conf<C>()))
+    , zero(sdd::zero<C>())
+    , one(sdd::one<C>())
+  {}
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(definition_test, empty_successor)
+TYPED_TEST_CASE(definition_test, configurations);
+#include "tests/macros.hh"
+
+/*------------------------------------------------------------------------------------------------*/
+
+TYPED_TEST(definition_test, empty_successor)
 {
   ASSERT_EQ(zero, SDD('a', {0}, zero));
-  conf::Values val;
+  values_type val;
   val.insert(0);
   ASSERT_EQ(zero, SDD('a', val, zero));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(definition_test, empty_valuation)
+TYPED_TEST(definition_test, empty_valuation)
 {
   ASSERT_EQ(zero, SDD('a', {}, one));
-  conf::Values val;
+  values_type val;
   ASSERT_EQ(zero, SDD('a', val, one));
   ASSERT_EQ(zero, SDD('a', zero, one));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST_F(definition_test, print)
+TYPED_TEST(definition_test, print)
 {
   {
     std::stringstream ss;
@@ -80,6 +84,47 @@ TEST_F(definition_test, print)
     SDD y('x', SDD('a', {1}, one), SDD('y', SDD('b', {1}, one), one));
     ss << x + y;
     ASSERT_NE(0u, ss.str().size());
+  }
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+TYPED_TEST(definition_test, check_compatibility)
+{
+  {
+    ASSERT_NO_THROW(check_compatibility(zero, zero));
+    ASSERT_NO_THROW(check_compatibility(one, one));
+    ASSERT_NO_THROW(check_compatibility(SDD(0, {1}, one), SDD(0, {2}, one)));
+    ASSERT_NO_THROW(check_compatibility( SDD(0, SDD(1, {1}, one), one)
+                                       , SDD(0, SDD(2, {2}, one), one)));
+  }
+  {
+    ASSERT_THROW(check_compatibility(zero, one), sdd::top<conf>);
+    ASSERT_THROW(check_compatibility(one, zero), sdd::top<conf>);
+
+    ASSERT_THROW(check_compatibility(zero, SDD(0, {1}, one)), sdd::top<conf>);
+    ASSERT_THROW(check_compatibility(SDD(0, {1}, one), zero), sdd::top<conf>);
+    ASSERT_THROW(check_compatibility(one, SDD(0, {1}, one)), sdd::top<conf>);
+    ASSERT_THROW(check_compatibility(SDD(0, {1}, one), one), sdd::top<conf>);
+
+    ASSERT_THROW(check_compatibility(zero, SDD(0, SDD(1, {1}, one), one)), sdd::top<conf>);
+    ASSERT_THROW(check_compatibility(SDD(0, SDD(1, {1}, one), one), zero), sdd::top<conf>);
+    ASSERT_THROW(check_compatibility(one, SDD(0, SDD(1, {1}, one), one)), sdd::top<conf>);
+    ASSERT_THROW(check_compatibility(SDD(0, SDD(1, {1}, one), one), one), sdd::top<conf>);
+
+    ASSERT_THROW(check_compatibility(SDD(0, {1}, one), SDD(1, {1}, one)), sdd::top<conf>);
+    ASSERT_THROW(check_compatibility(SDD(1, {1}, one), SDD(0, {1}, one)), sdd::top<conf>);
+
+    ASSERT_THROW( check_compatibility(SDD(0, SDD(1, {1}, one), one), SDD(1, one, one))
+                , sdd::top<conf>);
+    ASSERT_THROW( check_compatibility(SDD(1, one, one), SDD(0, SDD(1, {1}, one), one))
+                , sdd::top<conf>);
+
+    ASSERT_THROW(check_compatibility(SDD(0, {1}, one), SDD(1, one, one)), sdd::top<conf>);
+    ASSERT_THROW(check_compatibility(SDD(0, one, one), SDD(1, {1}, one)), sdd::top<conf>);
+    ASSERT_THROW(check_compatibility(SDD(0, {1}, one), SDD(1, one, one)), sdd::top<conf>);
+    ASSERT_THROW(check_compatibility(SDD(1, one, one), SDD(0, {1}, one)), sdd::top<conf>);
+
   }
 }
 

@@ -22,16 +22,8 @@ namespace dd {
 template <typename C>
 struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
 {
-  /// @brief Get the textual representation of the intersection operator.
-  ///
-  /// Called by top to export a textual description.
-  static
-  char
-  symbol()
-  noexcept
-  {
-    return '&';
-  }
+  /// @brief The textual representation of the intersection operator.
+  static constexpr char symbol = '&';
 
   /// @brief Perform the SDD intersection algorithm.
   template <typename InputIterator, typename NodeType>
@@ -50,18 +42,21 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
     SDD<C> res = *operands_cit;
 
     const variable_type& variable =
-	    mem::variant_cast<node_type>((*operands_cit)->data()).variable();
+	    mem::variant_cast<node_type>(**operands_cit).variable();
 
     // We re-use the same square union to save some allocations.
     square_union<C, valuation_type> su;
 
     for (++operands_cit; operands_cit != operands_end; ++operands_cit)
-    {    
+    {
+      // Throw a Top if operands are incompatible (different types or different variables).
+      check_compatibility(res, *operands_cit);
+
       // Cleanup for the next usage.
       su.clear();
 
-      const node_type& lhs = mem::variant_cast<node_type>((res)->data());
-      const node_type& rhs = mem::variant_cast<node_type>((*operands_cit)->data());
+      const node_type& lhs = mem::variant_cast<node_type>(*res);
+      const node_type& rhs = mem::variant_cast<node_type>(**operands_cit);
 
       for (auto& lhs_arc : lhs)
       {
@@ -90,7 +85,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
         return zero<C>();
       }
 
-      /// TODO avoid to create an intermediary SDD at each loop.
+      /// @todo avoid to create an intermediary SDD at each loop.
       res = SDD<C>(variable, su(cxt));
     }
 
@@ -114,8 +109,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_builder_impl
   /// @brief Constructor.
   intersection_builder_impl()
     : has_zero(false)
-  {
-  }
+  {}
 
   /// @brief Add an rvalue operand.
   void

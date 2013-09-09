@@ -17,58 +17,6 @@ namespace sdd { namespace dd {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Check that all operands are compatible and determine the nodes' type (hierarchical
-/// or flat).
-template<typename C>
-struct check_visitor
-{
-  typedef node_tag result_type;
-
-  node_tag
-  operator()( const flat_node<C>& lhs, const flat_node<C>& rhs
-            , const SDD<C>& sdd_lhs, const SDD<C>& sdd_rhs)
-  const
-  {
-    if (not (lhs.variable() == rhs.variable()))
-    {
-      throw top<C>(sdd_lhs, sdd_rhs);
-    }
-    return node_tag::flat;
-  }
-
-  node_tag
-  operator()( const hierarchical_node<C>& lhs, const hierarchical_node<C>& rhs
-            , const SDD<C>& sdd_lhs, const SDD<C>& sdd_rhs)
-  const
-  {
-    if (not (lhs.variable() == rhs.variable()))
-    {
-      throw top<C>(sdd_lhs, sdd_rhs);
-    }
-    return node_tag::hierarchical;
-  }
-
-  node_tag
-  operator()(const one_terminal<C>&, const one_terminal<C>&, const SDD<C>&, const SDD<C>&)
-  const noexcept
-  {
-    assert(false && "More than one |1| in operands.");
-    __builtin_unreachable();
-  }
-
-  template <typename T, typename U>
-  __attribute__((noreturn))
-  node_tag
-  operator()(const T&, const U&, const SDD<C>& sdd_lhs, const SDD<C>& sdd_rhs)
-  const
-  {
-    throw top<C>(sdd_lhs, sdd_rhs);
-  }
-};
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
 /// @brief Base class for sum and intersection operations, used by the cache.
 /// @tparam Operation The implementation of the sum or intersection algorithm.
 ///
@@ -151,24 +99,15 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_op
   operator()(context<C>& cxt)
   const
   {
-    // Check compatibility of operands, size is necessarily at least 2.
-    auto cit = begin();
-    auto last = end() - 1;
-    node_tag tag = node_tag::flat;
-    for (; cit != last; ++cit)
+    // Compatibility of nodes is checked on the fly by operations.
+    // It avoids to perform an iteration only for this task.
+    if (begin()->index() == SDD<C>::flat_node_index)
     {
-      tag = binary_visit_self(check_visitor<C>(), *cit, *(cit + 1));
-    }
-
-    if (tag == node_tag::flat)
-    {
-      typedef typename node_for_tag<C, node_tag::flat>::type node_type;
-      return Operation::template work<const_iterator, node_type>(begin(), end(), cxt);
+      return Operation::template work<const_iterator, flat_node<C>>(begin(), end(), cxt);
     }
     else
     {
-      typedef typename node_for_tag<C, node_tag::hierarchical>::type node_type;
-      return Operation::template work<const_iterator, node_type>(begin(), end(), cxt);
+      return Operation::template work<const_iterator, hierarchical_node<C>>(begin(), end(), cxt);
     }
   }
 };
@@ -193,7 +132,7 @@ template <typename C, typename Operation>
 std::ostream&
 operator<<(std::ostream& os, const nary_op<C, Operation>& x)
 {
-  os << Operation::symbol() << " (";
+  os << Operation::symbol << " (";
   std::copy(x.begin(), std::prev(x.end()), std::ostream_iterator<SDD<C>>(os, ", "));
   return os << *std::prev(x.end()) << ")";
 }
@@ -216,6 +155,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
   /// @brief The policy to add new operands.
   ///
   /// An instance is needed for builders with a state (actually, the intersection builder).
+  /// @todo Use empty base class optimisation?
   Builder builder_;
 
   /// @brief Sorted container of operands.

@@ -2,9 +2,11 @@
 #define _SDD_DD_SUM_HH_
 
 #include <initializer_list>
+#include <type_traits> // enable_if, is_same
 #include <unordered_map>
 #include <vector>
 
+#include <boost/container/flat_map.hpp>
 #include <boost/container/flat_set.hpp>
 
 #include "sdd/internal_manager_fwd.hh"
@@ -14,37 +16,30 @@
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
 #include "sdd/util/hash.hh"
+#include "sdd/values/values_traits.hh"
 
-namespace sdd {
+namespace sdd { namespace dd {
 
 /*------------------------------------------------------------------------------------------------*/
-
-namespace dd {
 
 /// @internal
 /// @brief The sum operation in the cache.
 template <typename C>
 struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
 {
-  /// @brief Get the textual representation of the union operator.
-  ///
-  /// Called by top to export a textual description.
-  static
-  char
-  symbol()
-  noexcept
-  {
-    return '+';
-  }
+  /// @brief The textual representation of the union operator.
+  static constexpr char symbol = '+';
 
   /// @brief Perform the SDD union algorithm.
   ///
   /// It's a so-called 'n-ary' union in the sense that we don't create intermediary SDD.
   /// Also, a lot of tests permit to break loops as soon as possible.
-  template <typename InputInterator, typename NodeType>
+  template <typename InputIterator, typename NodeType>
   static
-  SDD<C>
-  work(InputInterator begin, InputInterator end, context<C>& cxt)
+  typename std::enable_if< std::is_same<NodeType, hierarchical_node<C>>::value
+                         or not values::values_traits<typename C::Values>::fast_iterable
+                         , SDD<C>>::type
+  work(InputIterator begin, InputIterator end, context<C>& cxt)
   {
     typedef NodeType node_type;
     typedef typename node_type::valuation_type valuation_type;
@@ -53,13 +48,13 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     const auto operands_end = end;
 
     // Get the first operand as a node, we need it to initialize the algorithm.
-    const node_type& head = mem::variant_cast<node_type>((*operands_cit)->data());
+    const node_type& head = mem::variant_cast<node_type>(**operands_cit);
 
     // Type of the list of successors for a valuation, to be merged with the union operation
     // right before calling the square union.
     typedef sum_builder<C, SDD<C>> sum_builder_type;
 
-    /// TODO Use Boost.Intrusive to save on memory allocations?
+    /// @todo Use Boost.Intrusive to save on memory allocations?
     // List all the successors for each valuation in the final alpha.
     std::unordered_map<valuation_type, sum_builder_type> res(head.size());
 
@@ -83,9 +78,12 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     // (A).
     for (++operands_cit; operands_cit != operands_end; ++operands_cit)
     {
+      // Throw a Top if operands are incompatible (different types or different variables).
+      check_compatibility(*begin, *operands_cit);
+
       const auto res_end = res.end();
 
-      const node_type& node = mem::variant_cast<node_type>((*operands_cit)->data());
+      const node_type& node = mem::variant_cast<node_type>(**operands_cit);
       const auto alpha_end = node.end();
 
       // (B). For each arc of the current operand.
@@ -200,6 +198,72 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     }
 
     return SDD<C>(head.variable(), su(cxt));
+  }
+
+  /// @brief Linear union of flat SDDs whose valuation are "fast iterable".
+  template <typename InputIterator, typename NodeType>
+  static
+  typename std::enable_if< std::is_same<NodeType, flat_node<C>>::value
+                         and values::values_traits<typename C::Values>::fast_iterable
+                         , SDD<C>>::type
+  work(InputIterator begin, InputIterator end, context<C>& cxt)
+  {
+    const auto& variable = mem::variant_cast<flat_node<C>>(**begin).variable();
+
+    typedef typename C::Values values_type;
+    typedef typename values_type::value_type value_type;
+    typedef sum_builder<C, SDD<C>> sum_builder_type;
+    boost::container::flat_map<value_type, sum_builder_type> value_to_succ;
+    value_to_succ.reserve(std::distance(begin, end) * 2);
+
+    auto cit = begin;
+    for (; cit != end; ++cit)
+    {
+      check_compatibility(*begin, *cit);
+
+      const auto& node = mem::variant_cast<flat_node<C>>(**cit);
+      for (const auto& arc : node)
+      {
+        const SDD<C> succ = arc.successor();
+        for (const auto& value : arc.valuation())
+        {
+          const auto search = value_to_succ.find(value);
+          if (search == value_to_succ.end())
+          {
+            value_to_succ.emplace_hint(search, value, sum_builder_type({succ}));
+          }
+          else
+          {
+            search->second.add(succ);
+          }
+        }
+      }
+    }
+
+    boost::container::flat_map<SDD<C>, values_type> succ_to_value;
+    succ_to_value.reserve(value_to_succ.size());
+    for (auto& value_succs : value_to_succ)
+    {
+      const SDD<C> succ = sum(cxt, std::move(value_succs.second));
+      const auto search = succ_to_value.find(succ);
+      if (search == succ_to_value.end())
+      {
+        succ_to_value.emplace_hint(search, succ, values_type({value_succs.first}));
+      }
+      else
+      {
+        search->second.insert(value_succs.first);
+      }
+    }
+
+    alpha_builder<C, values_type> alpha;
+    alpha.reserve(succ_to_value.size());
+    for (auto& succ_values : succ_to_value)
+    {
+      alpha.add(std::move(succ_values.second), succ_values.first);
+    }
+
+    return SDD<C>(variable, std::move(alpha));
   }
 };
 
