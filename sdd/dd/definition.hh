@@ -93,6 +93,7 @@ public:
   SDD&
   operator=(const SDD&) noexcept = default;
 
+  /// @internal
   /// @brief Construct a hierarchical SDD.
   /// @param var  The SDD's variable.
   /// @param values  The SDD's valuation, a set of values constructed from an initialization list.
@@ -107,6 +108,7 @@ public:
     : ptr_(create_node(var, values_type(values), SDD(succ)))
   {}
 
+  /// @internal
   /// @brief Construct a flat SDD.
   /// @param var  The SDD's variable.
   /// @param val  The SDD's valuation, a set of values.
@@ -117,6 +119,7 @@ public:
     : ptr_(create_node(var, std::move(val), succ))
   {}
 
+  /// @internal
   /// @brief Construct a flat SDD.
   /// @param var  The SDD's variable.
   /// @param val  The SDD's valuation, a set of values.
@@ -127,6 +130,7 @@ public:
     : ptr_(create_node(var, val, succ))
   {}
 
+  /// @internal
   /// @brief Construct a hierarchical SDD.
   /// @param var  The SDD's variable.
   /// @param val  The SDD's valuation, an SDD in this case.
