@@ -75,9 +75,6 @@ public:
   /// @brief The type of a set of values.
   typedef typename C::Values values_type;
 
-  /// @brief The type of a value in a set of values.
-  typedef typename C::Values::value_type value_type;
-
 private:
 
   /// @brief The real smart pointer around a unified SDD.
@@ -103,7 +100,10 @@ public:
   ///
   /// O(1), for the creation of the SDD itself, but the complexity of the construction of the
   /// set of values depends on values_type.
-  SDD(const variable_type& var, std::initializer_list<value_type> values, const SDD& succ)
+  /// This constructor is only available when the set of values define the type value_type.
+  template <typename T = decltype(C::Values::value_type)>
+  SDD( const variable_type& var, std::initializer_list<typename C::Values::value_type> values
+     , const SDD& succ)
     : ptr_(create_node(var, values_type(values), SDD(succ)))
   {}
 
