@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iterator>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -243,12 +244,22 @@ struct configuration
 
 /*------------------------------------------------------------------------------------------------*/
 
-static manager<configuration> _manager = manager<configuration>::init();
+//static manager<configuration> _manager = manager<configuration>::init();
+struct _manager
+{
+  std::shared_ptr<manager<configuration>> ptr;
+
+  _manager()
+    : ptr(new manager<configuration>(std::move(manager<configuration>::init())))
+  {}
+};
 
 /*------------------------------------------------------------------------------------------------*/
 
 BOOST_PYTHON_MODULE(_sdd)
 {
+  class_<_manager>("_manager");
+
   class_<SDD<configuration>>("SDD", init<int, object, SDD<configuration>>())
     .def(init<int, SDD<configuration>, SDD<configuration>>())
     .def(self_ns::str(self))

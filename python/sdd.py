@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 
+from contextlib import contextmanager
 from _sdd import *
+from _sdd import _manager
+
+@contextmanager
+def session():
+  m = _manager()
+  yield
 
 class Values(object):
 
