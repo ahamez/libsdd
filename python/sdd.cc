@@ -40,7 +40,7 @@ struct py_identifier
   const
   {
     return call_method<bool>(py.ptr(), "__eq__", rhs.py);
-  }  
+  }
 
   bool
   operator<(const py_identifier& rhs)
@@ -54,7 +54,7 @@ struct py_identifier
   const
   {
     return static_cast<std::size_t>(call_method<long>(py.ptr(), "__hash__"));
-  }  
+  }
 
   std::string
   name()
@@ -100,7 +100,7 @@ struct py_values
   const
   {
     return call_method<bool>(py.ptr(), "__eq__", rhs.py);
-  }  
+  }
 
   bool
   operator<(const py_values& rhs)
@@ -134,21 +134,21 @@ struct py_values
   const
   {
     return call_method<std::string>(py.ptr(), "__str__" );
-  }    
+  }
 
   bool
   empty()
   const
   {
     return size() == 0;
-  }  
+  }
 
   std::size_t
   size()
   const
   {
     return py.is_none() ? 0 : call_method<std::size_t>(py.ptr(), "__len__" );
-  }    
+  }
 };
 
 std::ostream&
@@ -227,7 +227,7 @@ intersection(const py_values& lhs, const py_values& rhs)
     static constexpr bool fast_iterable = false;
     static constexpr bool has_value_type = false;
   };
-  
+
 }
 
 namespace python {
@@ -316,5 +316,5 @@ struct hash<sdd::python::py_values>
 };
 
 /*------------------------------------------------------------------------------------------------*/
-  
+
 } // namespace std
