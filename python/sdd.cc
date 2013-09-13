@@ -244,7 +244,14 @@ struct configuration
 
 /*------------------------------------------------------------------------------------------------*/
 
-//static manager<configuration> _manager = manager<configuration>::init();
+double
+count_paths(SDD<configuration> s)
+{
+  return sdd::count_paths(s).template convert_to<double>();
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
 struct _manager
 {
   std::shared_ptr<manager<configuration>> ptr;
@@ -273,6 +280,8 @@ BOOST_PYTHON_MODULE(_sdd)
 
   def("zero", &zero<configuration>);
   def("one", &one<configuration>);
+
+  def("count_paths", &count_paths);
 }
 
 /*------------------------------------------------------------------------------------------------*/
