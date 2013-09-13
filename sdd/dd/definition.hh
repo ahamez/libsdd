@@ -269,6 +269,14 @@ public:
     return ptr_->data().index();
   }
 
+  /// @internal
+  std::size_t
+  hash()
+  const noexcept
+  {
+    return std::hash<SDD>()(*this);
+  }
+
 private:
 
   /// @internal

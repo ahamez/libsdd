@@ -95,6 +95,11 @@
 		2B0197C315BDE7D900CE5F70 /* top.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = top.hh; sourceTree = "<group>"; };
 		2B04D093163454D900CB57A3 /* test_order.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_order.cc; sourceTree = "<group>"; };
 		2B07606A1680BE8F001CE761 /* consolidate.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = consolidate.hh; sourceTree = "<group>"; };
+		2B0A122A17E1FB960093A68C /* MANIFEST.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = MANIFEST.in; sourceTree = "<group>"; };
+		2B0A122B17E1FB960093A68C /* sdd.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sdd.cc; sourceTree = "<group>"; };
+		2B0A122C17E1FB960093A68C /* sdd.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = sdd.py; sourceTree = "<group>"; };
+		2B0A122D17E1FB960093A68C /* setup.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
+		2B0A122E17E1FB960093A68C /* py_types.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = py_types.hh; sourceTree = "<group>"; };
 		2B0EA1321615D0A10019EB04 /* order.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = order.hh; sourceTree = "<group>"; };
 		2B0EA138161640450019EB04 /* test_utility.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_utility.cc; sourceTree = "<group>"; };
 		2B1182F5172AF7A7006CC0B0 /* test_cache.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_cache.cc; sourceTree = "<group>"; };
@@ -264,6 +269,18 @@
 			path = dd;
 			sourceTree = "<group>";
 		};
+		2B0A122917E1FB960093A68C /* python */ = {
+			isa = PBXGroup;
+			children = (
+				2B0A122A17E1FB960093A68C /* MANIFEST.in */,
+				2B0A122B17E1FB960093A68C /* sdd.cc */,
+				2B0A122C17E1FB960093A68C /* sdd.py */,
+				2B0A122D17E1FB960093A68C /* setup.py */,
+				2B0A122E17E1FB960093A68C /* py_types.hh */,
+			);
+			path = python;
+			sourceTree = "<group>";
+		};
 		2B0EA1301614B3E70019EB04 /* order */ = {
 			isa = PBXGroup;
 			children = (
@@ -360,6 +377,7 @@
 				2BB9F9BF1598FE6900A31F5B /* LICENSE */,
 				2BC6106914E59FA00081D743 /* binaries */,
 				2BB6B43A16517FD9003063B8 /* examples */,
+				2B0A122917E1FB960093A68C /* python */,
 				2BB1A99414E07D38007921F2 /* sdd */,
 				2BB1A9AE14E086E3007921F2 /* tests */,
 			);
