@@ -141,7 +141,7 @@ struct hash<sdd::hom::composition<C>>
 {
   std::size_t
   operator()(const sdd::hom::composition<C>& c)
-  const noexcept
+  const
   {
     std::size_t seed = 0;
     sdd::util::hash_combine(seed, c.left());

@@ -157,7 +157,7 @@ public:
   /// @brief Get the user's inductive hash value.
   std::size_t
   hash()
-  const noexcept override
+  const noexcept(noexcept(std::hash<User>()(h_))) override
   {
     return std::hash<User>()(h_);
   }
@@ -414,7 +414,7 @@ struct hash<sdd::hom::inductive<C>>
 {
   std::size_t
   operator()(const sdd::hom::inductive<C>& i)
-  const noexcept
+  const
   {
     return i.hom().hash();
   }

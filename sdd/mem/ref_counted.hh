@@ -171,7 +171,7 @@ struct hash<sdd::mem::ref_counted<T,Hash>>
 {
   std::size_t
   operator()(const sdd::mem::ref_counted<T, Hash>& x)
-  const noexcept
+  const noexcept(noexcept(Hash()(x.data())))
   {
     return Hash()(x.data());
   }

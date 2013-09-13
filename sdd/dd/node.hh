@@ -192,7 +192,7 @@ struct hash<sdd::node<C, Valuation>>
 {
   std::size_t
   operator()(const sdd::node<C, Valuation>& n)
-  const noexcept
+  const
   {
     std::size_t seed = 0;
     sdd::util::hash_combine(seed, n.variable());

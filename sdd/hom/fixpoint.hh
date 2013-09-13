@@ -145,9 +145,7 @@ template <typename C>
 homomorphism<C>
 Fixpoint(const homomorphism<C>& h)
 {
-  return h.selector()
-       ? h
-       : visit(hom::fixpoint_builder_helper<C>(), h, h);
+  return h.selector() ? h : visit(hom::fixpoint_builder_helper<C>(), h, h);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -165,7 +163,7 @@ struct hash<sdd::hom::fixpoint<C>>
 {
   std::size_t
   operator()(const sdd::hom::fixpoint<C>& f)
-  const noexcept
+  const
   {
     std::size_t seed = 345789; // avoid to have the same hash as the contained homormorphism
     sdd::util::hash_combine(seed, f.hom());

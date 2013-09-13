@@ -242,7 +242,7 @@ private:
   {
     std::size_t
     operator()(const cache_entry& x)
-    const noexcept
+    const noexcept(noexcept(std::hash<Operation>()(x.operation)))
     {
       return std::hash<Operation>()(x.operation);
     }

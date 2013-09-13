@@ -280,7 +280,7 @@ struct hash<sdd::dd::nary_op<C, Operation>>
 {
   std::size_t
   operator()(const sdd::dd::nary_op<C, Operation>& op)
-  const noexcept
+  const
   {
     std::size_t seed = 0;
     for (const auto& operand : op)
