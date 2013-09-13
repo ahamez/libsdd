@@ -249,10 +249,8 @@ static manager<configuration> _manager = manager<configuration>::init();
 
 BOOST_PYTHON_MODULE(_sdd)
 {
-  class_<SDD<configuration>>( "SDD"
-                            , init<int, object, SDD<configuration>>()
-                            //, init<int, SDD<configuration>, SDD<configuration>>()
-                            )
+  class_<SDD<configuration>>("SDD", init<int, object, SDD<configuration>>())
+    .def(init<int, SDD<configuration>, SDD<configuration>>())
     .def(self_ns::str(self))
     .def(self + self)
     .def(self - self)
