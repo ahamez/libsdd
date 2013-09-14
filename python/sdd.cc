@@ -164,7 +164,7 @@ sum(const py_values& lhs, const py_values& rhs)
   {
     if (not rhs.empty())
     {
-      return py_values(call_method<object>(lhs.py.ptr(), "union", rhs.py));
+      return py_values(call_method<object>(lhs.py.ptr(), "__or__", rhs.py));
     }
     else
     {
@@ -184,7 +184,7 @@ difference(const py_values& lhs, const py_values& rhs)
   {
     if (not rhs.empty())
     {
-      return py_values(call_method<object>(lhs.py.ptr(), "difference", rhs.py));
+      return py_values(call_method<object>(lhs.py.ptr(), "__sub__", rhs.py));
     }
     else
     {
@@ -204,7 +204,7 @@ intersection(const py_values& lhs, const py_values& rhs)
   {
     if (not rhs.empty())
     {
-      return py_values(call_method<object>(lhs.py.ptr(), "intersection", rhs.py));
+      return py_values(call_method<object>(lhs.py.ptr(), "__and__", rhs.py));
     }
     else
     {

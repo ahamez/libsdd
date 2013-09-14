@@ -11,22 +11,19 @@ def session():
 
 class Values(object):
 
+  """
+  A set of values on an SDD's arc.
+  It's a thin wrapper around a frozenset, in order to provide a comparison operator.
+  """
+
   def __init__(self):
     self.values = frozenset([])
 
   def __init__(self, values):
     self.values = frozenset(values)
 
-  def union(self, other):
-    return Values(self.values | other.values)
-
-  def intersection(self, other):
-    return Values(self.values & other.values)
-
-  def difference(self, other):
-    return Values(self.values - other.values)
-
   def __lt__(self, other):
+    """Use lexicographic order to compare two sets of values."""
     for l, r in zip(self.values, other.values):
       if l < r: return True
       if l > r: return False
@@ -48,10 +45,10 @@ class Values(object):
     return self.values.__iter__()
 
   def __or__(self,other):
-    return self.union(other)
+    return Values(self.values | other.values)
 
   def __and__(self,other):
-    return self.intersection(other)
+    return Values(self.values & other.values)
 
   def __sub__(self,other):
-    return self.difference(other)
+    return Values(self.values - other.values)
