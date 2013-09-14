@@ -8,9 +8,9 @@ NAME         = "sdd"
 VERSION      = "0.1"
 AUTHORS      = "Alexandre Hamez"
 EMAIL        = "alexandre.hamez@isae.fr"
-DESCRIPTION  = """A package to use SDDs."""
+DESCRIPTION  = """A package to manipulate SDDs."""
 URL          = "https://github.com/ahamez/libsdd"
-LICENSE      = "BSD License"
+LICENSE      = "BSD"
 PLATFORM     = "Any"
 
 #################################################################
@@ -18,7 +18,7 @@ PLATFORM     = "Any"
 dynamic_sdd = \
 Extension(  name='_sdd',
             sources=['sdd.cc'],
-            include_dirs=["./"],#, "/usr/local/boost-1.54/clang/include"],
+            include_dirs=["./"],
             language='c++',
             libraries=['boost_python'])
 

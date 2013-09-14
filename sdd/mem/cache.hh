@@ -66,8 +66,7 @@ struct cache_statistics
       : hits(0)
       , misses(0)
       , filtered(0)
-    {
-    }
+    {}
 
     /// @brief The number of hits in a round.
     std::size_t hits;
@@ -182,8 +181,7 @@ private:
       , operation(std::move(op))
       , result(std::forward<Args>(args)...)
       , nb_hits_(in_use_mask) // initially in use
-    {
-    }
+    {}
 
     /// @brief Cache entries are only compared using their operations.
     bool
