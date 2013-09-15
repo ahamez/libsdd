@@ -110,7 +110,7 @@ struct py_values
     {
       return false;
     }
-    else if (empty())
+    else if (this->empty())
     {
       return true;
     }
@@ -245,9 +245,9 @@ struct configuration
 /*------------------------------------------------------------------------------------------------*/
 
 double
-count_paths(SDD<configuration> s)
+count_combinations(SDD<configuration> s)
 {
-  return sdd::count_paths(s).template convert_to<double>();
+  return sdd::count_combinations(s).template convert_to<double>();
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -281,7 +281,7 @@ BOOST_PYTHON_MODULE(_sdd)
   def("zero", &zero<configuration>);
   def("one", &one<configuration>);
 
-  def("count_paths", &count_paths);
+  def("count_combinations", &count_combinations);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -292,7 +292,6 @@ namespace std {
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Hash specialization for sdd::values::bitset.
 template <>
 struct hash<sdd::python::py_identifier>
 {
