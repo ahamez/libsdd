@@ -16,7 +16,7 @@
 *.swp
 *.lock
 profile
-
+gtest
 
 ####
 # Xcode temporary files that should never be committed
