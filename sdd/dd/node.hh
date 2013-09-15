@@ -171,7 +171,7 @@ template <typename C, typename Valuation>
 std::ostream&
 operator<<(std::ostream& os, const node<C, Valuation>& n)
 {
-  os << static_cast<std::size_t>(n.variable()) << "[";
+  os << n.variable() << "[";
   std::for_each( n.begin(), n.end() - 1
                , [&](const arc<C, Valuation>& a)
                     {os << a.valuation() << " --> " << a.successor() << " || ";});
