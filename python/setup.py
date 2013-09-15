@@ -20,7 +20,7 @@ Extension(  name='_sdd',
             sources=['sdd.cc'],
             include_dirs=["./"],
             language='c++',
-            libraries=['boost_python'])
+            libraries=['boost_python', 'boost_coroutine', 'boost_context'])
 
 #################################################################
 

@@ -6,10 +6,11 @@ add_subdirectory(gtest)
 
 set(SOURCES
     tests.cc
+    dd/test_count_combinations.cc
     dd/test_definition.cc
     dd/test_difference.cc
     dd/test_intersection.cc
-    dd/test_paths.cc
+    dd/test_path_generator.cc
     dd/test_sum.cc
     dd/test_top.cc
     hom/test_hom_composition.cc
@@ -38,7 +39,7 @@ set(SOURCES
     )
 
 add_executable(tests ${SOURCES})
-target_link_libraries(tests gtest ${TCMALLOC_LIBRARY})
+target_link_libraries(tests gtest ${TCMALLOC_LIBRARY} ${Boost_LIBRARIES})
 
 if (VALGRIND_EXE)
   add_test( NAME "UnitTestsValgrind"

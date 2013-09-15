@@ -7,6 +7,7 @@
 #include "sdd/dd/alpha.hh"
 #include "sdd/dd/definition_fwd.hh"
 #include "sdd/dd/node.hh"
+#include "sdd/dd/path_generator_fwd.hh"
 #include "sdd/dd/terminal.hh"
 #include "sdd/dd/top.hh"
 #include "sdd/mem/ptr.hh"
@@ -33,7 +34,6 @@ using hierarchical_node = node<C, SDD<C>>;
 template <typename C>
 class SDD final
 {
-
   static_assert( std::is_integral<typename C::Variable>::value
                , "A variable must be an integral type.");
 
@@ -49,6 +49,14 @@ private:
 public:
 
   /// @internal
+  static constexpr std::size_t zero_terminal_index
+    = data_type::template index_for_type<zero_terminal<C>>();
+
+  /// @internal
+  static constexpr std::size_t one_terminal_index
+    = data_type::template index_for_type<one_terminal<C>>();
+
+  /// @internal
   static constexpr std::size_t flat_node_index
     = data_type::template index_for_type<flat_node<C>>();
 
@@ -60,20 +68,20 @@ public:
   /// @brief A unified and canonized SDD, meant to be stored in a unique table.
   ///
   /// It is automatically erased when there is no more reference to it.
-  typedef mem::ref_counted<data_type> unique_type;
+  using unique_type = mem::ref_counted<data_type>;
 
   /// @internal
   /// @brief The type of the smart pointer around a unified SDD.
   ///
   /// It handles the reference counting as well as the deletion of the SDD when it is no longer
   /// referenced.
-  typedef mem::ptr<unique_type> ptr_type;
+  using ptr_type = mem::ptr<unique_type>;
 
   /// @brief The type of variables.
-  typedef typename C::Variable variable_type;
+  using variable_type = typename C::Variable;
 
   /// @brief The type of a set of values.
-  typedef typename C::Values values_type;
+  using values_type = typename C::Values;
 
 private:
 
@@ -160,6 +168,16 @@ public:
     {
       ptr_ = create_node(o.variable(), SDD(o.nested(), init), SDD(o.next(), init));
     }
+  }
+
+  /// @brief Return an iterable object which generates all paths of this SDD.
+  path_generator<C>
+  paths()
+  const
+  {
+    auto p = std::make_shared<path<C>>();
+    namespace hold = std::placeholders;
+    return path_generator<C>(std::bind(dd::xpaths_impl<C>, hold::_1, *this, p, nullptr));
   }
 
   /// @brief Indicate if the SDD is |0|.

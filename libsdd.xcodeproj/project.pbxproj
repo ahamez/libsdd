@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2B1182FC172AF7A7006CC0B0 /* test_variant.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B1182F8172AF7A7006CC0B0 /* test_variant.cc */; };
+		2B23A9C917E591C00019B1D4 /* test_path_generator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B23A9C717E591C00019B1D4 /* test_path_generator.cc */; };
 		2B4BE59915C416670053346F /* test_definition.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B4BE59715C416670053346F /* test_definition.cc */; };
 		2B6051D21743B67800D71F0F /* test_hash_table.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B6051D01743B67800D71F0F /* test_hash_table.cc */; };
 		2B99C75B15AB2BE0007389B8 /* tests.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BD33B5514E660D0004A7657 /* tests.cc */; };
@@ -15,7 +16,7 @@
 		2BC472DE15BF1C3200A8D442 /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC472C315BF1BB300A8D442 /* gtest-all.cc */; };
 		2BC472E115BF1D0000A8D442 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC472DA15BF1C1300A8D442 /* libgtest.a */; };
 		2BD442A917D8A3BD00E6BF15 /* test_sum.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC472A115BF1B9300A8D442 /* test_sum.cc */; };
-		2BD442AC17D8A56700E6BF15 /* test_paths.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B19AF0815C5E3CD00C4ABB0 /* test_paths.cc */; };
+		2BD442AC17D8A56700E6BF15 /* test_count_combinations.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B19AF0815C5E3CD00C4ABB0 /* test_count_combinations.cc */; };
 		2BD442AE17D8A70800E6BF15 /* test_difference.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC4729F15BF1B9300A8D442 /* test_difference.cc */; };
 		2BD442AF17D8A70800E6BF15 /* test_intersection.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BC472A015BF1B9300A8D442 /* test_intersection.cc */; };
 		2BD442B017D8A70800E6BF15 /* test_top.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B1E0FD515C3EBB7006BC2A1 /* test_top.cc */; };
@@ -105,8 +106,8 @@
 		2B1182F6172AF7A7006CC0B0 /* test_ptr.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_ptr.cc; sourceTree = "<group>"; };
 		2B1182F7172AF7A7006CC0B0 /* test_unique_table.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_unique_table.cc; sourceTree = "<group>"; };
 		2B1182F8172AF7A7006CC0B0 /* test_variant.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_variant.cc; sourceTree = "<group>"; };
-		2B19AF0615C5D75800C4ABB0 /* paths.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; path = paths.hh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		2B19AF0815C5E3CD00C4ABB0 /* test_paths.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_paths.cc; sourceTree = "<group>"; };
+		2B19AF0615C5D75800C4ABB0 /* count_combinations.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; lineEnding = 0; path = count_combinations.hh; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		2B19AF0815C5E3CD00C4ABB0 /* test_count_combinations.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_count_combinations.cc; sourceTree = "<group>"; };
 		2B1A26941619BDB1005D6BB0 /* definition.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = definition.hh; sourceTree = "<group>"; };
 		2B1A26961619BDEC005D6BB0 /* identity.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = identity.hh; sourceTree = "<group>"; };
 		2B1A26971619BEF1005D6BB0 /* sum.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = sum.hh; sourceTree = "<group>"; };
@@ -117,9 +118,12 @@
 		2B1A41921737F797002BA4FA /* carrier.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = carrier.hh; sourceTree = "<group>"; };
 		2B1A419317380E2B002BA4FA /* test_carrier.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_carrier.cc; sourceTree = "<group>"; };
 		2B1E0FD515C3EBB7006BC2A1 /* test_top.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_top.cc; sourceTree = "<group>"; };
+		2B23A9C717E591C00019B1D4 /* test_path_generator.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_path_generator.cc; sourceTree = "<group>"; };
 		2B38CC8615C023C10067BDD2 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		2B429E82164C46C5008000C1 /* flat_set.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = flat_set.hh; sourceTree = "<group>"; };
 		2B429E83164CFE33008000C1 /* test_flat_set.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_flat_set.cc; sourceTree = "<group>"; };
+		2B42FB3217E47AB500A4FBEA /* path_generator.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = path_generator.hh; sourceTree = "<group>"; };
+		2B42FB3717E5130F00A4FBEA /* path_generator_fwd.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = path_generator_fwd.hh; sourceTree = "<group>"; };
 		2B454E82162BFF6D0086989F /* expression.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = expression.hh; sourceTree = "<group>"; };
 		2B454E8F162C2BE50086989F /* constant.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = constant.hh; sourceTree = "<group>"; };
 		2B4BE59715C416670053346F /* test_definition.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_definition.cc; sourceTree = "<group>"; };
@@ -252,6 +256,7 @@
 				2B0197B515BDE7D900CE5F70 /* alpha.hh */,
 				2B0197B615BDE7D900CE5F70 /* context.hh */,
 				2B0197B715BDE7D900CE5F70 /* context_fwd.hh */,
+				2B19AF0615C5D75800C4ABB0 /* count_combinations.hh */,
 				2B0197B815BDE7D900CE5F70 /* definition.hh */,
 				2B0197B915BDE7D900CE5F70 /* definition_fwd.hh */,
 				2B0197BA15BDE7D900CE5F70 /* difference.hh */,
@@ -259,7 +264,8 @@
 				2B0197BC15BDE7D900CE5F70 /* nary.hh */,
 				2B0197BD15BDE7D900CE5F70 /* node.hh */,
 				2B0197BF15BDE7D900CE5F70 /* operations_fwd.hh */,
-				2B19AF0615C5D75800C4ABB0 /* paths.hh */,
+				2B42FB3217E47AB500A4FBEA /* path_generator.hh */,
+				2B42FB3717E5130F00A4FBEA /* path_generator_fwd.hh */,
 				2B0197C015BDE7D900CE5F70 /* square_union.hh */,
 				2B0197C115BDE7D900CE5F70 /* sum.hh */,
 				2B0197C215BDE7D900CE5F70 /* terminal.hh */,
@@ -441,7 +447,8 @@
 				2B4BE59715C416670053346F /* test_definition.cc */,
 				2BC4729F15BF1B9300A8D442 /* test_difference.cc */,
 				2BC472A015BF1B9300A8D442 /* test_intersection.cc */,
-				2B19AF0815C5E3CD00C4ABB0 /* test_paths.cc */,
+				2B19AF0815C5E3CD00C4ABB0 /* test_count_combinations.cc */,
+				2B23A9C717E591C00019B1D4 /* test_path_generator.cc */,
 				2BC472A115BF1B9300A8D442 /* test_sum.cc */,
 				2B1E0FD515C3EBB7006BC2A1 /* test_top.cc */,
 			);
@@ -708,13 +715,14 @@
 				2BD442AE17D8A70800E6BF15 /* test_difference.cc in Sources */,
 				2BD442AF17D8A70800E6BF15 /* test_intersection.cc in Sources */,
 				2BD442B017D8A70800E6BF15 /* test_top.cc in Sources */,
-				2BD442AC17D8A56700E6BF15 /* test_paths.cc in Sources */,
+				2BD442AC17D8A56700E6BF15 /* test_count_combinations.cc in Sources */,
 				2BD442A917D8A3BD00E6BF15 /* test_sum.cc in Sources */,
 				2B99C75B15AB2BE0007389B8 /* tests.cc in Sources */,
 				2B4BE59915C416670053346F /* test_definition.cc in Sources */,
 				2B1182FC172AF7A7006CC0B0 /* test_variant.cc in Sources */,
 				2B6051D21743B67800D71F0F /* test_hash_table.cc in Sources */,
 				2BB4939D1745587900C55DF6 /* test_next_power.cc in Sources */,
+				2B23A9C917E591C00019B1D4 /* test_path_generator.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -748,13 +756,17 @@
 				GCC_ENABLE_SSE42_EXTENSIONS = YES;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
 				GCC_STRICT_ALIASING = YES;
-				GCC_UNROLL_LOOPS = YES;
+				GCC_UNROLL_LOOPS = NO;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(BOOST_INCLUDE)",
 					"$(SRCROOT)",
 				);
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "$(BOOST_LIB)";
+				OTHER_LDFLAGS = (
+					"-lboost_context",
+					"-lboost_coroutine",
+				);
 			};
 			name = Debug;
 		};
@@ -775,7 +787,11 @@
 					"$(BOOST_INCLUDE)",
 					"$(SRCROOT)",
 				);
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "$(BOOST_LIB)";
+				OTHER_LDFLAGS = (
+					"-lboost_context",
+					"-lboost_coroutine",
+				);
 			};
 			name = Release;
 		};
@@ -941,6 +957,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"/usr/local/boost-1.54/clang/lib\"",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -964,6 +984,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"/usr/local/boost-1.54/clang/lib\"",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

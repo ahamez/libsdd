@@ -313,7 +313,6 @@ public:
     {
       ++pos;
     }
-
     return pos == nb_buckets_ ? end() : iterator(this, pos, buckets_[pos]);
   }
 
