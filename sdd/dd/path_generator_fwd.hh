@@ -1,8 +1,8 @@
 #ifndef _SDD_DD_PATH_GENERATOR_FWD_HH_
 #define _SDD_DD_PATH_GENERATOR_FWD_HH_
 
-#include <deque>
 #include <memory>
+#include <vector>
 
 #include <boost/coroutine/coroutine.hpp>
 
@@ -16,7 +16,7 @@ namespace sdd {
 ///
 /// Values are indexed from the top of the SDD to its bottom.
 template <typename C>
-using path = std::deque<typename C::Values>;
+using path = std::vector<typename C::Values>;
 
 /// @brief An on-the-fly generator of all paths contained in an SDD.
 ///

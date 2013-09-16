@@ -175,7 +175,9 @@ public:
   paths()
   const
   {
-    auto p = std::make_shared<path<C>>();
+    path<C> tmp;
+    tmp.reserve(128);
+    auto p = std::make_shared<path<C>>(std::move(tmp));
     namespace hold = std::placeholders;
     return path_generator<C>(std::bind(dd::xpaths_impl<C>, hold::_1, *this, p, nullptr));
   }
