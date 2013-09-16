@@ -85,7 +85,7 @@ public:
   /// @brief Get the variable of this node.
   ///
   /// O(1).
-  const variable_type&
+  variable_type
   variable()
   const noexcept
   {
