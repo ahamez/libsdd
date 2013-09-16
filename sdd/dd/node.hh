@@ -85,7 +85,7 @@ public:
   /// @brief Get the variable of this node.
   ///
   /// O(1).
-  const variable_type&
+  variable_type
   variable()
   const noexcept
   {
@@ -171,7 +171,7 @@ template <typename C, typename Valuation>
 std::ostream&
 operator<<(std::ostream& os, const node<C, Valuation>& n)
 {
-  os << static_cast<std::size_t>(n.variable()) << "[";
+  os << n.variable() << "[";
   std::for_each( n.begin(), n.end() - 1
                , [&](const arc<C, Valuation>& a)
                     {os << a.valuation() << " --> " << a.successor() << " || ";});
@@ -192,7 +192,7 @@ struct hash<sdd::node<C, Valuation>>
 {
   std::size_t
   operator()(const sdd::node<C, Valuation>& n)
-  const noexcept
+  const
   {
     std::size_t seed = 0;
     sdd::util::hash_combine(seed, n.variable());

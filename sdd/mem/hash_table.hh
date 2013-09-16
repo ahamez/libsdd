@@ -193,7 +193,7 @@ public:
   template <typename T, typename HashT, typename EqT>
   std::pair<iterator, bool>
   insert_check(const T& x, HashT hash, EqT eq, insert_commit_data& commit_data)
-  const noexcept
+  const noexcept(noexcept(hash(x)))
   {
     commit_data.hash = hash(x);
     // same as commit_data.h % nb_buckets_, but much more efficient (works only with powers of 2)
@@ -225,9 +225,6 @@ public:
     Data* previous = nullptr;
     Data* current = buckets_[pos];
 
-    // an other thread might have added x, we must check again
-    // mettre un flag dans la bucket (en plus du mutex) pour savoir
-    // si une insertion a été faite entre temps? comme ça on évite la boucle
     while (current != nullptr)
     {
       if (x == *current)
@@ -253,7 +250,7 @@ public:
   /// @brief Insert an element.
   std::pair<iterator, bool>
   insert(Data& x)
-  noexcept
+  noexcept(noexcept(Hash()(x)))
   {
     const std::uint32_t pos = Hash()(x) & (nb_buckets_ - 1);
 
@@ -316,7 +313,6 @@ public:
     {
       ++pos;
     }
-
     return pos == nb_buckets_ ? end() : iterator(this, pos, buckets_[pos]);
   }
 

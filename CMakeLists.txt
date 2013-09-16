@@ -8,7 +8,7 @@ project (libsdd)
 
 ################################################################################
 
-find_package(Boost 1.53.0 REQUIRED)
+find_package(Boost 1.54.0 REQUIRED COMPONENTS context coroutine)
 find_package(Doxygen QUIET)
 
 ################################################################################

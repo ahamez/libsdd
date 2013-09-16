@@ -10,6 +10,7 @@
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
 #include "sdd/util/hash.hh"
+#include "sdd/values/empty.hh"
 
 namespace sdd {
 
@@ -67,11 +68,11 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
           valuation_builder.add(rhs_arc.valuation());
           valuation_type inter_val = intersection(cxt, std::move(valuation_builder));
 
-          if (not inter_val.empty())
+          if (not values::empty_values(inter_val))
           {
             SDD<C> inter_succ = intersection(cxt, {lhs_arc.successor(), rhs_arc.successor()});
 
-            if (not inter_succ.empty())
+            if (not values::empty_values(inter_succ))
             {
               su.add(inter_succ, std::move(inter_val));
             }
@@ -119,7 +120,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_builder_impl
     {
       return;
     }
-    if (operand.empty())
+    if (values::empty_values(operand))
     {
       has_zero = true,
       set.clear();
@@ -136,7 +137,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_builder_impl
     {
       return;
     }
-    if (operand.empty())
+    if (values::empty_values(operand))
     {
       has_zero = true,
       set.clear();
@@ -188,7 +189,7 @@ intersection(context<C>&, intersection_builder<C, Values>&& builder)
     auto cit = builder.begin();
     const auto end = builder.end();
     Values result = *cit;
-    for (++cit; cit != end and not result.empty(); ++cit)
+    for (++cit; cit != end and not values::empty_values(result); ++cit)
     {
       typename C::Values tmp = intersection(result, *cit);
       using std::swap;

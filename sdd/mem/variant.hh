@@ -293,7 +293,7 @@ struct hash<sdd::mem::variant<Types...>>
 {
   std::size_t
   operator()(const sdd::mem::variant<Types...>& x)
-  const noexcept
+  const noexcept(noexcept(sdd::mem::apply_visitor(sdd::mem::hash_visitor(), x)))
   {
     std::size_t seed = sdd::mem::apply_visitor(sdd::mem::hash_visitor(), x);
     sdd::util::hash_combine(seed, x.index());

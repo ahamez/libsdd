@@ -7,6 +7,7 @@
 #include "sdd/dd/alpha.hh"
 #include "sdd/dd/definition_fwd.hh"
 #include "sdd/dd/node.hh"
+#include "sdd/dd/path_generator_fwd.hh"
 #include "sdd/dd/terminal.hh"
 #include "sdd/dd/top.hh"
 #include "sdd/mem/ptr.hh"
@@ -14,6 +15,7 @@
 #include "sdd/mem/variant.hh"
 #include "sdd/order/order.hh"
 #include "sdd/util/print_sizes_fwd.hh"
+#include "sdd/values/empty.hh"
 
 namespace sdd {
 
@@ -33,7 +35,6 @@ using hierarchical_node = node<C, SDD<C>>;
 template <typename C>
 class SDD final
 {
-
   static_assert( std::is_integral<typename C::Variable>::value
                , "A variable must be an integral type.");
 
@@ -49,6 +50,14 @@ private:
 public:
 
   /// @internal
+  static constexpr std::size_t zero_terminal_index
+    = data_type::template index_for_type<zero_terminal<C>>();
+
+  /// @internal
+  static constexpr std::size_t one_terminal_index
+    = data_type::template index_for_type<one_terminal<C>>();
+
+  /// @internal
   static constexpr std::size_t flat_node_index
     = data_type::template index_for_type<flat_node<C>>();
 
@@ -60,23 +69,20 @@ public:
   /// @brief A unified and canonized SDD, meant to be stored in a unique table.
   ///
   /// It is automatically erased when there is no more reference to it.
-  typedef mem::ref_counted<data_type> unique_type;
+  using unique_type = mem::ref_counted<data_type>;
 
   /// @internal
   /// @brief The type of the smart pointer around a unified SDD.
   ///
   /// It handles the reference counting as well as the deletion of the SDD when it is no longer
   /// referenced.
-  typedef mem::ptr<unique_type> ptr_type;
+  using ptr_type = mem::ptr<unique_type>;
 
   /// @brief The type of variables.
-  typedef typename C::Variable variable_type;
+  using variable_type = typename C::Variable;
 
   /// @brief The type of a set of values.
-  typedef typename C::Values values_type;
-
-  /// @brief The type of a value in a set of values.
-  typedef typename C::Values::value_type value_type;
+  using values_type = typename C::Values;
 
 private:
 
@@ -96,6 +102,7 @@ public:
   SDD&
   operator=(const SDD&) noexcept = default;
 
+  /// @internal
   /// @brief Construct a hierarchical SDD.
   /// @param var  The SDD's variable.
   /// @param values  The SDD's valuation, a set of values constructed from an initialization list.
@@ -103,10 +110,14 @@ public:
   ///
   /// O(1), for the creation of the SDD itself, but the complexity of the construction of the
   /// set of values depends on values_type.
-  SDD(const variable_type& var, std::initializer_list<value_type> values, const SDD& succ)
+  /// This constructor is only available when the set of values define the type value_type.
+  template <typename D = C, typename T = decltype(D::Values::value_type)>
+  SDD( const variable_type& var, std::initializer_list<typename D::Values::value_type> values
+     , const SDD& succ)
     : ptr_(create_node(var, values_type(values), SDD(succ)))
   {}
 
+  /// @internal
   /// @brief Construct a flat SDD.
   /// @param var  The SDD's variable.
   /// @param val  The SDD's valuation, a set of values.
@@ -117,6 +128,7 @@ public:
     : ptr_(create_node(var, std::move(val), succ))
   {}
 
+  /// @internal
   /// @brief Construct a flat SDD.
   /// @param var  The SDD's variable.
   /// @param val  The SDD's valuation, a set of values.
@@ -127,6 +139,7 @@ public:
     : ptr_(create_node(var, val, succ))
   {}
 
+  /// @internal
   /// @brief Construct a hierarchical SDD.
   /// @param var  The SDD's variable.
   /// @param val  The SDD's valuation, an SDD in this case.
@@ -156,6 +169,18 @@ public:
     {
       ptr_ = create_node(o.variable(), SDD(o.nested(), init), SDD(o.next(), init));
     }
+  }
+
+  /// @brief Return an iterable object which generates all paths of this SDD.
+  path_generator<C>
+  paths()
+  const
+  {
+    path<C> tmp;
+    tmp.reserve(128);
+    auto p = std::make_shared<path<C>>(std::move(tmp));
+    namespace hold = std::placeholders;
+    return path_generator<C>(std::bind(dd::xpaths_impl<C>, hold::_1, *this, p, nullptr));
   }
 
   /// @brief Indicate if the SDD is |0|.
@@ -265,6 +290,14 @@ public:
     return ptr_->data().index();
   }
 
+  /// @internal
+  std::size_t
+  hash()
+  const noexcept
+  {
+    return std::hash<SDD>()(*this);
+  }
+
 private:
 
   /// @internal
@@ -276,7 +309,7 @@ private:
   ptr_type
   create_node(const variable_type& var, Valuation&& val, const SDD& succ)
   {
-    if (succ.empty() or val.empty())
+    if (succ.empty() or values::empty_values(val))
     {
       return zero_ptr();
     }
@@ -297,7 +330,7 @@ private:
   ptr_type
   create_node(const variable_type& var, const Valuation& val, const SDD& succ)
   {
-    if (succ.empty() or val.empty())
+    if (succ.empty() or values::empty_values(val))
     {
       return zero_ptr();
     }

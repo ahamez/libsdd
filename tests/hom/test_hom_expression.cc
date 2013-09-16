@@ -3,11 +3,11 @@
 #include <memory>
 #include <type_traits> // underlying_type
 
-#include <boost/container/flat_map.hpp>
 #include <boost/variant.hpp>
 
 #include "gtest/gtest.h"
 
+#include "sdd/util/boost_flat_map_no_warnings.hh"
 #include "tests/hom/common.hh"
 
 /*------------------------------------------------------------------------------------------------*/

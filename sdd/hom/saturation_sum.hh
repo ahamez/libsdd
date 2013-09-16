@@ -242,7 +242,7 @@ struct hash<sdd::hom::saturation_sum<C>>
 {
   std::size_t
   operator()(const sdd::hom::saturation_sum<C>& s)
-  const noexcept
+  const
   {
     std::size_t seed = 0;
     sdd::util::hash_combine(seed, s.variable());

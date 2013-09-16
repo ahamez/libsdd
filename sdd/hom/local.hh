@@ -205,7 +205,7 @@ struct hash<sdd::hom::local<C>>
 {
   std::size_t
   operator()(const sdd::hom::local<C>& l)
-  const noexcept
+  const
   {
     std::size_t seed = 0;
     sdd::util::hash_combine(seed, l.identifier());

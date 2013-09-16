@@ -695,7 +695,7 @@ struct hash<sdd::hom::expression<C>>
 {
   std::size_t
   operator()(const sdd::hom::expression<C>& e)
-  const noexcept
+  const
   {
     std::size_t seed = e.evaluator().hash();
     for (const auto& v : e.identifiers())

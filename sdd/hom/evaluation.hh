@@ -217,7 +217,7 @@ struct hash<sdd::hom::cached_homomorphism<C>>
 {
   std::size_t
   operator()(const sdd::hom::cached_homomorphism<C>& ch)
-  const noexcept
+  const
   {
     std::size_t seed = 0;
     sdd::util::hash_combine(seed, ch.hom);

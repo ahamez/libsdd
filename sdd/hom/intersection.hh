@@ -244,7 +244,7 @@ struct hash<sdd::hom::intersection<C>>
 {
   std::size_t
   operator()(const sdd::hom::intersection<C>& s)
-  const noexcept
+  const
   {
     std::size_t seed = 0;
     for (const auto& op : s.operands())

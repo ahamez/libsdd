@@ -6,9 +6,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include <boost/container/flat_map.hpp>
-#include <boost/container/flat_set.hpp>
-
 #include "sdd/internal_manager_fwd.hh"
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition.hh"
@@ -16,6 +13,9 @@
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
 #include "sdd/util/hash.hh"
+#include "sdd/util/boost_flat_map_no_warnings.hh"
+#include "sdd/util/boost_flat_set_no_warnings.hh"
+#include "sdd/values/empty.hh"
 #include "sdd/values/values_traits.hh"
 
 namespace sdd { namespace dd {
@@ -97,7 +97,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
         auto res_cit = res.begin();
 
         // (C). While the current valuation is not empty, test it against arcs in res.
-        while (not current_val.empty() and res_cit != res_end)
+        while (not values::empty_values(current_val) and res_cit != res_end)
         {
           const valuation_type& res_val = res_cit->first;
           sum_builder_type& res_succs = res_cit->second;
@@ -120,14 +120,14 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
           const valuation_type inter = intersection(cxt, std::move(inter_builder));
 
           // (E). The current valuation and the current arc from res have a common part.
-          if (not inter.empty())
+          if (not values::empty_values(inter))
           {
             save.emplace_back(inter, res_succs);
             save.back().second.add(current_succ);
 
             // (F).
             valuation_type diff = difference(cxt, res_val, inter);
-            if (not diff.empty())
+            if (not values::empty_values(diff))
             {
               // (res_val - inter) can't be in intersection, but we need to keep it
               // for the next arcs of the current alpha. So we put in a temporary storage.
@@ -161,7 +161,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
 
         // (I). For val or a part of val (it could have been modified during the previous
         // loop), we didn't find an intersection with any arc of res.
-        if (not current_val.empty())
+        if (not values::empty_values(current_val))
         {
           sum_builder_type succs;
           succs.add(current_succ);
@@ -280,7 +280,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_builder_impl
   void
   add(boost::container::flat_set<Valuation>& set, Valuation&& operand)
   {
-    if (not operand.empty())
+    if (not values::empty_values(operand))
     {
       set.insert(std::move(operand));
     }
@@ -289,7 +289,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_builder_impl
   void
   add(boost::container::flat_set<Valuation>& set, const Valuation& operand)
   {
-    if (not operand.empty())
+    if (not values::empty_values(operand))
     {
       set.insert(operand);
     }

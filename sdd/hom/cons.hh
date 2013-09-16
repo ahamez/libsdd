@@ -156,7 +156,7 @@ struct hash<sdd::hom::cons<C, Valuation>>
 {
   std::size_t
   operator()(const sdd::hom::cons<C, Valuation>& h)
-  const noexcept
+  const
   {
     std::size_t seed = 0;
     sdd::util::hash_combine(seed, h.get_order());

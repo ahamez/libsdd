@@ -1,9 +1,8 @@
 #ifndef _SDD_DD_ALPHA_HH_
 #define _SDD_DD_ALPHA_HH_
 
-#include <boost/container/flat_map.hpp>
-
 #include "sdd/dd/definition_fwd.hh"
+#include "sdd/util/boost_flat_map_no_warnings.hh"
 #include "sdd/util/hash.hh"
 
 namespace sdd {

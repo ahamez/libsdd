@@ -123,7 +123,7 @@ struct hash<sdd::hom::constant<C>>
   constexpr
   std::size_t
   operator()(const sdd::hom::constant<C>& c)
-  const noexcept
+  const
   {
     return hash<sdd::SDD<C>>()(c.sdd());
   }

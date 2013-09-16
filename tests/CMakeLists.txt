@@ -2,14 +2,17 @@ add_definitions("-DGTEST_HAS_TR1_TUPLE=0")
 include_directories("${PROJECT_SOURCE_DIR}/tests/gtest/include")
 
 # we need to compile googletest with the same flags
-add_subdirectory(gtest)
+# we should check for gtest directory presence...
+include_directories("${PROJECT_SOURCE_DIR}/tests/gtest")
+add_library(gtest "${PROJECT_SOURCE_DIR}/tests/gtest/src/gtest-all.cc")
 
 set(SOURCES
     tests.cc
+    dd/test_count_combinations.cc
     dd/test_definition.cc
     dd/test_difference.cc
     dd/test_intersection.cc
-    dd/test_paths.cc
+    dd/test_path_generator.cc
     dd/test_sum.cc
     dd/test_top.cc
     hom/test_hom_composition.cc
@@ -39,7 +42,7 @@ set(SOURCES
     )
 
 add_executable(tests ${SOURCES})
-target_link_libraries(tests gtest ${TCMALLOC_LIBRARY})
+target_link_libraries(tests gtest ${TCMALLOC_LIBRARY} ${Boost_LIBRARIES})
 
 if (VALGRIND_EXE)
   add_test( NAME "UnitTestsValgrind"
