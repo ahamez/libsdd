@@ -198,6 +198,8 @@
 		2BCB2533163AF7D0002452D6 /* values_function.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = values_function.hh; sourceTree = "<group>"; };
 		2BCB2539163B3F57002452D6 /* test_hom_values_function.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_values_function.cc; sourceTree = "<group>"; };
 		2BCC83EB17E739BF00D8B174 /* empty.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = empty.hh; sourceTree = "<group>"; };
+		2BCC83EC17E7975100D8B174 /* boost_flat_set_no_warnings.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = boost_flat_set_no_warnings.hh; sourceTree = "<group>"; };
+		2BCC83ED17E79AE100D8B174 /* boost_flat_map_no_warnings.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = boost_flat_map_no_warnings.hh; sourceTree = "<group>"; };
 		2BD0DA80157A9596005BC59A /* test_bitset.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_bitset.cc; sourceTree = "<group>"; };
 		2BD33B5514E660D0004A7657 /* tests.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tests.cc; sourceTree = "<group>"; };
 		2BD442A817D87BA400E6BF15 /* macros.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = macros.hh; sourceTree = "<group>"; };
@@ -567,6 +569,8 @@
 		2BE06D7916555594002339CF /* util */ = {
 			isa = PBXGroup;
 			children = (
+				2BCC83ED17E79AE100D8B174 /* boost_flat_map_no_warnings.hh */,
+				2BCC83EC17E7975100D8B174 /* boost_flat_set_no_warnings.hh */,
 				2B913FFE1721A9B3006FD699 /* boost_multiindex_no_warnings.hh */,
 				2BD67E291721BA9B00053FB9 /* boost_multiprecision_no_warnings.hh */,
 				2BE06D7A16555594002339CF /* hash.hh */,

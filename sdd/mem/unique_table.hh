@@ -3,9 +3,8 @@
 
 #include <cassert>
 
-#include <boost/container/flat_map.hpp>
-
 #include "sdd/mem/hash_table.hh"
+#include "sdd/util/boost_flat_map_no_warnings.hh"
 
 namespace sdd { namespace mem {
 

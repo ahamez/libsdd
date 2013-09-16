@@ -6,9 +6,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include <boost/container/flat_map.hpp>
-#include <boost/container/flat_set.hpp>
-
 #include "sdd/internal_manager_fwd.hh"
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition.hh"
@@ -16,6 +13,8 @@
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
 #include "sdd/util/hash.hh"
+#include "sdd/util/boost_flat_map_no_warnings.hh"
+#include "sdd/util/boost_flat_set_no_warnings.hh"
 #include "sdd/values/empty.hh"
 #include "sdd/values/values_traits.hh"
 
