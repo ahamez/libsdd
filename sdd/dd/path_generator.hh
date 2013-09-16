@@ -1,9 +1,7 @@
 #ifndef _SDD_DD_PATH_GENERATOR_HH_
 #define _SDD_DD_PATH_GENERATOR_HH_
 
-#include <functional> // bind
 #include <cassert>
-#include <deque>
 #include <memory>
 
 #include <boost/coroutine/coroutine.hpp>
