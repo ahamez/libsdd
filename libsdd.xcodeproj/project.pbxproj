@@ -119,6 +119,7 @@
 		2B1A419317380E2B002BA4FA /* test_carrier.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_carrier.cc; sourceTree = "<group>"; };
 		2B1E0FD515C3EBB7006BC2A1 /* test_top.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_top.cc; sourceTree = "<group>"; };
 		2B23A9C717E591C00019B1D4 /* test_path_generator.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_path_generator.cc; sourceTree = "<group>"; };
+		2B27C3E217E7369000413365 /* size.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = size.hh; sourceTree = "<group>"; };
 		2B38CC8615C023C10067BDD2 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		2B429E82164C46C5008000C1 /* flat_set.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = flat_set.hh; sourceTree = "<group>"; };
 		2B429E83164CFE33008000C1 /* test_flat_set.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_flat_set.cc; sourceTree = "<group>"; };
@@ -196,6 +197,7 @@
 		2BC9F2B8161B4620005B5CDE /* evaluation.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = evaluation.hh; sourceTree = "<group>"; };
 		2BCB2533163AF7D0002452D6 /* values_function.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = values_function.hh; sourceTree = "<group>"; };
 		2BCB2539163B3F57002452D6 /* test_hom_values_function.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_values_function.cc; sourceTree = "<group>"; };
+		2BCC83EB17E739BF00D8B174 /* empty.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = empty.hh; sourceTree = "<group>"; };
 		2BD0DA80157A9596005BC59A /* test_bitset.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_bitset.cc; sourceTree = "<group>"; };
 		2BD33B5514E660D0004A7657 /* tests.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tests.cc; sourceTree = "<group>"; };
 		2BD442A817D87BA400E6BF15 /* macros.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = macros.hh; sourceTree = "<group>"; };
@@ -583,6 +585,8 @@
 				2BF0F988157A71B7005D1275 /* bitset.hh */,
 				2B429E82164C46C5008000C1 /* flat_set.hh */,
 				2B00B049172DC61800FF6B09 /* values_traits.hh */,
+				2B27C3E217E7369000413365 /* size.hh */,
+				2BCC83EB17E739BF00D8B174 /* empty.hh */,
 			);
 			path = values;
 			sourceTree = "<group>";

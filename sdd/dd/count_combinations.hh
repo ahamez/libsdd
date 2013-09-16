@@ -5,6 +5,7 @@
 
 #include "sdd/dd/definition.hh"
 #include "sdd/util/boost_multiprecision_no_warnings.hh"
+#include "sdd/values/size.hh"
 
 namespace sdd {
 
@@ -53,7 +54,7 @@ struct count_combinations_visitor
     {
       for (const auto& arc : n)
       {
-        insertion.first->second += arc.valuation().size() * visit(*this, arc.successor());
+        insertion.first->second += size(arc.valuation()) * visit(*this, arc.successor());
       }
     }
     return insertion.first->second;

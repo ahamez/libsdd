@@ -15,6 +15,7 @@
 #include "sdd/mem/variant.hh"
 #include "sdd/order/order.hh"
 #include "sdd/util/print_sizes_fwd.hh"
+#include "sdd/values/empty.hh"
 
 namespace sdd {
 
@@ -308,7 +309,7 @@ private:
   ptr_type
   create_node(const variable_type& var, Valuation&& val, const SDD& succ)
   {
-    if (succ.empty() or val.empty())
+    if (succ.empty() or values::empty_values(val))
     {
       return zero_ptr();
     }
@@ -329,7 +330,7 @@ private:
   ptr_type
   create_node(const variable_type& var, const Valuation& val, const SDD& succ)
   {
-    if (succ.empty() or val.empty())
+    if (succ.empty() or values::empty_values(val))
     {
       return zero_ptr();
     }

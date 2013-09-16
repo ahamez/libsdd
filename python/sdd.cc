@@ -12,179 +12,67 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-namespace sdd { namespace python {
+namespace boost { namespace python {
 
-using namespace boost::python;
+std::size_t
+size(const object& o)
+{
+  return o.is_none() ? 0 : call_method<std::size_t>(o.ptr(), "__len__" );
+}
+
+bool
+empty(const object& o)
+{
+  return size(o) == 0;
+}
+
+object
+sum(const object& lhs, const object& rhs)
+{
+  return call_method<object>(lhs.ptr(), "__or__", rhs);
+}
+
+object
+intersection(const object& lhs, const object& rhs)
+{
+  return call_method<object>(lhs.ptr(), "__and__", rhs);
+}
+
+object
+difference(const object& lhs, const object& rhs)
+{
+  return call_method<object>(lhs.ptr(), "__sub__", rhs);
+}
+
+std::ostream&
+operator<<(std::ostream& os, const object& o)
+{
+  return os << call_method<std::string>(o.ptr(), "__str__" );
+}
+
+}} // namespace boost::python
 
 /*------------------------------------------------------------------------------------------------*/
 
-struct py_values
+namespace sdd { namespace values {
+
+/*------------------------------------------------------------------------------------------------*/
+
+template <>
+struct values_traits<boost::python::object>
 {
-  object py;
-
-  py_values()
-    : py() // default to None
-  {}
-
-  py_values(object p)
-		: py(p)
-  {}
-
-  py_values(const py_values& v)
-		: py(v.py)
-  {}
-
-  py_values&
-  operator=(const py_values& v)
-  {
-    py = v.py;
-    return *this;
-  }
-
-  object
-  content()
-  const noexcept
-  {
-    return py;
-  }
-
-  bool
-  operator==(const py_values& rhs)
-  const
-  {
-    return call_method<bool>(py.ptr(), "__eq__", rhs.py);
-  }
-
-  bool
-  operator<(const py_values& rhs)
-  const
-  {
-    if (rhs.empty())
-    {
-      return false;
-    }
-    else if (this->empty())
-    {
-      return true;
-    }
-    else
-    {
-      return call_method<bool>(py.ptr(), "__lt__", rhs.py);
-    }
-  }
-
-  std::size_t
-  hash()
-  const
-  {
-    return empty()
-         ? std::hash<int>()(0)
-         : static_cast<std::size_t>(call_method<long>(py.ptr() , "__hash__" ));
-  }
-
-  std::string
-  name()
-  const
-  {
-    return call_method<std::string>(py.ptr(), "__str__" );
-  }
-
-  bool
-  empty()
-  const
-  {
-    return size() == 0;
-  }
-
-  std::size_t
-  size()
-  const
-  {
-    return py.is_none() ? 0 : call_method<std::size_t>(py.ptr(), "__len__" );
-  }
+  static constexpr bool stateful = false;
+  static constexpr bool fast_iterable = false;
+  static constexpr bool has_value_type = false;
 };
-
-std::ostream&
-operator<<(std::ostream& os, const py_values& v)
-{
-  return os << v.name();
-}
-
-py_values
-sum(const py_values& lhs, const py_values& rhs)
-{
-  if (not lhs.empty())
-  {
-    if (not rhs.empty())
-    {
-      return py_values(call_method<object>(lhs.py.ptr(), "__or__", rhs.py));
-    }
-    else
-    {
-      return lhs;
-    }
-  }
-  else
-  {
-    return rhs;
-  }
-}
-
-py_values
-difference(const py_values& lhs, const py_values& rhs)
-{
-  if (not lhs.empty())
-  {
-    if (not rhs.empty())
-    {
-      return py_values(call_method<object>(lhs.py.ptr(), "__sub__", rhs.py));
-    }
-    else
-    {
-      return lhs;
-    }
-  }
-  else
-  {
-    return lhs;
-  }
-}
-
-py_values
-intersection(const py_values& lhs, const py_values& rhs)
-{
-  if (not lhs.empty())
-  {
-    if (not rhs.empty())
-    {
-      return py_values(call_method<object>(lhs.py.ptr(), "__and__", rhs.py));
-    }
-    else
-    {
-      return rhs;
-    }
-  }
-  else
-  {
-    return lhs;
-  }
-}
-
-} // namespace python
-
-namespace values {
-
-  template <>
-  struct values_traits<python::py_values>
-  {
-    static constexpr bool stateful = false;
-    static constexpr bool fast_iterable = false;
-    static constexpr bool has_value_type = false;
-  };
 
 } // namespace values
 
+/*------------------------------------------------------------------------------------------------*/
+
 namespace python {
+
+namespace bp = boost::python;
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -193,7 +81,7 @@ struct pyconf
 {
   using Variable = int;
   using Identifier = std::string;
-  using Values = py_values;
+  using Values = bp::object;
 };
 
 /*------------------------------------------------------------------------------------------------*/
@@ -218,8 +106,8 @@ struct _manager
 /*------------------------------------------------------------------------------------------------*/
 
 inline
-object
-pass_through(object const& o)
+bp::object
+pass_through(bp::object const& o)
 {
   return o;
 }
@@ -257,36 +145,36 @@ struct paths
 
 struct py_visitor
 {
-  using result_type = object;
+  using result_type = bp::object;
 
-  object py;
+  bp::object py;
 
-  py_visitor(object p)
+  py_visitor(bp::object p)
     : py(p)
   {}
 
-  object
+  bp::object
   operator()(const hierarchical_node<pyconf>& node)
   const
   {
     return py.attr("hierarchical")(boost::cref(node));
   }
 
-  object
+  bp::object
   operator()(const flat_node<pyconf>& node)
   const
   {
     return py.attr("flat")(boost::cref(node));
   }
 
-  object
+  bp::object
   operator()(const one_terminal<pyconf>&)
   const
   {
     return py.attr("one")();
   }
 
-  object
+  bp::object
   operator()(const zero_terminal<pyconf>&)
   const
   {
@@ -294,18 +182,18 @@ struct py_visitor
   }
 };
 
-object
-py_visit(object visitor, const SDD<pyconf>& s)
+bp::object
+py_visit(bp::object visitor, const SDD<pyconf>& s)
 {
   return visit(py_visitor {visitor}, s);
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
-
-
 BOOST_PYTHON_MODULE(_sdd)
 {
+  using namespace boost::python;
+
   using sdd_type = SDD<pyconf>;
   using hierarchical = hierarchical_node<pyconf>;
   using flat = flat_node<pyconf>;
@@ -322,9 +210,9 @@ BOOST_PYTHON_MODULE(_sdd)
     .def("__iter__", range<return_internal_reference<>>(&hierarchical::begin, &hierarchical::end))
     ;
 
-  class_<arc<pyconf, py_values>, boost::noncopyable>("FlatArc", no_init)
-    .def("valuation", &arc<pyconf, py_values>::valuation, return_internal_reference<>())
-    .def("successor", &arc<pyconf, py_values>::successor)
+  class_<arc<pyconf, object>, boost::noncopyable>("FlatArc", no_init)
+    .def("valuation", &arc<pyconf, object>::valuation, return_internal_reference<>())
+    .def("successor", &arc<pyconf, object>::successor)
     ;
 
   class_<flat, boost::noncopyable>("FlatNode", no_init)
@@ -351,16 +239,12 @@ BOOST_PYTHON_MODULE(_sdd)
   def("visit", &py_visit);
 
   class_<path<pyconf>>("Path", no_init)
-    .def(vector_indexing_suite<path<pyconf>>())
+    .def(vector_indexing_suite<path<pyconf>, true /*NoProxy*/>())
     ;
 
   class_<paths, boost::noncopyable>("Paths", init<SDD<pyconf>>())
     .def("__iter__", &pass_through)
     .def("next", &paths::next)
-    ;
-
-  class_<py_values>("PyValues", no_init)
-    .def("content", &py_values::content)
     ;
 }
 
@@ -373,13 +257,13 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 template <>
-struct hash<sdd::python::py_values>
+struct hash<boost::python::object>
 {
   std::size_t
-  operator()(const sdd::python::py_values& val)
+  operator()(const boost::python::object& o)
   const
   {
-    return val.hash();
+    return static_cast<std::size_t>(boost::python::call_method<long>(o.ptr(), "__hash__"));
   }
 };
 
