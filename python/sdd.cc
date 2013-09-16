@@ -231,9 +231,7 @@ struct paths
   paths(const SDD<pyconf>& s)
   noexcept
     : gen(s.paths())
-  {
-    std::cout << "paths::paths()" << std::endl;
-  }
+  {}
 
   static
   path<pyconf>
