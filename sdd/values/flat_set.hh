@@ -28,9 +28,7 @@ public:
   /// @brief The type of the contained value.
   typedef Value value_type;
 
-  /// @brief The type of the real container.
-  typedef boost::container::flat_set<value_type> data_type;
-
+  /// @internal
   /// @brief How to hash a boost::container::flat_set.
   struct hash_type
   {
@@ -46,6 +44,10 @@ public:
       return seed;
     }
   };
+
+  /// @internal
+  /// @brief The type of the real container.
+  typedef boost::container::flat_set<value_type> data_type;
 
   /// @internal
   typedef mem::ref_counted<data_type, hash_type> unique_type;

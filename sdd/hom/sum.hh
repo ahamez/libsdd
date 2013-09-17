@@ -202,7 +202,7 @@ struct sum_builder_helper
   /// @brief Store all other operands.
   operands_type& operands_;
 
-  /// @bief Constructor.
+  /// @brief Constructor.
   sum_builder_helper(locals_type& locals, operands_type& operands)
     : locals_(locals), operands_(operands)
   {}
