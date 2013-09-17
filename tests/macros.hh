@@ -7,6 +7,7 @@
 
 #define conf typename TestFixture::configuration_type
 #define values_type typename TestFixture::configuration_type::Values
+#define identifier_type typename TestFixture::configuration_type::Identifier
 #define SDD typename sdd::SDD<conf>
 #define zero this->zero
 #define one this->one

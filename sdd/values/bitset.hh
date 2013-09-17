@@ -92,6 +92,13 @@ public:
     return content_.none();
   }
 
+  bool
+  test(std::size_t pos)
+  const noexcept
+  {
+    return content_.test(pos);
+  }
+
   friend void
   swap(bitset& lhs, bitset& rhs)
   noexcept

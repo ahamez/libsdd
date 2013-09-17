@@ -1,0 +1,42 @@
+#ifndef _SDD_HOM_EXPRESSION_STACKS_HH_
+#define _SDD_HOM_EXPRESSION_STACKS_HH_
+
+#include <memory> // shared_ptr
+
+#include "sdd/order/order.hh"
+
+namespace sdd { namespace hom { namespace expr {
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+template <typename C>
+struct app_stack
+{
+  const SDD<C> sdd;
+  const order<C> ord;
+  std::shared_ptr<app_stack> next;
+
+  app_stack(const SDD<C>& s, const order<C>& o, const std::shared_ptr<app_stack>& n)
+    : sdd(s), ord(o), next(n)
+  {}
+};
+
+/// @internal
+/// @brief The type of stack of results to put as a successor of a hierarhical node.
+template <typename C>
+struct res_stack
+{
+  dd::sum_builder<C, SDD<C>> result;
+  std::shared_ptr<res_stack> next;
+
+  res_stack(const std::shared_ptr<res_stack>& n)
+    : result(), next(n)
+  {}
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+}}} // namespace sdd::hom::expr
+
+#endif // _SDD_HOM_EXPRESSION_STACKS_HH_
