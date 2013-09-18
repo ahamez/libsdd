@@ -701,10 +701,17 @@ TYPED_TEST(hom_expression_test, simple_hierarchical_one_path)
   const auto _  = 21; // don't care value
   using ob = order_builder;
   {
-    order o(order_builder().push("i", order_builder {"a", "b", "c"}));
+    order o(ob("i", ob ({"a", "b", "c"})));
     const auto h = Expression<conf>(o, evaluator<conf>(ast1), l.begin(), l.end(), "c");
     const auto s0 = SDD(0, SDD(2, {1}, SDD(1, {1}, SDD(0, {_}, one))), one);
     const auto s1 = SDD(0, SDD(2, {1}, SDD(1, {1}, SDD(0, {2}, one))), one);
+    ASSERT_EQ(s1, h(o, s0));
+  }
+  {
+    order o(ob("z") << ob("i", ob ({"a", "b", "c"})));
+    const auto h = Expression<conf>(o, evaluator<conf>(ast1), l.begin(), l.end(), "c");
+    const auto s0 = SDD(1, {_}, SDD(0, SDD(2, {1}, SDD(1, {1}, SDD(0, {_}, one))), one));
+    const auto s1 = SDD(1, {_}, SDD(0, SDD(2, {1}, SDD(1, {1}, SDD(0, {2}, one))), one));
     ASSERT_EQ(s1, h(o, s0));
   }
   {
@@ -724,6 +731,48 @@ TYPED_TEST(hom_expression_test, simple_hierarchical_one_path)
     const auto s1 = SDD(2, SDD(0, {1}, one)
                   , SDD(1, SDD(0, {1}, one)
                   , SDD(0, SDD(0, {2}, one)
+                  , one)));
+
+    ASSERT_EQ(s1, h(o, s0));
+  }
+  {
+    const order o(ob("i", ob("a")) << ob("j", ob("b")) << ob("k", ob({"c", "x"})));
+    const auto h = Expression<conf>(o, evaluator<conf>(ast1), l.begin(), l.end(), "c");
+    const auto s0 = SDD(2, SDD(0, {2}, one)
+                  , SDD(1, SDD(0, {1}, one)
+                  , SDD(0, SDD(1, {_}, SDD(0, {_}, one))
+                  , one)));
+    const auto s1 = SDD(2, SDD(0, {2}, one)
+                  , SDD(1, SDD(0, {1}, one)
+                  , SDD(0, SDD(1, {3}, SDD(0, {_}, one))
+                  , one)));
+
+    ASSERT_EQ(s1, h(o, s0));
+  }
+  {
+    const order o(ob("i", ob("a")) << ob("j", ob("b")) << ob("k", ob({"y", "c", "x"})));
+    const auto h = Expression<conf>(o, evaluator<conf>(ast1), l.begin(), l.end(), "c");
+    const auto s0 = SDD(2, SDD(0, {2}, one)
+                  , SDD(1, SDD(0, {1}, one)
+                  , SDD(0, SDD(2, {_}, SDD(1, {_}, SDD(0, {_}, one)))
+                  , one)));
+    const auto s1 = SDD(2, SDD(0, {2}, one)
+                  , SDD(1, SDD(0, {1}, one)
+                  , SDD(0, SDD(2, {_}, SDD(1, {3}, SDD(0, {_}, one)))
+                  , one)));
+
+    ASSERT_EQ(s1, h(o, s0));
+  }
+  {
+    const order o(ob("i", ob("a")) << ob("j", ob({"b", "z"})) << ob("k", ob({"y", "c", "x"})));
+    const auto h = Expression<conf>(o, evaluator<conf>(ast1), l.begin(), l.end(), "c");
+    const auto s0 = SDD(2, SDD(0, {2}, one)
+                  , SDD(1, SDD(1, {1}, SDD(0, {_}, one))
+                  , SDD(0, SDD(2, {_}, SDD(1, {_}, SDD(0, {_}, one)))
+                  , one)));
+    const auto s1 = SDD(2, SDD(0, {2}, one)
+                  , SDD(1, SDD(1, {1}, SDD(0, {_}, one))
+                  , SDD(0, SDD(2, {_}, SDD(1, {3}, SDD(0, {_}, one)))
                   , one)));
 
     ASSERT_EQ(s1, h(o, s0));
