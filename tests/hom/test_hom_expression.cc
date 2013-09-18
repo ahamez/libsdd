@@ -736,6 +736,20 @@ TYPED_TEST(hom_expression_test, simple_hierarchical_one_path)
     ASSERT_EQ(s1, h(o, s0));
   }
   {
+    const order o(ob("i", ob("a")) << ob("b") << ob("k", ob("c")));
+    const auto h = Expression<conf>(o, evaluator<conf>(ast1), l.begin(), l.end(), "c");
+    const auto s0 = SDD(2, SDD(0, {1}, one)
+                  , SDD(1, {1}
+                  , SDD(0, SDD(0, {_}, one)
+                  , one)));
+    const auto s1 = SDD(2, SDD(0, {1}, one)
+                  , SDD(1, {1}
+                  , SDD(0, SDD(0, {2}, one)
+                  , one)));
+
+    ASSERT_EQ(s1, h(o, s0));
+  }
+  {
     const order o(ob("i", ob("a")) << ob("j", ob("b")) << ob("k", ob({"c", "x"})));
     const auto h = Expression<conf>(o, evaluator<conf>(ast1), l.begin(), l.end(), "c");
     const auto s0 = SDD(2, SDD(0, {2}, one)
