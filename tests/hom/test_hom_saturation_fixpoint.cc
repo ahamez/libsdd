@@ -77,7 +77,7 @@ TYPED_TEST(hom_saturation_fixpoint_test, evaluation)
              , h(o, s0));
   }
   {
-    order o(order_builder().add("c").add("b", order_builder {"x"}).add("a"));
+    order o(order_builder().push("c").push("b", order_builder {"x"}).push("a"));
     SDD s0(2, {0}, SDD(1, SDD(0, {0}, one), SDD(0, {0}, one)));
 
     const auto f = Fixpoint(Sum<conf>(o, {Inductive<conf>(targeted_incr<conf>("c", 1)), id}));

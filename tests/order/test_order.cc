@@ -45,7 +45,7 @@ TYPED_TEST(order_test, builder)
   }
   {
     order_builder ob;
-    ob.add("b").add("a");
+    ob.push("b").push("a");
     ASSERT_EQ("a", ob.identifier());
     ASSERT_TRUE(ob.nested().empty());
     ASSERT_FALSE(ob.next().empty());
@@ -54,7 +54,7 @@ TYPED_TEST(order_test, builder)
   }
   {
     order_builder ob;
-    ob.add("y", order_builder {"b"}).add("x", order_builder {"a"});
+    ob.push("y", order_builder {"b"}).push("x", order_builder {"a"});
 
     ASSERT_EQ("x", ob.identifier());
     ASSERT_FALSE(ob.nested().empty());
@@ -94,9 +94,9 @@ TYPED_TEST(order_test, constructed_order)
     ASSERT_EQ("2", o.next().next().identifier());
  }
   {
-    order o(order_builder().add("y", order_builder {"c"})
-                           .add("x", order_builder().add("z", order_builder {"b"}))
-                           .add("a"));
+    order o(order_builder().push("y", order_builder {"c"})
+                           .push("x", order_builder().push("z", order_builder {"b"}))
+                           .push("a"));
 
     const std::vector<std::string> ordered_identifiers {"a", "x", "z", "b", "y", "c"};
 

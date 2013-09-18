@@ -66,7 +66,7 @@ TYPED_TEST(rewriting_test, partition)
 TYPED_TEST(rewriting_test, sum)
 {
   {
-    order o(order_builder().add("b").add("a", order_builder {"x"}));
+    order o(order_builder().push("b").push("a", order_builder {"x"}));
     const homomorphism h0 = Sum<conf>( o
                             , { id
                               , Inductive<conf>(targeted_incr<conf>("b", 0))

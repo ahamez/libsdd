@@ -21,7 +21,7 @@ const SDD one = sdd::one<conf>();
 
 /*------------------------------------------------------------------------------------------------*/
 
-enum class binop {add, sub, mul};
+enum class binop {push, sub, mul};
 
 struct binary_operation;
 struct operand;
@@ -156,7 +156,7 @@ struct evaluation_visitor
   {
     switch (op)
     {
-      case binop::add : return lhs + rhs;
+      case binop::push : return lhs + rhs;
       case binop::sub : return lhs - rhs;
       case binop::mul : return lhs * rhs;
     }
@@ -240,7 +240,7 @@ struct print_visitor
   {
     switch (op)
     {
-      case binop::add : os << " + "; break;
+      case binop::push : os << " + "; break;
       case binop::sub : os << " - "; break;
       case binop::mul : os << " * "; break;
     }
@@ -295,7 +295,7 @@ struct hash<indexed_ast>
     {
       switch (op)
       {
-        case binop::add : return 0;
+        case binop::push : return 0;
         case binop::sub : return 1;
         case binop::mul : return 2;
       }
@@ -350,7 +350,7 @@ struct hom_expression_test
   {
     operand a("a");
     operand b("b");
-    binary_operation op(binop::add, a, b);
+    binary_operation op(binop::push, a, b);
     return std::make_shared<indexed_ast>(std::move(op));
   }
 };
