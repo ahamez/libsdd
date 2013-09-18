@@ -208,7 +208,7 @@ main(int argc, char** argv)
   sdd::order_builder<conf> ob;
   for (unsigned int i = 0; i < nb_rings; ++i)
   {
-    ob.add(i);
+    ob.push(i);
   }
   sdd::order<conf> o(ob);
 
