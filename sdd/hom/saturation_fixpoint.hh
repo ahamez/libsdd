@@ -233,7 +233,7 @@ operator<<(std::ostream& os, const saturation_fixpoint<C>& s)
 
 /// @internal
 /// @brief Create the Saturation Fixpoint homomorphism.
-/// @related homomorphism
+/// @related sdd::homomorphism
 ///
 /// We suppose that a saturation fixpoint is created in the rewriting process. Thus, we assume
 /// that operands of the G part are already optimized (e.g. local merged and sums flatten).

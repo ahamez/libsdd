@@ -212,7 +212,7 @@ difference(context<C>& cxt, const SDD<C>& lhs, const SDD<C>& rhs)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @related SDD
+/// @related sdd::SDD
 template <typename C, typename Values>
 inline
 Values

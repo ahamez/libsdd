@@ -13,10 +13,12 @@ namespace sdd {
 
 namespace detail {
 
+/// @internal
 /// @brief Signature of the structure that will store, if necessary, the state needed by C::Values.
 template <typename Values, bool>
 struct values_state;
 
+/// @internal
 /// @brief Specialization for a stateful set of values.
 template <typename Values>
 struct values_state<Values, true>
@@ -31,6 +33,7 @@ struct values_state<Values, true>
   {}
 };
 
+/// @internal
 /// @brief Specialization for a stateless set of values.
 template <typename Values>
 struct values_state<Values, false>
@@ -41,6 +44,7 @@ struct values_state<Values, false>
   {}
 };
 
+/// @internal
 /// @brief Dispatch on the correct type of values_state.
 template <typename Values>
 using values_state_type = values_state<Values, values::values_traits<Values>::stateful>;

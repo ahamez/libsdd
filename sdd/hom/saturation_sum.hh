@@ -197,7 +197,7 @@ operator<<(std::ostream& os, const saturation_sum<C>& s)
 
 /// @internal
 /// @brief Create the Saturation Sum homomorphism.
-/// @related homomorphism
+/// @related sdd::homomorphism
 ///
 /// We suppose that a saturation sum is created in the rewriting process. Thus, we assume that
 /// operands of the G part are already optimized (local merged and sums flatten).

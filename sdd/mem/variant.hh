@@ -233,7 +233,7 @@ operator<<(std::ostream& os, const variant<Types...>& v)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief
-/// @related variant
+/// @related mem::variant
 template <typename Visitor, typename X, typename... Args>
 inline
 typename Visitor::result_type
@@ -245,7 +245,7 @@ visit(const Visitor& v, const X& x, Args&&... args)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief
-/// @related variant
+/// @related mem::variant
 template <typename Visitor, typename X, typename... Args>
 inline
 typename Visitor::result_type
@@ -257,7 +257,7 @@ visit_self(const Visitor& v, const X& x, Args&&... args)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief
-/// @related variant
+/// @related mem::variant
 template <typename Visitor, typename X, typename Y, typename... Args>
 inline
 typename Visitor::result_type
@@ -269,7 +269,7 @@ binary_visit(const Visitor& v, const X& x, const Y& y, Args&&... args)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief
-/// @related variant
+/// @related mem::variant
 template <typename Visitor, typename X, typename Y, typename... Args>
 inline
 typename Visitor::result_type

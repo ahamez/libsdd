@@ -61,13 +61,8 @@ TYPED_TEST(hom_local_test, construction)
 
 TYPED_TEST(hom_local_test, evaluation)
 {
-  order_builder ob;
-  order_builder q {"b"};
-  ob.add("y", q);
-  order_builder p {"a"};
-  ob.add("x", p);
-
-  order o(ob);
+  using ob = order_builder;
+  const order o(ob("x", ob("a")) << ob("y", ob("b")));
 
   const SDD s0 = SDD(1, SDD(0, {0}, one), SDD(0, SDD(0, {1}, one), one));
 

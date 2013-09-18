@@ -300,7 +300,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_builder_impl
 
 /// @internal
 /// @brief   The sum operation of a set of SDD.
-/// @related SDD
+/// @related sdd::SDD
 template <typename C>
 inline
 SDD<C>

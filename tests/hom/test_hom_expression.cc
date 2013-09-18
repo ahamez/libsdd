@@ -364,7 +364,7 @@ struct hash<indexed_ast<C>>
   operator()(const indexed_ast<C>& idx)
   const noexcept
   {
-    
+
     return apply_visitor(visitor(), idx.ast);
   }
 };
@@ -699,24 +699,23 @@ TYPED_TEST(hom_expression_test, simple_hierarchical_one_path)
 {
   const auto l = {"a", "b"};
   const auto _  = 21; // don't care value
+  using ob = order_builder;
   {
-    order o(order_builder().add("i", order_builder {"a", "b", "c"}));
+    order o(order_builder().push("i", order_builder {"a", "b", "c"}));
     const auto h = Expression<conf>(o, evaluator<conf>(ast1), l.begin(), l.end(), "c");
     const auto s0 = SDD(0, SDD(2, {1}, SDD(1, {1}, SDD(0, {_}, one))), one);
     const auto s1 = SDD(0, SDD(2, {1}, SDD(1, {1}, SDD(0, {2}, one))), one);
     ASSERT_EQ(s1, h(o, s0));
   }
   {
-    order o(order_builder().add("j", order_builder().add("i", order_builder {"a", "b", "c"})));
+    order o(order_builder().push("j", order_builder().push("i", order_builder {"a", "b", "c"})));
     const auto h = Expression<conf>(o, evaluator<conf>(ast1), l.begin(), l.end(), "c");
     const auto s0 = SDD(0, SDD(0, SDD(2, {1}, SDD(1, {1}, SDD(0, {_}, one))), one), one);
     const auto s1 = SDD(0, SDD(0, SDD(2, {1}, SDD(1, {1}, SDD(0, {2}, one))), one), one);
     ASSERT_EQ(s1, h(o, s0));
   }
   {
-    order o(order_builder().add("k", order_builder {"c"})
-                           .add("j", order_builder {"b"})
-                           .add("i", order_builder {"a"}));
+    const order o(ob("i", ob("a")) << ob("j", ob("b")) << ob("k", ob("c")));
     const auto h = Expression<conf>(o, evaluator<conf>(ast1), l.begin(), l.end(), "c");
     const auto s0 = SDD(2, SDD(0, {1}, one)
                   , SDD(1, SDD(0, {1}, one)
@@ -730,9 +729,8 @@ TYPED_TEST(hom_expression_test, simple_hierarchical_one_path)
     ASSERT_EQ(s1, h(o, s0));
   }
   {
-    order o(order_builder().add("c")
-                           .add("j", order_builder {"b"})
-                           .add("i", order_builder {"a"}));
+    const order o(ob("i", ob("a")) << ob("j", ob("b")) << ob("c"));
+
     const auto h = Expression<conf>(o, evaluator<conf>(ast1), l.begin(), l.end(), "c");
     const auto s0 = SDD(2, SDD(0, {1}, one)
                   , SDD(1, SDD(0, {1}, one)
@@ -746,3 +744,5 @@ TYPED_TEST(hom_expression_test, simple_hierarchical_one_path)
     ASSERT_EQ(s1, h(o, s0));
   }
 }
+
+/*------------------------------------------------------------------------------------------------*/

@@ -37,9 +37,9 @@ TYPED_TEST_CASE(order_carrier_test, configurations);
 TYPED_TEST(order_carrier_test, inductive)
 {
   order_builder ob;
-  ob.add("a");
-  ob.add("b");
-  ob.add("c", order_builder().add("d").add("e", order_builder().add("f").add("g")));
+  ob.push("a");
+  ob.push("b");
+  ob.push("c", order_builder().push("d").push("e", order_builder().push("f").push("g")));
   order o (ob);
   {
     const auto h = Inductive<conf>(targeted_incr<conf>("a",1));
