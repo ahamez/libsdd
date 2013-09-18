@@ -352,8 +352,7 @@ private:
   order(const std::shared_ptr<nodes_type>& ptr, const node* head)
     : nodes_ptr_(ptr)
     , head_(head)
-  {
-  }
+  {}
 
   /// @brief Create the concrete order using an order_builder.
   static

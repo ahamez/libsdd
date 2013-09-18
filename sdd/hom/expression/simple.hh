@@ -79,7 +79,7 @@ struct simple
         su.reserve(node.size());
         for (const auto& arc : node)
         {
-          const SDD<C> successor = visit(*this, arc.successor(), o.next(), app, res, cit, end);
+          const SDD<C> successor = visit(*this, arc.valuation(), o.next(), app, res, cit, end);
           su.add(successor, arc.valuation());
         }
         return SDD<C>(o.variable(), su(cxt_.sdd_context()));
@@ -95,7 +95,7 @@ struct simple
           const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), app);
           const auto local_res = std::make_shared<res_stack<C>>(res);
 
-          const auto nested = visit( *this, arc.successor(), o.nested(), local_app, local_res
+          const auto nested = visit( *this, arc.valuation(), o.nested(), local_app, local_res
                                    , cit, end);
 
           assert(not local_res->result.empty() && "Invalid empty successor result");
@@ -111,7 +111,7 @@ struct simple
       dd::sum_builder<C, SDD<C>> operands(node.size());
       for (const auto& arc : node)
       {
-        const auto nested = visit(*this, arc.successor(), o.nested(), app, res, cit, end);
+        const auto nested = visit(*this, arc.valuation(), o.nested(), app, res, cit, end);
         operands.add( SDD<C>(o.variable(), nested, arc.successor()));
       }
       return dd::sum<C>(sdd_cxt, std::move(operands));

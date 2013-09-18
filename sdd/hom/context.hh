@@ -49,8 +49,7 @@ public:
   context(std::size_t size, sdd_context_type& sdd_cxt)
    	: cache_(std::make_shared<cache_type>(*this, "homomorphism_cache", size))
     , sdd_context_(sdd_cxt)
-  {
-  }
+  {}
 
   /// @brief Copy constructor.
   context(const context&) = default;
@@ -69,6 +68,14 @@ public:
   noexcept
   {
     return sdd_context_;
+  }
+
+  /// @brief Remove all cache entries of this context.
+  void
+  clear()
+  noexcept
+  {
+    cache_->clear();
   }
 };
 
