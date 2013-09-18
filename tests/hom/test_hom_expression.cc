@@ -20,7 +20,7 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-enum class binop {push, sub, mul};
+enum class binop {add, sub, mul};
 
 template <typename C>
 struct binary_operation;
@@ -175,7 +175,7 @@ struct evaluation_visitor
   {
     switch (op)
     {
-      case binop::push : return lhs + rhs;
+      case binop::add : return lhs + rhs;
       case binop::sub : return lhs - rhs;
       case binop::mul : return lhs * rhs;
     }
@@ -290,7 +290,7 @@ struct print_visitor
   {
     switch (op)
     {
-      case binop::push : os << " + "; break;
+      case binop::add : os << " + "; break;
       case binop::sub : os << " - "; break;
       case binop::mul : os << " * "; break;
     }
