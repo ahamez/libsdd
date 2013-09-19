@@ -79,7 +79,7 @@ struct simple
         su.reserve(node.size());
         for (const auto& arc : node)
         {
-          const SDD<C> successor = visit(*this, arc.valuation(), o.next(), app, res, cit, end);
+          const SDD<C> successor = visit(*this, arc.successor(), o.next(), app, res, cit, end);
           su.add(successor, arc.valuation());
         }
         return SDD<C>(o.variable(), su(cxt_.sdd_context()));
