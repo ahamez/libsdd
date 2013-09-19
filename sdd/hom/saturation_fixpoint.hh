@@ -244,9 +244,6 @@ SaturationFixpoint( const typename C::Variable& var
                   , InputIterator gbegin, InputIterator gend
                   , const homomorphism<C>& l)
 {
-  // A global flat_set to avoid reallocating a new set of operands each time.
-  auto& g = global<C>().saturation_fixpoint_data;
-
   const std::size_t gsize = std::distance(gbegin, gend);
 
   if (gsize == 0)
@@ -255,13 +252,14 @@ SaturationFixpoint( const typename C::Variable& var
     {
       return f;
     }
-
     if (f == Id<C>() and l != Id<C>())
     {
       return l;
     }
   }
 
+  // A global flat_set to avoid reallocating a new set of operands each time.
+  auto& g = global<C>().saturation_fixpoint_data;
   g.clear();
   g.insert(gbegin, gend);
   const std::size_t extra_bytes = g.size() * sizeof(homomorphism<C>);

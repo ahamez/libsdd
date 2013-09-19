@@ -18,11 +18,6 @@ namespace sdd { namespace hom {
 template <typename C, typename Valuation>
 class LIBSDD_ATTRIBUTE_PACKED cons
 {
-public:
-
-  /// @brief The identifier type.
-  typedef typename C::Identifier identifier_type;
-
 private:
 
   /// @brief
@@ -41,8 +36,7 @@ public:
     : order_(o)
     , valuation_(val)
     , next_(h)
-  {
-  }
+  {}
 
   /// @brief Evaluation.
   SDD<C>

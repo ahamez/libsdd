@@ -37,8 +37,7 @@ public:
   local(const identifier_type& id, const order<C>&, const homomorphism<C>& h)
     : identifier_(id)
     , h_(h)
-  {
-  }
+  {}
 
   /// @internal
   /// @brief Local's evaluation implementation.

@@ -210,14 +210,16 @@ SaturationSum( const typename C::Variable& var
 {
   const std::size_t g_size = std::distance(gbegin, gend);
 
-  if (f and g_size == 0 and not l)
+  if (g_size == 0)
   {
-    return *f;
-  }
-
-  if (not f and g_size == 0 and l)
-  {
-    return *l;
+    if (f and not l)
+    {
+      return *f;
+    }
+    if (not f and l)
+    {
+      return *l;
+    }
   }
 
   return homomorphism<C>::create( mem::construct<saturation_sum<C>>()

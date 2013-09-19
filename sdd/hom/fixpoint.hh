@@ -37,8 +37,7 @@ public:
   /// @brief Constructor.
   fixpoint(const homomorphism<C>& h)
     : h_(h)
-  {
-  }
+  {}
 
   /// @brief Evaluation.
   SDD<C>

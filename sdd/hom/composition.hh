@@ -19,11 +19,6 @@ namespace sdd { namespace hom {
 template <typename C>
 class LIBSDD_ATTRIBUTE_PACKED composition
 {
-public:
-
-  /// @brief The variable type.
-  typedef typename C::Variable variable_type;
-
 private:
 
   /// @brief The left homomorphism to apply.
@@ -38,8 +33,7 @@ public:
   composition(const homomorphism<C>& left, const homomorphism<C>& right)
     : left_(left)
     , right_(right)
-  {
-  }
+  {}
 
   /// @brief Evaluation.
   SDD<C>

@@ -58,14 +58,14 @@ public:
   /// @brief A unified and canonized homomorphism, meant to be stored in a unique table.
   ///
   /// It is automatically erased when there is no more reference to it.
-  typedef mem::ref_counted<data_type> unique_type;
+  using unique_type = mem::ref_counted<data_type>;
 
   /// @internal
   /// @brief Define the smart pointer around a unified homomorphism.
   ///
   /// It handles the reference counting as well as the deletion of the homomorphism when it is
   /// no longer referenced.
-  typedef mem::ptr<unique_type> ptr_type;
+  using ptr_type = mem::ptr<unique_type>;
 
 private:
 
@@ -207,7 +207,7 @@ public:
   /// @brief Dispatch the skip predicate call to concrete homomorphisms.
   struct skip_helper
   {
-    typedef bool result_type;
+    using result_type = bool;
 
     template <typename H>
     bool
