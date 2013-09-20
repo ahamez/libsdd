@@ -58,7 +58,7 @@ struct simple
   SDD<C>
   operator()( const hierarchical_node<C>& node
             , const order<C>& o
-            , std::shared_ptr<app_stack<C>> app, std::shared_ptr<res_stack<C>> res
+            , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<res_stack<C>>& res
             , identifiers_iterator cit, identifiers_iterator end)
   const
   {
@@ -112,7 +112,7 @@ struct simple
       for (const auto& arc : node)
       {
         const auto nested = visit(*this, arc.valuation(), o.nested(), app, res, cit, end);
-        operands.add( SDD<C>(o.variable(), nested, arc.successor()));
+        operands.add(SDD<C>(o.variable(), nested, arc.successor()));
       }
       return dd::sum<C>(sdd_cxt, std::move(operands));
     }
@@ -122,7 +122,7 @@ struct simple
   SDD<C>
   operator()( const flat_node<C>& node
             , const order<C>& o
-            , std::shared_ptr<app_stack<C>> app, std::shared_ptr<res_stack<C>> res
+            , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<res_stack<C>>& res
             , identifiers_iterator cit, identifiers_iterator end)
   const
   {
@@ -169,7 +169,7 @@ struct simple
   SDD<C>
   operator()( const one_terminal<C>&
             , const order<C>& o
-            , std::shared_ptr<app_stack<C>> app, std::shared_ptr<res_stack<C>> res
+            , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<res_stack<C>>& res
             , identifiers_iterator cit, identifiers_iterator end)
   const
   {
@@ -186,7 +186,7 @@ struct simple
   SDD<C>
   operator()( const zero_terminal<C>&
             , const order<C>&
-            , std::shared_ptr<app_stack<C>>, std::shared_ptr<res_stack<C>>
+            , const std::shared_ptr<app_stack<C>>&, const std::shared_ptr<res_stack<C>>&
             , identifiers_iterator, identifiers_iterator)
   const noexcept
   {
