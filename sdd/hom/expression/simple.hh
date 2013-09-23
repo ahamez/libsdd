@@ -151,7 +151,9 @@ struct simple
     }
     else
     {
-      dd::sum_builder<C, SDD<C>> operands(node.size());
+      // Not the last level, we just need to update values if necessary and to propagate on
+      // successors.
+      dd::square_union<C, values_type> su;
       for (const auto& arc : node)
       {
         if (update_values)
@@ -159,9 +161,9 @@ struct simple
           eval_.update(o.identifier(), arc.valuation());
         }
         const auto successor = visit(*this, arc.successor(), o.next(), app, res, cit, end);
-        operands.add(SDD<C>(o.variable(), arc.valuation(), successor));
+        su.add(successor, arc.valuation());
       }
-      return dd::sum<C>(sdd_cxt, std::move(operands));
+      return SDD<C>(o.variable(), su(sdd_cxt));
     }
   }
 
