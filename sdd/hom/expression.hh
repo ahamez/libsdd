@@ -13,6 +13,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/expression/evaluator.hh"
+#include "sdd/hom/expression/expression.hh"
 #include "sdd/hom/expression/simple.hh"
 #include "sdd/hom/expression/stacks.hh"
 #include "sdd/hom/identity.hh"
@@ -71,7 +72,8 @@ public:
   const noexcept
   {
     return o.identifier() != target_ and o.identifier() != *identifiers_.cbegin()
-       and not o.contains(o.identifier(), *identifiers_.cbegin());
+       and not o.contains(o.identifier(), *identifiers_.cbegin())
+       and not o.contains(o.identifier(), target_);
   }
 
   /// @brief Selector predicate.
@@ -87,7 +89,10 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& sdd)
   const
   {
-    assert(false);
+    std::shared_ptr<expr::app_stack<C>> app = nullptr;
+    std::shared_ptr<expr::res_stack<C>> res = nullptr;
+    expr::expression_pre<C> eval {cxt, target_, *eval_ptr_};
+    return visit(eval, sdd, o, app, res, identifiers_.cbegin(), identifiers_.cend());
   }
 
   /// @brief Get the user's evaluator.
@@ -191,7 +196,8 @@ public:
   const noexcept
   {
     return o.identifier() != target_ and o.identifier() != *identifiers_.cbegin()
-       and not o.contains(o.identifier(), *identifiers_.cbegin());
+       and not o.contains(o.identifier(), *identifiers_.cbegin())
+       and not o.contains(o.identifier(), target_);
   }
 
   /// @brief Selector predicate.

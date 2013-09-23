@@ -23,7 +23,7 @@ struct app_stack
 };
 
 /// @internal
-/// @brief The type of stack of results to put as a successor of a hierarhical node.
+/// @brief The type of stack of results to put as a successor of a hierarchical node.
 template <typename C>
 struct res_stack
 {
@@ -34,6 +34,20 @@ struct res_stack
     : result(), next(n)
   {}
 };
+
+/// @internal
+/// @brief The type of stack of successors of hierarchical nodes.
+template <typename C>
+struct sdd_stack
+{
+  SDD<C> sdd;
+  std::shared_ptr<sdd_stack> next;
+
+  sdd_stack(const SDD<C>& x, const std::shared_ptr<sdd_stack>& n)
+    : sdd(x), next(n)
+  {}
+};
+
 
 /*------------------------------------------------------------------------------------------------*/
 
