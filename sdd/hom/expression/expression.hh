@@ -115,20 +115,17 @@ expression_post( typename coro<C>::caller_type& yield
   /*-----------------------*/
   one:
   {
-    if (app) // We are in a nested hierarchy, we now propagate to the successor of the upper level.
+    // We are in a nested hierarchy, we now propagate to the successor of the upper level.
+    // We can't arrive here when app is not set, as the flat case ensure that we don't propagate
+    // on the final |1| (it avoids propagation whenever all operands have been encoutered).
+    assert(app);
+    coro<C> gen(std::bind( expression_post<C>, ph::_1, app->sdd, app->ord, target, valuation
+                         , app->next, res->next, cit, std::cref(end), eval));
+    while (gen)
     {
-      coro<C> gen(std::bind( expression_post<C>, ph::_1, app->sdd, app->ord, target, valuation
-                           , app->next, res->next, cit, std::cref(end), eval));
-      while (gen)
-      {
-        res->sdd = gen.get();
-        yield(one<C>());
-        gen();
-      }
-    }
-    else
-    {
+      res->sdd = gen.get();
       yield(one<C>());
+      gen();
     }
     return;
   }
