@@ -145,35 +145,21 @@ public:
   {}
 
   /// @brief Tell if lhs is before rhs in this order.
-  ///
+  /// @param lhs Must belong to the order on which this method is called.
+  /// @param rhs Must belong to the order on which this method is called.
   /// Here, 'before' mean that the order is seen as flatten and thus that an hierarchical
   /// identifier is located before its nested identifiers.
   bool
   compare(const identifier_type& lhs, const identifier_type& rhs)
-  const
+  const noexcept
   {
     const auto& identifiers = nodes_ptr_->template get<by_identifier>();
-
     const auto lhs_search = identifiers.find(lhs);
-    if (lhs_search == identifiers.end())
-    {
-      std::stringstream ss;
-      ss << "order::compare: Identifier " << lhs << " not found";
-      throw std::runtime_error(ss.str());
-    }
-
     const auto rhs_search = identifiers.find(rhs);
-    if (rhs_search == identifiers.end())
-    {
-      std::stringstream ss;
-      ss << "order::compare: Identifier " << rhs << " not found";
-      throw std::runtime_error(ss.str());
-    }
-
     return lhs_search->position < rhs_search->position;
   }
 
-  /// @brief Tell if upper contains nested in its possibily contained hierarchy.
+  /// @brief Tell if upper contains nested in its possibly contained hierarchy.
   bool
   contains(const identifier_type& upper, const identifier_type& nested)
   const noexcept
@@ -219,61 +205,33 @@ public:
   /// @brief Get the variable of this order's head.
   const variable_type&
   variable()
-  const
+  const noexcept
   {
-    if (head_)
-    {
-      return head_->variable;
-    }
-    else
-    {
-      throw std::runtime_error("Calling variable() on an empty order.");
-    }
+    return head_->variable;
   }
 
   /// @brief Get the identifier of this order's head.
   const identifier_type&
   identifier()
-  const
+  const noexcept
   {
-    if (head_)
-    {
-      return head_->identifier;
-    }
-    else
-    {
-      throw std::runtime_error("Calling identifier() on an empty order.");
-    }
+    return head_->identifier;
   }
 
   /// @brief Get the next order of this order's head.
   order
   next()
-  const
+  const noexcept
   {
-    if (head_)
-    {
-      return order(nodes_ptr_, head_->next);
-    }
-    else
-    {
-      throw std::runtime_error("Calling next() on an empty order.");
-    }
+    return order(nodes_ptr_, head_->next);
   }
 
   /// @brief Get the nested order of this order's head.
   order
   nested()
-  const
+  const noexcept
   {
-    if (head_)
-    {
-      return order(nodes_ptr_, head_->nested);
-    }
-    else
-    {
-      throw std::runtime_error("Calling nested() on an empty order.");
-    }
+    return order(nodes_ptr_, head_->nested);
   }
 
   /// @brief Tell if this order is empty.
