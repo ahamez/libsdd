@@ -171,7 +171,8 @@ template <typename C, typename Valuation>
 std::ostream&
 operator<<(std::ostream& os, const node<C, Valuation>& n)
 {
-  os << n.variable() << "[";
+  // +n.variable(): widen the type. It's useful to print the values of char and unsigned char types.
+  os << +n.variable() << "[";
   std::for_each( n.begin(), n.end() - 1
                , [&](const arc<C, Valuation>& a)
                     {os << a.valuation() << " --> " << a.successor() << " || ";});
