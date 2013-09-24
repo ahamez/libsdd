@@ -216,22 +216,6 @@ public:
     return const_iterator(nodes_ptr_->template get<by_identifier>().end(), extract_identifier());
   }
 
-  /// @brief Get the variable of an identifier
-  variable_type
-  identifier_variable(const identifier_type& id)
-  const
-  {
-    const auto& identifiers = nodes_ptr_->template get<by_identifier>();
-    const auto search = identifiers.find(id);
-    if (search == identifiers.end())
-    {
-      std::stringstream ss;
-      ss << "Identifier " << id << " not found";
-      throw std::runtime_error(ss.str());
-    }
-    return search->variable;
-  }
-
   /// @brief Get the variable of this order's head.
   const variable_type&
   variable()
