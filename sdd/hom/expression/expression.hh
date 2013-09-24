@@ -115,14 +115,21 @@ expression_post( typename coro<C>::caller_type& yield
   /*-----------------------*/
   one:
   {
-    if (app)
+    if (app) // We are in a nested hierarchy, we now propagate to the successor of the upper level.
     {
       coro<C> gen(std::bind( expression_post<C>, ph::_1, app->sdd, app->ord, target, valuation
                            , app->next, res->next, cit, end, eval));
-      assert(gen && "No result from coroutine");
-      res->sdd = gen.get();
+      while (gen)
+      {
+        res->sdd = gen.get();
+        yield(one<C>());
+        gen();
+      }
     }
-    yield(one<C>());
+    else
+    {
+      yield(one<C>());
+    }
     return;
   }
 
