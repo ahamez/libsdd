@@ -29,7 +29,7 @@ expression_post( typename coro<C>::caller_type& yield
                , const typename C::Identifier& target
                , typename C::Values* valuation
                , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<sdd_stack<C>>& res
-               , identifiers_iterator<C> cit, identifiers_iterator<C> end
+               , identifiers_iterator<C> cit, const identifiers_iterator<C>& end
                , evaluator_base<C>* eval)
 {
   namespace ph = std::placeholders;
@@ -47,7 +47,7 @@ expression_post( typename coro<C>::caller_type& yield
       const auto local_res = std::make_shared<sdd_stack<C>>(arc.successor(), res);
       const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), app);
       coro<C> gen(std::bind( expression_post<C>, ph::_1, arc.valuation(), o.nested(), target
-                           , valuation, local_app, local_res, cit, end, eval));
+                           , valuation, local_app, local_res, cit, std::cref(end), eval));
       while (gen)
       {
         yield(SDD<C>(o.variable(), gen.get(), local_res->sdd));
@@ -93,7 +93,7 @@ expression_post( typename coro<C>::caller_type& yield
       }
 
       coro<C> gen(std::bind( expression_post<C>, ph::_1, arc.successor(), o.next(), target
-                           , valuation, app, res, cit, end, eval));
+                           , valuation, app, res, cit, std::cref(end), eval));
 
       while (gen)
       {
@@ -118,7 +118,7 @@ expression_post( typename coro<C>::caller_type& yield
     if (app) // We are in a nested hierarchy, we now propagate to the successor of the upper level.
     {
       coro<C> gen(std::bind( expression_post<C>, ph::_1, app->sdd, app->ord, target, valuation
-                           , app->next, res->next, cit, end, eval));
+                           , app->next, res->next, cit, std::cref(end), eval));
       while (gen)
       {
         res->sdd = gen.get();
@@ -239,8 +239,8 @@ struct expression_pre
       {
         const auto local_res = std::make_shared<sdd_stack<C>>(arc.successor(), nullptr);
         const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), nullptr);
-        coro<C> gen(std::bind( expression_post<C>, ph::_1, arc.valuation(), o.nested()
-                             , target_, &valuation_, local_app, local_res, cit, end, &eval_));
+        coro<C> gen(std::bind( expression_post<C>, ph::_1, arc.valuation(), o.nested(), target_
+                             , &valuation_, local_app, local_res, cit, std::cref(end), &eval_));
         while(gen)
         {
           assert(not local_res->sdd.empty() && "Invalid |0| successor result");
@@ -281,8 +281,8 @@ struct expression_pre
           eval_.update(o.identifier(), arc.valuation());
         }
 
-        coro<C> gen(std::bind( expression_post<C>, ph::_1, arc.successor(), o.next()
-                             , target_, &valuation_, nullptr, nullptr, cit, end, &eval_));
+        coro<C> gen(std::bind( expression_post<C>, ph::_1, arc.successor(), o.next(), target_
+                             , &valuation_, nullptr, nullptr, cit, std::cref(end), &eval_));
 
         while (gen)
         {
