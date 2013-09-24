@@ -7,6 +7,7 @@
 
 using sdd::Composition;
 using sdd::Cons;
+using sdd::Expression;
 using sdd::Fixpoint;
 using sdd::Inductive;
 using sdd::Id;

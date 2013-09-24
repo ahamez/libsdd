@@ -130,6 +130,13 @@ public:
     }
   }
 
+  /// @brief Reset homomorphisms evaluation cache.
+  void
+  reset_hom_cache()
+  {
+    m_->hom_context.clear();
+  }
+
   /// @brief Default move constructor.
   manager(manager&&) = default;
 

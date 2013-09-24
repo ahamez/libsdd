@@ -69,6 +69,14 @@ public:
   {
     return sdd_context_;
   }
+
+  /// @brief Remove all cache entries of this context.
+  void
+  clear()
+  noexcept
+  {
+    cache_->clear();
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/

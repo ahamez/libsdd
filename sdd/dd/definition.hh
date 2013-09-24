@@ -33,7 +33,7 @@ using hierarchical_node = node<C, SDD<C>>;
 
 /// @brief Hierarchical Set Decision Diagram.
 template <typename C>
-class SDD final
+class SDD
 {
   static_assert( std::is_integral<typename C::Variable>::value
                , "A variable must be an integral type.");
