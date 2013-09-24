@@ -24,6 +24,7 @@ set(SOURCES
     hom/test_hom_local.cc
     hom/test_hom_saturation_fixpoint.cc
     hom/test_hom_saturation_sum.cc
+    hom/test_hom_simple_expression.cc
     hom/test_hom_sum.cc
     hom/test_hom_values_function.cc
     hom/test_rewriting.cc
