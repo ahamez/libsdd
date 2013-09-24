@@ -216,33 +216,6 @@ public:
     return const_iterator(nodes_ptr_->template get<by_identifier>().end(), extract_identifier());
   }
 
-  /// @brief Tell if two identifiers belong to the same hierarchy.
-  bool
-  same_hierarchy(const identifier_type& lhs, const identifier_type& rhs)
-  const
-  {
-    const auto& identifiers = nodes_ptr_->template get<by_identifier>();
-
-    const auto lhs_search = identifiers.find(lhs);
-    if (lhs_search == identifiers.end())
-    {
-      std::stringstream ss;
-      ss << "Identifier " << lhs << " not found";
-      throw std::runtime_error(ss.str());
-    }
-
-    const auto rhs_search = identifiers.find(rhs);
-    if (rhs_search == identifiers.end())
-    {
-      std::stringstream ss;
-      ss << "Identifier " << rhs << " not found";
-      throw std::runtime_error(ss.str());
-    }
-
-    // paths are shared, we can compare pointers
-    return lhs_search->path_ptr == rhs_search->path_ptr;
-  }
-
   /// @brief Get the variable of an identifier
   variable_type
   identifier_variable(const identifier_type& id)
