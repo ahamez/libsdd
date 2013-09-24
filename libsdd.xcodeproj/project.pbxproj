@@ -176,6 +176,7 @@
 		2B913FFE1721A9B3006FD699 /* boost_multiindex_no_warnings.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = boost_multiindex_no_warnings.hh; sourceTree = "<group>"; };
 		2B969458166E5C3100CAC3ED /* intersection.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = intersection.hh; sourceTree = "<group>"; };
 		2BB1A9B014E08BC7007921F2 /* sdd.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = sdd.hh; sourceTree = "<group>"; };
+		2BB2B81217F1916400790295 /* expressions */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = expressions; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BB4939B1745587900C55DF6 /* test_next_power.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_next_power.cc; sourceTree = "<group>"; };
 		2BB53736163C8F8C007E04E1 /* test_hom_expression.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_expression.cc; sourceTree = "<group>"; };
 		2BB6B43B16517FD9003063B8 /* hanoi.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = hanoi.cc; sourceTree = "<group>"; };
@@ -252,7 +253,6 @@
 		2BE71C73161CE1B300B22084 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		2BE8742015BF1DD000D38953 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BF0F988157A71B7005D1275 /* bitset.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bitset.hh; sourceTree = "<group>"; };
-		2BF4C58D17F02184003E6A0F /* expressions */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = expressions; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BFDE06717EC814B00C28C13 /* expression.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = expression.hh; sourceTree = "<group>"; };
 		2BFF0C571744DB4D00E1C89C /* next_power.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = next_power.hh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -422,13 +422,13 @@
 		2B51A8CE14E07CEC0062A43A = {
 			isa = PBXGroup;
 			children = (
+				2B38CC8615C023C10067BDD2 /* README */,
 				2BB9F9BF1598FE6900A31F5B /* LICENSE */,
 				2BC6106914E59FA00081D743 /* binaries */,
 				2BB6B43A16517FD9003063B8 /* examples */,
 				2B0A122917E1FB960093A68C /* python */,
 				2BB1A99414E07D38007921F2 /* sdd */,
 				2BB1A9AE14E086E3007921F2 /* tests */,
-				2BF4C58D17F02184003E6A0F /* expressions */,
 			);
 			sourceTree = "<group>";
 		};
@@ -576,9 +576,9 @@
 		2BC6106914E59FA00081D743 /* binaries */ = {
 			isa = PBXGroup;
 			children = (
-				2B38CC8615C023C10067BDD2 /* README */,
 				2BE1B4E9165211B300862ACE /* hanoi */,
 				2BC472DA15BF1C1300A8D442 /* libgtest.a */,
+				2BB2B81217F1916400790295 /* expressions */,
 				2BE8742015BF1DD000D38953 /* tests */,
 			);
 			name = binaries;
@@ -727,7 +727,7 @@
 			);
 			name = expressions;
 			productName = tests;
-			productReference = 2BF4C58D17F02184003E6A0F /* expressions */;
+			productReference = 2BB2B81217F1916400790295 /* expressions */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
