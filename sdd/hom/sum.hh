@@ -185,16 +185,19 @@ template <typename C>
 struct sum_builder_helper
 {
   /// @brief Used by mem::variant.
-  typedef void result_type;
+  using result_type = void;
 
   /// @brief The type of th flat sorted set of operands.
-  typedef boost::container::flat_set<homomorphism<C>> operands_type;
+  using operands_type = boost::container::flat_set<homomorphism<C>>;
 
   /// @brief We use a deque to store the list of homomorphisms as the needed size is unknown.
-  typedef std::deque<homomorphism<C>> hom_list_type;
+  using hom_list_type = std::deque<homomorphism<C>>;
+
+  /// @brief The absolute position of an identifier in an order.
+  using position_type = typename order<C>::position_type;
 
   /// @brief Map Local homomorphisms to the identifiers they work on.
-  typedef std::unordered_map<typename C::Identifier, hom_list_type> locals_type;
+  using locals_type = std::unordered_map<position_type, hom_list_type>;
 
   /// @brief Store local homomorphisms.
   locals_type& locals_;
@@ -223,7 +226,7 @@ struct sum_builder_helper
   operator()(const local<C>& l, const homomorphism<C>&)
   const
   {
-    auto insertion = locals_.emplace(l.identifier(), hom_list_type());
+    auto insertion = locals_.emplace(l.target(), hom_list_type());
     insertion.first->second.emplace_back(l.hom());
   }
 
@@ -266,7 +269,7 @@ Sum(const order<C>& o, InputIterator begin, InputIterator end)
   // insert remaining locals
   for (const auto& l : locals)
   {
-    operands.insert(Local<C>(l.first, o, Sum<C>(o, l.second.begin(), l.second.end())));
+    operands.insert(Local<C>(l.first, Sum<C>(o, l.second.begin(), l.second.end())));
   }
 
   if (operands.size() == 1)

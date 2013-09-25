@@ -22,11 +22,11 @@ class LIBSDD_ATTRIBUTE_PACKED local
 {
 private:
 
-  /// @brief The identifier type.
-  typedef typename C::Identifier identifier_type;
+  /// @brief The absolute position of an identifier in an order.
+  using position_type = typename order<C>::position_type;
 
-  ///
-  const identifier_type identifier_;
+  /// @brief The target of this homomorphism.
+  const position_type target_;
 
   /// @brief The nested homomorphism to apply in a nested level.
   const homomorphism<C> h_;
@@ -34,8 +34,8 @@ private:
 public:
 
   /// @brief Constructor.
-  local(const identifier_type& id, const order<C>&, const homomorphism<C>& h)
-    : identifier_(id)
+  local(position_type target, const homomorphism<C>& h)
+    : target_(target)
     , h_(h)
   {}
 
@@ -118,7 +118,7 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return o.identifier() != identifier_;
+    return o.position() != target_;
   }
 
   /// @brief Selector predicate
@@ -130,11 +130,11 @@ public:
   }
 
   /// @brief Return the target.
-  const identifier_type&
-  identifier()
+  position_type
+  target()
   const noexcept
   {
-    return identifier_;
+    return target_;
   }
 
   /// @brief Return the carried homomorphism.
@@ -157,7 +157,7 @@ bool
 operator==(const local<C>& lhs, const local<C>& rhs)
 noexcept
 {
-  return lhs.identifier() == rhs.identifier() and lhs.hom() == rhs.hom();
+  return lhs.target() == rhs.target() and lhs.hom() == rhs.hom();
 }
 
 /// @internal
@@ -166,18 +166,18 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const local<C>& l)
 {
-  return os << "@(" << l.identifier() << ", " << l.hom() << ")";
+  return os << "@(" << l.target() << ", " << l.hom() << ")";
 }
 
 } // namespace hom
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Create the Local homomorphism.
+/// @internal
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-Local(const typename C::Identifier& id, const order<C>& o, const homomorphism<C>& h)
+Local(typename order<C>::position_type pos, const homomorphism<C>& h)
 {
   if (h == Id<C>())
   {
@@ -185,8 +185,17 @@ Local(const typename C::Identifier& id, const order<C>& o, const homomorphism<C>
   }
   else
   {
-    return homomorphism<C>::create(mem::construct<hom::local<C>>(), id, o, h);
+    return homomorphism<C>::create(mem::construct<hom::local<C>>(), pos, h);
   }
+}
+
+/// @brief Create the Local homomorphism.
+/// @related homomorphism
+template <typename C>
+homomorphism<C>
+Local(const typename C::Identifier& id, const order<C>& o, const homomorphism<C>& h)
+{
+  return Local(o.identifier_position(id), h);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -207,7 +216,7 @@ struct hash<sdd::hom::local<C>>
   const
   {
     std::size_t seed = 0;
-    sdd::util::hash_combine(seed, l.identifier());
+    sdd::util::hash_combine(seed, l.target());
     sdd::util::hash_combine(seed, l.hom());
     return seed;
   }
