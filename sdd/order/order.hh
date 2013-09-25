@@ -29,12 +29,19 @@ class order final
 public:
 
   /// @brief A user's identifier type.
-  typedef typename C::Identifier identifier_type;
+  using identifier_type = typename C::Identifier;
 
   /// @brief A library's variable type.
-  typedef typename C::Variable variable_type;
+  using variable_type = typename C::Variable;
+
+  /// @internal
+  /// @brief The position of a node, unique to it.
+  using position_type = unsigned int;
 
 private:
+
+  /// @brief A path, following hierarchies, to a node.
+  using path_type = std::vector<identifier_type>;
 
   /// @brief A node in an order.
   ///
@@ -50,7 +57,7 @@ private:
     /// @brief Absolute position, when seeing the order as flatten.
     ///
     /// Used to establish a total order on identifiers.
-    const unsigned int position;
+    const position_type position;
 
     /// @brief A pointer to following order's head.
     const node* next;
@@ -59,12 +66,12 @@ private:
     const node* nested;
 
     /// @brief The path to this node.
-    const std::shared_ptr<std::vector<identifier_type>> path_ptr;
+    const std::shared_ptr<path_type> path_ptr;
 
     /// @brief Constructor.
     node( const identifier_type& id, const variable_type& var, unsigned int pos
         , const node* nxt, const node* nst
-        , const std::shared_ptr<std::vector<identifier_type>>& path)
+        , const std::shared_ptr<path_type>& path)
       : identifier(id)
       , variable(var)
       , position(pos)
@@ -79,6 +86,23 @@ private:
     const noexcept
     {
       return position < other.position;
+    }
+  }; // struct node
+
+  struct compare_node
+  {
+    bool
+    operator()(const node& lhs, position_type rhs)
+    const noexcept
+    {
+      return lhs.position < rhs;
+    }
+
+    bool
+    operator()(position_type lhs, const node& rhs)
+    const noexcept
+    {
+      return lhs < rhs.position;
     }
   };
 
@@ -122,38 +146,18 @@ public:
     , head_(mk_head())
   {}
 
-  /// @brief Tell if lhs is before rhs in this order.
-  /// @param lhs Must belong to the order on which this method is called.
-  /// @param rhs Must belong to the order on which this method is called.
-  /// Here, 'before' mean that the order is seen as flatten and thus that an hierarchical
-  /// identifier is located before its nested identifiers.
-  bool
-  compare(const identifier_type& lhs, const identifier_type& rhs)
-  const noexcept
-  {
-    const auto& identifiers = nodes_ptr_->template get<by_identifier>();
-    const auto lhs_search = identifiers.find(lhs);
-    const auto rhs_search = identifiers.find(rhs);
-    return lhs_search->position < rhs_search->position;
-  }
-
   /// @brief Tell if upper contains nested in its possibly contained hierarchy.
+  /// @param uppper Must belong to the current order.
+  /// @param nested Must belong to the current order.
   bool
-  contains(const identifier_type& upper, const identifier_type& nested)
+  contains(position_type upper, position_type nested)
   const noexcept
   {
-    const auto& identifiers = nodes_ptr_->template get<by_identifier>();
-
-    const auto search = identifiers.find(nested);
-    if (search == identifiers.end())
-    {
-      return false;
-    }
-    else
-    {
-      const auto& path = *search->path_ptr;
-      return std::find(path.begin(), path.end(), upper) != path.end();
-    }
+    const auto& identifiers = nodes_ptr_->template get<by_position>();
+    const auto search_nested = identifiers.find(nested, compare_node());
+    const auto search_uppper = identifiers.find(upper, compare_node());
+    const auto& path = *search_nested->path_ptr;
+    return std::find(path.begin(), path.end(), search_uppper->identifier) != path.end();
   }
 
   /// @brief
@@ -180,6 +184,14 @@ public:
     return head_->identifier;
   }
 
+  /// @brief Get the position of this order's head.
+  position_type
+  position()
+  const noexcept
+  {
+    return head_->position;
+  }
+
   /// @brief Get the next order of this order's head.
   order
   next()
@@ -202,6 +214,14 @@ public:
   const noexcept
   {
     return head_ == nullptr;
+  }
+
+  /// @internal
+  position_type
+  identifier_position(const identifier_type& id)
+  const noexcept
+  {
+    return (nodes_ptr_->template get<by_identifier>().find(id))->position;
   }
 
   /// @internal
@@ -248,23 +268,23 @@ private:
     // To enable recursion in the lambda.
     std::function<
       std::pair<const node*, variable_type>
-      (const order_builder<C>&, const std::shared_ptr<std::vector<identifier_type>>&)
+      (const order_builder<C>&, const std::shared_ptr<path_type>&)
     > helper;
 
     helper = [&helper, &nodes_ptr, &pos]
-    (const order_builder<C>& ob, const std::shared_ptr<std::vector<identifier_type>>& path)
+    (const order_builder<C>& ob, const std::shared_ptr<path_type>& path)
     -> std::pair<const node*, unsigned int>
     {
       constexpr variable_type first_variable = 0;
 
-      const unsigned int old_pos = pos++;
+      const unsigned int current_position = pos++;
 
       std::pair<const node*, variable_type> nested(nullptr, first_variable);
       std::pair<const node*, variable_type> next(nullptr, first_variable);
 
       if (not ob.nested().empty())
       {
-        const auto new_path = std::make_shared<std::vector<identifier_type>>(*path);
+        const auto new_path = std::make_shared<path_type>(*path);
         new_path->push_back(ob.identifier());
         new_path->shrink_to_fit();
         nested = helper(ob.nested(), new_path);
@@ -277,7 +297,7 @@ private:
 
       const auto& variable = next.second;
       /// TODO Manage artificial identifiers.
-      const node n(ob.identifier(), variable, old_pos, next.first, nested.first, path);
+      const node n(ob.identifier(), variable, current_position, next.first, nested.first, path);
 
       const auto insertion = nodes_ptr->insert(n);
       if (not insertion.second)
@@ -286,10 +306,10 @@ private:
         ss << "Duplicate identifier " << ob.identifier();
         throw std::runtime_error(ss.str());
       }
-      return std::make_pair( &*(insertion.first), variable + 1);
+      return std::make_pair(&*(insertion.first), variable + 1);
     };
 
-    helper(builder, std::make_shared<std::vector<identifier_type>>());
+    helper(builder, std::make_shared<path_type>());
 
     return nodes_ptr;
   }

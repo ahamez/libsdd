@@ -3,6 +3,7 @@
 
 #include <algorithm> // any_of, copy, find
 #include <cassert>
+#include <iterator>  // back_insert
 #include <iosfwd>
 #include <initializer_list>
 #include <memory>    // make_shared, shared_ptr, unique_ptr
@@ -33,14 +34,14 @@ public:
   /// @brief A variable type.
   using variable_type = typename C::Variable;
 
-  /// @brief An identifier type.
-  using identifier_type = typename C::Identifier;
+  /// @brief The absolute position of an identifier in an order.
+  using position_type = typename order<C>::position_type;
 
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 
   /// @brief The type of a set of variables.
-  using identifiers_type = std::vector<identifier_type>;
+  using positions_type = std::vector<position_type>;
 
 private:
 
@@ -48,22 +49,20 @@ private:
   const std::unique_ptr<expr::evaluator_base<C>> eval_ptr_;
 
   /// @brief The set of the expression's variables.
-  const identifiers_type identifiers_;
+  const positions_type positions_;
 
   /// @brief The target of the assignment.
-  const identifier_type target_;
+  const position_type target_;
 
   /// @brief An iterator on a set of identifiers.
-  using identifiers_iterator = typename identifiers_type::const_iterator;
+  using positions_iterator = typename positions_type::const_iterator;
 
 public:
 
   /// @brief Constructor.
-  expression( std::unique_ptr<expr::evaluator_base<C>>&& e_ptr, identifiers_type&& identifiers
-            , const identifier_type& target)
-    : eval_ptr_(std::move(e_ptr))
-    , identifiers_(std::move(identifiers))
-    , target_(target)
+  expression( std::unique_ptr<expr::evaluator_base<C>>&& e_ptr, positions_type&& positions
+            , position_type target)
+    : eval_ptr_(std::move(e_ptr)), positions_(std::move(positions)), target_(target)
   {}
 
   /// @brief Skip variable predicate.
@@ -71,9 +70,9 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return o.identifier() != target_ and o.identifier() != *identifiers_.cbegin()
-       and not o.contains(o.identifier(), *identifiers_.cbegin())
-       and not o.contains(o.identifier(), target_);
+    return o.position() != target_ and o.position() != positions_.front()
+       and not o.contains(o.position(), positions_.front())
+       and not o.contains(o.position(), target_);
   }
 
   /// @brief Selector predicate.
@@ -92,7 +91,7 @@ public:
     std::shared_ptr<expr::app_stack<C>> app = nullptr;
     std::shared_ptr<expr::res_stack<C>> res = nullptr;
     expr::expression_pre<C> eval {cxt, target_, *eval_ptr_};
-    return visit(eval, sdd, o, app, res, identifiers_.cbegin(), identifiers_.cend());
+    return visit(eval, sdd, o, app, res, positions_.cbegin(), positions_.cend());
   }
 
   /// @brief Get the user's evaluator.
@@ -104,15 +103,15 @@ public:
   }
 
   /// @brief Get the set of variables.
-  const identifiers_type&
+  const positions_type&
   identifiers()
   const noexcept
   {
-    return identifiers_;
+    return positions_;
   }
 
   /// @brief Get the target.
-  const identifier_type&
+  position_type
   target()
   const noexcept
   {
@@ -122,6 +121,7 @@ public:
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two expression homomorphisms.
 /// @related expression
 template <typename C>
@@ -134,6 +134,7 @@ noexcept
      and lhs.evaluator() == rhs.evaluator();
 }
 
+/// @internal
 /// @related expression
 template <typename C>
 std::ostream&
@@ -156,14 +157,14 @@ public:
   /// @brief A variable type.
   using variable_type = typename C::Variable;
 
-  /// @brief An identifier type.
-  using identifier_type = typename C::Identifier;
+  /// @brief The absolute position of an identifier in an order.
+  using position_type = typename order<C>::position_type;
 
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 
   /// @brief The type of a set of variables.
-  using identifiers_type = std::vector<identifier_type>;
+  using positions_type = std::vector<position_type>;
 
 private:
 
@@ -171,23 +172,20 @@ private:
   const std::unique_ptr<expr::evaluator_base<C>> eval_ptr_;
 
   /// @brief The set of the expression's variables.
-  const identifiers_type identifiers_;
+  const positions_type positions_;
 
   /// @brief The target of the assignment.
-  const identifier_type target_;
+  const position_type target_;
 
   /// @brief An iterator on a set of identifiers.
-  using identifiers_iterator = typename identifiers_type::const_iterator;
+  using positions_iterator = typename positions_type::const_iterator;
 
 public:
 
   /// @brief Constructor.
   simple_expression( std::unique_ptr<expr::evaluator_base<C>>&& e_ptr
-                   , identifiers_type&& identifiers
-                   , const identifier_type& target)
-    : eval_ptr_(std::move(e_ptr))
-    , identifiers_(std::move(identifiers))
-    , target_(target)
+                   , positions_type&& positions, position_type target)
+    : eval_ptr_(std::move(e_ptr)), positions_(std::move(positions)), target_(target)
   {}
 
   /// @brief Skip variable predicate.
@@ -195,9 +193,9 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return o.identifier() != target_ and o.identifier() != *identifiers_.cbegin()
-       and not o.contains(o.identifier(), *identifiers_.cbegin())
-       and not o.contains(o.identifier(), target_);
+    return o.position() != target_ and o.position() != positions_.front()
+       and not o.contains(o.position(), positions_.front())
+       and not o.contains(o.position(), target_);
   }
 
   /// @brief Selector predicate.
@@ -216,7 +214,7 @@ public:
     std::shared_ptr<expr::app_stack<C>> app = nullptr;
     std::shared_ptr<expr::res_stack<C>> res = nullptr;
     expr::simple<C> eval {cxt, target_, *eval_ptr_};
-    return visit(eval, sdd, o, app, res, identifiers_.cbegin(), identifiers_.cend());
+    return visit(eval, sdd, o, app, res, positions_.cbegin(), positions_.cend());
   }
 
   /// @brief Get the user's evaluator.
@@ -228,15 +226,15 @@ public:
   }
 
   /// @brief Get the set of variables.
-  const identifiers_type&
+  const positions_type&
   identifiers()
   const noexcept
   {
-    return identifiers_;
+    return positions_;
   }
 
   /// @brief Get the target.
-  const identifier_type&
+  position_type
   target()
   const noexcept
   {
@@ -246,6 +244,7 @@ public:
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Equality of two expression homomorphisms.
 /// @related expression
 template <typename C>
@@ -258,6 +257,7 @@ noexcept
      and lhs.evaluator() == rhs.evaluator();
 }
 
+/// @internal
 /// @related expression
 template <typename C>
 std::ostream&
@@ -275,43 +275,51 @@ operator<<(std::ostream& os, const simple_expression<C>& e)
 /// @brief Create the Expression homomorphism.
 /// @related homomorphism
 /// @todo How to handle the dumb case where there is only one identifier, which is also the target?
+///
+/// Elements of [begin, end) must be unique.
 template <typename C, typename Evaluator, typename InputIterator>
 homomorphism<C>
 Expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIterator end
           , const typename C::Identifier& target)
 {
+  using identifier_type = typename C::Identifier;
+  using derived_type = hom::expr::evaluator_derived<C, Evaluator>;
+  using positions_type = std::vector<typename order<C>::position_type>;
+
   if (std::distance(begin, end) == 0)
   {
     return Id<C>();
   }
 
-  typedef typename C::Identifier identifier_type;
-  typename hom::expression<C>::identifiers_type identifiers(begin, end);
-  std::sort( identifiers.begin(), identifiers.end()
-           , [&](const identifier_type& lhs, const identifier_type& rhs)
-                {
-                  return o.compare(lhs, rhs); // use order to compare two identifiers
-                });
+  const auto target_pos = o.identifier_position(target);
 
-  using derived_type = hom::expr::evaluator_derived<C, Evaluator>;
+  positions_type positions;
+  positions.reserve(std::distance(begin, end));
+  std::transform( begin, end, std::back_inserter(positions)
+                , [&](const identifier_type& id){return o.identifier_position(id);});
+  std::sort(positions.begin(), positions.end());
+
+
   std::unique_ptr<derived_type> evaluator_ptr(new derived_type(u));
 
-  const auto& last_identifier = *std::prev(identifiers.end());
-  if (o.compare(target, last_identifier))
+  const auto last_position = positions.back();
+  if (target_pos < last_position)
   {
     return homomorphism<C>::create( mem::construct<hom::expression<C>>()
-                                  , std::move(evaluator_ptr), std::move(identifiers), target);
+                                  , std::move(evaluator_ptr), std::move(positions), target_pos);
   }
   else
   {
     // The target is below all identifiers, it's a much simpler case to handle
     return homomorphism<C>::create( mem::construct<hom::simple_expression<C>>()
-                                  , std::move(evaluator_ptr), std::move(identifiers), target);
+                                  , std::move(evaluator_ptr), std::move(positions), target_pos);
   }
 }
 
 /// @brief Create the Expression homomorphism.
 /// @related homomorphism
+///
+/// Elements of ids must be unique.
 template <typename C, typename Evaluator>
 homomorphism<C>
 Expression( const order<C>& o, const Evaluator& u, std::initializer_list<typename C::Identifier> ids

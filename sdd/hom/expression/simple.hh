@@ -28,29 +28,29 @@ struct simple
   /// @brief A variable type.
   using variable_type = typename C::Variable;
 
-  /// @brief An identifier type.
-  using identifier_type = typename C::Identifier;
+  /// @brief
+  using position_type = typename order<C>::position_type;
 
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 
   /// @brief The type of a set of variables.
-  using identifiers_type = std::vector<identifier_type>;
+  using positions_type = std::vector<position_type>;
 
   /// @brief An iterator on a set of identifiers.
-  using identifiers_iterator = typename identifiers_type::const_iterator;
+  using positions_iterator = typename positions_type::const_iterator;
 
   /// @brief The evaluation's context.
   context<C>& cxt_;
 
   /// @brief The target of the evaluated expression.
-  const identifier_type& target_;
+  const position_type target_;
 
   /// @brief User evaluator of the expression.
   evaluator_base<C>& eval_;
 
   /// @brief Constructor.
-  simple(context<C>& cxt, const identifier_type& target, evaluator_base<C>& eval)
+  simple(context<C>& cxt, position_type target, evaluator_base<C>& eval)
     : cxt_(cxt), target_(target), eval_(eval)
   {}
 
@@ -59,17 +59,17 @@ struct simple
   operator()( const hierarchical_node<C>& node
             , const order<C>& o
             , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<res_stack<C>>& res
-            , identifiers_iterator cit, identifiers_iterator end)
+            , positions_iterator cit, positions_iterator end)
   const
   {
     auto& sdd_cxt = cxt_.sdd_context();
 
-    if (not o.contains(o.identifier(), target_)) // not the last level?
+    if (not o.contains(o.position(), target_)) // not the last level?
     {
       const bool nested_variables = std::any_of( cit, end
-                                               , [&](const identifier_type& id)
+                                               , [&](position_type pos)
                                                     {
-                                                      return o.contains(o.identifier(), id);
+                                                      return o.contains(o.position(), pos);
                                                     });
 
       if (not nested_variables)
@@ -123,12 +123,12 @@ struct simple
   operator()( const flat_node<C>& node
             , const order<C>& o
             , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<res_stack<C>>& res
-            , identifiers_iterator cit, identifiers_iterator end)
+            , positions_iterator cit, positions_iterator end)
   const
   {
     auto& sdd_cxt = cxt_.sdd_context();
-    const bool last_level = o.identifier() == target_;
-    const bool update_values = std::find(cit, end, o.identifier()) != end;
+    const bool last_level = o.position() == target_;
+    const bool update_values = std::find(cit, end, o.position()) != end;
 
     if (update_values)
     {
@@ -172,7 +172,7 @@ struct simple
   operator()( const one_terminal<C>&
             , const order<C>& o
             , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<res_stack<C>>& res
-            , identifiers_iterator cit, identifiers_iterator end)
+            , positions_iterator cit, positions_iterator end)
   const
   {
     assert(app && "Target never encountered while evaluating SimpleExpression");
@@ -189,7 +189,7 @@ struct simple
   operator()( const zero_terminal<C>&
             , const order<C>&
             , const std::shared_ptr<app_stack<C>>&, const std::shared_ptr<res_stack<C>>&
-            , identifiers_iterator, identifiers_iterator)
+            , positions_iterator, positions_iterator)
   const noexcept
   {
     assert(false);
