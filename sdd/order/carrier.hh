@@ -9,19 +9,16 @@ namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
-  /// @brief Get the succession of Local that apply h on target.
+/// @brief Get the succession of Local that apply h on target.
+/// @param o The actual order.
+/// @param target Must belong to o.
+/// @param h The homomorphism to apply on target.
 template <typename C>
 homomorphism<C>
 carrier(const order<C>& o, const typename C::Identifier& target, homomorphism<C> h)
 {
   const auto& identifiers = o.identifiers();
   const auto search = identifiers.find(target);
-  if (search == identifiers.end())
-  {
-    std::stringstream ss;
-    ss << "Identifier " << target << " not found";
-    throw std::runtime_error(ss.str());
-  }
   const auto& path = *(search->path_ptr);
   for (auto cit = path.rbegin(); cit != path.rend(); ++cit)
   {
