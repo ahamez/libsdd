@@ -17,12 +17,10 @@ template <typename C>
 homomorphism<C>
 carrier(const order<C>& o, const typename C::Identifier& target, homomorphism<C> h)
 {
-  const auto& identifiers = o.identifiers();
-  const auto search = identifiers.find(target);
-  const auto& path = *(search->path_ptr);
+  const auto& path = *(o.identifiers().find(target)->path_ptr);
   for (auto cit = path.rbegin(); cit != path.rend(); ++cit)
   {
-    h = Local(*cit, o, h);
+    h = Local(*cit, h);
   }
   return h;
 }

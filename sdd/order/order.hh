@@ -41,7 +41,7 @@ public:
 private:
 
   /// @brief A path, following hierarchies, to a node.
-  using path_type = std::vector<identifier_type>;
+  using path_type = std::vector<position_type>;
 
   /// @brief A node in an order.
   ///
@@ -155,9 +155,8 @@ public:
   {
     const auto& identifiers = nodes_ptr_->template get<by_position>();
     const auto search_nested = identifiers.find(nested, compare_node());
-    const auto search_uppper = identifiers.find(upper, compare_node());
     const auto& path = *search_nested->path_ptr;
-    return std::find(path.begin(), path.end(), search_uppper->identifier) != path.end();
+    return std::find(path.begin(), path.end(), upper) != path.end();
   }
 
   /// @brief
@@ -285,7 +284,7 @@ private:
       if (not ob.nested().empty())
       {
         const auto new_path = std::make_shared<path_type>(*path);
-        new_path->push_back(ob.identifier());
+        new_path->push_back(current_position);
         new_path->shrink_to_fit();
         nested = helper(ob.nested(), new_path);
       }
