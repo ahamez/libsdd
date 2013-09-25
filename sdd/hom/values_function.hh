@@ -336,7 +336,7 @@ operator<<(std::ostream& os, const values_function<C>& x)
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-ValuesFunction(const order<C>& o, const typename C::Idenfitier& i, const User& u)
+ValuesFunction(const order<C>& o, const typename C::Identifier& i, const User& u)
 {
   return homomorphism<C>::create( mem::construct<hom::values_function<C>>()
                                 , i, new hom::values_function_derived<C, User>(u));
