@@ -14,11 +14,17 @@
 
 namespace sdd { namespace hom { namespace expr {
 
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+/// @brief The signature of the coroutine used to implement the Expression evaluation.
 template <typename C>
 using coro = boost::coroutines::coroutine<SDD<C>()>;
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
+/// @brief Handle the Expression evaluation below the target.
 template <typename C>
 void
 expression_post( typename coro<C>::caller_type& yield
@@ -34,7 +40,6 @@ expression_post( typename coro<C>::caller_type& yield
   static void* table[4] = {&&zero, &&one, &&flat, &&hierarchical};
   goto *table[x.index()];
 
-  /*-----------------------*/
   hierarchical:
   {
     const auto& node = sdd::mem::variant_cast<sdd::hierarchical_node<C>>(*x);
@@ -54,7 +59,6 @@ expression_post( typename coro<C>::caller_type& yield
     return;
   }
 
-  /*-----------------------*/
   flat:
   {
     const bool target_level = o.position() == target;
@@ -109,7 +113,6 @@ expression_post( typename coro<C>::caller_type& yield
     return;
   }
 
-  /*-----------------------*/
   one:
   {
     // We are in a nested hierarchy, we now propagate to the successor of the upper level.
@@ -127,7 +130,6 @@ expression_post( typename coro<C>::caller_type& yield
     return;
   }
 
-  /*-----------------------*/
   zero:
   {
     assert(false);
