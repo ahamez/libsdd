@@ -22,11 +22,8 @@ class LIBSDD_ATTRIBUTE_PACKED local
 {
 private:
 
-  /// @brief The absolute position of an identifier in an order.
-  using position_type = typename order<C>::position_type;
-
   /// @brief The target of this homomorphism.
-  const position_type target_;
+  const order_position_type target_;
 
   /// @brief The nested homomorphism to apply in a nested level.
   const homomorphism<C> h_;
@@ -34,7 +31,7 @@ private:
 public:
 
   /// @brief Constructor.
-  local(position_type target, const homomorphism<C>& h)
+  local(order_position_type target, const homomorphism<C>& h)
     : target_(target)
     , h_(h)
   {}
@@ -130,7 +127,7 @@ public:
   }
 
   /// @brief Return the target.
-  position_type
+  order_position_type
   target()
   const noexcept
   {
@@ -177,7 +174,7 @@ operator<<(std::ostream& os, const local<C>& l)
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-Local(typename order<C>::position_type pos, const homomorphism<C>& h)
+Local(order_position_type pos, const homomorphism<C>& h)
 {
   if (h == Id<C>())
   {

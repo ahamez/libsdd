@@ -193,11 +193,8 @@ struct sum_builder_helper
   /// @brief We use a deque to store the list of homomorphisms as the needed size is unknown.
   using hom_list_type = std::deque<homomorphism<C>>;
 
-  /// @brief The absolute position of an identifier in an order.
-  using position_type = typename order<C>::position_type;
-
   /// @brief Map Local homomorphisms to the identifiers they work on.
-  using locals_type = std::unordered_map<position_type, hom_list_type>;
+  using locals_type = std::unordered_map<order_position_type, hom_list_type>;
 
   /// @brief Store local homomorphisms.
   locals_type& locals_;

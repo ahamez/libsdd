@@ -20,16 +20,13 @@ using coro = boost::coroutines::coroutine<SDD<C>()>;
 /*------------------------------------------------------------------------------------------------*/
 
 template <typename C>
-using positions_iterator = typename std::vector<typename order<C>::position_type>::const_iterator;
-
-template <typename C>
 void
 expression_post( typename coro<C>::caller_type& yield
                , SDD<C> x, const order<C>& o
-               , typename order<C>::position_type target
+               , order_position_type target
                , typename C::Values* valuation
                , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<sdd_stack<C>>& res
-               , positions_iterator<C> cit, const positions_iterator<C>& end
+               , order_positions_iterator cit, order_positions_iterator end
                , evaluator_base<C>* eval)
 {
   namespace ph = std::placeholders;
@@ -47,7 +44,7 @@ expression_post( typename coro<C>::caller_type& yield
       const auto local_res = std::make_shared<sdd_stack<C>>(arc.successor(), res);
       const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), app);
       coro<C> gen(std::bind( expression_post<C>, ph::_1, arc.valuation(), o.nested(), target
-                           , valuation, local_app, local_res, cit, std::cref(end), eval));
+                           , valuation, local_app, local_res, cit, end, eval));
       while (gen)
       {
         yield(SDD<C>(o.variable(), gen.get(), local_res->sdd));
@@ -93,7 +90,7 @@ expression_post( typename coro<C>::caller_type& yield
       }
 
       coro<C> gen(std::bind( expression_post<C>, ph::_1, arc.successor(), o.next(), target
-                           , valuation, app, res, cit, std::cref(end), eval));
+                           , valuation, app, res, cit, end, eval));
 
       while (gen)
       {
@@ -120,7 +117,7 @@ expression_post( typename coro<C>::caller_type& yield
     // on the final |1| (it avoids propagation whenever all operands have been encoutered).
     assert(app);
     coro<C> gen(std::bind( expression_post<C>, ph::_1, app->sdd, app->ord, target, valuation
-                         , app->next, res->next, cit, std::cref(end), eval));
+                         , app->next, res->next, cit, end, eval));
     while (gen)
     {
       res->sdd = gen.get();
@@ -151,23 +148,14 @@ struct expression_pre
   /// @brief A variable type.
   using variable_type = typename C::Variable;
 
-  /// @brief An identifier type.
-  using position_type = typename order<C>::position_type;
-
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
-
-  /// @brief The type of a set of variables.
-  using positions_type = std::vector<position_type>;
-
-  /// @brief An iterator on a set of identifiers.
-  using positions_iterator = typename positions_type::const_iterator;
 
   /// @brief The evaluation's context.
   context<C>& cxt_;
 
   /// @brief The target of the evaluated expression.
-  const position_type target_;
+  const order_position_type target_;
 
   /// @brief User evaluator of the expression.
   evaluator_base<C>& eval_;
@@ -176,7 +164,7 @@ struct expression_pre
   mutable values_type valuation_;
 
   /// @brief Constructor.
-  expression_pre(context<C>& cxt, position_type target, evaluator_base<C>& eval)
+  expression_pre(context<C>& cxt, order_position_type target, evaluator_base<C>& eval)
     : cxt_(cxt), target_(target), eval_(eval), valuation_()
   {}
 
@@ -185,7 +173,7 @@ struct expression_pre
   operator()( const hierarchical_node<C>& node
             , const order<C>& o
             , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<res_stack<C>>& res
-            , positions_iterator cit, positions_iterator end)
+            , order_positions_iterator cit, order_positions_iterator end)
   const
   {
     // Shortcut to the SDD evaluation context.
@@ -195,7 +183,7 @@ struct expression_pre
     {
       // Check if the nested levels contain any of the variables needed to update the evaluator.
       const bool nested_variables = std::any_of( cit, end
-                                               , [&](position_type pos)
+                                               , [&](order_position_type pos)
                                                     {return o.contains(o.position(), pos);});
 
       if (not nested_variables)
@@ -237,7 +225,7 @@ struct expression_pre
         const auto local_res = std::make_shared<sdd_stack<C>>(arc.successor(), nullptr);
         const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), nullptr);
         coro<C> gen(std::bind( expression_post<C>, ph::_1, arc.valuation(), o.nested(), target_
-                             , &valuation_, local_app, local_res, cit, std::cref(end), &eval_));
+                             , &valuation_, local_app, local_res, cit, end, &eval_));
         while(gen)
         {
           assert(not local_res->sdd.empty() && "Invalid |0| successor result");
@@ -254,7 +242,7 @@ struct expression_pre
   operator()( const flat_node<C>& node
             , const order<C>& o
             , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<res_stack<C>>& res
-            , positions_iterator cit, positions_iterator end)
+            , order_positions_iterator cit, order_positions_iterator end)
   const
   {
     auto& sdd_cxt = cxt_.sdd_context();
@@ -279,7 +267,7 @@ struct expression_pre
         }
 
         coro<C> gen(std::bind( expression_post<C>, ph::_1, arc.successor(), o.next(), target_
-                             , &valuation_, nullptr, nullptr, cit, std::cref(end), &eval_));
+                             , &valuation_, nullptr, nullptr, cit, end, &eval_));
 
         while (gen)
         {
@@ -313,7 +301,7 @@ struct expression_pre
   operator()( const one_terminal<C>&
             , const order<C>& o
             , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<res_stack<C>>& res
-            , positions_iterator cit, positions_iterator end)
+            , order_positions_iterator cit, order_positions_iterator end)
   const
   {
     // Continue to the stacked successor of a previously visited hierachical node.
@@ -329,7 +317,7 @@ struct expression_pre
   operator()( const zero_terminal<C>&
             , const order<C>&
             , const std::shared_ptr<app_stack<C>>&, const std::shared_ptr<res_stack<C>>&
-            , positions_iterator, positions_iterator)
+            , order_positions_iterator, order_positions_iterator)
   const noexcept
   {
     assert(false);

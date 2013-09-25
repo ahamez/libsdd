@@ -34,14 +34,8 @@ public:
   /// @brief A variable type.
   using variable_type = typename C::Variable;
 
-  /// @brief The absolute position of an identifier in an order.
-  using position_type = typename order<C>::position_type;
-
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
-
-  /// @brief The type of a set of variables.
-  using positions_type = std::vector<position_type>;
 
 private:
 
@@ -49,19 +43,16 @@ private:
   const std::unique_ptr<expr::evaluator_base<C>> eval_ptr_;
 
   /// @brief The set of the expression's variables.
-  const positions_type positions_;
+  const order_positions_type positions_;
 
   /// @brief The target of the assignment.
-  const position_type target_;
-
-  /// @brief An iterator on a set of identifiers.
-  using positions_iterator = typename positions_type::const_iterator;
+  const order_position_type target_;
 
 public:
 
   /// @brief Constructor.
-  expression( std::unique_ptr<expr::evaluator_base<C>>&& e_ptr, positions_type&& positions
-            , position_type target)
+  expression( std::unique_ptr<expr::evaluator_base<C>>&& e_ptr, order_positions_type&& positions
+            , order_position_type target)
     : eval_ptr_(std::move(e_ptr)), positions_(std::move(positions)), target_(target)
   {}
 
@@ -103,15 +94,15 @@ public:
   }
 
   /// @brief Get the set of variables.
-  const positions_type&
-  identifiers()
+  const order_positions_type&
+  operands()
   const noexcept
   {
     return positions_;
   }
 
   /// @brief Get the target.
-  position_type
+  order_position_type
   target()
   const noexcept
   {
@@ -130,7 +121,7 @@ bool
 operator==(const expression<C>& lhs, const expression<C>& rhs)
 noexcept
 {
-  return lhs.target() == rhs.target() and lhs.identifiers() == rhs.identifiers()
+  return lhs.target() == rhs.target() and lhs.operands() == rhs.operands()
      and lhs.evaluator() == rhs.evaluator();
 }
 
@@ -157,14 +148,8 @@ public:
   /// @brief A variable type.
   using variable_type = typename C::Variable;
 
-  /// @brief The absolute position of an identifier in an order.
-  using position_type = typename order<C>::position_type;
-
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
-
-  /// @brief The type of a set of variables.
-  using positions_type = std::vector<position_type>;
 
 private:
 
@@ -172,19 +157,16 @@ private:
   const std::unique_ptr<expr::evaluator_base<C>> eval_ptr_;
 
   /// @brief The set of the expression's variables.
-  const positions_type positions_;
+  const order_positions_type positions_;
 
   /// @brief The target of the assignment.
-  const position_type target_;
-
-  /// @brief An iterator on a set of identifiers.
-  using positions_iterator = typename positions_type::const_iterator;
+  const order_position_type target_;
 
 public:
 
   /// @brief Constructor.
   simple_expression( std::unique_ptr<expr::evaluator_base<C>>&& e_ptr
-                   , positions_type&& positions, position_type target)
+                   , order_positions_type&& positions, order_position_type target)
     : eval_ptr_(std::move(e_ptr)), positions_(std::move(positions)), target_(target)
   {}
 
@@ -226,15 +208,15 @@ public:
   }
 
   /// @brief Get the set of variables.
-  const positions_type&
-  identifiers()
+  const order_positions_type&
+  operands()
   const noexcept
   {
     return positions_;
   }
 
   /// @brief Get the target.
-  position_type
+  order_position_type
   target()
   const noexcept
   {
@@ -253,7 +235,7 @@ bool
 operator==(const simple_expression<C>& lhs, const simple_expression<C>& rhs)
 noexcept
 {
-  return lhs.target() == rhs.target() and lhs.identifiers() == rhs.identifiers()
+  return lhs.target() == rhs.target() and lhs.operands() == rhs.operands()
      and lhs.evaluator() == rhs.evaluator();
 }
 
@@ -284,7 +266,6 @@ Expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIte
 {
   using identifier_type = typename C::Identifier;
   using derived_type = hom::expr::evaluator_derived<C, Evaluator>;
-  using positions_type = std::vector<typename order<C>::position_type>;
 
   if (std::distance(begin, end) == 0)
   {
@@ -293,7 +274,7 @@ Expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIte
 
   const auto target_pos = o.identifier_position(target);
 
-  positions_type positions;
+  order_positions_type positions;
   positions.reserve(std::distance(begin, end));
   std::transform( begin, end, std::back_inserter(positions)
                 , [&](const identifier_type& id){return o.identifier_position(id);});
@@ -310,7 +291,7 @@ Expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIte
   }
   else
   {
-    // The target is below all identifiers, it's a much simpler case to handle
+    // The target is below all operands, it's a much simpler case to handle
     return homomorphism<C>::create( mem::construct<hom::simple_expression<C>>()
                                   , std::move(evaluator_ptr), std::move(positions), target_pos);
   }
@@ -346,7 +327,7 @@ struct hash<sdd::hom::expression<C>>
   const
   {
     std::size_t seed = e.evaluator().hash();
-    for (const auto& v : e.identifiers())
+    for (const auto& v : e.operands())
     {
       sdd::util::hash_combine(seed, v);
     }
@@ -365,7 +346,7 @@ struct hash<sdd::hom::simple_expression<C>>
   const noexcept
   {
     std::size_t seed = e.evaluator().hash();
-    for (const auto& v : e.identifiers())
+    for (const auto& v : e.operands())
     {
       sdd::util::hash_combine(seed, v);
     }

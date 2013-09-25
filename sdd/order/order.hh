@@ -15,7 +15,21 @@
 
 namespace sdd {
 
+/*------------------------------------------------------------------------------------------------*/
+
 namespace bmi = boost::multi_index;
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+/// @brief The position of an order's node, unique to it.
+using order_position_type = unsigned int;
+
+/// @internal
+using order_positions_type = std::vector<order_position_type>;
+
+/// @internal
+using order_positions_iterator = typename order_positions_type::const_iterator;
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -34,14 +48,10 @@ public:
   /// @brief A library's variable type.
   using variable_type = typename C::Variable;
 
-  /// @internal
-  /// @brief The position of a node, unique to it.
-  using position_type = unsigned int;
-
 private:
 
   /// @brief A path, following hierarchies, to a node.
-  using path_type = std::vector<position_type>;
+  using path_type = std::vector<order_position_type>;
 
   /// @brief A node in an order.
   ///
@@ -57,7 +67,7 @@ private:
     /// @brief Absolute position, when seeing the order as flatten.
     ///
     /// Used to establish a total order on identifiers.
-    const position_type position;
+    const order_position_type position;
 
     /// @brief A pointer to following order's head.
     const node* next;
@@ -89,22 +99,23 @@ private:
     }
   }; // struct node
 
+  /// @brief Used by boost::multi_index when looking for a node by position.
   struct compare_node
   {
     bool
-    operator()(const node& lhs, position_type rhs)
+    operator()(const node& lhs, order_position_type rhs)
     const noexcept
     {
       return lhs.position < rhs;
     }
 
     bool
-    operator()(position_type lhs, const node& rhs)
+    operator()(order_position_type lhs, const node& rhs)
     const noexcept
     {
       return lhs < rhs.position;
     }
-  };
+  }; // struct compare_node
 
   /// @brief Tag to access nodes using their absolute positions.
   struct by_position {};
@@ -150,7 +161,7 @@ public:
   /// @param uppper Must belong to the current order.
   /// @param nested Must belong to the current order.
   bool
-  contains(position_type upper, position_type nested)
+  contains(order_position_type upper, order_position_type nested)
   const noexcept
   {
     const auto& identifiers = nodes_ptr_->template get<by_position>();
@@ -184,7 +195,7 @@ public:
   }
 
   /// @brief Get the position of this order's head.
-  position_type
+  order_position_type
   position()
   const noexcept
   {
@@ -216,7 +227,7 @@ public:
   }
 
   /// @internal
-  position_type
+  order_position_type
   identifier_position(const identifier_type& id)
   const noexcept
   {
