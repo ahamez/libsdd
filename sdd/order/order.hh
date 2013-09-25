@@ -114,19 +114,6 @@ private:
   /// @brief The first node in the order.
   const node* head_;
 
-  /// @brief Extract the identifier of a node.
-  struct extract_identifier
-  {
-    typedef const identifier_type& result_type;
-
-    const identifier_type&
-    operator()(const node& n)
-    const noexcept
-    {
-      return n.identifier;
-    }
-  };
-
 public:
 
   /// @brief Constructor.
