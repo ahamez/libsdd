@@ -136,9 +136,6 @@ TYPED_TEST(hom_values_function_test, construction)
     const auto h1 = ValuesFunction<conf>(o, "b", threshold_fun<conf, true>(3));
     ASSERT_NE(h0, h1);
   }
-  {
-    ASSERT_THROW(ValuesFunction<conf>(o, "c", threshold_fun<conf, true>(2)), std::invalid_argument);
-  }
 }
 
 /*------------------------------------------------------------------------------------------------*/

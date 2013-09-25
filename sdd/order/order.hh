@@ -9,8 +9,6 @@
 #include <utility>   // pair
 #include <vector>
 
-#include <boost/iterator/transform_iterator.hpp>
-
 #include "sdd/order/order_builder.hh"
 #include "sdd/util/boost_multiindex_no_warnings.hh"
 #include "sdd/util/hash.hh"
@@ -110,10 +108,6 @@ private:
             >
           > nodes_type;
 
-  /// @brief
-  typedef typename nodes_type::template index<by_identifier>::type::const_iterator
-          identifiers_const_iterator;
-
   /// @brief The concrete order.
   const std::shared_ptr<nodes_type> nodes_ptr_;
 
@@ -134,9 +128,6 @@ private:
   };
 
 public:
-
-  /// @brief
-  typedef boost::transform_iterator<extract_identifier, identifiers_const_iterator> const_iterator;
 
   /// @brief Constructor.
   order(const order_builder<C>& builder)
@@ -184,22 +175,6 @@ public:
   const noexcept
   {
     return nodes_ptr_->template get<by_identifier>();
-  }
-
-  /// @brief Beginning of identifiers.
-  const_iterator
-  cbegin()
-  const noexcept
-  {
-    return const_iterator(nodes_ptr_->template get<by_identifier>().begin(), extract_identifier());
-  }
-
-  /// @brief End of identifiers.
-  const_iterator
-  cend()
-  const noexcept
-  {
-    return const_iterator(nodes_ptr_->template get<by_identifier>().end(), extract_identifier());
   }
 
   /// @brief Get the variable of this order's head.

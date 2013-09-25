@@ -4,7 +4,6 @@
 #include <algorithm> // find
 #include <iosfwd>
 #include <memory>    // unique_ptr
-#include <stdexcept> // invalid_argument
 #include <typeinfo>  // typeid
 
 #include "sdd/dd/definition.hh"
@@ -333,33 +332,23 @@ operator<<(std::ostream& os, const values_function<C>& x)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Create the Values Function homomorphism.
+/// @param i The target identifier, must belong to o.
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
 ValuesFunction(const order<C>& o, const typename C::Idenfitier& i, const User& u)
 {
-  if (std::find(o.cbegin(), o.cend(), i) == o.cend())
-  {
-    std::stringstream ss;
-    ss << "Identifier " << i << " not found." << std::endl;
-    throw std::invalid_argument(ss.str());
-  }
   return homomorphism<C>::create( mem::construct<hom::values_function<C>>()
                                 , i, new hom::values_function_derived<C, User>(u));
 }
 
 /// @brief Create the Values Function homomorphism.
+/// @param i The target identifier, must belong to o.
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
 ValuesFunction(const order<C>& o, const typename C::Identifier& i, User&& u)
 {
-  if (std::find(o.cbegin(), o.cend(), i) == o.cend())
-  {
-    std::stringstream ss;
-    ss << "Identifier " << i << " not found." << std::endl;
-    throw std::invalid_argument(ss.str());
-  }
   return homomorphism<C>::create( mem::construct<hom::values_function<C>>()
                                 , i, new hom::values_function_derived<C, User>(std::move(u)));
 }
