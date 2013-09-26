@@ -165,7 +165,37 @@ public:
     return *this;
   }
 
+  /// @brief Get the number of identifiers.
+  std::size_t
+  size()
+  const noexcept
+  {
+    std::size_t acc = 0;
+    node_size(acc, ptr_);
+    return acc;
+  }
+
 private:
+
+  /// @brief Get the number of identifiers of a node.
+  static
+  void
+  node_size(std::size_t& acc, node_ptr ptr)
+  noexcept
+  {
+    if (ptr)
+    {
+      ++acc;
+      if (ptr->nested)
+      {
+        node_size(acc, ptr->nested);
+      }
+      if (ptr->next)
+      {
+        node_size(acc, ptr->next);
+      }
+    }
+  }
 
   /// @brief Concatenate two order builders.
   static

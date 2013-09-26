@@ -17,7 +17,7 @@ template <typename C>
 homomorphism<C>
 carrier(const order<C>& o, const typename C::Identifier& target, homomorphism<C> h)
 {
-  const auto& path = *(o.identifiers().find(target)->path_ptr);
+  const auto& path = *(o.identifier_node(target).path_ptr);
   for (auto cit = path.rbegin(); cit != path.rend(); ++cit)
   {
     h = Local(*cit, h);
