@@ -82,7 +82,7 @@ public:
     std::shared_ptr<expr::app_stack<C>> app = nullptr;
     std::shared_ptr<expr::res_stack<C>> res = nullptr;
     expr::expression_pre<C> eval {cxt, target_, *eval_ptr_};
-    return visit(eval, sdd, o, app, res, positions_.cbegin(), positions_.cend());
+    return visit_self(eval, sdd, o, app, res, positions_.cbegin(), positions_.cend());
   }
 
   /// @brief Get the user's evaluator.
@@ -196,7 +196,7 @@ public:
     std::shared_ptr<expr::app_stack<C>> app = nullptr;
     std::shared_ptr<expr::res_stack<C>> res = nullptr;
     expr::simple<C> eval {cxt, target_, *eval_ptr_};
-    return visit(eval, sdd, o, app, res, positions_.cbegin(), positions_.cend());
+    return visit_self(eval, sdd, o, app, res, positions_.cbegin(), positions_.cend());
   }
 
   /// @brief Get the user's evaluator.

@@ -8,6 +8,7 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
+#include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/expression/evaluator.hh"
 #include "sdd/hom/expression/stacks.hh"
 #include "sdd/order/order.hh"
@@ -172,7 +173,7 @@ struct expression_pre
 
   /// @brief Evaluation on hierarchical nodes.
   SDD<C>
-  operator()( const hierarchical_node<C>& node
+  operator()( const hierarchical_node<C>& node, const SDD<C>& s
             , const order<C>& o
             , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<res_stack<C>>& res
             , order_positions_iterator cit, order_positions_iterator end)
@@ -195,7 +196,7 @@ struct expression_pre
         su.reserve(node.size());
         for (const auto& arc : node)
         {
-          const SDD<C> successor = visit(*this, arc.successor(), o.next(), app, res, cit, end);
+          const SDD<C> successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
           su.add(successor, arc.valuation());
         }
         return SDD<C>(o.variable(), su(sdd_cxt));
@@ -206,15 +207,24 @@ struct expression_pre
         // modiffy the current level: a square union is sufficient.
         dd::square_union<C, SDD<C>> su;
         su.reserve(node.size());
-        for (const auto& arc : node)
+        try
         {
-          const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), app);
-          const auto local_res = std::make_shared<res_stack<C>>(res);
-          visit(*this, arc.valuation(), o.nested(), local_app, local_res, cit, end);
-          assert(not local_res->result.empty() && "Invalid empty successor result");
-          su.add(dd::sum<C>(sdd_cxt, std::move(local_res->result)), arc.valuation());
+          for (const auto& arc : node)
+          {
+            const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), app);
+            const auto local_res = std::make_shared<res_stack<C>>(res);
+            visit_self(*this, arc.valuation(), o.nested(), local_app, local_res, cit, end);
+            assert(not local_res->result.empty() && "Invalid empty successor result");
+            su.add(dd::sum<C>(sdd_cxt, std::move(local_res->result)), arc.valuation());
+          }
+          return SDD<C>(o.variable(), su(sdd_cxt));
         }
-        return SDD<C>(o.variable(), su(sdd_cxt));
+        catch (top<C>& t)
+        {
+          evaluation_error<C> e(s);
+          e.add_top(t);
+          throw e;
+        }
       }
     }
     else // target is contained in this hierarchy
@@ -235,13 +245,22 @@ struct expression_pre
           gen();
         }
       }
-      return dd::sum<C>(sdd_cxt, std::move(operands));
+      try
+      {
+        return dd::sum<C>(sdd_cxt, std::move(operands));
+      }
+      catch (top<C>& t)
+      {
+        evaluation_error<C> e(s);
+        e.add_top(t);
+        throw e;
+      }
     }
   }
 
   /// @brief Evaluation on flat nodes.
   SDD<C>
-  operator()( const flat_node<C>& node
+  operator()( const flat_node<C>& node, const SDD<C>& s
             , const order<C>& o
             , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<res_stack<C>>& res
             , order_positions_iterator cit, order_positions_iterator end)
@@ -278,7 +297,16 @@ struct expression_pre
           gen();
         }
       }
-      return dd::sum<C>(sdd_cxt, std::move(operands));
+      try
+      {
+        return dd::sum<C>(sdd_cxt, std::move(operands));
+      }
+      catch (top<C>& t)
+      {
+        evaluation_error<C> e(s);
+        e.add_top(t);
+        throw e;
+      }
     }
     else // target is still below
     {
@@ -291,7 +319,7 @@ struct expression_pre
         {
           eval_.update(o.identifier(), arc.valuation());
         }
-        const SDD<C> successor = visit(*this, arc.successor(), o.next(), app, res, cit, end);
+        const SDD<C> successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
         su.add(successor, arc.valuation());
       }
       return SDD<C>(o.variable(), su(cxt_.sdd_context()));
@@ -300,14 +328,14 @@ struct expression_pre
 
   /// @brief Evaluation on |1|.
   SDD<C>
-  operator()( const one_terminal<C>&
+  operator()( const one_terminal<C>&, const SDD<C>&
             , const order<C>& o
             , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<res_stack<C>>& res
             , order_positions_iterator cit, order_positions_iterator end)
   const
   {
     // Continue to the stacked successor of a previously visited hierachical node.
-    const auto stacked_succ = visit(*this, app->sdd, app->ord, app->next, res->next, cit, end);
+    const auto stacked_succ = visit_self(*this, app->sdd, app->ord, app->next, res->next, cit, end);
     res->result.add(stacked_succ);
     return sdd::one<C>();
   }
@@ -316,7 +344,7 @@ struct expression_pre
   ///
   /// Should never happen.
   SDD<C>
-  operator()( const zero_terminal<C>&
+  operator()( const zero_terminal<C>&, const SDD<C>&
             , const order<C>&
             , const std::shared_ptr<app_stack<C>>&, const std::shared_ptr<res_stack<C>>&
             , order_positions_iterator, order_positions_iterator)
