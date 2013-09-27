@@ -91,11 +91,14 @@ private:
   /// @brief All nodes.
   using nodes_type = std::vector<node>;
 
+  /// @brief A shared pointer to nodes.
+  using shared_nodes_type = std::shared_ptr<const nodes_type>;
+
   /// @brief Define a mapping identifier->node.
   using identifier_to_node_type = std::unordered_map<identifier_type, const node*>;
 
   /// @brief The concrete order.
-  const std::shared_ptr<nodes_type> nodes_ptr_;
+  const shared_nodes_type nodes_ptr_;
 
   /// @brief Maps identifiers to nodes.
   const std::shared_ptr<identifier_to_node_type> identifier_to_node_ptr_;
@@ -217,13 +220,13 @@ public:
 private:
 
   /// @brief Construct whith a shallow copy an already existing order.
-  order(const std::shared_ptr<nodes_type>& ptr, const node* head)
+  order(const shared_nodes_type& ptr, const node* head)
     : nodes_ptr_(ptr), head_(head)
   {}
 
   /// @brief Create the concrete order using an order_builder.
   static
-  std::shared_ptr<nodes_type>
+  shared_nodes_type
   mk_nodes_ptr(const order_builder<C>& builder)
   {
     if (builder.empty())
@@ -288,7 +291,7 @@ private:
 
   /// @brief
   const std::shared_ptr<identifier_to_node_type>
-  mk_identifier_to_node(std::shared_ptr<nodes_type> nodes_ptr)
+  mk_identifier_to_node(const shared_nodes_type& nodes_ptr)
   {
     auto identifier_to_node_ptr = std::make_shared<identifier_to_node_type>();
     if (nodes_ptr)
