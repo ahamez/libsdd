@@ -97,9 +97,6 @@ private:
   /// @brief The sequence, in reverse order, of operations that led to the error.
   std::deque<std::shared_ptr<hom::operation_wrapper_base>> steps_;
 
-  /// @brief Flag to determine if the description has been built.
-  mutable bool description_built_;
-
   /// @brief Textual description of the error.
   mutable std::string description_;
 
@@ -109,15 +106,12 @@ public:
   evaluation_error(const SDD<C>& s)
     : sdd_(s)
     , steps_()
-    , description_built_(false)
     , description_()
-  {
-  }
+  {}
 
   ~evaluation_error()
   noexcept
-  {
-  }
+  {}
 
   /// @brief Return the textual description of the error.
   ///
@@ -151,7 +145,7 @@ public:
   description()
   const noexcept
   {
-    if (not description_built_)
+    if (description_.empty())
     {
       std::stringstream ss;
       ss << "Application failed on " << sdd_ << std::endl;
@@ -162,12 +156,11 @@ public:
         ss << i << " : " << (*rcit)->print() << std::endl;
       }
       description_ = ss.str();
-      description_built_ = true;
     }
     return description_;
   }
 
-  /// @brief Get the operand that raises this error.
+  /// @brief Get the operand that caused this error.
   SDD<C>
   operand()
   const noexcept
