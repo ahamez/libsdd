@@ -54,7 +54,7 @@ private:
   /// @brief A node in an order.
   ///
   /// An order is actually represented as a linked list of node.
-  struct node
+  struct order_node
   {
     /// @brief The (user's) identifier of this node.
     identifier_type identifier;
@@ -77,25 +77,28 @@ private:
     std::shared_ptr<path_type> path_ptr;
 
     /// @brief Constructor.
-    node( const identifier_type& id, variable_type var, unsigned int pos
-        , node* nxt, node* nst
+    order_node( const identifier_type& id, variable_type var, unsigned int pos
+        , order_node* nxt, order_node* nst
         , const std::shared_ptr<path_type>& path)
       : identifier(id), variable(var), position(pos), next(nxt), nested(nst), path_ptr(path)
     {}
 
-    node()
+    /// @brief Default constructor.
+    ///
+    /// Needed by std::vector for default initialization.
+    order_node()
       : identifier(), variable(), position(), next(), nested(), path_ptr()
     {}
   }; // struct node
 
   /// @brief All nodes.
-  using nodes_type = std::vector<node>;
+  using nodes_type = std::vector<order_node>;
 
   /// @brief A shared pointer to nodes.
   using shared_nodes_type = std::shared_ptr<const nodes_type>;
 
   /// @brief Define a mapping identifier->node.
-  using identifier_to_node_type = std::unordered_map<identifier_type, const node*>;
+  using identifier_to_node_type = std::unordered_map<identifier_type, const order_node*>;
 
   /// @brief The concrete order.
   const shared_nodes_type nodes_ptr_;
@@ -104,7 +107,7 @@ private:
   const std::shared_ptr<identifier_to_node_type> identifier_to_node_ptr_;
 
   /// @brief The first node in the order.
-  const node* head_;
+  const order_node* head_;
 
 public:
 
@@ -183,16 +186,8 @@ public:
   }
 
   /// @internal
-  order_position_type
-  identifier_position(const identifier_type& id)
-  const noexcept
-  {
-    return identifier_to_node_ptr_->at(id)->position;
-  }
-
-  /// @internal
-  const node&
-  identifier_node(const identifier_type& id)
+  const order_node&
+  node(const identifier_type& id)
   const noexcept
   {
     return *identifier_to_node_ptr_->at(id);
@@ -220,7 +215,7 @@ public:
 private:
 
   /// @brief Construct whith a shallow copy an already existing order.
-  order(const shared_nodes_type& ptr, const node* head)
+  order(const shared_nodes_type& ptr, const order_node* head)
     : nodes_ptr_(ptr), head_(head)
   {}
 
@@ -245,18 +240,18 @@ private:
 
     // To enable recursion in the lambda.
     std::function<
-      std::pair<node*, variable_type>
+      std::pair<order_node*, variable_type>
       (const order_builder<C>&, const std::shared_ptr<path_type>&)
     > helper;
 
     helper = [&helper, &pos, &nodes, &unicity]
     (const order_builder<C>& ob, const std::shared_ptr<path_type>& path)
-    -> std::pair<node*, unsigned int>
+    -> std::pair<order_node*, unsigned int>
     {
       const unsigned int current_position = pos++;
 
-      std::pair<node*, variable_type> nested(nullptr, 0 /*first variable*/);
-      std::pair<node*, variable_type> next(nullptr, 0 /* first variable */);
+      std::pair<order_node*, variable_type> nested(nullptr, 0 /*first variable*/);
+      std::pair<order_node*, variable_type> next(nullptr, 0 /* first variable */);
 
       if (not ob.nested().empty())
       {
@@ -279,7 +274,7 @@ private:
         throw std::runtime_error(ss.str());
       }
       new (&nodes[current_position])
-        node(ob.identifier(), variable, current_position, next.first, nested.first, path);
+        order_node(ob.identifier(), variable, current_position, next.first, nested.first, path);
       return std::make_pair(&nodes[current_position], variable + 1);
     };
 
@@ -298,7 +293,7 @@ private:
     {
       identifier_to_node_ptr->reserve(nodes_ptr->size());
       std::for_each( nodes_ptr->begin(), nodes_ptr_->end()
-                   , [&](const node& n){identifier_to_node_ptr->emplace(n.identifier, &n);});
+                   , [&](const order_node& n){identifier_to_node_ptr->emplace(n.identifier, &n);});
     }
     return identifier_to_node_ptr;
   }

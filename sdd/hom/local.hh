@@ -192,7 +192,7 @@ template <typename C>
 homomorphism<C>
 Local(const typename C::Identifier& id, const order<C>& o, const homomorphism<C>& h)
 {
-  return Local(o.identifier_position(id), h);
+  return Local(o.node(id).position, h);
 }
 
 /*------------------------------------------------------------------------------------------------*/
