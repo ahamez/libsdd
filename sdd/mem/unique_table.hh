@@ -51,11 +51,11 @@ private:
   /// @brief The statistics of this unique_table.
   mutable statistics stats_;
 
-  /// The number of re-usable memory blocks to keep.
-  static constexpr std::size_t nb_blocks = 4096;
-
-  /// Index re-usable memory blocks by size.
+  /// @brief Index re-usable memory blocks by size.
   boost::container::flat_multimap<std::size_t, char*> blocks_;
+
+  /// @brief The number of re-usable memory blocks to keep.
+  static constexpr std::size_t nb_blocks = 4096;
 
 public:
 

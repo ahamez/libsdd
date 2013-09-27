@@ -8,6 +8,7 @@ namespace sdd { namespace hom {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+/// @brief Move elements of a range to a given position.
 template <typename InputIterator>
 void
 consolidate(char* addr, InputIterator it, InputIterator end)

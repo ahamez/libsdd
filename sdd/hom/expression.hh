@@ -267,7 +267,9 @@ Expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIte
   using identifier_type = typename C::Identifier;
   using derived_type = hom::expr::evaluator_derived<C, Evaluator>;
 
-  if (std::distance(begin, end) == 0)
+  const std::size_t size = std::distance(begin, end);
+
+  if (size == 0)
   {
     return Id<C>();
   }
@@ -275,7 +277,7 @@ Expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIte
   const auto target_pos = o.node(target).position;
 
   order_positions_type positions;
-  positions.reserve(std::distance(begin, end));
+  positions.reserve(size);
   std::transform( begin, end, std::back_inserter(positions)
                 , [&](const identifier_type& id){return o.node(id).position;});
   std::sort(positions.begin(), positions.end());

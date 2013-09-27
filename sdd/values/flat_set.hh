@@ -236,7 +236,7 @@ private:
   ptr_type
   create(InputIterator begin, InputIterator end)
   {
-    if (std::distance(begin, end) == 0)
+    if (begin == end)
     {
       return empty_set();
     }

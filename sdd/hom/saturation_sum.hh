@@ -61,8 +61,7 @@ public:
     , F_(f)
     , G_(std::move(g))
     , L_(l)
-  {
-  }
+  {}
 
   /// @brief Evaluation.
   SDD<C>
