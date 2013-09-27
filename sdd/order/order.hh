@@ -57,24 +57,24 @@ private:
   struct order_node
   {
     /// @brief The (user's) identifier of this node.
-    identifier_type identifier;
+    const identifier_type identifier;
 
     /// @brief The (library's) variable of this node.
-    variable_type variable;
+    const variable_type variable;
 
     /// @brief Absolute position, when seeing the order as flatten.
     ///
     /// Used to establish a total order on identifiers.
-    order_position_type position;
+    const order_position_type position;
 
     /// @brief A pointer to following order's head.
-    node* next;
+    const order_node* next;
 
     /// @brief A pointer to the nested order's head.
-    node* nested;
+    const order_node* nested;
 
     /// @brief The path to this node.
-    std::shared_ptr<path_type> path_ptr;
+    const std::shared_ptr<path_type> path_ptr;
 
     /// @brief Constructor.
     order_node( const identifier_type& id, variable_type var, unsigned int pos
