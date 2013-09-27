@@ -14,27 +14,10 @@ find_package(Doxygen QUIET)
 ################################################################################
 
 option (TEST "Build and run tests." OFF) 
-option (VALGRIND "Check memory with Valgrind." OFF)
-option (ADDRESS_SANITIZER "Check memory with AddressSanitizer." OFF)
 option (TCMALLOC "Use TCMalloc" OFF)
 option (PACKED "Pack structures" OFF)
 option (COVERAGE "Code coverage" OFF)
 option (INTERNAL_DOC "Generate internal documentation" OFF)
-
-if (VALGRIND AND ADDRESS_SANITIZER)
-  message(FATAL_ERROR "Can't use both valgrind and AddressSanitizer.")
-endif ()
-
-if (VALGRIND)
-  find_program(VALGRIND_EXE valgrind)
-  if (NOT VALGRIND_EXE)
-    message(STATUS "valgrind not found.")
-  endif ()
-endif ()
-
-if (ADDRESS_SANITIZER)
-  # TODO: check if compiler is clang and that its version is >= 3.1
-endif ()
 
 if (TCMALLOC)
   find_library(TCMALLOC_LIBRARY tcmalloc)

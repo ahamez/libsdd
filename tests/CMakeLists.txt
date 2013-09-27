@@ -1,4 +1,3 @@
-add_definitions("-DGTEST_HAS_TR1_TUPLE=0")
 include_directories("${PROJECT_SOURCE_DIR}/tests/gtest/include")
 
 # we need to compile googletest with the same flags
@@ -44,17 +43,4 @@ set(SOURCES
 
 add_executable(tests ${SOURCES})
 target_link_libraries(tests gtest ${TCMALLOC_LIBRARY} ${Boost_LIBRARIES})
-
-if (VALGRIND_EXE)
-  add_test( NAME "UnitTestsValgrind"
-            COMMAND ${VALGRIND_EXE} $<TARGET_FILE:tests>
-          )
-else ()
-  if (ADDRESS_SANITIZER)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -faddress-sanitizer")
-    add_definitions("-faddress-sanitizer")
-    add_test("UnitTestsAddressSanitizer" tests)
-  else ()
-    add_test("UnitTests" tests)
-  endif ()  
-endif ()
+add_test("UnitTests" tests)
