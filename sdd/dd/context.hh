@@ -55,8 +55,7 @@ public:
     , intersection_cache_(std::make_shared<intersection_cache_type>( *this, "sdd_intersection_cache"
                                                                    , intersection_size))
     , sum_cache_(std::make_shared<sum_cache_type>(*this, "sdd_sum_cache", sum_size))
-  {
-  }
+  {}
 
   /// @brief Copy constructor.
   context(const context&) = default;

@@ -28,8 +28,7 @@ public:
   arc(Valuation&& val, SDD<C>&& succ)
     : valuation_(std::move(val))
     , successor_(std::move(succ))
-  {
-  }
+  {}
 
   /// @brief Get the valuation of this arc.
   const Valuation&
