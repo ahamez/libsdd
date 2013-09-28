@@ -19,8 +19,7 @@ struct operation_wrapper_base
 {
   virtual
   ~operation_wrapper_base()
-  {
-  }
+  {}
 
   virtual std::string print() const noexcept = 0;
 };
@@ -42,8 +41,7 @@ struct operation_wrapper
   /// Operations are non-copyable, but movable.
   operation_wrapper(Operation&& op)
     : operation_(std::move(op))
-  {
-  }
+  {}
 
   /// @brief Return a textual description of the contained operation.
   std::string
@@ -77,9 +75,6 @@ private:
   /// @brief The sequence, in reverse order, of operations that led to the error.
   std::vector<std::shared_ptr<operation_wrapper_base>> steps_;
 
-  /// @brief Flag to determine if the description has been built.
-  mutable bool description_built_;
-
   /// @brief Textual description of the error.
   mutable std::string description_;
 
@@ -87,18 +82,12 @@ public:
 
   /// @internal
   top(const SDD<C>& lhs, const SDD<C>& rhs)
-    : lhs_(lhs)
-    , rhs_(rhs)
-    , steps_()
-    , description_built_(false)
-    , description_()
-  {
-  }
+    : lhs_(lhs), rhs_(rhs), steps_(), description_()
+  {}
 
   ~top()
   noexcept
-  {
-  }
+  {}
 
   /// @brief Return the textual description of the error.
   ///
@@ -147,7 +136,7 @@ public:
   description()
   const noexcept
   {
-    if (not description_built_)
+    if (description_.empty())
     {
       std::stringstream ss;
       ss << "Incompatible SDD: " << lhs_ << " and " << rhs_ << "."
@@ -160,7 +149,6 @@ public:
         ss << i << " : " << (*rcit)->print() << std::endl;
       }
       description_ = ss.str();
-      description_built_ = true;
     }
     return description_;
   }
