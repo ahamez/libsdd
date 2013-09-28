@@ -23,6 +23,8 @@ struct default_configuration
   std::size_t hom_unique_table_size;
   std::size_t hom_cache_size;
 
+  static constexpr bool expression_preserve_fpu_registers = false;
+
   default_configuration()
     : sdd_unique_table_size(1000000)
     , sdd_difference_cache_size(500000)

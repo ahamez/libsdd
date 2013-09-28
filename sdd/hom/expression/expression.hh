@@ -17,10 +17,32 @@ namespace sdd { namespace hom { namespace expr {
 
 /*------------------------------------------------------------------------------------------------*/
 
+namespace bcoro = boost::coroutines;
+
 /// @internal
 /// @brief The signature of the coroutine used to implement the Expression evaluation.
 template <typename C>
-using coro = boost::coroutines::coroutine<SDD<C>()>;
+using coro = bcoro::coroutine<SDD<C>()>;
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+template <bool>
+struct coro_fpu;
+
+/// @internal
+template <>
+struct coro_fpu<true>
+{
+  static constexpr auto value = bcoro::fpu_preserved;
+};
+
+/// @internal
+template <>
+struct coro_fpu<false>
+{
+  static constexpr auto value = bcoro::fpu_not_preserved;
+};
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -49,8 +71,9 @@ expression_post( typename coro<C>::caller_type& yield
     {
       const auto local_res = std::make_shared<sdd_stack<C>>(arc.successor(), res);
       const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), app);
-      coro<C> gen(std::bind( expression_post<C>, ph::_1, arc.valuation(), o.nested(), target
-                           , valuation, local_app, local_res, cit, end, eval));
+      coro<C> gen( std::bind( expression_post<C>, ph::_1, arc.valuation(), o.nested(), target
+                            , valuation, local_app, local_res, cit, end, eval)
+                 , bcoro::attributes(coro_fpu<C::expression_preserve_fpu_registers>::value));
       while (gen)
       {
         yield(SDD<C>(o.variable(), gen.get(), local_res->sdd));
@@ -94,8 +117,9 @@ expression_post( typename coro<C>::caller_type& yield
         eval->update(o.identifier(), arc.valuation());
       }
 
-      coro<C> gen(std::bind( expression_post<C>, ph::_1, arc.successor(), o.next(), target
-                           , valuation, app, res, cit, end, eval));
+      coro<C> gen( std::bind( expression_post<C>, ph::_1, arc.successor(), o.next(), target
+                            , valuation, app, res, cit, end, eval)
+                 , bcoro::attributes(coro_fpu<C::expression_preserve_fpu_registers>::value));
 
       while (gen)
       {
@@ -120,8 +144,9 @@ expression_post( typename coro<C>::caller_type& yield
     // We can't arrive here when app is not set, as the flat case ensure that we don't propagate
     // on the final |1| (it avoids propagation whenever all operands have been encoutered).
     assert(app);
-    coro<C> gen(std::bind( expression_post<C>, ph::_1, app->sdd, app->ord, target, valuation
-                         , app->next, res->next, cit, end, eval));
+    coro<C> gen( std::bind( expression_post<C>, ph::_1, app->sdd, app->ord, target, valuation
+                          , app->next, res->next, cit, end, eval)
+               , bcoro::attributes(coro_fpu<C::expression_preserve_fpu_registers>::value));
     while (gen)
     {
       res->sdd = gen.get();
@@ -236,8 +261,9 @@ struct expression_pre
       {
         const auto local_res = std::make_shared<sdd_stack<C>>(arc.successor(), nullptr);
         const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), nullptr);
-        coro<C> gen(std::bind( expression_post<C>, ph::_1, arc.valuation(), o.nested(), target_
-                             , &valuation_, local_app, local_res, cit, end, &eval_));
+        coro<C> gen( std::bind( expression_post<C>, ph::_1, arc.valuation(), o.nested(), target_
+                              , &valuation_, local_app, local_res, cit, end, &eval_)
+                   , bcoro::attributes(coro_fpu<C::expression_preserve_fpu_registers>::value));
         while(gen)
         {
           assert(not local_res->sdd.empty() && "Invalid |0| successor result");
@@ -287,8 +313,9 @@ struct expression_pre
           eval_.update(o.identifier(), arc.valuation());
         }
 
-        coro<C> gen(std::bind( expression_post<C>, ph::_1, arc.successor(), o.next(), target_
-                             , &valuation_, nullptr, nullptr, cit, end, &eval_));
+        coro<C> gen( std::bind( expression_post<C>, ph::_1, arc.successor(), o.next(), target_
+                              , &valuation_, nullptr, nullptr, cit, end, &eval_)
+                   , bcoro::attributes(coro_fpu<C::expression_preserve_fpu_registers>::value));
 
         while (gen)
         {
