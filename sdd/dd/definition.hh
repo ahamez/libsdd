@@ -179,8 +179,9 @@ public:
     path<C> tmp;
     tmp.reserve(128);
     auto p = std::make_shared<path<C>>(std::move(tmp));
+    boost::coroutines::attributes attrs(boost::coroutines::fpu_not_preserved);
     namespace ph = std::placeholders;
-    return path_generator<C>(std::bind(dd::xpaths_impl<C>, ph::_1, *this, p, nullptr));
+    return path_generator<C>(std::bind(dd::xpaths_impl<C>, ph::_1, *this, p, nullptr), attrs);
   }
 
   /// @brief Indicate if the SDD is |0|.
