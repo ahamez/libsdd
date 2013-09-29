@@ -231,6 +231,7 @@
 		2BD33B5514E660D0004A7657 /* tests.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tests.cc; sourceTree = "<group>"; };
 		2BD442A817D87BA400E6BF15 /* macros.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = macros.hh; sourceTree = "<group>"; };
 		2BD67E291721BA9B00053FB9 /* boost_multiprecision_no_warnings.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = boost_multiprecision_no_warnings.hh; sourceTree = "<group>"; };
+		2BDA969D17F84D1F0050DF4E /* order_node.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = order_node.hh; sourceTree = "<group>"; };
 		2BE06D7316555594002339CF /* cache.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cache.hh; sourceTree = "<group>"; };
 		2BE06D7416555594002339CF /* ptr.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ptr.hh; sourceTree = "<group>"; };
 		2BE06D7516555594002339CF /* ref_counted.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ref_counted.hh; sourceTree = "<group>"; };
@@ -331,6 +332,7 @@
 				2B1A41921737F797002BA4FA /* carrier.hh */,
 				2B0EA1321615D0A10019EB04 /* order.hh */,
 				2B913FFD1721A55F006FD699 /* order_builder.hh */,
+				2BDA969D17F84D1F0050DF4E /* order_node.hh */,
 			);
 			path = order;
 			sourceTree = "<group>";

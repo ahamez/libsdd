@@ -4,7 +4,7 @@
 #include <algorithm> // find
 #include <initializer_list>
 #include <iostream>
-#include <memory>    // shared_ptr, unique_ptr
+#include <memory>    // shared_ptr
 #include <sstream>
 #include <utility>   // pair
 #include <unordered_map>
@@ -12,15 +12,12 @@
 #include <vector>
 
 #include "sdd/order/order_builder.hh"
+#include "sdd/order/order_node.hh"
 #include "sdd/util/hash.hh"
 
 namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief The position of an order's node, unique to it.
-using order_position_type = unsigned int;
 
 /// @internal
 using order_positions_type = std::vector<order_position_type>;
@@ -49,56 +46,16 @@ public:
 private:
 
   /// @brief A path, following hierarchies, to a node.
-  using path_type = std::vector<order_position_type>;
-
-  /// @brief A node in an order.
-  ///
-  /// An order is actually represented as a linked list of node.
-  struct order_node
-  {
-    /// @brief The (user's) identifier of this node.
-    identifier_type identifier;
-
-    /// @brief The (library's) variable of this node.
-    variable_type variable;
-
-    /// @brief Absolute position, when seeing the order as flatten.
-    ///
-    /// Used to establish a total order on identifiers.
-    order_position_type position;
-
-    /// @brief A pointer to following order's head.
-    order_node* next;
-
-    /// @brief A pointer to the nested order's head.
-    order_node* nested;
-
-    /// @brief The path to this node.
-    std::shared_ptr<path_type> path_ptr;
-
-    /// @brief Constructor.
-    order_node( const identifier_type& id, variable_type var, unsigned int pos
-              , order_node* nxt, order_node* nst
-              , const std::shared_ptr<path_type>& path)
-      : identifier(id), variable(var), position(pos), next(nxt), nested(nst), path_ptr(path)
-    {}
-
-    /// @brief Default constructor.
-    ///
-    /// Needed by std::vector for default initialization.
-    order_node()
-      : identifier(), variable(), position(), next(), nested(), path_ptr()
-    {}
-  }; // struct node
+  using path_type = typename order_node<C>::path_type;
 
   /// @brief All nodes.
-  using nodes_type = std::vector<order_node>;
+  using nodes_type = std::vector<order_node<C>>;
 
   /// @brief A shared pointer to nodes.
   using shared_nodes_type = std::shared_ptr<const nodes_type>;
 
   /// @brief Define a mapping identifier->node.
-  using identifier_to_node_type = std::unordered_map<identifier_type, const order_node*>;
+  using identifier_to_node_type = std::unordered_map<identifier_type, const order_node<C>*>;
 
   /// @brief The concrete order.
   const shared_nodes_type nodes_ptr_;
@@ -107,7 +64,7 @@ private:
   const std::shared_ptr<identifier_to_node_type> identifier_to_node_ptr_;
 
   /// @brief The first node in the order.
-  const order_node* head_;
+  const order_node<C>* head_;
 
 public:
 
@@ -125,7 +82,7 @@ public:
   contains(order_position_type upper, order_position_type nested)
   const noexcept
   {
-    const auto& path = *(*nodes_ptr_)[nested].path_ptr;
+    const auto& path = (*nodes_ptr_)[nested].path();
     return std::find(path.begin(), path.end(), upper) != path.end();
   }
 
@@ -138,11 +95,11 @@ public:
   }
 
   /// @brief Get the variable of this order's head.
-  const variable_type&
+  variable_type
   variable()
   const noexcept
   {
-    return head_->variable;
+    return head_->variable();
   }
 
   /// @brief Get the identifier of this order's head.
@@ -150,7 +107,7 @@ public:
   identifier()
   const noexcept
   {
-    return head_->identifier;
+    return head_->identifier();
   }
 
   /// @brief Get the position of this order's head.
@@ -158,7 +115,7 @@ public:
   position()
   const noexcept
   {
-    return head_->position;
+    return head_->position();
   }
 
   /// @brief Get the next order of this order's head.
@@ -166,7 +123,7 @@ public:
   next()
   const noexcept
   {
-    return order(nodes_ptr_, head_->next);
+    return order(nodes_ptr_, head_->next());
   }
 
   /// @brief Get the nested order of this order's head.
@@ -174,7 +131,7 @@ public:
   nested()
   const noexcept
   {
-    return order(nodes_ptr_, head_->nested);
+    return order(nodes_ptr_, head_->nested());
   }
 
   /// @brief Tell if this order is empty.
@@ -186,7 +143,7 @@ public:
   }
 
   /// @internal
-  const order_node&
+  const order_node<C>&
   node(const identifier_type& id)
   const noexcept
   {
@@ -215,7 +172,7 @@ public:
 private:
 
   /// @brief Construct whith a shallow copy an already existing order.
-  order(const shared_nodes_type& ptr, const order_node* head)
+  order(const shared_nodes_type& ptr, const order_node<C>* head)
     : nodes_ptr_(ptr), head_(head)
   {}
 
@@ -240,18 +197,18 @@ private:
 
     // To enable recursion in the lambda.
     std::function<
-      std::pair<order_node*, variable_type>
+      std::pair<order_node<C>*, variable_type>
       (const order_builder<C>&, const std::shared_ptr<path_type>&)
     > helper;
 
     helper = [&helper, &pos, &nodes, &unicity]
     (const order_builder<C>& ob, const std::shared_ptr<path_type>& path)
-    -> std::pair<order_node*, unsigned int>
+    -> std::pair<order_node<C>*, unsigned int>
     {
       const unsigned int current_position = pos++;
 
-      std::pair<order_node*, variable_type> nested(nullptr, 0 /*first variable*/);
-      std::pair<order_node*, variable_type> next(nullptr, 0 /* first variable */);
+      std::pair<order_node<C>*, variable_type> nested(nullptr, 0 /*first variable*/);
+      std::pair<order_node<C>*, variable_type> next(nullptr, 0 /* first variable */);
 
       if (not ob.nested().empty())
       {
@@ -274,7 +231,7 @@ private:
         throw std::runtime_error(ss.str());
       }
       nodes[current_position] =
-        order_node(ob.identifier(), variable, current_position, next.first, nested.first, path);
+        order_node<C>(ob.identifier(), variable, current_position, next.first, nested.first, path);
       return std::make_pair(&nodes[current_position], variable + 1);
     };
 
@@ -293,7 +250,9 @@ private:
     {
       identifier_to_node_ptr->reserve(nodes_ptr->size());
       std::for_each( nodes_ptr->begin(), nodes_ptr_->end()
-                   , [&](const order_node& n){identifier_to_node_ptr->emplace(n.identifier, &n);});
+                   , [&](const order_node<C>& n)
+                        {identifier_to_node_ptr->emplace(n.identifier(), &n);}
+                   );
     }
     return identifier_to_node_ptr;
   }

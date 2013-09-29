@@ -274,12 +274,12 @@ Expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIte
     return Id<C>();
   }
 
-  const auto target_pos = o.node(target).position;
+  const auto target_pos = o.node(target).position();
 
   order_positions_type positions;
   positions.reserve(size);
   std::transform( begin, end, std::back_inserter(positions)
-                , [&](const identifier_type& id){return o.node(id).position;});
+                , [&](const identifier_type& id){return o.node(id).position();});
   std::sort(positions.begin(), positions.end());
 
 
