@@ -57,29 +57,29 @@ private:
   struct order_node
   {
     /// @brief The (user's) identifier of this node.
-    const identifier_type identifier;
+    identifier_type identifier;
 
     /// @brief The (library's) variable of this node.
-    const variable_type variable;
+    variable_type variable;
 
     /// @brief Absolute position, when seeing the order as flatten.
     ///
     /// Used to establish a total order on identifiers.
-    const order_position_type position;
+    order_position_type position;
 
     /// @brief A pointer to following order's head.
-    const order_node* next;
+    order_node* next;
 
     /// @brief A pointer to the nested order's head.
-    const order_node* nested;
+    order_node* nested;
 
     /// @brief The path to this node.
-    const std::shared_ptr<path_type> path_ptr;
+    std::shared_ptr<path_type> path_ptr;
 
     /// @brief Constructor.
     order_node( const identifier_type& id, variable_type var, unsigned int pos
-        , order_node* nxt, order_node* nst
-        , const std::shared_ptr<path_type>& path)
+              , order_node* nxt, order_node* nst
+              , const std::shared_ptr<path_type>& path)
       : identifier(id), variable(var), position(pos), next(nxt), nested(nst), path_ptr(path)
     {}
 
@@ -273,7 +273,7 @@ private:
         ss << "Duplicate identifier " << ob.identifier() << " when constructing order";
         throw std::runtime_error(ss.str());
       }
-      new (&nodes[current_position])
+      nodes[current_position] =
         order_node(ob.identifier(), variable, current_position, next.first, nested.first, path);
       return std::make_pair(&nodes[current_position], variable + 1);
     };
