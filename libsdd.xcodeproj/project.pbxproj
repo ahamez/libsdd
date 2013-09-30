@@ -117,6 +117,7 @@
 		2B0197C215BDE7D900CE5F70 /* terminal.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = terminal.hh; sourceTree = "<group>"; };
 		2B0197C315BDE7D900CE5F70 /* top.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = top.hh; sourceTree = "<group>"; };
 		2B04D093163454D900CB57A3 /* test_order.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_order.cc; sourceTree = "<group>"; };
+		2B0572D717F9A97500734108 /* python.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = python.py; sourceTree = "<group>"; };
 		2B07606A1680BE8F001CE761 /* consolidate.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = consolidate.hh; sourceTree = "<group>"; };
 		2B0A122A17E1FB960093A68C /* MANIFEST.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = MANIFEST.in; sourceTree = "<group>"; };
 		2B0A122B17E1FB960093A68C /* sdd.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sdd.cc; sourceTree = "<group>"; };
@@ -482,6 +483,7 @@
 		2BB6B43A16517FD9003063B8 /* examples */ = {
 			isa = PBXGroup;
 			children = (
+				2B0572D717F9A97500734108 /* python.py */,
 				2BB6B43B16517FD9003063B8 /* hanoi.cc */,
 			);
 			path = examples;
