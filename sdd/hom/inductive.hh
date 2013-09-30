@@ -24,13 +24,12 @@ class inductive_base
 public:
 
   /// @brief The type of a set of values.
-  typedef typename C::Values values_type;
+  using values_type = typename C::Values;
 
   /// @brief Required virtual destructor.
   virtual
   ~inductive_base()
-  {
-  }
+  {}
 
   /// @brief Tell if the user's inductive skip the current variable.
   virtual
@@ -89,19 +88,17 @@ private:
 public:
 
   /// @brief The type of a set of values.
-  typedef typename C::Values values_type;
+  using values_type = typename C::Values;
 
   /// @brief Constructor.
   inductive_derived(const User& h)
     : h_(h)
-  {
-  }
+  {}
 
   /// @brief Constructor.
   inductive_derived(User&& h)
     : h_(std::move(h))
-  {
-  }
+  {}
 
   /// @brief Tell if the user's inductive skip the current variable.
   bool
@@ -135,7 +132,7 @@ public:
     return h_(o, val);
   }
 
-  /// @brief Get the terminal case from the user.
+  /// @brief Get the base case from the user.
   SDD<C>
   operator()(const one_terminal<C>&)
   const override
@@ -150,8 +147,7 @@ public:
   {
     return typeid(*this) == typeid(other)
          ? h_ == reinterpret_cast<const inductive_derived&>(other).h_
-         : false
-         ;
+         : false;
   }
 
   /// @brief Get the user's inductive hash value.
