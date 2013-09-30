@@ -141,7 +141,8 @@ public:
     const auto cit = set_.find(x);
     assert(cit != set_.end() && "Unique not found");
     set_.erase(cit);
-    delete &x;
+    x.~Unique();
+    delete[] reinterpret_cast<const char*>(&x); // match new char[] of allocate().
   }
 
   /// @brief Get the load factor of the internal hash table.
