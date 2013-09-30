@@ -145,8 +145,7 @@ struct rewriter
                            , F.size() > 0 ? rewrite(Sum<C>(o.next(), F.begin(), F.end()), o.next())
                                           : optional()
                            , G.begin(), G.end()
-                           , L.size() > 0 ? Local( o.identifier()
-                                                 , o
+                           , L.size() > 0 ? Local( o.position()
                                                  , rewrite( Sum<C>(o.nested(), L.begin(), L.end())
                                                           , o.nested()))
                                           : optional()
@@ -187,8 +186,7 @@ struct rewriter
     return SaturationFixpoint( o.variable()
                              , rewrite(Fixpoint(Sum<C>(o.next(), F.begin(), F.end())), o.next())
                              , G.begin(), G.end()
-                             , Local( o.identifier()
-                                    , o
+                             , Local( o.position()
                                     , rewrite( Fixpoint(Sum<C>(o.nested(), L.begin(), L.end()))
                                              , o.nested())
                                     )
