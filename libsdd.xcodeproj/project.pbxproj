@@ -231,7 +231,6 @@
 		2BD0DA80157A9596005BC59A /* test_bitset.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_bitset.cc; sourceTree = "<group>"; };
 		2BD33B5514E660D0004A7657 /* tests.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tests.cc; sourceTree = "<group>"; };
 		2BD442A817D87BA400E6BF15 /* macros.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = macros.hh; sourceTree = "<group>"; };
-		2BD67E291721BA9B00053FB9 /* boost_multiprecision_no_warnings.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = boost_multiprecision_no_warnings.hh; sourceTree = "<group>"; };
 		2BDA969D17F84D1F0050DF4E /* order_node.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = order_node.hh; sourceTree = "<group>"; };
 		2BE06D7316555594002339CF /* cache.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cache.hh; sourceTree = "<group>"; };
 		2BE06D7416555594002339CF /* ptr.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ptr.hh; sourceTree = "<group>"; };
@@ -626,7 +625,6 @@
 			children = (
 				2BCC83ED17E79AE100D8B174 /* boost_flat_map_no_warnings.hh */,
 				2BCC83EC17E7975100D8B174 /* boost_flat_set_no_warnings.hh */,
-				2BD67E291721BA9B00053FB9 /* boost_multiprecision_no_warnings.hh */,
 				2BE06D7A16555594002339CF /* hash.hh */,
 				2BFF0C571744DB4D00E1C89C /* next_power.hh */,
 				2BE06D7B16555594002339CF /* packed.hh */,
