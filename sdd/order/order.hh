@@ -145,7 +145,7 @@ public:
   /// @internal
   const order_node<C>&
   node(const identifier_type& id)
-  const noexcept
+  const
   {
     return *id_to_node_ptr_->at(id);
   }
