@@ -5,6 +5,8 @@
 #include <cassert>
 #include <vector>
 
+#include <boost/coroutine/coroutine.hpp>
+
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
