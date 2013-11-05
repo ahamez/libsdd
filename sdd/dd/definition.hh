@@ -171,6 +171,7 @@ public:
     }
   }
 
+#if !defined(HAS_NO_BOOST_COROUTINE)
   /// @brief Return an iterable object which generates all paths of this SDD.
   path_generator<C>
   paths()
@@ -183,6 +184,7 @@ public:
     namespace ph = std::placeholders;
     return path_generator<C>(std::bind(dd::xpaths_impl<C>, ph::_1, *this, p, nullptr), attrs);
   }
+#endif
 
   /// @brief Indicate if the SDD is |0|.
   /// @return true if the SDD is |0|, false otherwise.

@@ -41,7 +41,9 @@ private:
                       , hom::cons<C, SDD<C>>
                       , hom::cons<C, typename C::Values>
                       , hom::constant<C>
+#if !defined(HAS_NO_BOOST_COROUTINE)
                       , hom::expression<C>
+#endif // !defined(HAS_NO_BOOST_COROUTINE)
                       , hom::fixpoint<C>
                       , hom::identity<C>
                       , hom::inductive<C>

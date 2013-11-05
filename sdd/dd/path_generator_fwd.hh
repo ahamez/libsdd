@@ -1,6 +1,8 @@
 #ifndef _SDD_DD_PATH_GENERATOR_FWD_HH_
 #define _SDD_DD_PATH_GENERATOR_FWD_HH_
 
+#if !defined(HAS_NO_BOOST_COROUTINE)
+
 #include <memory>
 #include <vector>
 
@@ -51,5 +53,7 @@ xpaths_impl( typename path_generator<C>::caller_type&
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::dd
+
+#endif // !defined(HAS_NO_BOOST_COROUTINE)
 
 #endif // _SDD_DD_PATH_GENERATOR_FWD_HH_
