@@ -252,6 +252,7 @@
 		2BE71C70161CE08E00B22084 /* test_hom_local.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_local.cc; sourceTree = "<group>"; };
 		2BE71C73161CE1B300B22084 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		2BE8742015BF1DD000D38953 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
+		2BEF8DD31828E53800AFEC85 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		2BF0F988157A71B7005D1275 /* bitset.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bitset.hh; sourceTree = "<group>"; };
 		2BFDE06717EC814B00C28C13 /* expression.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = expression.hh; sourceTree = "<group>"; };
 		2BFF0C571744DB4D00E1C89C /* next_power.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = next_power.hh; sourceTree = "<group>"; };
@@ -423,6 +424,7 @@
 		2B51A8CE14E07CEC0062A43A = {
 			isa = PBXGroup;
 			children = (
+				2BEF8DD31828E53800AFEC85 /* CMakeLists.txt */,
 				2B38CC8615C023C10067BDD2 /* README */,
 				2BB9F9BF1598FE6900A31F5B /* LICENSE */,
 				2BC6106914E59FA00081D743 /* binaries */,
