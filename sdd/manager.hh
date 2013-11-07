@@ -1,7 +1,6 @@
 #ifndef _SDD_MANAGER_HH_
 #define _SDD_MANAGER_HH_
 
-#include <memory>    // unique_ptr
 #include <stdexcept> // runtime_error
 
 #include "sdd/internal_manager.hh"
@@ -71,19 +70,20 @@ private:
   /// @brief The type of a set of values.
   typedef typename C::Values values_type;
 
+  /// @brief Keep the configuration.
+  const C& conf_;
+
   /// @brief The manager of Values.
-  std::unique_ptr<values_manager<values_type>> values_;
+  values_manager<values_type>* values_;
 
   /// @brief The manager of SDD and homomorphisms.
-  std::unique_ptr<internal_manager<C>> m_;
+  internal_manager<C>* m_;
 
   /// @brief Construct a manager from an internal manager.
-  manager(std::unique_ptr<values_manager<values_type>> v, std::unique_ptr<internal_manager<C>>&& m)
-    : values_(std::move(v))
-    , m_(std::move(m))
+  manager(const C& conf, values_manager<values_type>* v, internal_manager<C>* m)
+    : conf_(conf), values_(v), m_(m)
   {}
 
-  ///
   friend
   std::ostream&
   operator<< <C>(std::ostream&, const manager&);
@@ -102,14 +102,23 @@ public:
   {
     if (*global_ptr<C>() == nullptr and *global_ptr<values_type>() == nullptr)
     {
-      std::unique_ptr<values_manager<values_type>>
-        v(new values_manager<values_type>(configuration));
-      *global_values_ptr<values_type>() = v.get();
+      values_manager<values_type>* v = new values_manager<values_type>(configuration);
+      if (not v)
+      {
+        throw std::runtime_error("Can't allocate values manager.");
+      }
 
-      std::unique_ptr<internal_manager<C>> g(new internal_manager<C>(configuration));
-      *global_ptr<C>() = g.get();
+      *global_values_ptr<values_type>() = v;
 
-      return manager<C>(std::move(v), std::move(g));
+      internal_manager<C>* g = new internal_manager<C>(configuration);
+      if (not g)
+      {
+        delete v;
+        throw std::runtime_error("Can't allocate internal manager.");
+      }
+      *global_ptr<C>() = g;
+
+      return manager<C>(configuration, v, g);
     }
     else
     {
@@ -123,10 +132,18 @@ public:
     if (m_)
     {
       *global_ptr<C>() = nullptr;
+      if (conf_.final_cleanup)
+      {
+        delete m_;
+      }
     }
     if (values_)
     {
       *global_values_ptr<values_type>() = nullptr;
+      if (conf_.final_cleanup)
+      {
+        delete values_;
+      }
     }
   }
 
