@@ -5,7 +5,6 @@
 #include <initializer_list>
 #include <iostream>
 #include <memory>    // shared_ptr
-#include <sstream>
 #include <utility>   // pair
 #include <unordered_map>
 #include <unordered_set>
@@ -228,9 +227,7 @@ private:
       const auto variable = next.second;
       if (not unicity.insert(ob.identifier()).second)
       {
-        std::stringstream ss;
-        ss << "Duplicate identifier " << ob.identifier() << " when constructing order";
-        throw std::runtime_error(ss.str());
+        throw std::runtime_error("Duplicate order identifier " + ob.identifier());
       }
       nodes[current_position] =
         order_node<C>(ob.identifier(), variable, current_position, next.first, nested.first, path);
