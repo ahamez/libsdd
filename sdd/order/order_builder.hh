@@ -175,6 +175,21 @@ public:
     return acc;
   }
 
+  /// @brief Get the number of identifiers, at the current level only.
+  std::size_t
+  height()
+  const noexcept
+  {
+    std::size_t res = 1;
+    node_ptr current = ptr_->next;
+    while (current)
+    {
+      current = current->next;
+      ++res;
+    }
+    return res;
+  }
+
 private:
 
   /// @brief Get the number of identifiers of a node.
