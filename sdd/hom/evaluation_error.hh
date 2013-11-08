@@ -19,10 +19,9 @@ struct operation_wrapper_base
 {
   virtual
   ~operation_wrapper_base()
-  {
-  }
+  {}
 
-  virtual std::string print() const noexcept = 0;
+  virtual std::string print() const = 0;
 };
 
 /// @internal
@@ -42,15 +41,14 @@ struct operation_wrapper
   /// Operations are non-copyable, but movable.
   operation_wrapper(Operation&& op)
     : operation_(std::move(op))
-  {
-  }
+  {}
 
   /// @brief Return a textual description of the contained operation.
   std::string
   print()
-  const noexcept final
+  const final
   {
-    std::stringstream ss;
+    std::ostringstream ss;
     ss << operation_;
     return ss.str();
   }
@@ -67,13 +65,12 @@ struct operation_wrapper<top<C>>
   /// @brief Constructor.
   operation_wrapper(const top<C>& t)
     : top_(t)
-  {
-  }
+  {}
 
   /// @brief Return a textual description of the contained Top.
   std::string
   print()
-  const noexcept
+  const
   {
     return top_.description();
   }
@@ -147,7 +144,7 @@ public:
   {
     if (description_.empty())
     {
-      std::stringstream ss;
+      std::ostringstream ss;
       ss << "Application failed on " << sdd_ << std::endl;
       ss << "The following operations led to this error:" << std::endl;
       std::size_t i = 1;
