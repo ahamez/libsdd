@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "sdd/order/order_builder.hh"
+#include "sdd/order/order_identifier.hh"
 #include "sdd/order/order_node.hh"
 #include "sdd/util/hash.hh"
 
@@ -55,7 +56,7 @@ private:
   using nodes_ptr_type = std::shared_ptr<const nodes_type>;
 
   /// @brief Define a mapping identifier->node.
-  using id_to_node_type = std::unordered_map<identifier_type, const order_node<C>*>;
+  using id_to_node_type = std::unordered_map<order_identifier<C>, const order_node<C>*>;
 
   /// @brief The concrete order.
   const nodes_ptr_type nodes_ptr_;
@@ -103,7 +104,7 @@ public:
   }
 
   /// @brief Get the identifier of this order's head.
-  const identifier_type&
+  const order_identifier<C>&
   identifier()
   const noexcept
   {
@@ -147,7 +148,7 @@ public:
   node(const identifier_type& id)
   const
   {
-    return *id_to_node_ptr_->at(id);
+    return *id_to_node_ptr_->at(order_identifier<C>(id));
   }
 
   /// @internal
@@ -226,7 +227,7 @@ private:
       }
 
       const auto variable = next.second;
-      if (not unicity.insert(ob.identifier()).second)
+      if (not ob.identifier().artificial() and not unicity.insert(ob.identifier().user()).second)
       {
         std::stringstream ss;
         ss << "Duplicate identifier " << ob.identifier() << " when constructing order";

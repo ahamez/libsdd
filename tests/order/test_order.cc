@@ -31,42 +31,42 @@ TYPED_TEST(order_test, builder)
   }
   {
     order_builder ob {"a"};
-    ASSERT_EQ("a", ob.identifier());
+    ASSERT_EQ("a", ob.identifier().user());
     ASSERT_TRUE(ob.nested().empty());
     ASSERT_TRUE(ob.next().empty());
   }
   {
     order_builder ob {"a", "b"};
-    ASSERT_EQ("a", ob.identifier());
+    ASSERT_EQ("a", ob.identifier().user());
     ASSERT_TRUE(ob.nested().empty());
     ASSERT_FALSE(ob.next().empty());
-    ASSERT_EQ("b", ob.next().identifier());
+    ASSERT_EQ("b", ob.next().identifier().user());
     ASSERT_TRUE(ob.next().next().empty());
   }
   {
     order_builder ob;
     ob.push("b").push("a");
-    ASSERT_EQ("a", ob.identifier());
+    ASSERT_EQ("a", ob.identifier().user());
     ASSERT_TRUE(ob.nested().empty());
     ASSERT_FALSE(ob.next().empty());
-    ASSERT_EQ("b", ob.next().identifier());
+    ASSERT_EQ("b", ob.next().identifier().user());
     ASSERT_TRUE(ob.next().next().empty());
   }
   {
     order_builder ob;
     ob.push("y", order_builder {"b"}).push("x", order_builder {"a"});
 
-    ASSERT_EQ("x", ob.identifier());
+    ASSERT_EQ("x", ob.identifier().user());
     ASSERT_FALSE(ob.nested().empty());
     ASSERT_FALSE(ob.next().empty());
-    ASSERT_EQ("a", ob.nested().identifier());
+    ASSERT_EQ("a", ob.nested().identifier().user());
     ASSERT_TRUE(ob.nested().nested().empty());
     ASSERT_TRUE(ob.nested().next().empty());
 
-    ASSERT_EQ("y", ob.next().identifier());
+    ASSERT_EQ("y", ob.next().identifier().user());
     ASSERT_FALSE(ob.next().nested().empty());
     ASSERT_TRUE(ob.next().next().empty());
-    ASSERT_EQ("b", ob.next().nested().identifier());
+    ASSERT_EQ("b", ob.next().nested().identifier().user());
     ASSERT_TRUE(ob.next().nested().nested().empty());
     ASSERT_TRUE(ob.next().nested().next().empty());
   }
@@ -89,9 +89,9 @@ TYPED_TEST(order_test, constructed_order)
     ASSERT_TRUE(o.nested().empty());
     ASSERT_TRUE(o.next().nested().empty());
     ASSERT_TRUE(o.next().next().nested().empty());
-    ASSERT_EQ("0", o.identifier());
-    ASSERT_EQ("1", o.next().identifier());
-    ASSERT_EQ("2", o.next().next().identifier());
+    ASSERT_EQ("0", o.identifier().user());
+    ASSERT_EQ("1", o.next().identifier().user());
+    ASSERT_EQ("2", o.next().next().identifier().user());
  }
   {
     order o(order_builder().push("y", order_builder {"c"})
@@ -111,16 +111,16 @@ TYPED_TEST(order_test, constructed_order)
 //    ASSERT_FALSE(o.contains("a", "a"));
 
     ASSERT_FALSE(o.empty());
-    ASSERT_EQ("a", o.identifier());
+    ASSERT_EQ("a", o.identifier().user());
     ASSERT_TRUE(o.nested().empty());
 
     ASSERT_FALSE(o.next().empty());
-    ASSERT_EQ("x", o.next().identifier());
+    ASSERT_EQ("x", o.next().identifier().user());
     ASSERT_FALSE(o.next().nested().empty());
-    ASSERT_EQ("z", o.next().nested().identifier());
+    ASSERT_EQ("z", o.next().nested().identifier().user());
     ASSERT_TRUE(o.next().nested().next().empty());
     ASSERT_FALSE(o.next().nested().nested().empty());
-    ASSERT_EQ("b", o.next().nested().nested().identifier());
+    ASSERT_EQ("b", o.next().nested().nested().identifier().user());
     ASSERT_TRUE(o.next().nested().nested().next().empty());
     ASSERT_TRUE(o.next().nested().nested().nested().empty());
  }

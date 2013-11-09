@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "sdd/order/order_builder.hh"
+#include "sdd/order/order_identifier.hh"
 #include "sdd/util/hash.hh"
 
 namespace sdd {
@@ -23,9 +24,6 @@ class order_node
 {
 public:
 
-  /// @brief A user's identifier type.
-  using identifier_type = typename C::Identifier;
-
   /// @brief A library's variable type.
   using variable_type = typename C::Variable;
 
@@ -34,8 +32,8 @@ public:
 
 private:
 
-  /// @brief The (user's) identifier of this node.
-  identifier_type identifier_;
+  /// @brief The (user or artificial) identifier of this node.
+  order_identifier<C> identifier_;
 
   /// @brief The (library's) variable of this node.
   variable_type variable_;
@@ -56,8 +54,9 @@ private:
 
 public:
 
+  /// @internal
   /// @brief Constructor.
-  order_node( const identifier_type& id, variable_type var, unsigned int pos
+  order_node( const order_identifier<C>& id, variable_type var, unsigned int pos
             , order_node* nxt, order_node* nst
             , const std::shared_ptr<path_type>& path)
     : identifier_(id), variable_(var), position_(pos), next_(nxt), nested_(nst), path_ptr_(path)
@@ -81,7 +80,7 @@ public:
   order_node& operator=(const order_node&) = delete;
 
   /// @brief Get the identifier of this node.
-  const identifier_type&
+  const order_identifier<C>&
   identifier()
   const noexcept
   {

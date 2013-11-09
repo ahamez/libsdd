@@ -1,8 +1,11 @@
 #ifndef _SDD_HOM_EXPRESSION_EVALUATOR_HH_
 #define _SDD_HOM_EXPRESSION_EVALUATOR_HH_
 
+#include <cassert>
 #include <iosfwd>
 #include <typeinfo>  // typeid
+
+#include "sdd/order/order_identifier.hh"
 
 namespace sdd { namespace hom { namespace expr {
 
@@ -14,9 +17,6 @@ class evaluator_base
 {
 public:
 
-  /// @brief The type of a variable.
-  using identifier_type = typename C::Identifier;
-
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 
@@ -27,7 +27,7 @@ public:
   /// @brief Update an identifier with a set of values when it is encountered when walking the SDD.
   virtual
   void
-  update(const identifier_type&, const values_type&) = 0;
+  update(const order_identifier<C>&, const values_type&) = 0;
 
   /// @brief Called when all identifiers have been updated, thus when the expression can be
   /// evaluated on a path of the SDD.
@@ -66,9 +66,6 @@ private:
 
 public:
 
-  /// @brief The type of a variable.
-  using identifier_type = typename C::Identifier;
-
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 
@@ -79,10 +76,13 @@ public:
 
   /// @brief Update an identifier with a set of values when it is encountered when walking the SDD.
   void
-  update(const identifier_type& id, const values_type& values)
+  update(const order_identifier<C>& id, const values_type& values)
   override
   {
-    eval_.update(id, values);
+    // We can safely pass the order_identifier as a user one because only hierarchical levels
+    // can be artificial.
+    assert(not id.artificial());
+    eval_.update(id.user(), values);
   }
 
   /// @brief Called when all identifiers have been updated, thus when the expression can be
