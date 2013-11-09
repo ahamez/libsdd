@@ -1,6 +1,7 @@
 #ifndef _SDD_DD_DEFINITION_HH_
 #define _SDD_DD_DEFINITION_HH_
 
+#include <cassert>
 #include <initializer_list>
 #include <type_traits> // is_integral
 
@@ -162,7 +163,10 @@ public:
     // flat
     else if (o.nested().empty())
     {
-      ptr_ = create_node(o.variable(), init(o.identifier()), SDD(o.next(), init));
+      // We can safely pass the order_identifier as a user one because only hierarchical levels
+      // can be artificial.
+      assert(not id.artificial());
+      ptr_ = create_node(o.variable(), init(o.identifier().user()), SDD(o.next(), init));
     }
     // hierarchical
     else

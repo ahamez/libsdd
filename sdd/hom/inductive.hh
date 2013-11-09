@@ -1,6 +1,7 @@
 #ifndef _SDD_HOM_INDUCTIVE_HH_
 #define _SDD_HOM_INDUCTIVE_HH_
 
+#include <cassert>
 #include <iosfwd>
 #include <memory>   // unique_ptr
 #include <typeinfo> // typeid
@@ -197,9 +198,12 @@ private:
   static auto
   skip_impl(const H& h, const order<C>& o, int)
   noexcept
-  -> decltype(h.skip(o.identifier()))
+  -> decltype(h.skip(o.identifier().user()))
   {
-    return h.skip(o.identifier());
+    // We can safely pass the order_identifier as a user one because only hierarchical levels
+    // can be artificial.
+    assert(not id.artificial());
+    return h.skip(o.identifier().user());
   }
 
   /// @brief Called when the user's inductive doesn't have skip().
