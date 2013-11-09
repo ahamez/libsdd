@@ -32,9 +32,9 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
   SDD<C>
   work(InputIterator begin, InputIterator end, context<C>& cxt)
   {
-    typedef NodeType node_type;
-    typedef typename node_type::valuation_type valuation_type;
-    typedef typename node_type::variable_type variable_type;
+    using node_type      = NodeType;
+    using valuation_type = typename node_type::valuation_type;
+    using variable_type  = typename node_type::variable_type;
 
     auto operands_cit = begin;
     const auto operands_end = end;

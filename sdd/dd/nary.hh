@@ -30,10 +30,10 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_op
   nary_op& operator=(const nary_op&) = delete;
 
   /// @brief Used by the cache to know the type of the result.
-  typedef SDD<C> result_type;
+  using result_type = SDD<C>;
 
   /// @brief Define an iterator on operands.
-  typedef const SDD<C>* const_iterator;
+  using const_iterator = const SDD<C>*;
 
   /// @brief The dynamically allocated array of operands.
   ///
@@ -149,8 +149,8 @@ operator<<(std::ostream& os, const nary_op<C, Operation>& x)
 template <typename Valuation, typename Builder>
 struct LIBSDD_ATTRIBUTE_PACKED nary_builder
 {
-  typedef boost::container::flat_set<Valuation> set_type;
-  typedef typename set_type::const_iterator const_iterator;
+  using set_type = boost::container::flat_set<Valuation>;
+  using const_iterator = typename set_type::const_iterator;
 
   /// @brief The policy to add new operands.
   ///

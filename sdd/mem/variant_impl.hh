@@ -75,10 +75,9 @@ struct union_storage
 #else
   static constexpr std::size_t alignment_value = largest_alignment<Types...>::value;
 #endif
-  typedef typename std::aligned_storage< (Len > max_size ? Len : max_size)
-                                       , alignment_value
-                                       >::type
-                   type;
+  using type = typename std::aligned_storage< (Len > max_size ? Len : max_size)
+                                            , alignment_value
+                                            >::type;
 };
 
 /*------------------------------------------------------------------------------------------------*/
@@ -87,7 +86,7 @@ struct union_storage
 /// @brief Dispatch the destructor to the contained type in the visited variant.
 struct dtor_visitor
 {
-  typedef void result_type;
+  using result_type = void;
 
   template <typename T>
   result_type
@@ -106,7 +105,7 @@ struct dtor_visitor
 /// It uses the standard (C++11) way of hashing an object.
 struct hash_visitor
 {
-  typedef std::size_t result_type;
+  using result_type = std::size_t;
 
   template <typename T>
   result_type
@@ -123,14 +122,13 @@ struct hash_visitor
 /// Dispatch the ostream export to the contained type in the visited variant.
 struct ostream_visitor
 {
-  typedef std::ostream& result_type;
+  using result_type = std::ostream&;
 
   std::ostream& os_;
 
   ostream_visitor(std::ostream& os)
 	  : os_(os)
-  {
-  }
+  {}
 
   template <typename T>
   result_type
@@ -147,7 +145,7 @@ struct ostream_visitor
 /// @brief Dispatch the equality operator to the contained type in the visited variant.
 struct eq_visitor
 {
-  typedef bool result_type;
+  using result_type = bool;
 
   template <typename T>
   result_type
@@ -176,7 +174,7 @@ struct eq_visitor
 /// It is used by the unicity table to help it manage memory.
 struct extra_bytes_visitor
 {
-  typedef std::size_t result_type;
+  using result_type = std::size_t;
 
   template <typename T>
   std::size_t
@@ -257,7 +255,7 @@ dispatch( const Visitor& v
 # define BOOST_PP_LOCAL_MACRO(n)                        \
   BOOST_PP_CAT(lab,n):                                  \
   {                                                     \
-    typedef typename util::nth<n, Types...>::type T;    \
+    using T = typename util::nth<n, Types...>::type;    \
     const T& x = *reinterpret_cast<const T*>(&storage); \
     return invoke(v, x, std::forward<Args>(args)...);   \
   }                                                     \
@@ -320,7 +318,7 @@ inner_dispatch( const Visitor& v
 # define BOOST_PP_LOCAL_MACRO(n)                                \
   BOOST_PP_CAT(lab,n):                                          \
   {                                                             \
-    typedef typename util::nth<n, Types...>::type U;            \
+    using U = typename util::nth<n, Types...>::type;            \
     const U& y = *reinterpret_cast<const U*>(&storage);         \
     return binary_invoke(v, x, y, std::forward<Args>(args)...); \
   }                                                             \
@@ -352,7 +350,7 @@ binary_dispatch( const Visitor& v
 # define BOOST_PP_LOCAL_MACRO(n)                                                        \
   BOOST_PP_CAT(lab,n):                                                                  \
   {                                                                                     \
-    typedef typename util::nth<n, Types1...>::type T;                                   \
+    using T = typename util::nth<n, Types1...>::type;                                   \
     const T& x = *reinterpret_cast<const T*>(&storage1);                                \
     return inner_dispatch(v, x, storage2, tuple2, index2, std::forward<Args>(args)...); \
   }                                                                                     \

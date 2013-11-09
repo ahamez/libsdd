@@ -33,20 +33,21 @@ namespace hom {
 template <typename C>
 struct rewriter
 {
-  /// @brief Needed by variant.
-  typedef homomorphism<C> result_type;
+  /// @brief Needed by mem::variant.
+  using result_type = homomorphism<C>;
 
   /// @brief A variable type.
-  typedef typename C::Variable variable_type;
+  using variable_type =typename C::Variable;
 
   /// @brief The type of a list of homomorphisms.
-  typedef std::deque<homomorphism<C>> hom_list_type;
+  using hom_list_type = std::deque<homomorphism<C>>;
 
   /// @internal
   /// @brief Tell if an homomorphism is Local.
   struct is_local
   {
-    typedef bool result_type;
+    /// @brief Needed by mem::variant.
+    using result_type = bool;
 
     constexpr bool
     operator()(const local<C>&)
@@ -68,7 +69,7 @@ struct rewriter
   /// @brief Tell if an homomorphism is Sum.
   struct is_sum
   {
-    typedef bool result_type;
+    using result_type = bool;
 
     constexpr bool
     operator()(const sum<C>&)
@@ -140,7 +141,7 @@ struct rewriter
       F.push_back(Id<C>());
     }
 
-    typedef typename saturation_sum<C>::optional_type optional;
+    using optional = typename saturation_sum<C>::optional_type;
     return SaturationSum<C>( o.variable()
                            , F.size() > 0 ? rewrite(Sum<C>(o.next(), F.begin(), F.end()), o.next())
                                           : optional()

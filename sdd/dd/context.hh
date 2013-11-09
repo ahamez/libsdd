@@ -27,13 +27,13 @@ class context
 public:
 
   /// @brief Cache parameterized by the difference operation and the top error.
-  typedef mem::cache<context, difference_op<C>, top<C>> difference_cache_type;
+  using difference_cache_type = mem::cache<context, difference_op<C>, top<C>>;
 
   /// @brief Cache parameterized by the intersection operation and the top error.
-  typedef mem::cache<context, intersection_op<C>, top<C>> intersection_cache_type;
+  using intersection_cache_type = mem::cache<context, intersection_op<C>, top<C>>;
 
   /// @brief Cache parameterized by the sum operation and the top error.
-  typedef mem::cache<context, sum_op<C>, top<C>> sum_cache_type;
+  using sum_cache_type = mem::cache<context, sum_op<C>, top<C>>;
 
 private:
 

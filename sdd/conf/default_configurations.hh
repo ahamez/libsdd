@@ -18,10 +18,10 @@ namespace sdd {
 struct default_configuration
 {
   /// @brief The type to store the number of elements in an alpha successor function.
-  typedef std::uint16_t alpha_size_type;
+  using alpha_size_type = std::uint16_t;
 
   /// @brief The type to store the number of elements in an operation.
-  typedef std::uint32_t operands_size_type;
+  using operands_size_type = std::uint32_t;
 
   /// @brief The initial size of the hash table that stores SDD.
   std::size_t sdd_unique_table_size;
@@ -69,9 +69,9 @@ struct default_configuration
 struct conf0
   : public default_configuration
 {
-  typedef std::string        Identifier;
-  typedef unsigned char      Variable;
-  typedef values::bitset<64> Values;
+  using Identifier = std::string;
+  using Variable   = unsigned char;
+  using Values     = values::bitset<64>;
 };
 
 /*------------------------------------------------------------------------------------------------*/
@@ -79,10 +79,11 @@ struct conf0
 struct conf1
   : public default_configuration
 {
-  typedef std::string                    Identifier;
-  typedef unsigned int                   Variable;
-  typedef values::flat_set<unsigned int> Values;
+  using Identifier = std::string;
+  using Variable   = unsigned int;
+  using Values     = values::flat_set<unsigned int>;
 
+  /// @brief The size of the hash table that stores flat_set<>.
   std::size_t flat_set_unique_table_size;
 
   conf1()

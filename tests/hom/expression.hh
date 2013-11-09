@@ -83,7 +83,7 @@ struct indexed_ast
 
   ast_type<C> ast;
 
-  typedef boost::container::flat_map<identifier_type, std::forward_list<values_type*>> index_type;
+  using index_type = boost::container::flat_map<identifier_type, std::forward_list<values_type*>>;
   index_type index;
 
   struct indexer
@@ -121,8 +121,7 @@ struct indexed_ast
   };
 
   indexed_ast(ast_type<C>&& a)
-    : ast(std::move(a))
-    , index()
+    : ast(std::move(a)), index()
   {
     indexer idx(index);
     apply_visitor(idx, ast);
@@ -337,7 +336,7 @@ struct hash<indexed_ast<C>>
     hash_op(enum binop op)
     const noexcept
     {
-      typedef std::underlying_type<enum binop>::type type;
+      using type = std::underlying_type<enum binop>::type;
       return std::hash<type>()(static_cast<type>(op));
     }
 
@@ -380,7 +379,7 @@ template <typename C>
 struct hom_expression_test
   : public testing::Test
 {
-  typedef C configuration_type;
+  using configuration_type = C;
 
   sdd::manager<C> m;
 

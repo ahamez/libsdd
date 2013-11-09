@@ -35,16 +35,16 @@ class LIBSDD_ATTRIBUTE_PACKED node final
 public:
 
   /// @brief The type of the variable of this node.
-  typedef typename C::Variable variable_type;
+  using variable_type = typename C::Variable;
 
   /// @brief The type of the valuation of this node.
-  typedef Valuation valuation_type;
+  using valuation_type = Valuation;
 
   /// @brief The type used to store the number of arcs of this node.
-  typedef typename C::alpha_size_type alpha_size_type;
+  using alpha_size_type = typename C::alpha_size_type;
 
   /// @brief A (const) iterator on the arcs of this node.
-  typedef const arc<C, Valuation>* const_iterator;
+  using const_iterator = const arc<C, Valuation>*;
 
 private:
 
@@ -63,8 +63,7 @@ public:
   /// It can't throw as the memory for the alpha has already been allocated.
   node(const variable_type& var, dd::alpha_builder<C, Valuation>& builder)
   noexcept
-    : variable_(var)
-    , size_(static_cast<alpha_size_type>(builder.size()))
+    : variable_(var), size_(static_cast<alpha_size_type>(builder.size()))
   {
     // Instruct the alpha builder to place it right after the node.
     builder.consolidate(alpha_addr());

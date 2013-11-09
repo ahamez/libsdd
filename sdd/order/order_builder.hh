@@ -18,10 +18,10 @@ class order_builder final
 public:
 
   /// @brief The type of a variable.
-  typedef typename C::Variable variable_type;
+  using variable_type = typename C::Variable;
 
   /// @brief The type of an identifier.
-  typedef typename C::Identifier identifier_type;
+  using identifier_type = typename C::Identifier;
 
 private:
 

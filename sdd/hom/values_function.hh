@@ -26,7 +26,7 @@ class values_function_base
 public:
 
   /// @brief The type of a set of values.
-  typedef typename C::Values values_type;
+  using values_type = typename C::Values;
 
   /// @brief Destructor.
   virtual
@@ -74,11 +74,8 @@ private:
 
 public:
 
-  /// @brief The type of a variable.
-  typedef typename C::Variable variable_type;
-
   /// @brief The type of a set of values.
-  typedef typename C::Values values_type;
+  using values_type = typename C::Values;
 
   /// @brief Constructor.
   values_function_derived(const User& f)
@@ -168,14 +165,8 @@ class LIBSDD_ATTRIBUTE_PACKED values_function
 {
 private:
 
-  /// @brief The type of a variable.
-  typedef typename C::Variable variable_type;
-
-  /// @brief The type of an identifier.
-  typedef typename C::Identifier identifier_type;
-
   /// @brief The type of a valuation on a flat node.
-  typedef typename C::Values values_type;
+  using values_type = typename C::Values;
 
   /// @brief The identifier on which the user function is applied.
   const order_position_type target_;

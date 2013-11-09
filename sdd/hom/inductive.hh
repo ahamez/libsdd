@@ -188,7 +188,7 @@ private:
   print_impl(std::ostream& os, const H& h, long)
   -> decltype(void())
   {
-    os << "UserInductive(" << &h << ")";
+    os << "Inductive(" << &h << ")";
   }
 
   /// @brief Called when the user's inductive has skip().
@@ -248,7 +248,7 @@ private:
 /// @internal
 /// @brief Inductive homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED inductive
+class inductive
 {
 private:
 
@@ -256,19 +256,17 @@ private:
   const std::unique_ptr<const inductive_base<C>> hom_ptr_;
 
   /// @brief Dispatch the inductive homomorphism evaluation.
-  struct helper
+  struct evaluation
   {
-    typedef SDD<C> result_type;
+    using result_type = SDD<C>;
 
     context<C>& cxt_;
     const order<C>& order_;
     const SDD<C> sdd_;
 
-    helper(context<C>& c, const order<C>& o, const SDD<C>& s)
+    evaluation(context<C>& c, const order<C>& o, const SDD<C>& s)
     noexcept
-      : cxt_(c)
-      , order_(o)
-      , sdd_(s)
+      : cxt_(c), order_(o), sdd_(s)
     {}
 
     SDD<C>
@@ -323,7 +321,7 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    return visit(helper{cxt, o, s}, s, *hom_ptr_);
+    return visit(evaluation{cxt, o, s}, s, *hom_ptr_);
   }
 
   /// @brief Skip predicate.

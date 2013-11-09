@@ -152,10 +152,10 @@ public:
   };
 
   /// @brief The type of an iterator on this hash table.
-  typedef hash_table_iterator<Data, hash_table<Data, Hash>> iterator;
+  using iterator = hash_table_iterator<Data, hash_table<Data, Hash>>;
 
   /// @brief The type of a const iterator on this hash table.
-  typedef hash_table_iterator<const Data, hash_table<Data, Hash>> const_iterator;
+  using const_iterator = hash_table_iterator<const Data, hash_table<Data, Hash>>;
 
 private:
 

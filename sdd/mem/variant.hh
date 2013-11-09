@@ -87,7 +87,7 @@ private:
   const uint8_t index_;
 
   /// @brief A type large enough to contain all variant's types, with the correct alignement.
-  typedef typename union_storage<0, Types...>::type storage_type;
+  using storage_type = typename union_storage<0, Types...>::type;
 
   /// @brief Memory storage suitable for all Types.
   const storage_type storage_;

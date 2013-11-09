@@ -30,15 +30,15 @@ class LIBSDD_ATTRIBUTE_PACKED saturation_fixpoint
 public:
 
   /// @brief The type of a const iterator on this saturation_fixpoint's G operands.
-  typedef const homomorphism<C>* const_iterator;
+  using const_iterator = const homomorphism<C>*;
 
   /// @brief The variable type.
-  typedef typename C::Variable variable_type;
+  using variable_type = typename C::Variable;
 
 private:
 
   /// @brief The type deduced from configuration of the number of operands.
-  typedef typename C::operands_size_type operands_size_type;
+  using operands_size_type = typename C::operands_size_type;
 
   /// @brief The variable on which this sum works.
   const variable_type variable_;

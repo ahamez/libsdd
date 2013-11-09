@@ -26,7 +26,7 @@ class flat_set final
 public:
 
   /// @brief The type of the contained value.
-  typedef Value value_type;
+  using value_type = Value;
 
   /// @internal
   /// @brief How to hash a boost::container::flat_set.
@@ -47,16 +47,16 @@ public:
 
   /// @internal
   /// @brief The type of the real container.
-  typedef boost::container::flat_set<value_type> data_type;
+  using data_type = boost::container::flat_set<value_type>;
 
   /// @internal
-  typedef mem::ref_counted<data_type, hash_type> unique_type;
+  using unique_type = mem::ref_counted<data_type, hash_type>;
 
   /// @internal
-  typedef mem::ptr<unique_type> ptr_type;
+  using ptr_type = mem::ptr<unique_type>;
 
   /// @brief The type of an iterator on a flat set of values.
-  typedef typename data_type::const_iterator const_iterator;
+  using const_iterator = typename data_type::const_iterator;
 
 private:
 
@@ -281,10 +281,10 @@ template <typename Value>
 struct flat_set_manager
 {
   /// @brief The type of a unified flat_set.
-  typedef typename flat_set<Value>::unique_type unique_type;
+  using unique_type = typename flat_set<Value>::unique_type;
 
   /// @brief The type of smart pointer to a unified flat_set.
-  typedef typename flat_set<Value>::ptr_type ptr_type;
+  using ptr_type = typename flat_set<Value>::ptr_type;
 
   /// @brief Manage the handler needed by ptr when a unified data is no longer referenced.
   struct ptr_handler
@@ -336,8 +336,8 @@ template <typename Value>
 struct values_traits<flat_set<Value>>
 {
   static constexpr bool stateful = true;
-  typedef flat_set_manager<Value> state_type;
   static constexpr bool fast_iterable = true;
+  using state_type = flat_set_manager<Value>;
 };
 
 /*------------------------------------------------------------------------------------------------*/

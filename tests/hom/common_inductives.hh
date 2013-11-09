@@ -13,14 +13,13 @@
 template <typename C>
 struct targeted_incr
 {
-  typedef typename C::Values values_type;
+  using values_type = typename C::Values;
 
   const std::string var_;
   const unsigned int value_;
 
   targeted_incr(const std::string& var, unsigned int val)
-    : var_(var)
-    , value_(val)
+    : var_(var), value_(val)
   {}
 
   bool
@@ -98,7 +97,7 @@ operator<<(std::ostream& os, const targeted_incr<C>& i)
 template <typename C>
 struct incr
 {
-  typedef typename C::Values values_type;
+  using values_type = typename C::Values;
   
   const unsigned int value_;
 
@@ -168,7 +167,7 @@ operator<<(std::ostream& os, const incr<C>& i)
 template <typename C>
 struct targeted_noop
 {
-  typedef typename C::Values values_type;
+  using values_type = typename C::Values;
 
   const std::string var_;
 

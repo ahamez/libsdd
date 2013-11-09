@@ -31,16 +31,16 @@ struct internal_manager
   internal_manager& operator=(const internal_manager&&) = delete;
 
   /// @brief The type of a unified SDD.
-  typedef typename SDD<C>::unique_type sdd_unique_type;
+  using sdd_unique_type = typename SDD<C>::unique_type;
 
   /// @brief The type of a smart pointer to a unified SDD.
-  typedef typename SDD<C>::ptr_type sdd_ptr_type;
+  using sdd_ptr_type = typename SDD<C>::ptr_type;
 
   /// @brief The type of a unified homomorphism.
-  typedef typename homomorphism<C>::unique_type hom_unique_type;
+  using hom_unique_type = typename homomorphism<C>::unique_type;
 
   /// @brief The type of a smart pointer to a unified homomorphism.
-  typedef typename homomorphism<C>::ptr_type hom_ptr_type;
+  using hom_ptr_type = typename homomorphism<C>::ptr_type;
 
   /// @brief Manage the handlers needed by ptr when a unified data is no longer referenced.
   struct ptr_handlers

@@ -32,7 +32,7 @@ class intersection
 public:
 
   /// @brief The type of the homomorphism operands' set.
-  typedef boost::container::flat_set<homomorphism<C>> operands_type;
+  using operands_type = boost::container::flat_set<homomorphism<C>>;
 
 private:
 
@@ -44,8 +44,7 @@ public:
   /// @brief Constructor.
   intersection(operands_type&& operands)
     : operands_(std::move(operands))
-  {
-  }
+  {}
 
   /// @brief Evaluation.
   SDD<C>
@@ -129,10 +128,10 @@ operator<<(std::ostream& os, const intersection<C>& s)
 template <typename C>
 struct intersection_builder_helper
 {
-  typedef void result_type;
-  typedef typename intersection<C>::operands_type operands_type;
-  typedef std::deque<homomorphism<C>> hom_list_type;
-  typedef std::unordered_map<typename C::Identifier, hom_list_type> locals_type;
+  using result_type   = void;
+  using operands_type = typename intersection<C>::operands_type;
+  using hom_list_type = std::deque<homomorphism<C>> ;
+  using locals_type   = std::unordered_map<typename C::Identifier, hom_list_type>;
 
   operands_type& operands_;
   locals_type& locals_;

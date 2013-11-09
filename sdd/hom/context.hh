@@ -26,12 +26,11 @@ class context
 public:
 
   /// @brief Homomorphism evaluation cache type.
-  typedef mem::cache< context, cached_homomorphism<C>, evaluation_error<C>
-                    , should_cache<C>, one_terminal_evaluation<C>>
-          cache_type;
+  using cache_type = mem::cache< context, cached_homomorphism<C>, evaluation_error<C>
+                               , should_cache<C>, one_terminal_evaluation<C>>;
 
   /// @brief SDD operation context type.
-  typedef sdd::dd::context<C> sdd_context_type;
+  using sdd_context_type = sdd::dd::context<C>;
 
 private:
 

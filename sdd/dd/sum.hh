@@ -41,8 +41,8 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
                          , SDD<C>>::type
   work(InputIterator begin, InputIterator end, context<C>& cxt)
   {
-    typedef NodeType node_type;
-    typedef typename node_type::valuation_type valuation_type;
+    using node_type = NodeType;
+    using valuation_type = typename node_type::valuation_type;
 
     auto operands_cit = begin;
     const auto operands_end = end;
@@ -52,7 +52,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
 
     // Type of the list of successors for a valuation, to be merged with the union operation
     // right before calling the square union.
-    typedef sum_builder<C, SDD<C>> sum_builder_type;
+    using sum_builder_type = sum_builder<C, SDD<C>>;
 
     /// @todo Use Boost.Intrusive to save on memory allocations?
     // List all the successors for each valuation in the final alpha.
@@ -210,9 +210,9 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
   {
     const auto& variable = mem::variant_cast<flat_node<C>>(**begin).variable();
 
-    typedef typename C::Values values_type;
-    typedef typename values_type::value_type value_type;
-    typedef sum_builder<C, SDD<C>> sum_builder_type;
+    using values_type      = typename C::Values;
+    using value_type       = typename values_type::value_type;
+    using sum_builder_type = sum_builder<C, SDD<C>>;
     boost::container::flat_map<value_type, sum_builder_type> value_to_succ;
     value_to_succ.reserve(std::distance(begin, end) * 2);
 

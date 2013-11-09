@@ -7,8 +7,8 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-typedef sdd::conf0 conf0;
-typedef sdd::conf1 conf1;
+using conf0 = sdd::conf0;
+using conf1 = sdd::conf1;
 
 template <typename C>
 C
@@ -27,7 +27,7 @@ noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
-typedef ::testing::Types<conf0, conf1> configurations;
+using configurations = ::testing::Types<conf0, conf1>;
 
 /*------------------------------------------------------------------------------------------------*/
 

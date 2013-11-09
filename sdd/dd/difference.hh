@@ -27,7 +27,7 @@ template <typename C>
 struct difference_visitor
 {
   /// @brief Indicate to mem::variant what is the type of the result.
-  typedef SDD<C> result_type;
+  using result_type = SDD<C>;
 
   /// @brief The evaluation context.
   context<C>& cxt_;
@@ -137,7 +137,7 @@ template <typename C>
 struct difference_op
 {
   /// @brief Needed by the cache to know the result of this operation.
-  typedef SDD<C> result_type;
+  using result_type = SDD<C>;
 
   /// @brief The left operand of this difference operation.
   const SDD<C> lhs;
@@ -147,8 +147,7 @@ struct difference_op
 
   /// @brief Constructor.
   difference_op(const SDD<C>& l, const SDD<C>& r)
-  	: lhs(l)
-		, rhs(r)
+  	: lhs(l), rhs(r)
   {}
 
   /// @brief Apply this operation.

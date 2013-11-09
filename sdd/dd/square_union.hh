@@ -21,7 +21,7 @@ class square_union
 private:
 
   /// @brief Store the a list of valuation to be merged with a union operation.
-  typedef sum_builder<C, Valuation> sum_builder_type;
+  using sum_builder_type = sum_builder<C, Valuation>;
 
   /// @brief Map successors to a list of valuations going to this same successor.
   boost::container::flat_map<SDD<C>, sum_builder_type> map_;

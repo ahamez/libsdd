@@ -24,7 +24,7 @@ private:
 
 public:
 
-  typedef std::size_t value_type;
+  using value_type = std::size_t;
 
   bitset()
   noexcept

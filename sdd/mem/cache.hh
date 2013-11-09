@@ -144,10 +144,10 @@ class cache
 private:
 
   /// @brief The type of the context of this cache.
-  typedef Context context_type;
+  using context_type = Context;
 
   /// @brief The type of the result of an operation stored in the cache.
-  typedef typename Operation::result_type result_type;
+  using result_type = typename Operation::result_type;
 
   /// @brief Associate an operation to its result into the cache.
   ///
@@ -261,7 +261,7 @@ private:
   double max_load_factor_;
 
   /// @brief An intrusive hash table.
-  typedef mem::hash_table<cache_entry, hash_key> set_type;
+  using set_type = mem::hash_table<cache_entry, hash_key>;
 
   /// @brief The actual storage of caches entries.
   set_type set_;

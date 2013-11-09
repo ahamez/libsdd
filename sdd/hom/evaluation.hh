@@ -18,7 +18,7 @@ template <typename C>
 struct evaluation
 {
   /// @brief Used by util::variant.
-  typedef SDD<C> result_type;
+  using result_type = SDD<C>;
 
   /// @brief Terminal |0| case.
   ///
@@ -101,7 +101,7 @@ template <typename C>
 struct cached_homomorphism
 {
   /// @brief Needed by the cache.
-  typedef SDD<C> result_type;
+  using result_type = SDD<C>;
 
   /// @brief The current order position.
   const order<C> ord;
@@ -114,9 +114,7 @@ struct cached_homomorphism
 
   /// @brief Constructor.
   cached_homomorphism(const order<C>& o, const homomorphism<C>& h, const SDD<C>& s)
-    : ord(o)
-    , hom(h)
-    , sdd(s)
+    : ord(o), hom(h), sdd(s)
   {}
 
   /// @brief Launch the evaluation.
@@ -160,8 +158,8 @@ operator<<(std::ostream& os, const cached_homomorphism<C>& ch)
 template <typename C>
 struct should_cache
 {
-  /// @brief Needed by variant.
-  typedef bool result_type;
+  /// @brief Needed by mem::variant.
+  using result_type = bool;
 
   /// @brief Dispatch to each homomorphism's trait.
   template <typename T>
@@ -188,8 +186,8 @@ struct should_cache
 template <typename C>
 struct one_terminal_evaluation
 {
-  /// @brief Needed by variant.
-  typedef bool result_type;
+  /// @brief Needed by me::variant.
+  using result_type = bool;
 
   /// @brief Application of should_cache.
   bool

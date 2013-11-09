@@ -37,25 +37,24 @@ class homomorphism final
 private:
 
   /// @brief A canonized homomorphism.
-  typedef mem::variant< hom::composition<C>
-                      , hom::cons<C, SDD<C>>
-                      , hom::cons<C, typename C::Values>
-                      , hom::constant<C>
+  using data_type = mem::variant< hom::composition<C>
+                                , hom::cons<C, SDD<C>>
+                                , hom::cons<C, typename C::Values>
+                                , hom::constant<C>
 #if !defined(HAS_NO_BOOST_COROUTINE)
-                      , hom::expression<C>
+                                , hom::expression<C>
 #endif // !defined(HAS_NO_BOOST_COROUTINE)
-                      , hom::fixpoint<C>
-                      , hom::identity<C>
-                      , hom::inductive<C>
-                      , hom::intersection<C>
-                      , hom::local<C>
-                      , hom::saturation_fixpoint<C>
-                      , hom::saturation_sum<C>
-                      , hom::simple_expression<C>
-                      , hom::sum<C>
-                      , hom::values_function<C>
-                      >
-          data_type;
+                                , hom::fixpoint<C>
+                                , hom::identity<C>
+                                , hom::inductive<C>
+                                , hom::intersection<C>
+                                , hom::local<C>
+                                , hom::saturation_fixpoint<C>
+                                , hom::saturation_sum<C>
+                                , hom::simple_expression<C>
+                                , hom::sum<C>
+                                , hom::values_function<C>
+                                >;
 
 public:
 
@@ -78,12 +77,6 @@ private:
   ptr_type ptr_;
 
 public:
-
-  /// @brief The variable type.
-  typedef typename C::Variable variable_type;
-
-  /// @brief The identifier type.
-  typedef typename C::Identifier identifier_type;
 
   /// @brief Copy constructor.
   ///
@@ -227,7 +220,7 @@ public:
   /// @brief Dispatch the selector predicate call to concrete homomorphisms.
   struct selector_helper
   {
-    typedef bool result_type;
+    using result_type = bool;
 
     template <typename H>
     bool

@@ -33,12 +33,12 @@ class LIBSDD_ATTRIBUTE_PACKED sum
 public:
 
   /// @brief The type of a const iterator on this sum's operands.
-  typedef const homomorphism<C>* const_iterator;
+  using const_iterator = const homomorphism<C>*;
 
 private:
 
   /// @brief The type deduced from configuration of the number of operands.
-  typedef typename C::operands_size_type operands_size_type;
+  using operands_size_type = typename C::operands_size_type;
 
   /// @brief The homomorphism's number of operands.
   const operands_size_type size_;

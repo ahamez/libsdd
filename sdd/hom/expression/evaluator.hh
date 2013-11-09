@@ -141,7 +141,7 @@ private:
   print_impl(std::ostream& os, const E& e, long)
   -> decltype(void())
   {
-    os << "UserEvaluator(" << &e << ")";
+    os << "Evaluator(" << &e << ")";
   }
 };
 

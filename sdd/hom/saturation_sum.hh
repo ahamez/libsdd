@@ -30,13 +30,13 @@ class LIBSDD_ATTRIBUTE_PACKED saturation_sum
 public:
 
   /// @brief The type of an optional homomorphism.
-  typedef boost::optional<homomorphism<C>> optional_type;
+  using optional_type = boost::optional<homomorphism<C>>;
 
   /// @brief The variable type.
-  typedef typename C::Variable variable_type;
+  using variable_type = typename C::Variable;
 
   /// @brief The type of the homomorphism G part.
-  typedef boost::container::flat_set<homomorphism<C>> g_type;
+  using g_type = boost::container::flat_set<homomorphism<C>>;
 
 private:
 

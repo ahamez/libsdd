@@ -15,9 +15,7 @@ struct nil {};
 
 /// @internal
 template <typename... Types>
-struct typelist
-{
-};
+struct typelist {};
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -43,19 +41,19 @@ struct index_of<T, Head, Types...>
 template <std::size_t Index, typename... Types>
 struct nth
 {
-  typedef nil type;
+  using type = nil;
 };
 
 template <typename Head, typename... Tail>
 struct nth<0, Head, Tail...>
 {
-  typedef Head type;
+  using type = Head;
 };
   
 template <std::size_t Index, typename Head, typename... Tail>
 struct nth<Index, Head, Tail...>
 {
-  typedef typename nth<Index - 1, Tail...>::type type;
+  using type = typename nth<Index - 1, Tail...>::type;
 };  
 
 /*------------------------------------------------------------------------------------------------*/  

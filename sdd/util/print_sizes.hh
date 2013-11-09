@@ -35,7 +35,7 @@ print_sizes(::std::ostream& os)
   os << "flat_node          " << sizeof(flat_node<C>) << ::std::endl;
   os << "hierarchical_node  " << sizeof(hierarchical_node<C>) << ::std::endl;
 
-  typedef homomorphism<C> hom_type;
+  using hom_type = homomorphism<C>;
 
   os << ::std::endl;
   os << "Hom::data             " << sizeof(typename hom_type::data_type) << ::std::endl;

@@ -109,7 +109,7 @@ operator<<(std::ostream& os, const fixpoint<C>& f)
 template <typename C>
 struct fixpoint_builder_helper
 {
-  typedef homomorphism<C> result_type;
+  using result_type = homomorphism<C>;
 
   homomorphism<C>
   operator()(const identity<C>&, const homomorphism<C>& h)

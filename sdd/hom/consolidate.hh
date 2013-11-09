@@ -14,7 +14,7 @@ void
 consolidate(char* addr, InputIterator it, InputIterator end)
 noexcept
 {
-  typedef typename std::iterator_traits<InputIterator>::value_type value_type;
+  using value_type = typename std::iterator_traits<InputIterator>::value_type;
   value_type* base = reinterpret_cast<value_type*>(addr);
   std::size_t i = 0;
   for (; it != end; ++it)

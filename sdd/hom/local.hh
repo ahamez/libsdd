@@ -41,7 +41,7 @@ public:
   struct evaluation
   {
     /// @brief Used by variant.
-    typedef SDD<C> result_type;
+    using result_type = SDD<C>;
 
     context<C>& cxt_;
     const order<C>& order_;

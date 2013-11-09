@@ -68,7 +68,7 @@ class manager final
 private:
 
   /// @brief The type of a set of values.
-  typedef typename C::Values values_type;
+  using values_type = typename C::Values;
 
   /// @brief Keep the configuration.
   const C& conf_;
