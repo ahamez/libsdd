@@ -165,7 +165,7 @@
 		2B23A9C717E591C00019B1D4 /* test_path_generator.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_path_generator.cc; sourceTree = "<group>"; };
 		2B27C3E217E7369000413365 /* size.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = size.hh; sourceTree = "<group>"; };
 		2B2FA52317E8BB05008A572D /* stacks.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = stacks.hh; sourceTree = "<group>"; };
-		2B357E4F182E30A0002B13E1 /* tests copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "tests copy"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2B357E50182E3929002B13E1 /* tests copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = "tests copy"; path = "/Users/hal/code/libsdd/build/Debug/tests copy"; sourceTree = "<absolute>"; };
 		2B38CC8615C023C10067BDD2 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		2B429E82164C46C5008000C1 /* flat_set.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = flat_set.hh; sourceTree = "<group>"; };
 		2B429E83164CFE33008000C1 /* test_flat_set.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_flat_set.cc; sourceTree = "<group>"; };
@@ -462,7 +462,6 @@
 				2B0A122917E1FB960093A68C /* python */,
 				2BB1A99414E07D38007921F2 /* sdd */,
 				2BB1A9AE14E086E3007921F2 /* tests */,
-				2B357E4F182E30A0002B13E1 /* tests copy */,
 			);
 			sourceTree = "<group>";
 		};
@@ -708,7 +707,7 @@
 			);
 			name = saturation_fixpoint;
 			productName = tests;
-			productReference = 2B357E4F182E30A0002B13E1 /* tests copy */;
+			productReference = 2B357E50182E3929002B13E1 /* tests copy */;
 			productType = "com.apple.product-type.tool";
 		};
 		2BC472D915BF1C1300A8D442 /* gtest */ = {
