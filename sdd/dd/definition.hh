@@ -181,12 +181,8 @@ public:
   paths()
   const
   {
-    path<C> tmp;
-    tmp.reserve(128);
-    auto p = std::make_shared<path<C>>(std::move(tmp));
     boost::coroutines::attributes attrs(boost::coroutines::fpu_not_preserved);
-    namespace ph = std::placeholders;
-    return path_generator<C>(std::bind(dd::xpaths_impl<C>, ph::_1, *this, p, nullptr), attrs);
+    return path_generator<C>(std::bind(dd::paths<C>, std::placeholders::_1, *this), attrs);
   }
 #endif
 

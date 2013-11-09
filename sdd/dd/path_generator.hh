@@ -1,7 +1,6 @@
+#if !defined(HAS_NO_BOOST_COROUTINE)
 #ifndef _SDD_DD_PATH_GENERATOR_HH_
 #define _SDD_DD_PATH_GENERATOR_HH_
-
-#if !defined(HAS_NO_BOOST_COROUTINE)
 
 #include <cassert>
 #include <memory>
@@ -16,64 +15,79 @@ namespace sdd { namespace dd {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Generate all paths of an SDD.
-///
-/// It uses coroutines in order to generate them on the fly. For now, it doesn't use the visitor
-/// mechanism of mem::variant, but a manual dispatch using variant's indexes.
 template <typename C>
-void
-xpaths_impl( typename path_generator<C>::caller_type& yield
-           , SDD<C> sdd, std::shared_ptr<path<C>> p, std::shared_ptr<sdd_stack<C>> stack)
+struct paths_visitor
 {
-  switch(sdd.index())
+  using result_type = void;
+  typename path_generator<C>::caller_type& yield;
+
+  paths_visitor(typename path_generator<C>::caller_type& y)
+    : yield(y)
+  {}
+
+  void
+  operator()( const hierarchical_node<C>& n
+            , std::shared_ptr<path<C>> path, std::shared_ptr<sdd_stack<C>> stack)
+  const
   {
-    case (SDD<C>::hierarchical_node_index) :
+    for (const auto& arc : n)
     {
-      const auto& node = sdd::mem::variant_cast<sdd::hierarchical_node<C>>(*sdd);
-      for (const auto& arc : node)
-      {
-        const auto local_stack = std::make_shared<sdd_stack<C>>(arc.successor(), stack);
-        xpaths_impl(yield, arc.valuation(), p, local_stack);
-      }
-      break;
-    }
-
-    case (SDD<C>::flat_node_index) :
-    {
-      const auto& node = sdd::mem::variant_cast<sdd::flat_node<C>>(*sdd);
-      for (const auto& arc : node)
-      {
-        p->emplace_back(arc.valuation());
-        xpaths_impl(yield, arc.successor(), p, stack);
-        p->pop_back();
-      }
-      break;
-    }
-
-    case (SDD<C>::one_terminal_index) :
-    {
-      if (stack)
-      {
-        xpaths_impl(yield, stack->sdd, p, stack->next);
-        return;
-      }
-      // end of a path
-      yield(*p);
-      break;
-    }
-
-    default /* zero_terminal */ :
-    {
-      assert(p->empty() && "Non empty path leading to |0|");
-      yield(*p);
+      const auto local_stack = std::make_shared<sdd_stack<C>>(arc.successor(), stack);
+      visit(*this, arc.valuation(), path, local_stack);
     }
   }
-}
 
+  void
+  operator()( const flat_node<C>& n
+            , std::shared_ptr<path<C>> path, std::shared_ptr<sdd_stack<C>> stack)
+  const
+  {
+    for (const auto& arc : n)
+    {
+      path->emplace_back(arc.valuation());
+      visit(*this, arc.successor(), path, stack);
+      path->pop_back();
+    }
+  }
+
+  void
+  operator()( const one_terminal<C>
+            , std::shared_ptr<path<C>> path, std::shared_ptr<sdd_stack<C>> stack)
+  const
+  {
+    if (stack)
+    {
+      visit(*this, stack->sdd, path, stack->next);
+      return;
+    }
+    // end of a path
+    yield(*path);
+  }
+
+  void
+  operator()( const zero_terminal<C>&
+            , std::shared_ptr<path<C>> path, std::shared_ptr<sdd_stack<C>>)
+  const
+  {
+    assert(path->empty() && "Non empty path leading to |0|");
+    yield(*path);
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+template <typename C>
+void
+paths(typename path_generator<C>::caller_type& yield, SDD<C> sdd)
+{
+  path<C> tmp;
+  tmp.reserve(512);
+  visit(paths_visitor<C>(yield), sdd, std::make_shared<path<C>>(std::move(tmp)), nullptr);
+}
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::dd
 
-#endif // !defined(HAS_NO_BOOST_COROUTINE)
-
 #endif // _SDD_DD_PATH_GENERATOR_HH_
+#endif // !defined(HAS_NO_BOOST_COROUTINE)

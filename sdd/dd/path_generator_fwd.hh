@@ -1,7 +1,6 @@
+#if !defined(HAS_NO_BOOST_COROUTINE)
 #ifndef _SDD_DD_PATH_GENERATOR_FWD_HH_
 #define _SDD_DD_PATH_GENERATOR_FWD_HH_
-
-#if !defined(HAS_NO_BOOST_COROUTINE)
 
 #include <memory>
 #include <vector>
@@ -45,15 +44,14 @@ struct sdd_stack
 };
 
 // Forward declaration.
+/// @internal
 template <typename C>
 void
-xpaths_impl( typename path_generator<C>::caller_type&
-           , SDD<C>, std::shared_ptr<path<C>>, std::shared_ptr<sdd_stack<C>>);
+paths(typename path_generator<C>::caller_type&, SDD<C>);
 
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::dd
 
-#endif // !defined(HAS_NO_BOOST_COROUTINE)
-
 #endif // _SDD_DD_PATH_GENERATOR_FWD_HH_
+#endif // !defined(HAS_NO_BOOST_COROUTINE)
