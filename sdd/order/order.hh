@@ -228,7 +228,7 @@ private:
       const auto variable = next.second;
       if (not ob.identifier().artificial() and not unicity.insert(ob.identifier().user()).second)
       {
-        throw std::runtime_error("Duplicate order identifier " + ob.identifier());
+        throw std::runtime_error("Duplicate order identifier " + ob.identifier().user());
       }
       nodes[current_position] =
         order_node<C>(ob.identifier(), variable, current_position, next.first, nested.first, path);

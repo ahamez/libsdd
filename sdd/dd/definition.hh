@@ -165,7 +165,7 @@ public:
     {
       // We can safely pass the order_identifier as a user one because only hierarchical levels
       // can be artificial.
-      assert(not id.artificial());
+      assert(not o.identifier().artificial());
       ptr_ = create_node(o.variable(), init(o.identifier().user()), SDD(o.next(), init));
     }
     // hierarchical
