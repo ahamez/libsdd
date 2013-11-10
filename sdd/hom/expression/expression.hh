@@ -28,6 +28,10 @@ namespace bcoro = boost::coroutines;
 template <typename C>
 using coro = bcoro::coroutine<SDD<C>()>;
 
+/// @internal
+template <typename C>
+using yield_type = typename coro<C>::caller_type;
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
@@ -51,32 +55,46 @@ struct coro_fpu<false>
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Handle the Expression evaluation below the target.
+template <typename C>
+struct expression_post_visitor;
+
+/// @internal
 template <typename C>
 void
-expression_post( typename coro<C>::caller_type& yield
-               , SDD<C> x, const order<C>& o
-               , order_position_type target
-               , typename C::Values* valuation
+expression_post( yield_type<C>& yield, expression_post_visitor<C>& v, SDD<C> s, const order<C>& o
                , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<sdd_stack<C>>& res
-               , order_positions_iterator cit, order_positions_iterator end
-               , evaluator_base<C>* eval)
+               , order_positions_iterator cit, order_positions_iterator end);
+
+/// @internal
+/// @brief Handle the Expression evaluation below the target.
+template <typename C>
+struct expression_post_visitor
 {
-  namespace ph = std::placeholders;
+  using result_type = void;
 
-  static void* table[4] = {&&zero, &&one, &&flat, &&hierarchical};
-  goto *table[x.index()];
+  evaluator_base<C>& eval;
+  typename C::Values& valuation;
+  const order_position_type target;
 
-  hierarchical:
+  expression_post_visitor(evaluator_base<C>& e, typename C::Values& v, order_position_type t)
+    : eval(e), valuation(v), target(t)
+  {}
+
+  void
+  operator()( const hierarchical_node<C>& n
+            , yield_type<C>& yield
+            , const order<C>& o
+            , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<sdd_stack<C>>& res
+            , order_positions_iterator cit, order_positions_iterator end)
+  const
   {
-    const auto& node = sdd::mem::variant_cast<sdd::hierarchical_node<C>>(*x);
-
-    for (const auto& arc : node)
+    namespace ph = std::placeholders;
+    for (const auto& arc : n)
     {
       const auto local_res = std::make_shared<sdd_stack<C>>(arc.successor(), res);
       const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), app);
-      coro<C> gen( std::bind( expression_post<C>, ph::_1, arc.valuation(), o.nested(), target
-                            , valuation, local_app, local_res, cit, end, eval)
+      coro<C> gen( std::bind( expression_post<C>, ph::_1, *this, arc.valuation(), o.nested()
+                            , local_app, local_res, cit, end)
                  , bcoro::attributes(coro_fpu<C::expression_preserve_fpu_registers>::value));
       while (gen)
       {
@@ -84,72 +102,81 @@ expression_post( typename coro<C>::caller_type& yield
         gen();
       }
     }
-    return;
   }
 
-  flat:
+  void
+  operator()( const flat_node<C>& n
+            , yield_type<C>& yield
+            , const order<C>& o
+            , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<sdd_stack<C>>& res
+            , order_positions_iterator cit, order_positions_iterator end)
+  const
   {
+    namespace ph = std::placeholders;
     const bool target_level = o.position() == target;
     const bool update_values = std::find(cit, end, o.position()) != end;
 
     if (update_values)
     {
-      // Narrow the range for future searches of identifiers.
-      std::advance(cit, 1);
+      std::advance(cit, 1); // Narrow the range for future searches of identifiers.
     }
-
-    const auto& node = sdd::mem::variant_cast<sdd::flat_node<C>>(*x);
 
     if (cit == end) // Last level, avoid to propagate a new coroutine.
     {
-      for (const auto& arc : node)
+      for (const auto& arc : n)
       {
         if (update_values)
         {
-          eval->update(o.identifier(), arc.valuation());
+          eval.update(o.identifier(), arc.valuation());
         }
-        *valuation = eval->evaluate();
+        valuation = eval.evaluate();
         yield(SDD<C>(o.variable(), arc.valuation(), arc.successor()));
       }
-      return;
     }
-
-    for (const auto& arc : node)
+    else // cit != end
     {
-      if (update_values)
+      for (const auto& arc : n)
       {
-        eval->update(o.identifier(), arc.valuation());
-      }
-
-      coro<C> gen( std::bind( expression_post<C>, ph::_1, arc.successor(), o.next(), target
-                            , valuation, app, res, cit, end, eval)
-                 , bcoro::attributes(coro_fpu<C::expression_preserve_fpu_registers>::value));
-
-      while (gen)
-      {
-        if (target_level)
+        if (update_values)
         {
-          *valuation = eval->evaluate();
-          yield(SDD<C>(o.variable(), *valuation, gen.get()));
+          eval.update(o.identifier(), arc.valuation());
         }
-        else
+
+        coro<C> gen( std::bind( expression_post<C>, ph::_1, *this, arc.successor(), o.next()
+                              , app, res, cit, end)
+                   , bcoro::attributes(coro_fpu<C::expression_preserve_fpu_registers>::value));
+        while (gen)
         {
-          yield(SDD<C>(o.variable(), arc.valuation(), gen.get()));
+          if (target_level)
+          {
+            valuation = eval.evaluate();
+            yield(SDD<C>(o.variable(), valuation, gen.get()));
+          }
+          else
+          {
+            yield(SDD<C>(o.variable(), arc.valuation(), gen.get()));
+          }
+          gen();
         }
-        gen();
       }
     }
-    return;
   }
 
-  one:
+  void
+  operator()( const one_terminal<C>&
+            , yield_type<C>& yield
+            , const order<C>&
+            , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<sdd_stack<C>>& res
+            , order_positions_iterator cit, order_positions_iterator end)
+  const
   {
+    namespace ph = std::placeholders;
     // We are in a nested hierarchy, we now propagate to the successor of the upper level.
     // We can't arrive here when app is not set, as the flat case ensure that we don't propagate
     // on the final |1| (it avoids propagation whenever all operands have been encoutered).
     assert(app);
-    coro<C> gen( std::bind( expression_post<C>, ph::_1, app->sdd, app->ord, target, valuation
-                          , app->next, res->next, cit, end, eval)
+    coro<C> gen( std::bind( expression_post<C>, ph::_1, *this, app->sdd, app->ord
+                          , app->next, res->next, cit, end)
                , bcoro::attributes(coro_fpu<C::expression_preserve_fpu_registers>::value));
     while (gen)
     {
@@ -157,15 +184,32 @@ expression_post( typename coro<C>::caller_type& yield
       yield(one<C>());
       gen();
     }
-    return;
   }
 
-  zero:
+  void
+  operator()( const zero_terminal<C>&
+            , yield_type<C>&
+            , const order<C>&
+            , const std::shared_ptr<app_stack<C>>&, const std::shared_ptr<sdd_stack<C>>&
+            , order_positions_iterator, order_positions_iterator)
+  const
   {
     assert(false);
     __builtin_unreachable();
   }
+};
+
+/// @internal
+template <typename C>
+inline
+void
+expression_post( yield_type<C>& yield, expression_post_visitor<C>& v, SDD<C> s, const order<C>& o
+               , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<sdd_stack<C>>& res
+               , order_positions_iterator cit, order_positions_iterator end)
+{
+  visit(v, /* visited */s, yield, o, app, res, cit, end);
 }
+
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -265,8 +309,9 @@ struct expression_pre
       {
         const auto local_res = std::make_shared<sdd_stack<C>>(arc.successor(), nullptr);
         const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), nullptr);
-        coro<C> gen( std::bind( expression_post<C>, ph::_1, arc.valuation(), o.nested(), target_
-                              , &valuation_, local_app, local_res, cit, end, &eval_)
+        coro<C> gen( std::bind( expression_post<C>, ph::_1
+                              , expression_post_visitor<C>(eval_, valuation_, target_)
+                              , arc.valuation(), o.nested(), local_app, local_res, cit, end)
                    , bcoro::attributes(coro_fpu<C::expression_preserve_fpu_registers>::value));
         while(gen)
         {
@@ -317,8 +362,9 @@ struct expression_pre
           eval_.update(o.identifier(), arc.valuation());
         }
 
-        coro<C> gen( std::bind( expression_post<C>, ph::_1, arc.successor(), o.next(), target_
-                              , &valuation_, nullptr, nullptr, cit, end, &eval_)
+        coro<C> gen( std::bind( expression_post<C>, ph::_1
+                              , expression_post_visitor<C>(eval_, valuation_, target_)
+                              , arc.successor(), o.next(), nullptr, nullptr, cit, end)
                    , bcoro::attributes(coro_fpu<C::expression_preserve_fpu_registers>::value));
 
         while (gen)

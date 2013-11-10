@@ -51,7 +51,7 @@ struct paths_visitor
   }
 
   void
-  operator()( const one_terminal<C>
+  operator()( const one_terminal<C>&
             , std::shared_ptr<path<C>> path, std::shared_ptr<sdd_stack<C>> stack)
   const
   {
