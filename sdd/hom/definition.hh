@@ -37,24 +37,25 @@ class homomorphism final
 private:
 
   /// @brief A canonized homomorphism.
-  using data_type = mem::variant< hom::composition<C>
-                                , hom::cons<C, SDD<C>>
-                                , hom::cons<C, typename C::Values>
-                                , hom::constant<C>
+  typedef mem::variant< hom::composition<C>
+                      , hom::cons<C, SDD<C>>
+                      , hom::cons<C, typename C::Values>
+                      , hom::constant<C>
 #if !defined(HAS_NO_BOOST_COROUTINE)
-                                , hom::expression<C>
+                      , hom::expression<C>
 #endif // !defined(HAS_NO_BOOST_COROUTINE)
-                                , hom::fixpoint<C>
-                                , hom::identity<C>
-                                , hom::inductive<C>
-                                , hom::intersection<C>
-                                , hom::local<C>
-                                , hom::saturation_fixpoint<C>
-                                , hom::saturation_sum<C>
-                                , hom::simple_expression<C>
-                                , hom::sum<C>
-                                , hom::values_function<C>
-                                >;
+                      , hom::fixpoint<C>
+                      , hom::identity<C>
+                      , hom::inductive<C>
+                      , hom::intersection<C>
+                      , hom::local<C>
+                      , hom::saturation_fixpoint<C>
+                      , hom::saturation_sum<C>
+                      , hom::simple_expression<C>
+                      , hom::sum<C>
+                      , hom::values_function<C>
+                      >
+          data_type;
 
 public:
 

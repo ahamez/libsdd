@@ -45,8 +45,8 @@ private:
   ///
   /// This is the real recursive definition of an SDD: it can be a |0| or |1| terminal, or it
   /// can be a flat or an hierachical node.
-  using data_type =
-    mem::variant<zero_terminal<C>, one_terminal<C>, flat_node<C>, hierarchical_node<C>>;
+  typedef mem::variant<zero_terminal<C>, one_terminal<C>, flat_node<C>, hierarchical_node<C>>
+          data_type;
 
 public:
 
