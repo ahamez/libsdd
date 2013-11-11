@@ -86,13 +86,10 @@ public:
 
   /// @brief Copy operator.
   ptr&
-  operator=(const ptr& other)
+  operator=(ptr other)
   noexcept
   {
-    other.x_->increment_reference_counter();
-    x_->decrement_reference_counter();
-    erase_if_necessary(x_);
-    x_ = other.x_;
+    swap(*this, other);
     return *this;
   }
 
@@ -100,7 +97,10 @@ public:
   ~ptr()
   {
     x_->decrement_reference_counter();
-    erase_if_necessary(x_);
+    if (x_->is_not_referenced())
+    {
+      deletion_handler<Unique>()(*x_);
+    }
   }
 
   /// @brief Get a reference to the unified data.
@@ -124,22 +124,7 @@ public:
   swap(ptr& lhs, ptr& rhs)
   noexcept
   {
-    using std::swap;
-    swap(lhs.x_, rhs.x_);
-  }
-
-private:
-
-  /// @brief If the managed data is no longer referenced, erase it.
-  static
-  void
-  erase_if_necessary(const Unique* x)
-  noexcept
-  {
-    if (x->is_not_referenced())
-    {
-      deletion_handler<Unique>()(*x);
-    }
+    std::swap(lhs.x_, rhs.x_);
   }
 };
 
