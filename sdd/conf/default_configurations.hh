@@ -44,10 +44,10 @@ struct default_configuration
   /// @brief Tell if FPU registers shoud be preserved when using Expressions.
   static constexpr bool expression_preserve_fpu_registers = false;
 
-  /// @brief Tell if the library should clean all memory after the its last usage.
+  /// @brief Tell if the library should clean all memory when the manager is destroyed.
   ///
-  /// Useful if have only one instance of the library and that you don't want to wait for its
-  /// cleanup at you program's exit.
+  /// Useful if you have only one instance of the library and that you don't want to wait for its
+  /// cleanup at your program's exit.
   bool final_cleanup;
 
   /// @brief Default constructor.
