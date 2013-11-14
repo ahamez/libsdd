@@ -29,12 +29,6 @@ operator<<(std::ostream& os, const manager<C>& m)
   os << "access      : " << sdd_stats.access << std::endl;
   os << "hit         : " << sdd_stats.hit << std::endl;
   os << "miss        : " << sdd_stats.miss << std::endl;
-  os << "rehash      : " << sdd_stats.rehash << std::endl;
-#ifdef LIBSDD_PROFILE
-  os << "collisions  : " << sdd_stats.collisions << std::endl;
-  os << "tcollisions : " << sdd_stats.total_collisions << std::endl;
-#endif // LIBSDD_PROFILE
-
   os << std::endl;
 
   os << "Hom" << std::endl;
@@ -43,11 +37,6 @@ operator<<(std::ostream& os, const manager<C>& m)
   os << "access      : " << hom_stats.access << std::endl;
   os << "hit         : " << hom_stats.hit << std::endl;
   os << "miss        : " << hom_stats.miss << std::endl;
-  os << "rehash      : " << hom_stats.rehash << std::endl;
-#ifdef LIBSDD_PROFILE
-  os << "collisions  : " << hom_stats.collisions << std::endl;
-  os << "tcollisions : " << hom_stats.total_collisions << std::endl;
-#endif // LIBSDD_PROFILE
 
   return os;
 }

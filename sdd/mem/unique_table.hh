@@ -38,9 +38,6 @@ public:
 
     /// @brief The number of misses.
     std::size_t miss;
-
-    /// @brief The number of rehash.
-    std::size_t rehash;
   };
 
 private:
