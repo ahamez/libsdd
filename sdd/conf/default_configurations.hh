@@ -54,7 +54,7 @@ struct default_configuration
   ///
   /// Initialize all parameters to their default values.
   default_configuration()
-    : sdd_unique_table_size(1000000)
+    : sdd_unique_table_size(10000000)
     , sdd_difference_cache_size(500000)
     , sdd_intersection_cache_size(500000)
     , sdd_sum_cache_size(1000000)
