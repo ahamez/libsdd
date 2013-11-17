@@ -12,6 +12,7 @@
 #include "sdd/dd/nary.hh"
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
+#include "sdd/mem/linear_alloc.hh"
 #include "sdd/util/hash.hh"
 #include "sdd/util/boost_flat_map_no_warnings.hh"
 #include "sdd/util/boost_flat_set_no_warnings.hh"
@@ -44,6 +45,9 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     using node_type = NodeType;
     using valuation_type = typename node_type::valuation_type;
 
+    // Automatic reinitialisation of the memory arena.
+    mem::rewinder _(cxt.arena());
+
     auto operands_cit = begin;
     const auto operands_end = end;
 
@@ -54,17 +58,26 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     // right before calling the square union.
     using sum_builder_type = sum_builder<C, SDD<C>>;
 
-    /// @todo Use Boost.Intrusive to save on memory allocations?
+    /// @todo Use intrusive hash map to save on memory allocations?
     // List all the successors for each valuation in the final alpha.
-    std::unordered_map<valuation_type, sum_builder_type> res(head.size());
+    std::unordered_map< valuation_type, sum_builder_type
+                      , std::hash<valuation_type>, std::equal_to<valuation_type>
+                      , mem::linear_alloc<std::pair<const valuation_type, sum_builder_type>>
+                      >
+      res( head.size(), std::hash<valuation_type>(), std::equal_to<valuation_type>()
+         , mem::linear_alloc<std::pair<const valuation_type, sum_builder_type>>(cxt.arena()));
+
+    using pair_type = std::pair<valuation_type, sum_builder_type>;
 
     // Needed to temporarily store arcs erased from res and arcs from the alpha visited in
     // the loop (B).
-    std::vector<std::pair<valuation_type, sum_builder_type>> save;
+    std::vector<pair_type, mem::linear_alloc<pair_type>>
+      save(mem::linear_alloc<pair_type>(cxt.arena()));
     save.reserve(head.size());
 
     // Used in test (F).
-    std::vector<std::pair<valuation_type, sum_builder_type>> remainder;
+    std::vector<pair_type, mem::linear_alloc<pair_type>>
+      remainder(mem::linear_alloc<pair_type>(cxt.arena()));
     remainder.reserve(head.size());
 
     // Initialize res with the alpha of the first operand.
