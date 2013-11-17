@@ -104,21 +104,6 @@ public:
   operator=(const SDD&) noexcept = default;
 
   /// @internal
-  /// @brief Construct a hierarchical SDD.
-  /// @param var  The SDD's variable.
-  /// @param values  The SDD's valuation, a set of values constructed from an initialization list.
-  /// @param succ The SDD's successor.
-  ///
-  /// O(1), for the creation of the SDD itself, but the complexity of the construction of the
-  /// set of values depends on values_type.
-  /// This constructor is only available when the set of values define the type value_type.
-  template <typename D = C, typename T = decltype(D::Values::value_type)>
-  SDD( const variable_type& var, std::initializer_list<typename D::Values::value_type> values
-     , const SDD& succ)
-    : ptr_(create_node(var, values_type(values), SDD(succ)))
-  {}
-
-  /// @internal
   /// @brief Construct a flat SDD.
   /// @param var  The SDD's variable.
   /// @param val  The SDD's valuation, a set of values.
