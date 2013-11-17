@@ -146,19 +146,19 @@ TYPED_TEST(sum_test, flat_commutativity)
 TYPED_TEST(sum_test, flat_no_successors)
 {
   {
-    flat_alpha_builder builder;
+    flat_alpha_builder builder(cxt);
     builder.add({0,1}, one);
     ASSERT_EQ( SDD(0, std::move(builder))
              , sum(cxt, {SDD(0, {0}, one), SDD(0, {1}, one)}));
   }
   {
-    flat_alpha_builder builder;
+    flat_alpha_builder builder(cxt);
     builder.add({0,1}, one);
     ASSERT_EQ( SDD(0, std::move(builder))
              , sum(cxt, {SDD(0, {0,1}, one), SDD(0, {1}, one)}));
   }
   {
-    flat_alpha_builder builder;
+    flat_alpha_builder builder(cxt);
     builder.add({0,1}, one);
     ASSERT_EQ( SDD(0, std::move(builder))
              , sum(cxt, {SDD(0, {0,1}, one), SDD(0, {0,1}, one)}));
@@ -177,21 +177,21 @@ TYPED_TEST(sum_test, flat_no_successors)
 TYPED_TEST(sum_test, hierarchical_no_successors)
 {
   {
-    hier_alpha_builder builder;
+    hier_alpha_builder builder(cxt);
     builder.add(SDD(0, {0,1}, one), one);
     ASSERT_EQ( SDD(10, std::move(builder))
              , sum(cxt, { SDD(10, SDD(0, {0}, one), one)
                         , SDD(10, SDD(0, {1}, one), one)}));
   }
   {
-    hier_alpha_builder builder;
+    hier_alpha_builder builder(cxt);
     builder.add(SDD(0, {0,1}, one), one);
     ASSERT_EQ( SDD(10, std::move(builder))
              , sum(cxt, { SDD(10, SDD(0, {0,1}, one), one)
                         , SDD(10, SDD(0, {1}, one), one)}));
   }
   {
-    hier_alpha_builder builder;
+    hier_alpha_builder builder(cxt);
     builder.add(SDD(0, {0,1}, one), one);
     ASSERT_EQ( SDD(10, std::move(builder))
              , sum(cxt, { SDD(10, SDD(0, {0,1}, one), one)
@@ -203,7 +203,7 @@ TYPED_TEST(sum_test, hierarchical_no_successors)
 
 TYPED_TEST(sum_test, flat_partition_changing)
 {
-  flat_alpha_builder builder;
+  flat_alpha_builder builder(cxt);
   builder.add({1}, SDD(1, {4}, one));
   builder.add({2}, SDD(1, {4,5}, one));
   builder.add({3}, SDD(1, {5}, one));
@@ -216,7 +216,7 @@ TYPED_TEST(sum_test, flat_partition_changing)
 
 TYPED_TEST(sum_test, hierarchical_partition_changing)
 {
-  hier_alpha_builder builder;
+  hier_alpha_builder builder(cxt);
   builder.add(SDD('a', {1}, one), SDD('y', SDD('b', {4}, one), one));
   builder.add(SDD('a', {2}, one), SDD('y', SDD('b', {4,5}, one), one));
   builder.add(SDD('a', {3}, one), SDD('y', SDD('b', {5}, one), one));

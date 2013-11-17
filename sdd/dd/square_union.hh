@@ -83,7 +83,7 @@ public:
   alpha_builder<C, Valuation>
   operator()(context<C>& cxt)
   {
-    alpha_builder<C, Valuation> builder;
+    alpha_builder<C, Valuation> builder(cxt);
     builder.reserve(map_.size());
     for (auto& reversed_arc : map_)
     {

@@ -269,7 +269,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       }
     }
 
-    alpha_builder<C, values_type> alpha;
+    alpha_builder<C, values_type> alpha(cxt);
     alpha.reserve(succ_to_value.size());
     for (auto& succ_values : succ_to_value)
     {

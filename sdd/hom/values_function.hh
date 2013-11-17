@@ -215,17 +215,17 @@ private:
     {
       if (fun.selector())
       {
-        dd::alpha_builder<C, values_type> alpha_buidler;
-        alpha_buidler.reserve(node.size());
+        dd::alpha_builder<C, values_type> alpha_builder(cxt.sdd_context());
+        alpha_builder.reserve(node.size());
         for (const auto& arc : node)
         {
           values_type val = fun(arc.valuation());
           if (not val.empty())
           {
-            alpha_buidler.add(std::move(val), arc.successor());
+            alpha_builder.add(std::move(val), arc.successor());
           }
         }
-        return {o.variable(), std::move(alpha_buidler)};
+        return {o.variable(), std::move(alpha_builder)};
       }
       else
       {
