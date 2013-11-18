@@ -202,7 +202,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       save.clear();
     } // End of iteration on operands.
 
-    square_union<C, valuation_type> su;
+    square_union<C, valuation_type> su(cxt);
     su.reserve(res.size());
     for (auto& arc : res)
     {
@@ -210,7 +210,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       su.add(sum(cxt, std::move(arc.second)), arc.first);
     }
 
-    return SDD<C>(head.variable(), su(cxt));
+    return SDD<C>(head.variable(), su());
   }
 
   /// @brief Linear union of flat SDDs whose valuation are "fast iterable".

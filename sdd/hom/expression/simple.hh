@@ -67,14 +67,14 @@ struct simple
       if (not nested_variables)
       {
         // We are not interested in this level, thus the visitor is propagated to the next level.
-        dd::square_union<C, SDD<C>> su;
+        dd::square_union<C, SDD<C>> su(sdd_cxt);
         su.reserve(node.size());
         for (const auto& arc : node)
         {
           const SDD<C> successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
           su.add(successor, arc.valuation());
         }
-        return SDD<C>(o.variable(), su(cxt_.sdd_context()));
+        return SDD<C>(o.variable(), su());
       }
       else
       {
@@ -172,7 +172,7 @@ struct simple
     {
       // Not the last level, we just need to update values if necessary and to propagate on
       // successors.
-      dd::square_union<C, values_type> su;
+      dd::square_union<C, values_type> su(sdd_cxt);
       for (const auto& arc : node)
       {
         if (update_values)
@@ -182,7 +182,7 @@ struct simple
         const auto successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
         su.add(successor, arc.valuation());
       }
-      return SDD<C>(o.variable(), su(sdd_cxt));
+      return SDD<C>(o.variable(), su());
     }
   }
 

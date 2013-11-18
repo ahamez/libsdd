@@ -64,7 +64,7 @@ struct evaluation
     {
       // The evaluated homomorphism skips the current level. We can thus forward its application
       // to the following levels.
-      dd::square_union<C, typename Node::valuation_type> su;
+      dd::square_union<C, typename Node::valuation_type> su(cxt.sdd_context());
       su.reserve(node.size());
       for (const auto& arc : node)
       {
@@ -74,7 +74,7 @@ struct evaluation
           su.add(new_successor, arc.valuation());
         }
       }
-      return {node.variable(), su(cxt.sdd_context())};
+      return {node.variable(), su()};
     }
     else
     {

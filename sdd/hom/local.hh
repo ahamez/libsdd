@@ -32,8 +32,7 @@ public:
 
   /// @brief Constructor.
   local(order_position_type target, const homomorphism<C>& h)
-    : target_(target)
-    , h_(h)
+    : target_(target), h_(h)
   {}
 
   /// @internal
@@ -61,7 +60,7 @@ public:
       {
         if (h_.selector()) // partition won't change
         {
-          dd::square_union<C, SDD<C>> su;
+          dd::square_union<C, SDD<C>> su(cxt_.sdd_context());
           su.reserve(node.size());
           for (const auto& arc : node)
           {
@@ -71,7 +70,7 @@ public:
               su.add(arc.successor(), new_valuation);
             }
           }
-          return {node.variable(), su(cxt_.sdd_context())};
+          return {node.variable(), su()};
         }
         else // partition will change
         {

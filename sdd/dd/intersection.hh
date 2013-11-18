@@ -46,7 +46,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
 	    mem::variant_cast<node_type>(**operands_cit).variable();
 
     // We re-use the same square union to save some allocations.
-    square_union<C, valuation_type> su;
+    square_union<C, valuation_type> su(cxt);
 
     for (++operands_cit; operands_cit != operands_end; ++operands_cit)
     {
@@ -87,7 +87,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
       }
 
       /// @todo avoid to create an intermediary SDD at each loop.
-      res = SDD<C>(variable, su(cxt));
+      res = SDD<C>(variable, su());
     }
 
     return res;

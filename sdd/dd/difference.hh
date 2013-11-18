@@ -58,7 +58,7 @@ struct difference_visitor
     }
     const Valuation rhs_union = sum(cxt_, std::move(sum_builder));
 
-    square_union<C, Valuation> su;
+    square_union<C, Valuation> su(cxt_);
 
     // We iterate two times on lhs's alpha, and we possibly add each arc, modified, two times.
     // First when removing rhs_union, then when we look for all common parts).
@@ -96,7 +96,7 @@ struct difference_visitor
 
     return su.empty()
          ? zero<C>() // avoid a useless allocation when calling square_union::operator()
-         : SDD<C>(lhs.variable(), su(cxt_));
+         : SDD<C>(lhs.variable(), su());
   }
 
   /// @brief Always an error, difference with |0| as an operand is not cached.
