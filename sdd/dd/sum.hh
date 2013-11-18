@@ -292,10 +292,11 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
 /// This implementation is meant to be used as a policy by nary_builder which doesn't know how
 /// to add an arc.
 template <typename C, typename Valuation>
-struct LIBSDD_ATTRIBUTE_PACKED sum_builder_impl
+struct sum_builder_impl
 {
+  template <typename Container>
   void
-  add(boost::container::flat_set<Valuation>& set, Valuation&& operand)
+  add(Container& set, Valuation&& operand)
   {
     if (not values::empty_values(operand))
     {
@@ -303,8 +304,9 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_builder_impl
     }
   }
 
+  template <typename Container>
   void
-  add(boost::container::flat_set<Valuation>& set, const Valuation& operand)
+  add(Container& set, const Valuation& operand)
   {
     if (not values::empty_values(operand))
     {

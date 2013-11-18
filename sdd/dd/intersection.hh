@@ -104,7 +104,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
 /// This implementation is meant to be used as a policy by nary_builder which doesn't know how
 /// to add an arc.
 template <typename C, typename Valuation>
-struct LIBSDD_ATTRIBUTE_PACKED intersection_builder_impl
+struct intersection_builder_impl
 {
   /// @brief Tell if a zero is contained in this set of operands.
   bool has_zero;
@@ -115,8 +115,9 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_builder_impl
   {}
 
   /// @brief Add an rvalue operand.
+  template <typename Container>
   void
-  add(boost::container::flat_set<Valuation>& set, Valuation&& operand)
+  add(Container& set, Valuation&& operand)
   {
     if (has_zero)
     {
@@ -132,8 +133,9 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_builder_impl
   }
 
   /// @brief Add an lvalue operand.
+  template <typename Container>
   void
-  add(boost::container::flat_set<Valuation>& set, const Valuation& operand)
+  add(Container& set, const Valuation& operand)
   {
     if (has_zero)
     {
