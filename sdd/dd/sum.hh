@@ -277,8 +277,9 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
 template <typename C, typename Valuation>
 struct LIBSDD_ATTRIBUTE_PACKED sum_builder_impl
 {
+  template <typename Container>
   void
-  add(boost::container::flat_set<Valuation>& set, Valuation&& operand)
+  add(Container& set, Valuation&& operand)
   {
     if (not values::empty_values(operand))
     {
@@ -286,8 +287,9 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_builder_impl
     }
   }
 
+  template <typename Container>
   void
-  add(boost::container::flat_set<Valuation>& set, const Valuation& operand)
+  add(Container& set, const Valuation& operand)
   {
     if (not values::empty_values(operand))
     {

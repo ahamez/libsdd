@@ -113,8 +113,9 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_builder_impl
   {}
 
   /// @brief Add an rvalue operand.
+  template <typename Container>
   void
-  add(boost::container::flat_set<Valuation>& set, Valuation&& operand)
+  add(Container& set, Valuation&& operand)
   {
     if (has_zero)
     {
@@ -130,8 +131,9 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_builder_impl
   }
 
   /// @brief Add an lvalue operand.
+  template <typename Container>
   void
-  add(boost::container::flat_set<Valuation>& set, const Valuation& operand)
+  add(Container& set, const Valuation& operand)
   {
     if (has_zero)
     {
