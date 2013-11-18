@@ -70,7 +70,7 @@ public:
               su.add(arc.successor(), new_valuation);
             }
           }
-          return {node.variable(), su()};
+          return {node.variable(), su(cxt_.sdd_context())};
         }
         else // partition will change
         {

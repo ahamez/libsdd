@@ -76,7 +76,7 @@ struct evaluation
           su.add(new_successor, arc.valuation());
         }
       }
-      return {node.variable(), su()};
+      return {node.variable(), su(cxt.sdd_context())};
     }
     else
     {

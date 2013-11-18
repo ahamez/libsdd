@@ -209,7 +209,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       su.add(sum(cxt, std::move(arc.second)), arc.first);
     }
 
-    return SDD<C>(head.variable(), su());
+    return SDD<C>(head.variable(), su(cxt));
   }
 
   /// @brief Linear union of flat SDDs whose valuation are "fast iterable".

@@ -98,7 +98,7 @@ struct difference_visitor
 
     return su.empty()
          ? zero<C>() // avoid a useless allocation when calling square_union::operator()
-         : SDD<C>(lhs.variable(), su());
+         : SDD<C>(lhs.variable(), su(cxt_));
   }
 
   /// @brief Always an error, difference with |0| as an operand is not cached.

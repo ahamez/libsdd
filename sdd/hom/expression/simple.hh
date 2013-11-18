@@ -75,7 +75,7 @@ struct simple
           const SDD<C> successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
           su.add(successor, arc.valuation());
         }
-        return SDD<C>(o.variable(), su());
+        return SDD<C>(o.variable(), su(sdd_cxt));
       }
       else
       {
@@ -184,7 +184,7 @@ struct simple
         const auto successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
         su.add(successor, arc.valuation());
       }
-      return SDD<C>(o.variable(), su());
+      return SDD<C>(o.variable(), su(sdd_cxt));
     }
   }
 

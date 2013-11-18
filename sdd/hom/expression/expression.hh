@@ -273,7 +273,7 @@ struct expression_pre
           const SDD<C> successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
           su.add(successor, arc.valuation());
         }
-        return SDD<C>(o.variable(), su());
+        return SDD<C>(o.variable(), su(sdd_cxt));
       }
       else
       {
@@ -291,7 +291,7 @@ struct expression_pre
             assert(not local_res->result.empty() && "Invalid empty successor result");
             su.add(dd::sum<C>(sdd_cxt, std::move(local_res->result)), arc.valuation());
           }
-          return SDD<C>(o.variable(), su());
+          return SDD<C>(o.variable(), su(sdd_cxt));
         }
         catch (top<C>& t)
         {
@@ -401,7 +401,7 @@ struct expression_pre
         const SDD<C> successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
         su.add(successor, arc.valuation());
       }
-      return SDD<C>(o.variable(), su());
+      return SDD<C>(o.variable(), su(sdd_cxt));
     }
   }
 
