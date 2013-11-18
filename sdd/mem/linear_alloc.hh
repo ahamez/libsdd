@@ -81,8 +81,8 @@ struct arena
   rewind(position_type pos)
   noexcept
   {
+    assert(pointer_in_buffer(pos));
     position_ = pos;
-    assert(pointer_in_buffer(position_));
   }
 
   position_type
