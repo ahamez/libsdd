@@ -27,6 +27,11 @@ struct arena
     , position_(buffer_.get())
   {}
 
+  ~arena()
+  {
+    assert(used() == 0 && "Memory arena not rewound.");
+  }
+
   arena(const arena&) = delete;
   arena& operator=(const arena&) = delete;
 
@@ -105,7 +110,7 @@ struct arena
 /// @internal
 /// @brief Rewind an arena to its initial position.
 ///
-/// Use RAII to ensure that the arena is always rewinded to its initial position .
+/// Use RAII to ensure that the arena is always rewound to its initial position .
 struct rewinder
 {
   arena& a_;
