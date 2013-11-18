@@ -55,6 +55,7 @@ struct simple
   const
   {
     auto& sdd_cxt = cxt_.sdd_context();
+    mem::rewinder _(sdd_cxt.arena());
 
     if (not o.contains(o.position(), target_)) // not the last level?
     {
@@ -137,6 +138,7 @@ struct simple
   const
   {
     auto& sdd_cxt = cxt_.sdd_context();
+    mem::rewinder _(sdd_cxt.arena());
     const bool last_level = o.position() == target_;
     const bool update_values = std::find(cit, end, o.position()) != end;
 

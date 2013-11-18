@@ -45,7 +45,6 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     using node_type = NodeType;
     using valuation_type = typename node_type::valuation_type;
 
-    // Automatic reinitialisation of the memory arena.
     mem::rewinder _(cxt.arena());
 
     auto operands_cit = begin;
@@ -223,10 +222,15 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
   {
     const auto& variable = mem::variant_cast<flat_node<C>>(**begin).variable();
 
+    mem::rewinder _(cxt.arena());
+
     using values_type      = typename C::Values;
     using value_type       = typename values_type::value_type;
     using sum_builder_type = sum_builder<C, SDD<C>>;
-    boost::container::flat_map<value_type, sum_builder_type> value_to_succ;
+    boost::container::flat_map< value_type, sum_builder_type, std::less<value_type>
+                              , mem::linear_alloc<std::pair<value_type, sum_builder_type>>>
+      value_to_succ( std::less<value_type>()
+                   , mem::linear_alloc<std::pair<value_type, sum_builder_type>>(cxt.arena()));
     value_to_succ.reserve(std::distance(begin, end) * 2);
 
     auto cit = begin;

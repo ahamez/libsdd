@@ -9,6 +9,7 @@
 #include "sdd/dd/nary.hh"
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
+#include "sdd/mem/linear_alloc.hh"
 #include "sdd/util/hash.hh"
 #include "sdd/values/empty.hh"
 
@@ -36,14 +37,15 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
     using valuation_type = typename node_type::valuation_type;
     using variable_type  = typename node_type::variable_type;
 
+    mem::rewinder _(cxt.arena());
+
     auto operands_cit = begin;
     const auto operands_end = end;
 
     // Result accumulator, initialized with the first operand.
     SDD<C> res = *operands_cit;
 
-    const variable_type& variable =
-	    mem::variant_cast<node_type>(**operands_cit).variable();
+    const variable_type& variable = mem::variant_cast<node_type>(**operands_cit).variable();
 
     // We re-use the same square union to save some allocations.
     square_union<C, valuation_type> su(cxt);
