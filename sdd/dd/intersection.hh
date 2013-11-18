@@ -102,7 +102,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
 /// This implementation is meant to be used as a policy by nary_builder which doesn't know how
 /// to add an arc.
 template <typename C, typename Valuation>
-struct LIBSDD_ATTRIBUTE_PACKED intersection_builder_impl
+struct intersection_builder_impl
 {
   /// @brief Tell if a zero is contained in this set of operands.
   bool has_zero;

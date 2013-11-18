@@ -275,7 +275,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
 /// This implementation is meant to be used as a policy by nary_builder which doesn't know how
 /// to add an arc.
 template <typename C, typename Valuation>
-struct LIBSDD_ATTRIBUTE_PACKED sum_builder_impl
+struct sum_builder_impl
 {
   template <typename Container>
   void
