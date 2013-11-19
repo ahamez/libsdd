@@ -303,7 +303,8 @@ struct expression_pre
     else // target is contained in this hierarchy
     {
       namespace ph = std::placeholders;
-      dd::sum_builder<C, SDD<C>> operands(node.size());
+      dd::sum_builder<C, SDD<C>> operands;
+      operands.reserve(node.size());
 
       for (const auto& arc : node)
       {
@@ -353,7 +354,8 @@ struct expression_pre
     if (o.position() == target_)
     {
       namespace ph = std::placeholders;
-      dd::sum_builder<C, SDD<C>> operands(node.size());
+      dd::sum_builder<C, SDD<C>> operands;
+      operands.reserve(node.size());
 
       for (const auto& arc : node)
       {

@@ -53,7 +53,8 @@ struct difference_visitor
     mem::rewinder _(cxt_.arena());
 
     // Compute union of all rhs valuations.
-    sum_builder<C, Valuation> sum_builder(rhs.size());
+    sum_builder<C, Valuation> sum_builder;
+    sum_builder.reserve(rhs.size());
     for (auto& rhs_arc : rhs)
     {
       sum_builder.add(rhs_arc.valuation());

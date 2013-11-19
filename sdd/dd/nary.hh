@@ -167,22 +167,23 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
     , set_()
   {}
 
-  /// @brief Construction with a reserve request.
-  nary_builder(std::size_t size)
+  /// @brief Construction from a list of operands.
+  nary_builder(std::initializer_list<Valuation> operands)
     : builder_()
     , set_()
   {
-    set_.reserve(size);
-  }
-
-  /// @brief Construction from a list of operands.
-  nary_builder(std::initializer_list<Valuation> operands)
-    : nary_builder(operands.size())
-  {
+    set_.reserve(operands.size());
     for (const auto& op : operands)
     {
       add(op);
     }
+  }
+
+  /// @brief Request for allocation of additional memory.
+  void
+  reserve(std::size_t size)
+  {
+    set_.reserve(size);
   }
 
   /// @brief Add a new operand.
@@ -197,14 +198,6 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
   add(const Valuation& operand)
   {
     builder_.add(set_, operand);
-  }
-
-  /// @brief Request for allocation of additional memory.
-  void
-  reserve(std::size_t size)
-  noexcept
-  {
-    set_.reserve(size);
   }
 
   /// @brief Get an iterator to the first operand.
