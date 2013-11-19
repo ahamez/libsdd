@@ -4,7 +4,6 @@
 #include <algorithm> // any_of, copy, find
 #include <cassert>
 #include <utility>   // pair
-#include <vector>
 
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
