@@ -7,6 +7,7 @@
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/operations_fwd.hh"
+#include "sdd/mem/linear_alloc.hh"
 #include "sdd/util/boost_flat_map_no_warnings.hh"
 
 namespace sdd { namespace dd {
@@ -23,6 +24,9 @@ private:
   /// @brief Store the a list of valuation to be merged with a union operation.
   using sum_builder_type = sum_builder<C, Valuation>;
 
+  /// @brief The SDD evaluation context.
+  context<C>& cxt_;
+
   /// @brief Map successors to a list of valuations going to this same successor.
   boost::container::flat_map< SDD<C>, sum_builder_type, std::less<SDD<C>>
                             , mem::linear_alloc<std::pair<SDD<C>, sum_builder_type>>> map_;
@@ -31,7 +35,8 @@ public:
 
   /// @brief Constructor.
   square_union(context<C>& cxt)
-    : map_( std::less<SDD<C>>()
+    : cxt_(cxt)
+    , map_( std::less<SDD<C>>()
           , mem::linear_alloc<std::pair<SDD<C>, sum_builder_type>>(cxt.arena()))
   {}
 
@@ -51,7 +56,7 @@ public:
     }
     else
     {
-      auto ins = map_.emplace_hint(lb, succ, sum_builder_type());
+      auto ins = map_.emplace_hint(lb, succ, sum_builder_type(cxt_));
       ins->second.add(std::forward<Val>(val));
     }
   }
@@ -88,13 +93,13 @@ public:
   /// Once performed, all subsequent calls to this instance are invalid, except clear().
   /// Once clear() has been called, it's OK to use this square_union again.
   alpha_builder<C, Valuation>
-  operator()(context<C>& cxt)
+  operator()()
   {
-    alpha_builder<C, Valuation> builder(cxt);
+    alpha_builder<C, Valuation> builder(cxt_);
     builder.reserve(map_.size());
     for (auto& reversed_arc : map_)
     {
-      builder.add(sum(cxt, std::move(reversed_arc.second)), std::move(reversed_arc.first));
+      builder.add(sum(cxt_, std::move(reversed_arc.second)), std::move(reversed_arc.first));
     }
     return builder;
   }

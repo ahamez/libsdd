@@ -3,6 +3,7 @@
 
 #include <memory> // shared_ptr
 
+#include "sdd/dd/context_fwd.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom { namespace expr {
@@ -30,8 +31,8 @@ struct res_stack
   dd::sum_builder<C, SDD<C>> result;
   std::shared_ptr<res_stack> next;
 
-  res_stack(const std::shared_ptr<res_stack>& n)
-    : result(), next(n)
+  res_stack(dd::context<C>& cxt, const std::shared_ptr<res_stack>& n)
+    : result(cxt), next(n)
   {}
 };
 

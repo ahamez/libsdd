@@ -53,7 +53,7 @@ struct difference_visitor
     mem::rewinder _(cxt_.arena());
 
     // Compute union of all rhs valuations.
-    sum_builder<C, Valuation> sum_builder;
+    sum_builder<C, Valuation> sum_builder(cxt_);
     sum_builder.reserve(rhs.size());
     for (auto& rhs_arc : rhs)
     {
@@ -82,7 +82,7 @@ struct difference_visitor
     {
       for (auto& rhs_arc : rhs)
       {
-        intersection_builder<C, Valuation> inter_builder;
+        intersection_builder<C, Valuation> inter_builder(cxt_);
         inter_builder.add(lhs_arc.valuation());
         inter_builder.add(rhs_arc.valuation());
         Valuation tmp_val = intersection(cxt_, std::move(inter_builder));
@@ -99,7 +99,7 @@ struct difference_visitor
 
     return su.empty()
          ? zero<C>() // avoid a useless allocation when calling square_union::operator()
-         : SDD<C>(lhs.variable(), su(cxt_));
+         : SDD<C>(lhs.variable(), su());
   }
 
   /// @brief Always an error, difference with |0| as an operand is not cached.

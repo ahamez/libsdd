@@ -289,7 +289,7 @@ private:
     operator()(const Node& node, const inductive_base<C>& i)
     const
     {
-      dd::sum_builder<C, SDD<C>> sum_operands;
+      dd::sum_builder<C, SDD<C>> sum_operands(cxt_.sdd_context());
       sum_operands.reserve(node.size());
       for (const auto& arc : node)
       {

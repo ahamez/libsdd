@@ -81,6 +81,8 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
+    auto& sdd_context = cxt.sdd_context();
+
     SDD<C> s1 = s;
     SDD<C> s2 = s;
 
@@ -97,7 +99,7 @@ public:
         try
         {
           // chain applications of G
-          s2 = dd::sum(cxt.sdd_context(), {s2, g(cxt, o, s2)});
+          s2 = dd::sum(sdd_context, dd::sum_builder<C, SDD<C>>(sdd_context, {s2, g(cxt, o, s2)}));
         }
         catch (top<C>& t)
         {

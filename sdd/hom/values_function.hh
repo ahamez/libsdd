@@ -229,7 +229,7 @@ private:
       }
       else
       {
-        dd::sum_builder<C, SDD<C>> sum_operands;
+        dd::sum_builder<C, SDD<C>> sum_operands(cxt.sdd_context());
         sum_operands.reserve(node.size());
         for (const auto& arc : node)
         {

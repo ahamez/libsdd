@@ -51,7 +51,7 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
-    dd::intersection_builder<C, SDD<C>> intersection_operands;
+    dd::intersection_builder<C, SDD<C>> intersection_operands(cxt.sdd_context());
     intersection_operands.reserve(operands_.size());
     for (const auto& op : operands_)
     {

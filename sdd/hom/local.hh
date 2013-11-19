@@ -70,11 +70,11 @@ public:
               su.add(arc.successor(), new_valuation);
             }
           }
-          return {node.variable(), su(cxt_.sdd_context())};
+          return {node.variable(), su()};
         }
         else // partition will change
         {
-          dd::sum_builder<C, SDD<C>> sum_operands;
+          dd::sum_builder<C, SDD<C>> sum_operands(cxt_.sdd_context());
           sum_operands.reserve(node.size());
           for (const auto& arc : node)
           {

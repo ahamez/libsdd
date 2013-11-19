@@ -82,7 +82,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     // Initialize res with the alpha of the first operand.
     for (auto& arc : head)
     {
-      sum_builder_type succs;
+      sum_builder_type succs(cxt);
       succs.add(arc.successor());
       res.emplace(arc.valuation(), std::move(succs));
     }
@@ -126,7 +126,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
             goto equality;
           }
 
-          intersection_builder<C, valuation_type> inter_builder;
+          intersection_builder<C, valuation_type> inter_builder(cxt);
           inter_builder.add(current_val);
           inter_builder.add(res_val);
           const valuation_type inter = intersection(cxt, std::move(inter_builder));
@@ -175,7 +175,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
         // loop), we didn't find an intersection with any arc of res.
         if (not values::empty_values(current_val))
         {
-          sum_builder_type succs;
+          sum_builder_type succs(cxt);
           succs.add(current_succ);
           save.emplace_back(std::move(current_val), std::move(succs));
         }
@@ -209,7 +209,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       su.add(sum(cxt, std::move(arc.second)), arc.first);
     }
 
-    return SDD<C>(head.variable(), su(cxt));
+    return SDD<C>(head.variable(), su());
   }
 
   /// @brief Linear union of flat SDDs whose valuation are "fast iterable".
@@ -247,7 +247,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
           const auto search = value_to_succ.find(value);
           if (search == value_to_succ.end())
           {
-            value_to_succ.emplace_hint(search, value, sum_builder_type({succ}));
+            value_to_succ.emplace_hint(search, value, sum_builder_type(cxt, {succ}));
           }
           else
           {
@@ -383,7 +383,8 @@ inline
 SDD<C>
 operator+(const SDD<C>& lhs, const SDD<C>& rhs)
 {
-  return dd::sum(global<C>().sdd_context, {lhs, rhs});
+  return dd::sum( global<C>().sdd_context
+                , dd::sum_builder<C, SDD<C>>(global<C>().sdd_context, {lhs, rhs}));
 }
 
 /// @brief Perform the union of two SDD.
@@ -393,7 +394,8 @@ inline
 SDD<C>&
 operator+=(SDD<C>& lhs, const SDD<C>& rhs)
 {
-  SDD<C> tmp = dd::sum(global<C>().sdd_context, {lhs, rhs});
+  SDD<C> tmp = dd::sum( global<C>().sdd_context
+                      , dd::sum_builder<C, SDD<C>>(global<C>().sdd_context, {lhs, rhs}));
   using std::swap;
   swap(tmp, lhs);
   return lhs;
@@ -406,7 +408,7 @@ SDD<C>
 inline
 sum(InputIterator begin, InputIterator end)
 {
-  dd::sum_builder<C, SDD<C>> builder;
+  dd::sum_builder<C, SDD<C>> builder(global<C>().sdd_context);
   for (; begin != end; ++begin)
   {
     builder.add(*begin);
