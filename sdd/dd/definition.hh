@@ -141,20 +141,18 @@ public:
   SDD(const order<C>& o, const Initializer& init)
     : ptr_(one_ptr())
   {
-    if (o.empty())
+    if (o.empty()) // base case of the recursion, ptr_ is defaulted to |1|
     {
       return;
     }
-    // flat
-    else if (o.nested().empty())
+    else if (o.nested().empty()) // flat
     {
       // We can safely pass the order_identifier as a user one because only hierarchical levels
       // can be artificial.
       assert(not o.identifier().artificial());
       ptr_ = create_node(o.variable(), init(o.identifier().user()), SDD(o.next(), init));
     }
-    // hierarchical
-    else
+    else // hierarchical
     {
       ptr_ = create_node(o.variable(), SDD(o.nested(), init), SDD(o.next(), init));
     }
