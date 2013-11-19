@@ -53,7 +53,7 @@ TYPED_TEST(order_utility_test, empty)
 
 /*-------------------------------------------------------------------------------------------*/
 
-TYPED_TEST(order_utility_test, flat)
+TYPED_TEST(order_utility_test, sdd_initializer_flat)
 {
   {
     order_builder ob;
@@ -74,7 +74,7 @@ TYPED_TEST(order_utility_test, flat)
 
 /*-------------------------------------------------------------------------------------------*/
 
-TYPED_TEST(order_utility_test, hierarchical)
+TYPED_TEST(order_utility_test, sdd_initializer_hierarchical)
 {
   {
     order_builder ob0;

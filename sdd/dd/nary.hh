@@ -149,29 +149,25 @@ operator<<(std::ostream& os, const nary_op<C, Operation>& x)
 /// construction of operations in nary_op).
 template <typename C, typename Valuation, typename Builder>
 struct LIBSDD_ATTRIBUTE_PACKED nary_builder
+  : public Builder
 {
+  using builder_type = Builder;
   using set_type = boost::container::flat_set< Valuation, std::less<Valuation>
                                              , mem::linear_alloc<Valuation>>;
   using const_iterator = typename set_type::const_iterator;
-
-  /// @brief The policy to add new operands.
-  ///
-  /// An instance is needed for builders with a state (actually, the intersection builder).
-  /// @todo Use empty base class optimisation?
-  Builder builder_;
 
   /// @brief Sorted container of operands.
   set_type set_;
 
   /// @brief Default constructor.
   nary_builder(context<C>& cxt)
-    : builder_()
+    : builder_type()
     , set_(std::less<Valuation>(), mem::linear_alloc<Valuation>(cxt.arena()))
   {}
 
   /// @brief Construction from a list of operands.
   nary_builder(context<C>& cxt, std::initializer_list<Valuation> operands)
-    : builder_()
+    : builder_type()
     , set_(std::less<Valuation>(), mem::linear_alloc<Valuation>(cxt.arena()))
   {
     set_.reserve(operands.size());
@@ -192,14 +188,14 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
   void
   add(Valuation&& operand)
   {
-    builder_.add(set_, std::move(operand));
+    builder_type::add(set_, std::move(operand));
   }
 
   /// @brief Add a new operand.
   void
   add(const Valuation& operand)
   {
-    builder_.add(set_, operand);
+    builder_type::add(set_, operand);
   }
 
   /// @brief Get an iterator to the first operand.
