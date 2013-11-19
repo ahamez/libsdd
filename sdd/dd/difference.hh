@@ -63,7 +63,7 @@ struct difference_visitor
     square_union<C, Valuation> su(cxt_);
 
     // We iterate two times on lhs's alpha, and we possibly add each arc, modified, two times.
-    // First when removing rhs_union, then when we look for all common parts).
+    // First when removing rhs_union, then when we look for all common parts.
     su.reserve(lhs.size() * 2);
 
     // For each valuation of lhs, remove the quantity rhs_union.

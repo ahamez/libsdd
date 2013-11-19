@@ -254,7 +254,6 @@ struct expression_pre
   {
     // Shortcut to the SDD evaluation context.
     auto& sdd_cxt = cxt_.sdd_context();
-    mem::rewinder _(sdd_cxt.arena());
 
     if (not o.contains(o.position(), target_)) // target is not in the nested hierarchy
     {
@@ -343,7 +342,6 @@ struct expression_pre
   const
   {
     auto& sdd_cxt = cxt_.sdd_context();
-    mem::rewinder _(sdd_cxt.arena());
     const bool update_values = std::find(cit, end, o.position()) != end;
 
     if (update_values)

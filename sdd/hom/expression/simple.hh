@@ -55,7 +55,6 @@ struct simple
   const
   {
     auto& sdd_cxt = cxt_.sdd_context();
-    mem::rewinder _(sdd_cxt.arena());
 
     if (not o.contains(o.position(), target_)) // not the last level?
     {
@@ -138,7 +137,6 @@ struct simple
   const
   {
     auto& sdd_cxt = cxt_.sdd_context();
-    mem::rewinder _(sdd_cxt.arena());
     const bool last_level = o.position() == target_;
     const bool update_values = std::find(cit, end, o.position()) != end;
 
@@ -175,6 +173,7 @@ struct simple
       // Not the last level, we just need to update values if necessary and to propagate on
       // successors.
       dd::square_union<C, values_type> su(sdd_cxt);
+      su.reserve(node.size());
       for (const auto& arc : node)
       {
         if (update_values)

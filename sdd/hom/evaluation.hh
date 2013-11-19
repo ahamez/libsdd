@@ -62,8 +62,6 @@ struct evaluation
 
     if (h.skip(o))
     {
-      mem::rewinder _(cxt.sdd_context().arena());
-
       // The evaluated homomorphism skips the current level. We can thus forward its application
       // to the following levels.
       dd::square_union<C, typename Node::valuation_type> su(cxt.sdd_context());
