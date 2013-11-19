@@ -289,7 +289,8 @@ private:
     operator()(const Node& node, const inductive_base<C>& i)
     const
     {
-      dd::sum_builder<C, SDD<C>> sum_operands(node.size());
+      dd::sum_builder<C, SDD<C>> sum_operands;
+      sum_operands.reserve(node.size());
       for (const auto& arc : node)
       {
         const homomorphism<C> next_hom = i(order_, arc.valuation());

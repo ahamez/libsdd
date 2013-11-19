@@ -79,7 +79,8 @@ struct simple
       {
         // We are interested in this level, but the target is not nested into it. Thus, we must
         // propagate on both nesteds SDD and successors.
-        dd::sum_builder<C, SDD<C>> operands(node.size());
+        dd::sum_builder<C, SDD<C>> operands;
+        operands.reserve(node.size());
         try
         {
           for (const auto& arc : node)
@@ -108,7 +109,8 @@ struct simple
     else
     {
       // Final level, we just need to propagate in the nested SDD.
-      dd::sum_builder<C, SDD<C>> operands(node.size());
+      dd::sum_builder<C, SDD<C>> operands;
+      operands.reserve(node.size());
       for (const auto& arc : node)
       {
         const auto nested = visit_self(*this, arc.valuation(), o.nested(), app, res, cit, end);
@@ -147,7 +149,8 @@ struct simple
 
     if (last_level)
     {
-      dd::sum_builder<C, SDD<C>> operands(node.size());
+      dd::sum_builder<C, SDD<C>> operands;
+      operands.reserve(node.size());
       for (const auto& arc : node)
       {
         if (update_values)

@@ -75,7 +75,8 @@ public:
         }
         else // partition will change
         {
-          dd::sum_builder<C, SDD<C>> sum_operands(node.size());
+          dd::sum_builder<C, SDD<C>> sum_operands;
+          sum_operands.reserve(node.size());
           for (const auto& arc : node)
           {
             const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());

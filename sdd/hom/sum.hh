@@ -67,7 +67,8 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
-    dd::sum_builder<C, SDD<C>> sum_operands(size_);
+    dd::sum_builder<C, SDD<C>> sum_operands;
+    sum_operands.reserve(size_);
     for (const auto& op : *this)
     {
       sum_operands.add(op(cxt, o, x));
