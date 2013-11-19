@@ -187,7 +187,7 @@ struct linear_alloc
   operator==(const linear_alloc<U>& lhs, const linear_alloc<V>& rhs)
   noexcept
   {
-    return lhs.size_ == rhs.size_ and &lhs.a_ == &rhs.a_;
+    return &lhs.a_ == &rhs.a_;
   }
 
   template <class U> friend struct linear_alloc;
