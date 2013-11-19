@@ -175,6 +175,7 @@ struct simple
       // Not the last level, we just need to update values if necessary and to propagate on
       // successors.
       dd::square_union<C, values_type> su;
+      su.reserve(node.size());
       for (const auto& arc : node)
       {
         if (update_values)
