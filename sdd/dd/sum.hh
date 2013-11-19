@@ -257,7 +257,10 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       }
     }
 
-    boost::container::flat_map<SDD<C>, values_type> succ_to_value;
+    boost::container::flat_map< SDD<C>, values_type, std::less<SDD<C>>
+                              , mem::linear_alloc<std::pair<SDD<C>, values_type>>>
+      succ_to_value( std::less<SDD<C>>()
+                   , mem::linear_alloc<std::pair<SDD<C>, values_type>>(cxt.arena()));
     succ_to_value.reserve(value_to_succ.size());
     for (auto& value_succs : value_to_succ)
     {
