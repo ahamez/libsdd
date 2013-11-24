@@ -64,6 +64,7 @@ struct evaluation
     {
       // The evaluated homomorphism skips the current level. We can thus forward its application
       // to the following levels.
+      mem::rewinder _(cxt.sdd_context().arena());
       dd::square_union<C, typename Node::valuation_type> su(cxt.sdd_context());
       su.reserve(node.size());
       for (const auto& arc : node)
