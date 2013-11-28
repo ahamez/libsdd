@@ -84,11 +84,21 @@ public:
 
   /// @brief Constructor with a single identifier.
   order_builder(identifier_type&& id)
+    : ptr_(mk_ptr(std::move(id), nullptr, nullptr))
+  {}
+
+  /// @brief Constructor with a single identifier.
+  order_builder(const identifier_type& id)
     : ptr_(mk_ptr(id, nullptr, nullptr))
   {}
 
   /// @brief Constructor with an identifier and its associated nested order.
   order_builder(identifier_type&& id, const order_builder& nested)
+    : ptr_(mk_ptr(std::move(id), nested.ptr_, nullptr))
+  {}
+
+  /// @brief Constructor with an identifier and its associated nested order.
+  order_builder(const identifier_type& id, const order_builder& nested)
     : ptr_(mk_ptr(id, nested.ptr_, nullptr))
   {}
 
