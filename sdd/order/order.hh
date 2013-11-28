@@ -167,8 +167,16 @@ public:
   operator==(const order& other)
   const noexcept
   {
-    return nodes_ptr_ == other.nodes_ptr_ and id_to_node_ptr_ == other.id_to_node_ptr_
-      and head_ == other.head_;
+    if (empty())
+    {
+      return other.empty() ? true : false;
+    }
+    else if (other.empty())
+    {
+      return false;
+    }
+    return position() == other.position() and identifier() == other.identifier()
+       and nested() == other.nested() and next() == other.next();
   }
 
 private:
