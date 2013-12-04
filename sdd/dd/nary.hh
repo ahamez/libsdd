@@ -272,10 +272,7 @@ struct hash<sdd::dd::nary_op<C, Operation>>
   const
   {
     std::size_t seed = 0;
-    for (const auto& operand : op)
-    {
-      sdd::util::hash_combine(seed, operand);
-    }
+    sdd::util::hash_combine(seed, op.begin(), op.end());
     return seed;
   }
 };
