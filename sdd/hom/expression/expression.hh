@@ -61,8 +61,9 @@ struct expression_post_visitor;
 /// @internal
 template <typename C>
 void
-expression_post( yield_type<C>& yield, expression_post_visitor<C>& v, SDD<C> s, const order<C>& o
-               , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<sdd_stack<C>>& res
+expression_post( yield_type<C>& yield, expression_post_visitor<C>& v, const SDD<C>& s
+               , const order<C>& o, const std::shared_ptr<app_stack<C>>& app
+               , const std::shared_ptr<sdd_stack<C>>& res
                , order_positions_iterator cit, order_positions_iterator end);
 
 /// @internal
@@ -203,8 +204,9 @@ struct expression_post_visitor
 template <typename C>
 inline
 void
-expression_post( yield_type<C>& yield, expression_post_visitor<C>& v, SDD<C> s, const order<C>& o
-               , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<sdd_stack<C>>& res
+expression_post( yield_type<C>& yield, expression_post_visitor<C>& v, const SDD<C>& s
+               , const order<C>& o, const std::shared_ptr<app_stack<C>>& app
+               , const std::shared_ptr<sdd_stack<C>>& res
                , order_positions_iterator cit, order_positions_iterator end)
 {
   visit(v, /* visited */s, yield, o, app, res, cit, end);

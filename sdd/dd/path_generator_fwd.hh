@@ -47,7 +47,7 @@ struct sdd_stack
 /// @internal
 template <typename C>
 void
-paths(typename path_generator<C>::caller_type&, SDD<C>);
+paths(typename path_generator<C>::caller_type&, const SDD<C>&);
 
 /*------------------------------------------------------------------------------------------------*/
 
