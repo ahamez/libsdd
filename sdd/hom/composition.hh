@@ -137,8 +137,7 @@ struct hash<sdd::hom::composition<C>>
   operator()(const sdd::hom::composition<C>& c)
   const
   {
-    std::size_t seed = 0;
-    sdd::util::hash_combine(seed, c.left());
+    std::size_t seed = sdd::util::hash(c.left());
     sdd::util::hash_combine(seed, c.right());
     return seed;
   }

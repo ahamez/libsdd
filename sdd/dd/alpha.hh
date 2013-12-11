@@ -162,4 +162,26 @@ public:
 
 }} // namespace sdd::dd
 
+namespace std {
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @brief Hash specialization for sdd::arc
+template <typename C, typename Valuation>
+struct hash<sdd::arc<C, Valuation>>
+{
+  std::size_t
+  operator()(const sdd::arc<C, Valuation>& arc)
+  const
+  {
+    std::size_t seed = sdd::util::hash(arc.valuation());
+    sdd::util::hash_combine(seed, arc.successor());
+    return seed;
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+} // namespace std
+
 #endif // _SDD_DD_ALPHA_HH_

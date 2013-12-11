@@ -246,8 +246,7 @@ struct hash<sdd::hom::saturation_sum<C>>
   operator()(const sdd::hom::saturation_sum<C>& s)
   const
   {
-    std::size_t seed = 0;
-    sdd::util::hash_combine(seed, s.variable());
+    std::size_t seed = sdd::util::hash(s.variable());
     if (s.F())
     {
       sdd::util::hash_combine(seed, *s.F());
@@ -256,10 +255,7 @@ struct hash<sdd::hom::saturation_sum<C>>
     {
       sdd::util::hash_combine(seed, *s.L());
     }
-    for (const auto& g : s.G())
-    {
-      sdd::util::hash_combine(seed, g);
-    }
+    sdd::util::hash_combine(seed, s.G().begin(), s.G().end());
     return seed;
   }
 };

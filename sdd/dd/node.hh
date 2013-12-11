@@ -194,13 +194,8 @@ struct hash<sdd::node<C, Valuation>>
   operator()(const sdd::node<C, Valuation>& n)
   const
   {
-    std::size_t seed = 0;
-    sdd::util::hash_combine(seed, n.variable());
-    for (auto& arc : n)
-    {
-      sdd::util::hash_combine(seed, arc.valuation());
-      sdd::util::hash_combine(seed, arc.successor());
-    }
+    std::size_t seed = sdd::util::hash(n.variable());
+    sdd::util::hash_combine(seed, n.begin(), n.end());
     return seed;
   }
 };

@@ -507,7 +507,7 @@ struct hash<sdd::SDD<C>>
   operator()(const sdd::SDD<C>& x)
   const noexcept
   {
-    return std::hash<decltype(x.ptr())>()(x.ptr());
+    return sdd::util::hash(x.ptr());
   }
 };
 

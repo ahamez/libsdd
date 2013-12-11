@@ -35,6 +35,32 @@ hash_combine(std::size_t& seed, InputIterator cit, InputIterator cend)
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @brief Call std::hash<>
+template <typename T>
+inline
+std::size_t
+hash(const T& x)
+noexcept(noexcept(std::hash<T>()(x)))
+{
+  return std::hash<T>()(x);
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @brief Call std::hash<>
+template <typename InputIterator>
+inline
+std::size_t
+hash(InputIterator cit, InputIterator cend)
+noexcept(noexcept(std::hash<typename std::decay<decltype(*cit)>::type>()(*cit)))
+{
+  std::size_t seed = hash(*cit);
+  hash_combine(seed, cit + 1, cend);
+  return seed;
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
 }} // namespace sdd::util
 
 #endif // _SDD_UTIL_HASH_HH_

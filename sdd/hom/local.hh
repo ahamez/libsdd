@@ -213,8 +213,7 @@ struct hash<sdd::hom::local<C>>
   operator()(const sdd::hom::local<C>& l)
   const
   {
-    std::size_t seed = 0;
-    sdd::util::hash_combine(seed, l.target());
+    std::size_t seed = sdd::util::hash(l.target());
     sdd::util::hash_combine(seed, l.hom());
     return seed;
   }

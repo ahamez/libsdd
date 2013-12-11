@@ -301,7 +301,7 @@ struct hash<sdd::homomorphism<C>>
   operator()(const sdd::homomorphism<C>& h)
   const noexcept
   {
-    return std::hash<decltype(h.ptr())>()(h.ptr());
+    return sdd::util::hash(h.ptr());
   }
 };
 

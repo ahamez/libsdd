@@ -126,8 +126,7 @@ struct hash<sdd::order_identifier<C>>
   operator()(const sdd::order_identifier<C>& o)
   const noexcept
   {
-    std::size_t seed = 0;
-    sdd::util::hash_combine(seed, o.artificial());
+    std::size_t seed = sdd::util::hash(o.artificial());
     sdd::util::hash_combine(seed, o.user());
     return seed;
   }

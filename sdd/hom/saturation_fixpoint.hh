@@ -284,14 +284,10 @@ struct hash<sdd::hom::saturation_fixpoint<C>>
   operator()(const sdd::hom::saturation_fixpoint<C>& s)
   const
   {
-    std::size_t seed = 0;
-    sdd::util::hash_combine(seed, s.variable());
+    std::size_t seed = sdd::util::hash(s.variable());
     sdd::util::hash_combine(seed, s.F());
     sdd::util::hash_combine(seed, s.L());
-    for (auto cit = s.G_begin(); cit != s.G_end(); ++cit)
-    {
-      sdd::util::hash_combine(seed, *cit);
-    }
+    sdd::util::hash_combine(seed, s.G_begin(), s.G_end());
     return seed;
   }
 };

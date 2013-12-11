@@ -8,6 +8,8 @@
 #include <limits>
 #include <type_traits>
 
+#include "sdd/util/hash.hh"
+
 namespace sdd { namespace values {
 
 /*------------------------------------------------------------------------------------------------*/
@@ -204,7 +206,7 @@ struct hash<sdd::values::bitset<Size>>
   operator()(const sdd::values::bitset<Size>& b)
   const noexcept
   {
-    return std::hash<unsigned long>()(b.content_.to_ulong());
+    return sdd::util::hash(b.content_.to_ulong());
   }
 };
   
