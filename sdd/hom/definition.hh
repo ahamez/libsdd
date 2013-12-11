@@ -24,7 +24,6 @@
 #include "sdd/mem/ptr.hh"
 #include "sdd/mem/ref_counted.hh"
 #include "sdd/mem/variant.hh"
-#include "sdd/util/print_sizes_fwd.hh"
 
 namespace sdd {
 
@@ -231,8 +230,6 @@ public:
       return h.selector();
     }
   };
-
-  friend void util::print_sizes<C>(std::ostream&);
 };
 
 /*------------------------------------------------------------------------------------------------*/

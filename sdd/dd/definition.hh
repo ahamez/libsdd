@@ -15,7 +15,6 @@
 #include "sdd/mem/ref_counted.hh"
 #include "sdd/mem/variant.hh"
 #include "sdd/order/order.hh"
-#include "sdd/util/print_sizes_fwd.hh"
 #include "sdd/values/empty.hh"
 
 namespace sdd {
@@ -364,8 +363,6 @@ private:
       new (addr) unique_type(mem::construct<node<C, Valuation>>(), var, builder);
     return ut(u);
   }
-
-  friend void util::print_sizes<C>(std::ostream&);
 };
 
 /*------------------------------------------------------------------------------------------------*/
