@@ -25,7 +25,7 @@ class order_node
 public:
 
   /// @brief A library's variable type.
-  using variable_type = typename C::Variable;
+  using variable_type = typename C::variable_type;
 
   /// @brief A path, following hierarchies, to a node.
   using path_type = std::vector<order_position_type>;

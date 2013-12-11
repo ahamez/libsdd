@@ -36,9 +36,6 @@ using hierarchical_node = node<C, SDD<C>>;
 template <typename C>
 class SDD
 {
-  static_assert( std::is_integral<typename C::Variable>::value
-               , "A variable must be an integral type.");
-
 private:
 
   /// @brief A canonized SDD.
@@ -80,7 +77,7 @@ public:
   using ptr_type = mem::ptr<unique_type>;
 
   /// @brief The type of variables.
-  using variable_type = typename C::Variable;
+  using variable_type = typename C::variable_type;
 
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
@@ -110,7 +107,7 @@ public:
   /// @param succ The SDD's successor.
   ///
   /// O(1).
-  SDD(const variable_type& var, values_type&& val, const SDD& succ)
+  SDD(variable_type var, values_type&& val, const SDD& succ)
     : ptr_(create_node(var, std::move(val), succ))
   {}
 
@@ -121,7 +118,7 @@ public:
   /// @param succ The SDD's successor.
   ///
   /// O(1).
-  SDD(const variable_type& var, const values_type& val, const SDD& succ)
+  SDD(variable_type var, const values_type& val, const SDD& succ)
     : ptr_(create_node(var, val, succ))
   {}
 
@@ -132,7 +129,7 @@ public:
   /// @param succ The SDD's successor.
   ///
   /// O(1).
-  SDD(const variable_type& var, const SDD& val, const SDD& succ)
+  SDD(variable_type var, const SDD& val, const SDD& succ)
     : ptr_(create_node(var, val, succ))
   {}
 
@@ -207,7 +204,7 @@ public:
   ///
   /// O(n) where n is the number of arcs in the builder.
   template <typename Valuation>
-  SDD(const variable_type& var, dd::alpha_builder<C, Valuation>&& builder)
+  SDD(variable_type var, dd::alpha_builder<C, Valuation>&& builder)
     : ptr_(create_node(var, std::move(builder)))
   {}
 
@@ -293,7 +290,7 @@ private:
   template <typename Valuation>
   static
   ptr_type
-  create_node(const variable_type& var, Valuation&& val, const SDD& succ)
+  create_node(variable_type var, Valuation&& val, const SDD& succ)
   {
     if (succ.empty() or values::empty_values(val))
     {
@@ -314,7 +311,7 @@ private:
   template <typename Valuation>
   static
   ptr_type
-  create_node(const variable_type& var, const Valuation& val, const SDD& succ)
+  create_node(variable_type var, const Valuation& val, const SDD& succ)
   {
     if (succ.empty() or values::empty_values(val))
     {
@@ -335,7 +332,7 @@ private:
   template <typename Valuation>
   static
   ptr_type
-  create_node(const variable_type& var, dd::alpha_builder<C, Valuation>&& builder)
+  create_node(variable_type var, dd::alpha_builder<C, Valuation>&& builder)
   {
     if (builder.empty())
     {
@@ -354,7 +351,7 @@ private:
   template <typename Valuation>
   static
   unique_type&
-  unify_node(const variable_type& var, dd::alpha_builder<C, Valuation>&& builder)
+  unify_node(variable_type var, dd::alpha_builder<C, Valuation>&& builder)
   {
     // Will be erased by the unicity table, either it's an already existing node or a deletion
     // is requested by ptr.

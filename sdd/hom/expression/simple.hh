@@ -25,9 +25,6 @@ struct simple
   /// @brief Needed by mem::variant.
   using result_type = SDD<C>;
 
-  /// @brief A variable type.
-  using variable_type = typename C::Variable;
-
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 

@@ -17,9 +17,6 @@ class order_builder final
 {
 public:
 
-  /// @brief The type of a variable.
-  using variable_type = typename C::Variable;
-
   /// @brief The type of an identifier.
   using identifier_type = typename C::Identifier;
 

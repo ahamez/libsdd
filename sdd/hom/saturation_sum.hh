@@ -33,7 +33,7 @@ public:
   using optional_type = boost::optional<homomorphism<C>>;
 
   /// @brief The variable type.
-  using variable_type = typename C::Variable;
+  using variable_type = typename C::variable_type;
 
   /// @brief The type of the homomorphism G part.
   using g_type = boost::container::flat_set<homomorphism<C>>;
@@ -55,8 +55,7 @@ private:
 public:
 
   /// @brief Constructor.
-  saturation_sum( const variable_type& var, const optional_type& f, g_type&& g
-                , const optional_type& l)
+  saturation_sum(variable_type var, const optional_type& f, g_type&& g, const optional_type& l)
     : variable_(var)
     , F_(f)
     , G_(std::move(g))
@@ -118,7 +117,7 @@ public:
   }
 
   /// @brief Get the targeted variable.
-  const variable_type&
+  variable_type
   variable()
   const noexcept
   {
@@ -203,7 +202,7 @@ operator<<(std::ostream& os, const saturation_sum<C>& s)
 /// operands of the G part are already optimized (local merged and sums flatten).
 template <typename C, typename InputIterator>
 homomorphism<C>
-SaturationSum( const typename C::Variable& var
+SaturationSum( typename C::variable_type var
              , const typename saturation_sum<C>::optional_type& f
              , InputIterator gbegin, InputIterator gend
              , const typename saturation_sum<C>::optional_type& l)

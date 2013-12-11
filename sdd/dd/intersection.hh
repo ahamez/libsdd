@@ -42,7 +42,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
     // Result accumulator, initialized with the first operand.
     SDD<C> res = *operands_cit;
 
-    const variable_type& variable =
+    const variable_type variable =
 	    mem::variant_cast<node_type>(**operands_cit).variable();
 
     // We re-use the same square union to save some allocations.

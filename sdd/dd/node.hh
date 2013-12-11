@@ -35,7 +35,7 @@ class LIBSDD_ATTRIBUTE_PACKED node final
 public:
 
   /// @brief The type of the variable of this node.
-  using variable_type = typename C::Variable;
+  using variable_type = typename C::variable_type;
 
   /// @brief The type of the valuation of this node.
   using valuation_type = Valuation;
@@ -61,7 +61,7 @@ public:
   ///
   /// O(n) where n is the number of arcs in the builder.
   /// It can't throw as the memory for the alpha has already been allocated.
-  node(const variable_type& var, dd::alpha_builder<C, Valuation>& builder)
+  node(variable_type var, dd::alpha_builder<C, Valuation>& builder)
   noexcept
     : variable_(var), size_(static_cast<alpha_size_type>(builder.size()))
   {

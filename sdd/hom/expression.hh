@@ -32,9 +32,6 @@ class expression
 {
 public:
 
-  /// @brief A variable type.
-  using variable_type = typename C::Variable;
-
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 
@@ -146,9 +143,6 @@ template <typename C>
 class simple_expression
 {
 public:
-
-  /// @brief A variable type.
-  using variable_type = typename C::Variable;
 
   /// @brief The type of a set of values.
   using values_type = typename C::Values;

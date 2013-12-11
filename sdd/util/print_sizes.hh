@@ -23,7 +23,7 @@ print_sizes(::std::ostream& os)
 #endif
 
   os << ::std::endl;
-  os << "Variable " << sizeof(typename C::Variable) << ::std::endl;
+  os << "Variable " << sizeof(typename C::variable_type) << ::std::endl;
   os << "Values   " << sizeof(typename C::Values) << ::std::endl;
 
   os << ::std::endl;

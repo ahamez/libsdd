@@ -42,7 +42,7 @@ public:
   using identifier_type = typename C::Identifier;
 
   /// @brief A library's variable type.
-  using variable_type = typename C::Variable;
+  using variable_type = typename C::variable_type;
 
 private:
 
