@@ -125,7 +125,7 @@ struct hash<sdd::hom::constant<C>>
   operator()(const sdd::hom::constant<C>& c)
   const
   {
-    return hash<sdd::SDD<C>>()(c.sdd());
+    return sdd::util::hash(c.sdd());
   }
 };
 

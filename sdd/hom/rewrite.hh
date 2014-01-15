@@ -36,9 +36,6 @@ struct rewriter
   /// @brief Needed by mem::variant.
   using result_type = homomorphism<C>;
 
-  /// @brief A variable type.
-  using variable_type =typename C::Variable;
-
   /// @brief The type of a list of homomorphisms.
   using hom_list_type = std::deque<homomorphism<C>>;
 

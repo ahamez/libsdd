@@ -32,9 +32,6 @@ class expression
 {
 public:
 
-  /// @brief A variable type.
-  using variable_type = typename C::Variable;
-
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 
@@ -146,9 +143,6 @@ template <typename C>
 class simple_expression
 {
 public:
-
-  /// @brief A variable type.
-  using variable_type = typename C::Variable;
 
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
@@ -336,10 +330,7 @@ struct hash<sdd::hom::expression<C>>
   const
   {
     std::size_t seed = e.evaluator().hash();
-    for (const auto& v : e.operands())
-    {
-      sdd::util::hash_combine(seed, v);
-    }
+    sdd::util::hash_combine(seed, e.operands().begin(), e.operands().end());
     sdd::util::hash_combine(seed, e.target());
     return seed;
   }
@@ -356,10 +347,7 @@ struct hash<sdd::hom::simple_expression<C>>
   const noexcept
   {
     std::size_t seed = e.evaluator().hash();
-    for (const auto& v : e.operands())
-    {
-      sdd::util::hash_combine(seed, v);
-    }
+    sdd::util::hash_combine(seed, e.operands().begin(), e.operands().end());
     sdd::util::hash_combine(seed, e.target());
     return seed;
   }

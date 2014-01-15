@@ -35,7 +35,7 @@ class LIBSDD_ATTRIBUTE_PACKED node final
 public:
 
   /// @brief The type of the variable of this node.
-  using variable_type = typename C::Variable;
+  using variable_type = typename C::variable_type;
 
   /// @brief The type of the valuation of this node.
   using valuation_type = Valuation;
@@ -61,7 +61,7 @@ public:
   ///
   /// O(n) where n is the number of arcs in the builder.
   /// It can't throw as the memory for the alpha has already been allocated.
-  node(const variable_type& var, dd::alpha_builder<C, Valuation>& builder)
+  node(variable_type var, dd::alpha_builder<C, Valuation>& builder)
   noexcept
     : variable_(var), size_(static_cast<alpha_size_type>(builder.size()))
   {
@@ -194,13 +194,8 @@ struct hash<sdd::node<C, Valuation>>
   operator()(const sdd::node<C, Valuation>& n)
   const
   {
-    std::size_t seed = 0;
-    sdd::util::hash_combine(seed, n.variable());
-    for (auto& arc : n)
-    {
-      sdd::util::hash_combine(seed, arc.valuation());
-      sdd::util::hash_combine(seed, arc.successor());
-    }
+    std::size_t seed = sdd::util::hash(n.variable());
+    sdd::util::hash_combine(seed, n.begin(), n.end());
     return seed;
   }
 };

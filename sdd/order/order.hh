@@ -42,7 +42,7 @@ public:
   using identifier_type = typename C::Identifier;
 
   /// @brief A library's variable type.
-  using variable_type = typename C::Variable;
+  using variable_type = typename C::variable_type;
 
 private:
 
@@ -181,7 +181,7 @@ public:
 
 private:
 
-  /// @brief Construct whith a shallow copy an already existing order.
+  /// @brief Construct with a shallow copy an already existing order.
   order( const nodes_ptr_type& nodes_ptr, const std::shared_ptr<id_to_node_type>& id_to_node
        , const order_node<C>* head)
     : nodes_ptr_(nodes_ptr), id_to_node_ptr_(id_to_node), head_(head)

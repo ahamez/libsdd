@@ -79,7 +79,7 @@ struct paths_visitor
 /// @internal
 template <typename C>
 void
-paths(typename path_generator<C>::caller_type& yield, SDD<C> sdd)
+paths(typename path_generator<C>::caller_type& yield, const SDD<C>& sdd)
 {
   path<C> tmp;
   tmp.reserve(512);

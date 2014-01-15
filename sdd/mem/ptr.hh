@@ -6,6 +6,7 @@
 #include <type_traits> // remove_const
 
 #include "sdd/mem/unique_table.hh"
+#include "sdd/util/hash.hh"
 
 namespace sdd { namespace mem {
 
@@ -173,7 +174,7 @@ struct hash<sdd::mem::ptr<Unique>>
   operator()(const sdd::mem::ptr<Unique>& x)
   const noexcept
   {
-    return std::hash<decltype(x.operator->())>()(x.operator->());
+    return sdd::util::hash(x.operator->());
   }
 };
 

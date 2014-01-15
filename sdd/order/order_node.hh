@@ -25,7 +25,7 @@ class order_node
 public:
 
   /// @brief A library's variable type.
-  using variable_type = typename C::Variable;
+  using variable_type = typename C::variable_type;
 
   /// @brief A path, following hierarchies, to a node.
   using path_type = std::vector<order_position_type>;
@@ -125,6 +125,15 @@ public:
   const noexcept
   {
     return *path_ptr_;
+  }
+
+  /// @brief Tell if lhs is before rhs.
+  friend
+  bool
+  operator<(const order_node& lhs, const order_node& rhs)
+  noexcept
+  {
+    return lhs.position() < rhs.position();
   }
 }; // class order_node
 
