@@ -358,6 +358,22 @@ noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @brief Inequality of flat_set
+/// @related flat_set
+///
+/// O(1).
+template <typename Value>
+inline
+bool
+operator!=(const flat_set<Value>& lhs, const flat_set<Value>& rhs)
+noexcept
+{
+  // Pointer inequality.
+  return not(lhs.ptr() == rhs.ptr());
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
 /// @brief Comparison of flat_set
 /// @related flat_set
 ///
