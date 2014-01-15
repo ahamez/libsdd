@@ -126,6 +126,15 @@ public:
   {
     return *path_ptr_;
   }
+
+  /// @brief Tell if lhs is before rhs.
+  friend
+  bool
+  operator<(const order_node& lhs, const order_node& rhs)
+  noexcept
+  {
+    return lhs.position() < rhs.position();
+  }
 }; // class order_node
 
 /*------------------------------------------------------------------------------------------------*/
