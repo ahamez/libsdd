@@ -23,11 +23,11 @@ struct flatten
     }
     else if (ob.nested().empty())
     {
-      return order_builder<C>(ob.identifier().user()) << operator()(ob.next());
+      return order_builder<C>(ob.identifier().user()) << (*this)(ob.next());
     }
     else
     {
-      return operator()(ob.nested()) << operator()(ob.next());
+      return (*this)(ob.nested()) << (*this)(ob.next());
     }
   }
 };
