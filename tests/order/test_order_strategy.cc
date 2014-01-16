@@ -2,10 +2,11 @@
 
 #include "sdd/order/order.hh"
 #include "sdd/order/strategies/flatten.hh"
+#include "sdd/order/strategies/variables_per_level.hh"
 
 #include "tests/configuration.hh"
 
-/*-------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------------------*/
 
 template <typename C>
 struct order_strategy_test
@@ -20,9 +21,9 @@ TYPED_TEST_CASE(order_strategy_test, configurations);
 #include "tests/macros.hh"
 
 #define flatten sdd::flatten<conf>
+#define variables_per_level sdd::variables_per_level<conf>
 
-/*-------------------------------------------------------------------------------------------*/
-
+/*------------------------------------------------------------------------------------------------*/
 
 TYPED_TEST(order_strategy_test, strategy_flatten)
 {
@@ -57,6 +58,16 @@ TYPED_TEST(order_strategy_test, strategy_flatten)
                   << order_builder("z", order_builder("k"));
     const auto obr = order_builder({"i", "j", "k"});
     ASSERT_EQ(order(obr), order(flatten()(ob0)));
+  }
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+TYPED_TEST(order_strategy_test, strategy_variables_per_level)
+{
+  {
+    const order_builder ob0;
+    ASSERT_EQ(order(ob0), order(variables_per_level(10)(ob0)));
   }
 }
 

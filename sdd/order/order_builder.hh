@@ -100,6 +100,26 @@ public:
   {}
 
   /// @internal
+  order_builder(const order_identifier<C>& id, const order_builder& nested)
+    : ptr_(mk_ptr(id, nested.ptr_, nullptr))
+  {}
+
+  /// @internal
+  order_builder(order_identifier<C>&& id, const order_builder& nested)
+    : ptr_(mk_ptr(std::move(id), nested.ptr_, nullptr))
+  {}
+
+  /// @internal
+  order_builder(const order_identifier<C>& id)
+    : ptr_(mk_ptr(id, nullptr, nullptr))
+  {}
+
+  /// @internal
+  order_builder(order_identifier<C>&& id)
+    : ptr_(mk_ptr(std::move(id), nullptr, nullptr))
+  {}
+
+  /// @internal
   /// @brief Tell if this order is empty.
   ///
   /// It's unsafe to call any other method, except push(), if this order is empty.
