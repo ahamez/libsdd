@@ -12,6 +12,7 @@
 #include "sdd/order/carrier.hh"
 #include "sdd/order/ordering.hh"
 #include "sdd/order/strategies/flatten.hh"
+#include "sdd/order/strategies/variables_per_level.hh"
 
 #include "sdd/manager.hh"
 
