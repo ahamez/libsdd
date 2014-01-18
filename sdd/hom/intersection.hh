@@ -246,12 +246,7 @@ struct hash<sdd::hom::intersection<C>>
   operator()(const sdd::hom::intersection<C>& s)
   const
   {
-    std::size_t seed = 0;
-    for (const auto& op : s.operands())
-    {
-      sdd::util::hash_combine(seed, op);
-    }
-    return seed;
+    return sdd::util::hash(s.operands().begin(), s.operands().end());
   }
 };
 

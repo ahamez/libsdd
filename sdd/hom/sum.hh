@@ -310,12 +310,7 @@ struct hash<sdd::hom::sum<C>>
   operator()(const sdd::hom::sum<C>& s)
   const
   {
-    std::size_t seed = 0;
-    for (const auto& op : s)
-    {
-      sdd::util::hash_combine(seed, op);
-    }
-    return seed;
+    return sdd::util::hash(s.begin(), s.end());
   }
 };
 

@@ -105,7 +105,7 @@ struct hash<sdd::hom::identity<C>>
   operator()(const sdd::hom::identity<C>&)
   const noexcept
   {
-    return 607769;
+    return sdd::util::hash(607769);
   }
 };
 

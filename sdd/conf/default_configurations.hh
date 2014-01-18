@@ -13,10 +13,13 @@ namespace sdd {
 
 /// @brief The default base configuration.
 ///
-/// It doesn't include the configuration of variable, identifier and values type. These informations
+/// It doesn't include the configuration of identifier and values type. These informations
 /// should be given by derived configurations.
 struct default_configuration
 {
+  /// @brief The type of an SDD variable.
+  using variable_type = unsigned int;
+
   /// @brief The type to store the number of elements in an alpha successor function.
   using alpha_size_type = std::uint16_t;
 
@@ -74,7 +77,6 @@ struct conf0
   : public default_configuration
 {
   using Identifier = std::string;
-  using Variable   = unsigned char;
   using Values     = values::bitset<64>;
 };
 
@@ -84,7 +86,6 @@ struct conf1
   : public default_configuration
 {
   using Identifier = std::string;
-  using Variable   = unsigned int;
   using Values     = values::flat_set<unsigned int>;
 
   /// @brief The size of the hash table that stores flat_set<>.

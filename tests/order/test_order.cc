@@ -74,6 +74,31 @@ TYPED_TEST(order_test, builder)
 
 /*-------------------------------------------------------------------------------------------*/
 
+TYPED_TEST(order_test, order_node_relative_order)
+{
+  {
+    const order o(order_builder {"a", "b"});
+    ASSERT_TRUE(o.node("a") < o.node("b"));
+  }
+  {
+    const order o(order_builder {"a", "b", "c"});
+    ASSERT_TRUE(o.node("a") < o.node("b"));
+    ASSERT_TRUE(o.node("a") < o.node("c"));
+    ASSERT_TRUE(o.node("b") < o.node("c"));
+  }
+  {
+    const order o(order_builder("a", order_builder {"x", "y"}) << order_builder {"b"});
+    ASSERT_TRUE(o.node("a") < o.node("x"));
+    ASSERT_TRUE(o.node("a") < o.node("y"));
+    ASSERT_TRUE(o.node("x") < o.node("y"));
+    ASSERT_TRUE(o.node("a") < o.node("b"));
+    ASSERT_TRUE(o.node("x") < o.node("b"));
+    ASSERT_TRUE(o.node("y") < o.node("b"));
+  }
+}
+
+/*-------------------------------------------------------------------------------------------*/
+
 TYPED_TEST(order_test, constructed_order)
 {
   {

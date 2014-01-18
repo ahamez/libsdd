@@ -218,8 +218,7 @@ struct hash<sdd::hom::cached_homomorphism<C>>
   operator()(const sdd::hom::cached_homomorphism<C>& ch)
   const
   {
-    std::size_t seed = 0;
-    sdd::util::hash_combine(seed, ch.hom);
+    std::size_t seed = sdd::util::hash(ch.hom);
     sdd::util::hash_combine(seed, ch.sdd);
     return seed;
   }

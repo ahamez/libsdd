@@ -33,7 +33,7 @@ public:
   using const_iterator = const homomorphism<C>*;
 
   /// @brief The variable type.
-  using variable_type = typename C::Variable;
+  using variable_type = typename C::variable_type;
 
 private:
 
@@ -55,7 +55,7 @@ private:
 public:
 
   /// @brief Constructor.
-  saturation_fixpoint( const variable_type& var, const homomorphism<C>& f
+  saturation_fixpoint( variable_type var, const homomorphism<C>& f
                      , boost::container::flat_set<homomorphism<C>>& g
                      , const homomorphism<C>& l)
     : variable_(var)
@@ -133,7 +133,7 @@ public:
   }
 
   /// @brief Get the targeted variable.
-  const variable_type&
+  variable_type
   variable()
   const noexcept
   {
@@ -241,7 +241,7 @@ operator<<(std::ostream& os, const saturation_fixpoint<C>& s)
 /// that operands of the G part are already optimized (e.g. local merged and sums flatten).
 template <typename C, typename InputIterator>
 homomorphism<C>
-SaturationFixpoint( const typename C::Variable& var
+SaturationFixpoint( typename C::variable_type var
                   , const homomorphism<C>& f
                   , InputIterator gbegin, InputIterator gend
                   , const homomorphism<C>& l)
@@ -286,14 +286,10 @@ struct hash<sdd::hom::saturation_fixpoint<C>>
   operator()(const sdd::hom::saturation_fixpoint<C>& s)
   const
   {
-    std::size_t seed = 0;
-    sdd::util::hash_combine(seed, s.variable());
+    std::size_t seed = sdd::util::hash(s.variable());
     sdd::util::hash_combine(seed, s.F());
     sdd::util::hash_combine(seed, s.L());
-    for (auto cit = s.G_begin(); cit != s.G_end(); ++cit)
-    {
-      sdd::util::hash_combine(seed, *cit);
-    }
+    sdd::util::hash_combine(seed, s.G_begin(), s.G_end());
     return seed;
   }
 };

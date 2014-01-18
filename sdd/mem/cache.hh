@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "sdd/mem/hash_table.hh"
+#include "sdd/util/hash.hh"
 #include "sdd/util/packed.hh"
 
 namespace sdd { namespace mem {
@@ -245,9 +246,9 @@ private:
   {
     std::size_t
     operator()(const cache_entry& x)
-    const noexcept(noexcept(std::hash<Operation>()(x.operation)))
+    const noexcept(noexcept(util::hash(x.operation)))
     {
-      return std::hash<Operation>()(x.operation);
+      return util::hash(x.operation);
     }
   };
 

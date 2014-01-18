@@ -152,8 +152,7 @@ struct hash<sdd::hom::cons<C, Valuation>>
   operator()(const sdd::hom::cons<C, Valuation>& h)
   const
   {
-    std::size_t seed = 0;
-    sdd::util::hash_combine(seed, h.get_order());
+    std::size_t seed = sdd::util::hash(h.get_order());
     sdd::util::hash_combine(seed, h.valuation());
     sdd::util::hash_combine(seed, h.next());
     return seed;
