@@ -240,7 +240,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       }
     }
 
-    boost::container::flat_map<SDD<C>, values_type> succ_to_value;
+    boost::container::flat_map<SDD<C>, boost::container::flat_set<value_type>> succ_to_value;
     succ_to_value.reserve(value_to_succ.size());
     for (auto& value_succs : value_to_succ)
     {
@@ -248,7 +248,9 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       const auto search = succ_to_value.find(succ);
       if (search == succ_to_value.end())
       {
-        succ_to_value.emplace_hint(search, succ, values_type({value_succs.first}));
+        boost::container::flat_set<value_type> tmp;
+        tmp.insert(value_succs.first);
+        succ_to_value.emplace_hint(search, succ, std::move(tmp));
       }
       else
       {
@@ -260,7 +262,8 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     alpha.reserve(succ_to_value.size());
     for (auto& succ_values : succ_to_value)
     {
-      alpha.add(std::move(succ_values.second), succ_values.first);
+      alpha.add( values_type(succ_values.second.begin(), succ_values.second.end())
+               , succ_values.first);
     }
 
     return SDD<C>(variable, std::move(alpha));
