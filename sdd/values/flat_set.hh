@@ -87,7 +87,7 @@ public:
     : flat_set(values.begin(), values.end())
   {}
 
-  /// @brief Constructor from a temporary internal_flat_set_type.
+  /// @brief Constructor from a temporary data_type.
   flat_set(data_type&& fs)
     : ptr_(create(std::move(fs)))
   {}
@@ -338,6 +338,7 @@ struct values_traits<flat_set<Value>>
   static constexpr bool stateful = true;
   static constexpr bool fast_iterable = true;
   using state_type = flat_set_manager<Value>;
+  using builder = boost::container::flat_set<Value>;
 };
 
 /*------------------------------------------------------------------------------------------------*/
