@@ -172,22 +172,32 @@ struct to_lua_visitor
 
 /// @internal
 template <typename C>
-struct lua
+struct to_lua
 {
   const SDD<C> x_;
 
-  lua(const SDD<C>& x)
+  to_lua(const SDD<C>& x)
     : x_(x)
   {}
 
   friend
   std::ostream&
-  operator<<(std::ostream& out, const lua& manip)
+  operator<<(std::ostream& out, const to_lua& manip)
   {
     const auto res = visit(to_lua_visitor<C>(out), manip.x_);
     return out << "return n" << res.id << "\n";
   }
 };
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+template <typename C>
+to_lua<C>
+lua(const SDD<C>& x)
+{
+  return to_lua<C>(x);
+}
 
 /*------------------------------------------------------------------------------------------------*/
 
