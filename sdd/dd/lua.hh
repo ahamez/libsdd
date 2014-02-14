@@ -1,5 +1,5 @@
-#ifndef _SDD_DD_TO_LUA_HH_
-#define _SDD_DD_TO_LUA_HH_
+#ifndef _SDD_DD_LUA_HH_
+#define _SDD_DD_LUA_HH_
 
 #include <unordered_map>
 
@@ -51,9 +51,9 @@ struct to_lua_visitor
     if (insertion.second)
     {
       const auto id = next_id_++;
-      os_ << "local n" << id << " = {\n";
+      os_ << "n" << id << " = {\n";
       os_ << " variable = 0,\n";
-      os_ << " value = 0\n";
+      os_ << " terminal = 0\n";
       os_ << "}\n\n";
       insertion.first->second.height = 0;
       insertion.first->second.id = id;
@@ -70,9 +70,9 @@ struct to_lua_visitor
     if (insertion.second)
     {
       const auto id = next_id_++;
-      os_ << "local n" << id << " = {\n";
+      os_ << "n" << id << " = {\n";
       os_ << " variable = 0,\n";
-      os_ << " value = 1\n";
+      os_ << " terminal = 1\n";
       os_ << "}\n\n";
       insertion.first->second.height = 0;
       insertion.first->second.id = id;
@@ -100,7 +100,7 @@ struct to_lua_visitor
 
       result_type res(succs.front().height + 1, next_id_++);
 
-      os_ << "local n" << res.id << " = {\n";
+      os_ << "n" << res.id << " = {\n";
       os_ << " variable = " << res.height << ",\n";
       auto arc_cit = n.begin();
       for (auto succs_cit = succs.cbegin(); succs_cit != succs.end(); ++succs_cit, ++arc_cit)
@@ -113,12 +113,7 @@ struct to_lua_visitor
         }
         os_ << "\n";
         os_ << "  successor = n" << succs_cit->id << "\n";
-        os_ << " }";
-        if (succs_cit != succs.end() - 1)
-        {
-          os_ << ",";
-        }
-        os_ << "\n";
+        os_ << " },\n";
       }
       os_ << "}\n\n";
       insertion.first->second = res;
@@ -155,7 +150,7 @@ struct to_lua_visitor
 
       result_type res(succs.front().height + 1, next_id_++);
 
-      os_ << "local n" << res.id << " = {\n";
+      os_ << "n" << res.id << " = {\n";
       os_ << " variable = " << res.height << ",\n";
       auto nested_cit = nested.cbegin();
       for (auto succs_cit = succs.cbegin(); succs_cit != succs.end(); ++succs_cit, ++nested_cit)
@@ -163,19 +158,13 @@ struct to_lua_visitor
         os_ << " {\n";
         os_ << "  n" << nested_cit->id << ",\n";
         os_ << "  successor = n" << succs_cit->id << "\n";
-        os_ << " }";
-        if (succs_cit != succs.end() - 1)
-        {
-          os_ << ",";
-        }
-        os_ << "\n";
+        os_ << " },\n";
       }
       os_ << "}\n\n";
 
       insertion.first->second = res;
     }
     return insertion.first->second;
-
   }
 };
 
@@ -183,16 +172,25 @@ struct to_lua_visitor
 
 /// @internal
 template <typename C>
-inline
-void
-to_lua(SDD<C> x, std::ostream& os)
+struct lua
 {
-  const auto res = visit(to_lua_visitor<C>(os), x);
-  os << "return n" << res.id << "\n";
-}
+  const SDD<C> x_;
+
+  lua(const SDD<C>& x)
+    : x_(x)
+  {}
+
+  friend
+  std::ostream&
+  operator<<(std::ostream& out, const lua& manip)
+  {
+    const auto res = visit(to_lua_visitor<C>(out), manip.x_);
+    return out << "return n" << res.id << "\n";
+  }
+};
 
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
 
-#endif // _SDD_DD_TO_LUA_HH_
+#endif // _SDD_DD_LUA_HH_
