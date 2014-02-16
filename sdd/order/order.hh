@@ -59,15 +59,20 @@ private:
   using id_to_node_type = std::unordered_map<order_identifier<C>, const order_node<C>*>;
 
   /// @brief The concrete order.
-  const nodes_ptr_type nodes_ptr_;
+  nodes_ptr_type nodes_ptr_;
 
   /// @brief Maps identifiers to nodes.
-  const std::shared_ptr<id_to_node_type> id_to_node_ptr_;
+  std::shared_ptr<id_to_node_type> id_to_node_ptr_;
 
   /// @brief The first node in the order.
   const order_node<C>* head_;
 
 public:
+
+  order(const order&) = default;
+  order& operator=(const order&) = default;
+  order(order&&) = default;
+  order& operator=(order&&) = default;
 
   /// @brief Constructor.
   order(const order_builder<C>& builder)
