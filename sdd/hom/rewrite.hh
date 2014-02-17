@@ -10,7 +10,9 @@
 #include "sdd/hom/fixpoint.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/hom/saturation_fixpoint.hh"
+#include "sdd/hom/saturation_intersection.hh"
 #include "sdd/hom/saturation_sum.hh"
+#include "sdd/hom/intersection.hh"
 #include "sdd/hom/sum.hh"
 
 namespace sdd {
@@ -145,6 +147,41 @@ struct rewriter
                            , G.begin(), G.end()
                            , L.size() > 0 ? Local( o.position()
                                                  , rewrite( Sum<C>(o.nested(), L.begin(), L.end())
+                                                          , o.nested()))
+                                          : optional()
+                           );
+  }
+
+  /// @brief Rewrite Intersection into a Saturation Intersection, if possible.
+  homomorphism<C>
+  operator()(const intersection<C>& s, const homomorphism<C>& h, const order<C>& o)
+  const
+  {
+    auto&& p = partition(o, s.begin(), s.end());
+    auto& F = std::get<0>(p);
+    auto& G = std::get<1>(p);
+    auto& L = std::get<2>(p);
+    const bool has_id = std::get<3>(p);
+
+    if (F.size() == 0 and L.size() == 0)
+    {
+      return h;
+    }
+
+    if (has_id)
+    {
+      F.push_back(Id<C>());
+    }
+
+    using optional = typename saturation_intersection<C>::optional_type;
+    return SaturationIntersection<C>( o.variable()
+                           , F.size() > 0 ? rewrite( Intersection<C>(o.next(), F.begin(), F.end())
+                                                   , o.next())
+                                          : optional()
+                           , G.begin(), G.end()
+                           , L.size() > 0 ? Local( o.position()
+                                                 , rewrite( Intersection<C>( o.nested(), L.begin()
+                                                                           , L.end())
                                                           , o.nested()))
                                           : optional()
                            );
