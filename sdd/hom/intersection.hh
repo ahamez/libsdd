@@ -34,6 +34,9 @@ public:
   /// @brief The type of the homomorphism operands' set.
   using operands_type = boost::container::flat_set<homomorphism<C>>;
 
+  /// @brief The type of a const iterator on this intersection's operands.
+  using const_iterator = typename operands_type::const_iterator;
+
 private:
 
   /// @brief The homomorphism operands' set.
@@ -86,6 +89,26 @@ public:
   {
     return std::all_of( operands_.begin(), operands_.end()
                       , [](const homomorphism<C>& h){return h.selector();});
+  }
+
+  /// @brief Get an iterator to the first operand.
+  ///
+  /// O(1).
+  const_iterator
+  begin()
+  const noexcept
+  {
+    return operands_.begin();
+  }
+
+  /// @brief Get an iterator to the end of operands.
+  ///
+  /// O(1).
+  const_iterator
+  end()
+  const noexcept
+  {
+    return operands_.end();
   }
 
   const operands_type&
