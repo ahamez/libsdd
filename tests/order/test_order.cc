@@ -123,17 +123,17 @@ TYPED_TEST(order_test, constructed_order)
                            .push("x", order_builder().push("z", order_builder {"b"}))
                            .push("a"));
 
-//    ASSERT_TRUE(o.contains("y", "c"));
-//    ASSERT_TRUE(o.contains("x", "z"));
-//    ASSERT_TRUE(o.contains("x", "b"));
-//    ASSERT_TRUE(o.contains("z", "b"));
-//
-//    ASSERT_FALSE(o.contains("y", "b"));
-//    ASSERT_FALSE(o.contains("x", "c"));
-//    ASSERT_FALSE(o.contains("x", "y"));
-//    ASSERT_FALSE(o.contains("x", "x"));
-//    ASSERT_FALSE(o.contains("a", "y"));
-//    ASSERT_FALSE(o.contains("a", "a"));
+    ASSERT_TRUE(o.contains("y", "c"));
+    ASSERT_TRUE(o.contains("x", "z"));
+    ASSERT_TRUE(o.contains("x", "b"));
+    ASSERT_TRUE(o.contains("z", "b"));
+
+    ASSERT_FALSE(o.contains("y", "b"));
+    ASSERT_FALSE(o.contains("x", "c"));
+    ASSERT_FALSE(o.contains("x", "y"));
+    ASSERT_FALSE(o.contains("x", "x"));
+    ASSERT_FALSE(o.contains("a", "y"));
+    ASSERT_FALSE(o.contains("a", "a"));
 
     ASSERT_FALSE(o.empty());
     ASSERT_EQ("a", o.identifier().user());
