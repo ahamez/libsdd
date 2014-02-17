@@ -167,7 +167,7 @@ noexcept
 }
 
 /// @internal
-/// @related sum
+/// @related saturation_sum
 template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const saturation_sum<C>& s)
@@ -199,7 +199,7 @@ operator<<(std::ostream& os, const saturation_sum<C>& s)
 /// @related sdd::homomorphism
 ///
 /// We suppose that a saturation sum is created in the rewriting process. Thus, we assume that
-/// operands of the G part are already optimized (local merged and sums flatten).
+/// operands are already optimized (local merged, etc.).
 template <typename C, typename InputIterator>
 homomorphism<C>
 SaturationSum( typename C::variable_type var
