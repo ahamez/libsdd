@@ -233,7 +233,7 @@ main(int argc, char** argv)
 
   union_swap_pole.insert(Id<conf>());
   hom events = Fixpoint(Sum<conf>(o, union_swap_pole.begin(), union_swap_pole.end()));
-  events = sdd::rewrite(events, o);
+  events = sdd::rewrite(o, events);
 
   std::chrono::time_point<std::chrono::system_clock> start, end;
   std::size_t elapsed;

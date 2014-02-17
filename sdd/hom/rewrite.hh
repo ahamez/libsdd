@@ -22,7 +22,7 @@ namespace sdd {
 // Forward declaration for recursive call by rewriter.
 template <typename C>
 homomorphism<C>
-rewrite(const homomorphism<C>&, const order<C>&);
+rewrite(const order<C>&, const homomorphism<C>&);
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -142,12 +142,13 @@ struct rewriter
 
     using optional = typename saturation_sum<C>::optional_type;
     return SaturationSum<C>( o.variable()
-                           , F.size() > 0 ? rewrite(Sum<C>(o.next(), F.begin(), F.end()), o.next())
+                           , F.size() > 0 ? rewrite(o.next(), Sum<C>(o.next(), F.begin(), F.end()))
                                           : optional()
                            , G.begin(), G.end()
                            , L.size() > 0 ? Local( o.position()
-                                                 , rewrite( Sum<C>(o.nested(), L.begin(), L.end())
-                                                          , o.nested()))
+                                                 , rewrite( o.nested()
+                                                          , Sum<C>(o.nested(), L.begin(), L.end())
+                                                          ))
                                           : optional()
                            );
   }
@@ -175,14 +176,14 @@ struct rewriter
 
     using optional = typename saturation_intersection<C>::optional_type;
     return SaturationIntersection<C>( o.variable()
-                           , F.size() > 0 ? rewrite( Intersection<C>(o.next(), F.begin(), F.end())
-                                                   , o.next())
+                           , F.size() > 0 ? rewrite( o.next()
+                                                   , Intersection<C>(o.next(), F.begin(), F.end()))
                                           : optional()
                            , G.begin(), G.end()
                            , L.size() > 0 ? Local( o.position()
-                                                 , rewrite( Intersection<C>( o.nested(), L.begin()
-                                                                           , L.end())
-                                                          , o.nested()))
+                                                 , rewrite( o.nested()
+                                                          , Intersection<C>( o.nested(), L.begin()
+                                                                           , L.end())))
                                           : optional()
                            );
   }
@@ -219,11 +220,11 @@ struct rewriter
     std::partition(G.begin(), G.end(), [](const homomorphism<C>& g){return g.selector();});
 
     return SaturationFixpoint( o.variable()
-                             , rewrite(Fixpoint(Sum<C>(o.next(), F.begin(), F.end())), o.next())
+                             , rewrite(o.next(), Fixpoint(Sum<C>(o.next(), F.begin(), F.end())))
                              , G.begin(), G.end()
                              , Local( o.position()
-                                    , rewrite( Fixpoint(Sum<C>(o.nested(), L.begin(), L.end()))
-                                             , o.nested())
+                                    , rewrite( o.nested()
+                                             , Fixpoint(Sum<C>(o.nested(), L.begin(), L.end())))
                                     )
                              );
   }
@@ -247,7 +248,7 @@ struct rewriter
 /// @brief Rewrite an homomorphism to enable saturation.
 template <typename C>
 homomorphism<C>
-rewrite(const homomorphism<C>& h, const order<C>& o)
+rewrite(const order<C>& o, const homomorphism<C>& h)
 {
   return o.empty()
        ? h

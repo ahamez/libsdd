@@ -74,7 +74,7 @@ TYPED_TEST(rewriting_test, sum)
                               , Inductive<conf>(targeted_incr<conf>("b", 0))
                               , Local("a", o, Inductive<conf>(targeted_incr<conf>("x", 0)))
                               });
-    const homomorphism h1 = sdd::rewrite(h0, o);
+    const homomorphism h1 = sdd::rewrite(o, h0);
     ASSERT_NE(h1, h0);
     SDD s0(1, SDD(0, {0}, one), SDD(0, {0}, one));
     ASSERT_EQ(h0(o, s0), h1(o, s0));
@@ -88,7 +88,7 @@ TYPED_TEST(rewriting_test, sum)
                    , Inductive<conf>(targeted_incr<conf>("c", 0))
                    }
                  );
-    const homomorphism h1 = sdd::rewrite(h0, o);
+    const homomorphism h1 = sdd::rewrite(o, h0);
     ASSERT_NE(h1, h0);
     SDD s0(2, {0}, SDD(1, {0}, SDD(0, {0}, one)));
     ASSERT_EQ(h0(o, s0), h1(o, s0));
@@ -106,7 +106,7 @@ TYPED_TEST(rewriting_test, intersection)
       = Intersection<conf>( o
                           , { Inductive<conf>(targeted_incr<conf>("b", 0))
                             , Local("a", o, Inductive<conf>(targeted_incr<conf>("x", 0)))});
-    const homomorphism h1 = sdd::rewrite(h0, o);
+    const homomorphism h1 = sdd::rewrite(o, h0);
     ASSERT_NE(h1, h0);
     SDD s0(1, SDD(0, {0}, one), SDD(0, {0}, one));
     ASSERT_EQ(h0(o, s0), h1(o, s0));
@@ -118,7 +118,7 @@ TYPED_TEST(rewriting_test, intersection)
                          , { Inductive<conf>(targeted_incr<conf>("a", 0))
                            , Inductive<conf>(targeted_incr<conf>("b", 0))
                            , Inductive<conf>(targeted_incr<conf>("c", 0))});
-    const homomorphism h1 = sdd::rewrite(h0, o);
+    const homomorphism h1 = sdd::rewrite(o, h0);
     ASSERT_NE(h1, h0);
     SDD s0(2, {0}, SDD(1, {0}, SDD(0, {0}, one)));
     ASSERT_EQ(h0(o, s0), h1(o, s0));
@@ -137,7 +137,7 @@ TYPED_TEST(rewriting_test, transitive_closure)
                           , { id
                             , Inductive<conf>(targeted_incr<conf>("b", 0))
                             , Local("a", o, Inductive<conf>(targeted_incr<conf>("x", 0)))}));
-    const auto h1 = sdd::rewrite(h0, o);
+    const auto h1 = sdd::rewrite(o, h0);
     ASSERT_NE(h1, h0);
     SDD s0(1, SDD(0, {0}, one), SDD(0, {0}, one));
     ASSERT_EQ(h0(o, s0), h1(o, s0));
@@ -148,7 +148,7 @@ TYPED_TEST(rewriting_test, transitive_closure)
       = Fixpoint(Sum<conf>( o
                           , { Inductive<conf>(targeted_incr<conf>("b", 0))
                             , Local("a", o, Inductive<conf>(targeted_incr<conf>("x", 0)))}));
-    const auto h1 = sdd::rewrite(h0, o);
+    const auto h1 = sdd::rewrite(o, h0);
     ASSERT_EQ(h1, h0);
   }
 }
