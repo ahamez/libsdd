@@ -10,6 +10,7 @@ using sdd::Cons;
 using sdd::Expression;
 using sdd::Fixpoint;
 using sdd::Inductive;
+using sdd::Intersection;
 using sdd::Id;
 using sdd::Local;
 using sdd::hom::SaturationFixpoint;
