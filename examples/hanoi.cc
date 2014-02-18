@@ -245,7 +245,7 @@ main(int argc, char** argv)
   elapsed = std::chrono::duration_cast<std::chrono::seconds>(end-start).count();
   std::cout << "Time: " << elapsed << "s" << std::endl;
   // Number of distinct paths
-  std::cout << "Number of states : " << sdd::count_combinations(sat_final) << std::endl;
+  std::cout << "Number of states : " << sat_final.size() << std::endl;
 
   std::cout << manager << std::endl;
 

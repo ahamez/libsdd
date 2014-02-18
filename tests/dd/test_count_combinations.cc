@@ -37,45 +37,45 @@ TYPED_TEST_CASE(count_combinations_test, configurations);
 
 TYPED_TEST(count_combinations_test, terminal_zero)
 {
-  ASSERT_EQ(0u, count_combinations(zero));
+  ASSERT_EQ(0u, sdd::dd::count_combinations(zero));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
 TYPED_TEST(count_combinations_test, terminal_one)
 {
-  ASSERT_EQ(1u, count_combinations(one));
+  ASSERT_EQ(1u, sdd::dd::count_combinations(one));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
 TYPED_TEST(count_combinations_test, flat)
 {
-  ASSERT_EQ(3u, count_combinations(SDD('a', {0,1,2}, one)));
-  ASSERT_EQ(9u, count_combinations(SDD('a', {0,1,2}, SDD('b', {0,1,2}, one))));
-  ASSERT_EQ(6u, count_combinations(SDD('a', {0,1,2}, one) + SDD('a', {3,4,5}, one)));
+  ASSERT_EQ(3u, sdd::dd::count_combinations(SDD('a', {0,1,2}, one)));
+  ASSERT_EQ(9u, sdd::dd::count_combinations(SDD('a', {0,1,2}, SDD('b', {0,1,2}, one))));
+  ASSERT_EQ(6u, sdd::dd::count_combinations(SDD('a', {0,1,2}, one) + SDD('a', {3,4,5}, one)));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
 TYPED_TEST(count_combinations_test, hierarchical)
 {
-  ASSERT_EQ(3, count_combinations(SDD('a', SDD('b', {0,1,2}, one), one)));
-  ASSERT_EQ(9, count_combinations( SDD( 'a', SDD('b', {0,1,2}, one)
+  ASSERT_EQ(3, sdd::dd::count_combinations(SDD('a', SDD('b', {0,1,2}, one), one)));
+  ASSERT_EQ(9, sdd::dd::count_combinations( SDD( 'a', SDD('b', {0,1,2}, one)
                                , SDD( 'a', SDD('b', {0,1,2}, one)
                                     , one
                                     )
                                )
                           )
            );
-  ASSERT_EQ(9, count_combinations( SDD( 'a', SDD('b', SDD('c', {0,1,2}, one), one)
+  ASSERT_EQ(9, sdd::dd::count_combinations( SDD( 'a', SDD('b', SDD('c', {0,1,2}, one), one)
                                , SDD( 'a', SDD('b', SDD('c', {0,1,2}, one), one)
                                     , one
                                     )
                                )
                           )
            );
-  ASSERT_EQ(6, count_combinations( SDD('a', SDD('b', {0,1,2}, one), one)
+  ASSERT_EQ(6, sdd::dd::count_combinations( SDD('a', SDD('b', {0,1,2}, one), one)
                           + SDD('a', SDD('b', {3,4,5}, one), one)));
 }
 

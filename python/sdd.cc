@@ -89,7 +89,7 @@ struct pyconf
 double
 count_combinations(SDD<pyconf> s)
 {
-  return sdd::count_combinations(s).template convert_to<double>();
+  return sdd::dd::count_combinations(s).template convert_to<double>();
 }
 
 /*------------------------------------------------------------------------------------------------*/

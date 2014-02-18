@@ -3,9 +3,7 @@
 
 #include "sdd/conf/default_configurations.hh"
 #include "sdd/dd/context.hh"
-#include "sdd/dd/count_combinations.hh"
 #include "sdd/dd/definition.hh"
-#include "sdd/dd/path_generator.hh"
 #include "sdd/hom/context.hh"
 #include "sdd/hom/definition.hh"
 #include "sdd/hom/rewrite.hh"
