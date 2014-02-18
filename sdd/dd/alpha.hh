@@ -25,6 +25,9 @@ private:
 
 public:
 
+  /// @brief The valuation type.
+  using valuation_type = Valuation;
+
   /// @internal
   /// @brief Constructor.
   arc(Valuation&& val, SDD<C>&& succ)

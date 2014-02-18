@@ -46,6 +46,9 @@ public:
   /// @brief A (const) iterator on the arcs of this node.
   using const_iterator = const arc<C, Valuation>*;
 
+  /// @brief The arc type.
+  using arc_type = arc<C, Valuation>;
+
 private:
 
   /// @brief The variable of this node.

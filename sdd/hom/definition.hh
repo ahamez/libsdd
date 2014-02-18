@@ -18,6 +18,7 @@
 #include "sdd/hom/intersection.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/hom/saturation_fixpoint.hh"
+#include "sdd/hom/saturation_intersection.hh"
 #include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
 #include "sdd/hom/values_function.hh"
@@ -49,6 +50,7 @@ private:
                       , hom::intersection<C>
                       , hom::local<C>
                       , hom::saturation_fixpoint<C>
+                      , hom::saturation_intersection<C>
                       , hom::saturation_sum<C>
                       , hom::simple_expression<C>
                       , hom::sum<C>

@@ -34,6 +34,9 @@ public:
   /// @brief The type of the homomorphism operands' set.
   using operands_type = boost::container::flat_set<homomorphism<C>>;
 
+  /// @brief The type of a const iterator on this intersection's operands.
+  using const_iterator = typename operands_type::const_iterator;
+
 private:
 
   /// @brief The homomorphism operands' set.
@@ -88,6 +91,26 @@ public:
                       , [](const homomorphism<C>& h){return h.selector();});
   }
 
+  /// @brief Get an iterator to the first operand.
+  ///
+  /// O(1).
+  const_iterator
+  begin()
+  const noexcept
+  {
+    return operands_.begin();
+  }
+
+  /// @brief Get an iterator to the end of operands.
+  ///
+  /// O(1).
+  const_iterator
+  end()
+  const noexcept
+  {
+    return operands_.end();
+  }
+
   const operands_type&
   operands()
   const noexcept
@@ -132,7 +155,7 @@ struct intersection_builder_helper
   using result_type   = void;
   using operands_type = typename intersection<C>::operands_type;
   using hom_list_type = std::deque<homomorphism<C>> ;
-  using locals_type   = std::unordered_map<typename C::Identifier, hom_list_type>;
+  using locals_type   = std::unordered_map<order_position_type, hom_list_type>;
 
   operands_type& operands_;
   locals_type& locals_;
@@ -159,7 +182,7 @@ struct intersection_builder_helper
   operator()(const local<C>& l, const homomorphism<C>&)
   const
   {
-    auto insertion = locals_.emplace(l.identifier(), hom_list_type());
+    auto insertion = locals_.emplace(l.target(), hom_list_type());
     insertion.first->second.emplace_back(l.hom());
   }
 
@@ -204,7 +227,7 @@ Intersection(const order<C>& o, InputIterator begin, InputIterator end)
   // insert remaining locals
   for (const auto& l : locals)
   {
-    operands.insert(Local<C>(l.first, o, Intersection<C>(o, l.second.begin(), l.second.end())));
+    operands.insert(Local<C>(l.first, Intersection<C>(o, l.second.begin(), l.second.end())));
   }
 
   if (operands.size() == 1)

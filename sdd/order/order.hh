@@ -1,12 +1,12 @@
 #ifndef _SDD_ORDER_ORDER_HH_
 #define _SDD_ORDER_ORDER_HH_
 
-#include <algorithm> // find
+#include <algorithm>  // find
 #include <initializer_list>
 #include <iostream>
-#include <memory>    // shared_ptr
+#include <memory>     // shared_ptr
 #include <sstream>
-#include <utility>   // pair
+#include <utility>    // pair
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -59,15 +59,20 @@ private:
   using id_to_node_type = std::unordered_map<order_identifier<C>, const order_node<C>*>;
 
   /// @brief The concrete order.
-  const nodes_ptr_type nodes_ptr_;
+  nodes_ptr_type nodes_ptr_;
 
   /// @brief Maps identifiers to nodes.
-  const std::shared_ptr<id_to_node_type> id_to_node_ptr_;
+  std::shared_ptr<id_to_node_type> id_to_node_ptr_;
 
   /// @brief The first node in the order.
   const order_node<C>* head_;
 
 public:
+
+  order(const order&) = default;
+  order& operator=(const order&) = default;
+  order(order&&) = default;
+  order& operator=(order&&) = default;
 
   /// @brief Constructor.
   order(const order_builder<C>& builder)
@@ -76,6 +81,7 @@ public:
     , head_(nodes_ptr_ ? &(nodes_ptr_->front()) : nullptr)
   {}
 
+  /// @internal
   /// @brief Tell if upper contains nested in its possibly contained hierarchy.
   /// @param uppper Must belong to the current order.
   /// @param nested Must belong to the current order.
@@ -143,6 +149,15 @@ public:
     return head_ == nullptr;
   }
 
+  /// @brief Return flat variables, from top to bottom.
+  template <typename OutputIterator>
+  void
+  flat(OutputIterator it)
+  const
+  {
+    flat_impl(it, head_);
+  }
+
   /// @internal
   const order_node<C>&
   node(const identifier_type& id)
@@ -180,6 +195,26 @@ public:
   }
 
 private:
+
+  /// @brief Recursion on the order to get flat nodes
+  template <typename OutputIterator>
+  static
+  void
+  flat_impl(OutputIterator it, const order_node<C>* current)
+  {
+    if (current != nullptr)
+    {
+      if (current->nested())
+      {
+        flat_impl(it, current->nested());
+      }
+      else
+      {
+        *it++ = current->identifier().user();
+      }
+      flat_impl(it, current->next());
+    }
+  }
 
   /// @brief Construct with a shallow copy an already existing order.
   order( const nodes_ptr_type& nodes_ptr, const std::shared_ptr<id_to_node_type>& id_to_node

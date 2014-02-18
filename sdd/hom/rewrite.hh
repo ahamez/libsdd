@@ -10,7 +10,9 @@
 #include "sdd/hom/fixpoint.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/hom/saturation_fixpoint.hh"
+#include "sdd/hom/saturation_intersection.hh"
 #include "sdd/hom/saturation_sum.hh"
+#include "sdd/hom/intersection.hh"
 #include "sdd/hom/sum.hh"
 
 namespace sdd {
@@ -20,7 +22,7 @@ namespace sdd {
 // Forward declaration for recursive call by rewriter.
 template <typename C>
 homomorphism<C>
-rewrite(const homomorphism<C>&, const order<C>&);
+rewrite(const order<C>&, const homomorphism<C>&);
 
 /*-------------------------------------------------------------------------------------------*/
 
@@ -140,12 +142,48 @@ struct rewriter
 
     using optional = typename saturation_sum<C>::optional_type;
     return SaturationSum<C>( o.variable()
-                           , F.size() > 0 ? rewrite(Sum<C>(o.next(), F.begin(), F.end()), o.next())
+                           , F.size() > 0 ? rewrite(o.next(), Sum<C>(o.next(), F.begin(), F.end()))
                                           : optional()
                            , G.begin(), G.end()
                            , L.size() > 0 ? Local( o.position()
-                                                 , rewrite( Sum<C>(o.nested(), L.begin(), L.end())
-                                                          , o.nested()))
+                                                 , rewrite( o.nested()
+                                                          , Sum<C>(o.nested(), L.begin(), L.end())
+                                                          ))
+                                          : optional()
+                           );
+  }
+
+  /// @brief Rewrite Intersection into a Saturation Intersection, if possible.
+  homomorphism<C>
+  operator()(const intersection<C>& s, const homomorphism<C>& h, const order<C>& o)
+  const
+  {
+    auto&& p = partition(o, s.begin(), s.end());
+    auto& F = std::get<0>(p);
+    auto& G = std::get<1>(p);
+    auto& L = std::get<2>(p);
+    const bool has_id = std::get<3>(p);
+
+    if (F.size() == 0 and L.size() == 0)
+    {
+      return h;
+    }
+
+    if (has_id)
+    {
+      F.push_back(Id<C>());
+    }
+
+    using optional = typename saturation_intersection<C>::optional_type;
+    return SaturationIntersection<C>( o.variable()
+                           , F.size() > 0 ? rewrite( o.next()
+                                                   , Intersection<C>(o.next(), F.begin(), F.end()))
+                                          : optional()
+                           , G.begin(), G.end()
+                           , L.size() > 0 ? Local( o.position()
+                                                 , rewrite( o.nested()
+                                                          , Intersection<C>( o.nested(), L.begin()
+                                                                           , L.end())))
                                           : optional()
                            );
   }
@@ -182,11 +220,11 @@ struct rewriter
     std::partition(G.begin(), G.end(), [](const homomorphism<C>& g){return g.selector();});
 
     return SaturationFixpoint( o.variable()
-                             , rewrite(Fixpoint(Sum<C>(o.next(), F.begin(), F.end())), o.next())
+                             , rewrite(o.next(), Fixpoint(Sum<C>(o.next(), F.begin(), F.end())))
                              , G.begin(), G.end()
                              , Local( o.position()
-                                    , rewrite( Fixpoint(Sum<C>(o.nested(), L.begin(), L.end()))
-                                             , o.nested())
+                                    , rewrite( o.nested()
+                                             , Fixpoint(Sum<C>(o.nested(), L.begin(), L.end())))
                                     )
                              );
   }
@@ -210,7 +248,7 @@ struct rewriter
 /// @brief Rewrite an homomorphism to enable saturation.
 template <typename C>
 homomorphism<C>
-rewrite(const homomorphism<C>& h, const order<C>& o)
+rewrite(const order<C>& o, const homomorphism<C>& h)
 {
   return o.empty()
        ? h

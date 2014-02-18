@@ -1,5 +1,5 @@
-#ifndef _SDD_HOM_SATURATION_SUM_HH_
-#define _SDD_HOM_SATURATION_SUM_HH_
+#ifndef _SDD_HOM_SATURATION_INTERSECTION_HH_
+#define _SDD_HOM_SATURATION_INTERSECTION_HH_
 
 #include <algorithm>  // all_of, copy
 #include <iosfwd>
@@ -14,7 +14,7 @@
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
-#include "sdd/hom/sum.hh"
+#include "sdd/hom/intersection.hh"
 #include "sdd/order/order.hh"
 #include "sdd/util/packed.hh"
 
@@ -25,7 +25,7 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief Saturation Sum homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED saturation_sum
+class LIBSDD_ATTRIBUTE_PACKED saturation_intersection
 {
 public:
 
@@ -40,7 +40,7 @@ public:
 
 private:
 
-  /// @brief The variable on which this sum works.
+  /// @brief The variable on which this intersection works.
   const variable_type variable_;
 
   /// @brief The homomorphism's F part.
@@ -55,7 +55,8 @@ private:
 public:
 
   /// @brief Constructor.
-  saturation_sum(variable_type var, const optional_type& f, g_type&& g, const optional_type& l)
+  saturation_intersection( variable_type var, const optional_type& f, g_type&& g
+                         , const optional_type& l)
     : variable_(var)
     , F_(f)
     , G_(std::move(g))
@@ -67,27 +68,27 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    dd::sum_builder<C, SDD<C>> sum_operands(cxt.sdd_context());
-    sum_operands.reserve(G_.size() + 2);
+    dd::intersection_builder<C, SDD<C>> operands;
+    operands.reserve(G_.size() + 2);
 
     if (F_)
     {
-      sum_operands.add((*F_)(cxt, o, s));
+      operands.add((*F_)(cxt, o, s));
     }
 
     for (const auto& g : G_)
     {
-      sum_operands.add(g(cxt, o, s));
+      operands.add(g(cxt, o, s));
     }
 
     if (L_)
     {
-      sum_operands.add((*L_)(cxt, o, s));
+      operands.add((*L_)(cxt, o, s));
     }
 
     try
     {
-      return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+      return dd::intersection(cxt.sdd_context(), std::move(operands));
     }
     catch (top<C>& t)
     {
@@ -152,27 +153,25 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Equality of two saturation_sum.
-/// @related saturation_sum
+/// @brief Equality of two saturation_intersection.
+/// @related saturation_intersection
 template <typename C>
 inline
 bool
-operator==(const saturation_sum<C>& lhs, const saturation_sum<C>& rhs)
+operator==(const saturation_intersection<C>& lhs, const saturation_intersection<C>& rhs)
 noexcept
 {
-  return lhs.variable() == rhs.variable()
-     and lhs.F() == rhs.F()
-     and lhs.L() == rhs.L()
+  return lhs.variable() == rhs.variable() and lhs.F() == rhs.F() and lhs.L() == rhs.L()
      and lhs.G() == rhs.G();
 }
 
 /// @internal
-/// @related saturation_sum
+/// @related saturation_intersection
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const saturation_sum<C>& s)
+operator<<(std::ostream& os, const saturation_intersection<C>& s)
 {
-  os << "Sat(@" << (int)s.variable() << ",  ";
+  os << "SatInter(@" << (int)s.variable() << ",  ";
   if (s.F())
   {
     os << *s.F();
@@ -195,17 +194,17 @@ operator<<(std::ostream& os, const saturation_sum<C>& s)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Create the Saturation Sum homomorphism.
+/// @brief Create the Saturation Intersection homomorphism.
 /// @related sdd::homomorphism
 ///
-/// We suppose that a saturation sum is created in the rewriting process. Thus, we assume that
-/// operands are already optimized (local merged, etc.).
+/// We suppose that a saturation intersection is created in the rewriting process. Thus, we assume
+/// that operands are already optimized (local merged, etc.).
 template <typename C, typename InputIterator>
 homomorphism<C>
-SaturationSum( typename C::variable_type var
-             , const typename saturation_sum<C>::optional_type& f
-             , InputIterator gbegin, InputIterator gend
-             , const typename saturation_sum<C>::optional_type& l)
+SaturationIntersection( typename C::variable_type var
+                      , const typename saturation_intersection<C>::optional_type& f
+                      , InputIterator gbegin, InputIterator gend
+                      , const typename saturation_intersection<C>::optional_type& l)
 {
   const std::size_t g_size = std::distance(gbegin, gend);
 
@@ -221,10 +220,10 @@ SaturationSum( typename C::variable_type var
     }
   }
 
-  return homomorphism<C>::create( mem::construct<saturation_sum<C>>()
+  return homomorphism<C>::create( mem::construct<saturation_intersection<C>>()
                                 , var
                                 , f
-                                , typename saturation_sum<C>::g_type(gbegin, gend)
+                                , typename saturation_intersection<C>::g_type(gbegin, gend)
                                 , l);
 }
 
@@ -237,12 +236,12 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Hash specialization for sdd::hom::saturation_sum.
+/// @brief Hash specialization for sdd::hom::saturation_intersection.
 template <typename C>
-struct hash<sdd::hom::saturation_sum<C>>
+struct hash<sdd::hom::saturation_intersection<C>>
 {
   std::size_t
-  operator()(const sdd::hom::saturation_sum<C>& s)
+  operator()(const sdd::hom::saturation_intersection<C>& s)
   const
   {
     std::size_t seed = sdd::util::hash(s.variable());
@@ -263,4 +262,4 @@ struct hash<sdd::hom::saturation_sum<C>>
 
 } // namespace std
 
-#endif // _SDD_HOM_SATURATION_SUM_HH_
+#endif // _SDD_HOM_SATURATION_INTERSECTION_HH_
