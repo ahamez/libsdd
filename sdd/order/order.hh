@@ -93,16 +93,6 @@ public:
     return std::find(path.begin(), path.end(), upper) != path.end();
   }
 
-  /// @brief Tell if upper contains nested in its possibly contained hierarchy.
-  /// @param uppper Must belong to the current order.
-  /// @param nested Must belong to the current order.
-  bool
-  contains(const identifier_type& upper, const identifier_type& nested)
-  const noexcept
-  {
-    return contains(node(upper).position(), node(nested).position());
-  }
-
   /// @brief
   const nodes_type&
   identifiers()
