@@ -186,7 +186,7 @@ public:
   /// Returns a copy.
   order_builder
   operator<<(const order_builder& next)
-#if GCC_VERSION >= 409000
+#if GCC_VERSION >= 409000 || defined(__clang__)
   const&
 #else
   const
@@ -195,7 +195,7 @@ public:
     return order_builder(concat(ptr_, next.ptr_));
   }
 
-#if GCC_VERSION >= 409000
+#if GCC_VERSION >= 409000 || defined(__clang__)
   /// @brief Concatenate this order with another one.
   order_builder
   operator<<(const order_builder& next)
