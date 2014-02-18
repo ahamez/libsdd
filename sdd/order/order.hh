@@ -1,12 +1,12 @@
 #ifndef _SDD_ORDER_ORDER_HH_
 #define _SDD_ORDER_ORDER_HH_
 
-#include <algorithm> // find
+#include <algorithm>  // find
 #include <initializer_list>
 #include <iostream>
-#include <memory>    // shared_ptr
+#include <memory>     // shared_ptr
 #include <sstream>
-#include <utility>   // pair
+#include <utility>    // pair
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -159,6 +159,15 @@ public:
     return head_ == nullptr;
   }
 
+  /// @brief Return flat variables, from top to bottom.
+  template <typename OutputIterator>
+  void
+  flat(OutputIterator it)
+  const
+  {
+    flat_impl(it, head_);
+  }
+
   /// @internal
   const order_node<C>&
   node(const identifier_type& id)
@@ -196,6 +205,26 @@ public:
   }
 
 private:
+
+  /// @brief Recursion on the order to get flat nodes
+  template <typename OutputIterator>
+  static
+  void
+  flat_impl(OutputIterator it, const order_node<C>* current)
+  {
+    if (current != nullptr)
+    {
+      if (current->nested())
+      {
+        flat_impl(it, current->nested());
+      }
+      else
+      {
+        *it++ = current->identifier().user();
+      }
+      flat_impl(it, current->next());
+    }
+  }
 
   /// @brief Construct with a shallow copy an already existing order.
   order( const nodes_ptr_type& nodes_ptr, const std::shared_ptr<id_to_node_type>& id_to_node
