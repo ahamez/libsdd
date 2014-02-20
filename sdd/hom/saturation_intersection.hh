@@ -165,22 +165,22 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const saturation_intersection<C>& s)
 {
-  os << "SatInter(@" << (int)s.variable() << ",  ";
+  os << "SatInter(@" << +s.variable() << ", F=";
   if (s.F())
   {
     os << *s.F();
   }
-  os << " + ";
+  os << ", G=";
+  if (not s.G().empty())
+  {
+    std::copy( s.G().begin(), std::prev(s.G().end())
+             , std::ostream_iterator<homomorphism<C>>(os, " & "));
+    os << *std::prev(s.G().end()) << ")";
+  }
+  os << ", L=";
   if (s.L())
   {
     os << *s.L();
-  }
-  if (not s.G().empty())
-  {
-    os << " + ";
-    std::copy( s.G().begin(), std::prev(s.G().end())
-             , std::ostream_iterator<homomorphism<C>>(os, " + "));
-    os << *std::prev(s.G().end()) << ")";
   }
   return os;
 }

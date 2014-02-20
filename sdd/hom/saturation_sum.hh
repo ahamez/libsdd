@@ -167,22 +167,22 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const saturation_sum<C>& s)
 {
-  os << "Sat(@" << (int)s.variable() << ",  ";
+  os << "SatSum(@" << +s.variable() << ", F=";
   if (s.F())
   {
     os << *s.F();
   }
-  os << " + ";
-  if (s.L())
-  {
-    os << *s.L();
-  }
+  os << ", G=";
   if (not s.G().empty())
   {
-    os << " + ";
     std::copy( s.G().begin(), std::prev(s.G().end())
              , std::ostream_iterator<homomorphism<C>>(os, " + "));
     os << *std::prev(s.G().end()) << ")";
+  }
+  os << ", L=";
+  if (s.L())
+  {
+    os << *s.L();
   }
   return os;
 }
