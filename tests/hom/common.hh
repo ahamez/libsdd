@@ -14,6 +14,7 @@ using sdd::Intersection;
 using sdd::Id;
 using sdd::Local;
 using sdd::hom::SaturationFixpoint;
+using sdd::hom::SaturationIntersection;
 using sdd::hom::SaturationSum;
 using sdd::Sum;
 using sdd::ValuesFunction;
