@@ -95,6 +95,23 @@ struct conf1
 
 /*------------------------------------------------------------------------------------------------*/
 
+struct conf2
+  : public default_configuration
+{
+  using Identifier = unsigned int;
+  using Values     = values::flat_set<unsigned int>;
+
+  /// @brief The size of the hash table that stores flat_set<>.
+  std::size_t flat_set_unique_table_size;
+
+  conf2()
+    : default_configuration()
+    , flat_set_unique_table_size(1000)
+  {}
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
 } // namespace sdd
 
 #endif // _SDD_CONF_DEFAULT_CONFIGURATIONS_HH_
