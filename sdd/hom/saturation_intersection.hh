@@ -182,7 +182,7 @@ operator<<(std::ostream& os, const saturation_intersection<C>& s)
   {
     os << *s.L();
   }
-  return os;
+  return os << ")";
 }
 
 /*------------------------------------------------------------------------------------------------*/
