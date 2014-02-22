@@ -5,7 +5,7 @@
 
 #include "sdd/dd/definition.hh"
 
-namespace sdd {
+namespace sdd { namespace tools {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -201,6 +201,6 @@ lua(const SDD<C>& x)
 
 /*------------------------------------------------------------------------------------------------*/
 
-} // namespace sdd
+}} // namespace sdd::tools
 
 #endif // _SDD_DD_LUA_HH_
