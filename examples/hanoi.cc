@@ -6,14 +6,10 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-struct conf
-  : public sdd::conf1
-{
-  typedef unsigned int Identifier;
-};
-typedef sdd::SDD<conf> SDD;
-typedef sdd::homomorphism<conf> hom;
-typedef sdd::conf1::Values Values;
+using conf   = sdd::conf2;
+using SDD    = sdd::SDD<conf>;
+using hom    = sdd::homomorphism<conf>;
+using Values = conf::Values;
 
 using sdd::Cons;
 using sdd::Constant;
