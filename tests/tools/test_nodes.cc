@@ -77,7 +77,7 @@ TYPED_TEST(nodes_test, flat_sdd)
 TYPED_TEST(nodes_test, hierarchical_sdd)
 {
   {
-    const SDD x(1, one, one);
+    const SDD x(0, one, one);
     ASSERT_EQ(std::make_pair(0ul, 1ul), sdd::tools::nodes(x));
   }
   {
