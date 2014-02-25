@@ -69,6 +69,20 @@ struct default_configuration
 
 /*------------------------------------------------------------------------------------------------*/
 
+struct flat_set_default_configuration
+  : public default_configuration
+{
+  /// @brief The size of the hash table that stores flat_set<>.
+  std::size_t flat_set_unique_table_size;
+
+  flat_set_default_configuration()
+    : default_configuration()
+    , flat_set_unique_table_size(1000)
+  {}
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
 struct conf0
   : public default_configuration
 {
@@ -79,35 +93,19 @@ struct conf0
 /*------------------------------------------------------------------------------------------------*/
 
 struct conf1
-  : public default_configuration
+  : public flat_set_default_configuration
 {
   using Identifier = std::string;
   using Values     = values::flat_set<unsigned int>;
-
-  /// @brief The size of the hash table that stores flat_set<>.
-  std::size_t flat_set_unique_table_size;
-
-  conf1()
-    : default_configuration()
-    , flat_set_unique_table_size(1000)
-  {}
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
 struct conf2
-  : public default_configuration
+  : public flat_set_default_configuration
 {
   using Identifier = unsigned int;
   using Values     = values::flat_set<unsigned int>;
-
-  /// @brief The size of the hash table that stores flat_set<>.
-  std::size_t flat_set_unique_table_size;
-
-  conf2()
-    : default_configuration()
-    , flat_set_unique_table_size(1000)
-  {}
 };
 
 /*------------------------------------------------------------------------------------------------*/
