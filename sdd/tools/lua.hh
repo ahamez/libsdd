@@ -1,5 +1,5 @@
-#ifndef _SDD_DD_LUA_HH_
-#define _SDD_DD_LUA_HH_
+#ifndef _SDD_TOOLS_LUA_HH_
+#define _SDD_TOOLS_LUA_HH_
 
 #include <unordered_map>
 
@@ -203,4 +203,4 @@ lua(const SDD<C>& x)
 
 }} // namespace sdd::tools
 
-#endif // _SDD_DD_LUA_HH_
+#endif // _SDD_TOOLS_LUA_HH_
