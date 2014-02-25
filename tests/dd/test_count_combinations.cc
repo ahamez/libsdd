@@ -1,6 +1,5 @@
 #include "gtest/gtest.h"
 
-#include "sdd/conf/default_configurations.hh"
 #include "sdd/dd/context.hh"
 #include "sdd/dd/count_combinations.hh"
 #include "sdd/dd/definition.hh"
