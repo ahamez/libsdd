@@ -8,7 +8,6 @@ namespace sdd {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Store a user's identifier or an artificial one.
-/// @todo Use a discriminated union.
 ///
 /// An artificial identifier is created by order strategies (automatic variable ordering).
 /// Furthermore, only identifiers that represent hierarchical levels can be artificial.
@@ -25,7 +24,8 @@ private:
   /// @brief The value of this identifier, if artificial.
   ///
   /// If it's equals to 0, then this node identifier is not an artificial one and
-  /// it's safe to call user().
+  /// it's safe to call user(). We could use a discriminated union, but as there are only a few
+  /// order_identifier (<10000), it's not useful to try to save some memory here.
   unsigned int artificial_;
 
   /// @brief The value of this identifier, if it's a user one.
