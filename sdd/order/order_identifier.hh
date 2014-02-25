@@ -24,7 +24,7 @@ private:
 
   /// @brief The value of this identifier, if artificial.
   ///
-  /// If it's equals to 0, then this node identifier is not artificial one and
+  /// If it's equals to 0, then this node identifier is not an artificial one and
   /// it's safe to call user().
   unsigned int artificial_;
 
