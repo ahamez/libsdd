@@ -34,6 +34,7 @@ set(SOURCES
     mem/test_variant.cc
     order/test_carrier.cc
     order/test_order.cc
+    order/test_order_strategy.cc
     order/test_utility.cc
     tools/test_nodes.cc
     util/test_next_power.cc
