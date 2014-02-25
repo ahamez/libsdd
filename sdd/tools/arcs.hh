@@ -91,6 +91,22 @@ arcs(const SDD<C>& x)
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
+std::pair<std::size_t /* flat arcs */, std::size_t /* hierarchical arcs */>
+number_of_arcs(const arcs_frequency_type& freq)
+noexcept
+{
+  std::pair<std::size_t, std::size_t> res {0, 0};
+  for (const auto& kv : freq)
+  {
+    res.first += kv.first * kv.second.first;
+    res.second += kv.first * kv.second.second;
+  }
+  return res;
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
 }} // namespace sdd::tools
 
 #endif // _SDD_TOOLS_ARCS_HH_
