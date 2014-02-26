@@ -84,7 +84,7 @@ public:
   /// @param configuration An instance of the configuration with some parameters set.
   /// @throw std::runtime_error if the library was already configured.
   ///
-  /// It's must be the first function called before any other call to the library.
+  /// It must be the first function called before any other call to the library.
   static
   manager<C>
   init(const C& configuration = C())
