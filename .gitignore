@@ -3,3 +3,4 @@ build*/
 *.xcodeproj/
 profile
 gtest
+examples/dictionary.txt

@@ -9,6 +9,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/fixpoint.hh"
 #include "sdd/hom/local.hh"
+#include "sdd/hom/optional_homomorphism.hh"
 #include "sdd/hom/saturation_fixpoint.hh"
 #include "sdd/hom/saturation_intersection.hh"
 #include "sdd/hom/saturation_sum.hh"
@@ -140,16 +141,15 @@ struct rewriter
       F.push_back(Id<C>());
     }
 
-    using optional = typename saturation_sum<C>::optional_type;
     return SaturationSum<C>( o.variable()
                            , F.size() > 0 ? rewrite(o.next(), Sum<C>(o.next(), F.begin(), F.end()))
-                                          : optional()
+                                          : optional_homomorphism<C>()
                            , G.begin(), G.end()
                            , L.size() > 0 ? Local( o.position()
                                                  , rewrite( o.nested()
                                                           , Sum<C>(o.nested(), L.begin(), L.end())
                                                           ))
-                                          : optional()
+                                          : optional_homomorphism<C>()
                            );
   }
 
@@ -174,17 +174,16 @@ struct rewriter
       F.push_back(Id<C>());
     }
 
-    using optional = typename saturation_intersection<C>::optional_type;
     return SaturationIntersection<C>( o.variable()
                            , F.size() > 0 ? rewrite( o.next()
                                                    , Intersection<C>(o.next(), F.begin(), F.end()))
-                                          : optional()
+                                          : optional_homomorphism<C>()
                            , G.begin(), G.end()
                            , L.size() > 0 ? Local( o.position()
                                                  , rewrite( o.nested()
                                                           , Intersection<C>( o.nested(), L.begin()
                                                                            , L.end())))
-                                          : optional()
+                                          : optional_homomorphism<C>()
                            );
   }
 

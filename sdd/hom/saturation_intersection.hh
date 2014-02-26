@@ -6,15 +6,15 @@
 #include <stdexcept>  //invalid_argument
 
 #include <boost/container/flat_set.hpp>
-#include <boost/optional.hpp>
 
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
-#include "sdd/hom/local.hh"
 #include "sdd/hom/intersection.hh"
+#include "sdd/hom/local.hh"
+#include "sdd/hom/optional_homomorphism.hh"
 #include "sdd/order/order.hh"
 #include "sdd/util/packed.hh"
 
@@ -29,9 +29,6 @@ class LIBSDD_ATTRIBUTE_PACKED saturation_intersection
 {
 public:
 
-  /// @brief The type of an optional homomorphism.
-  using optional_type = boost::optional<homomorphism<C>>;
-
   /// @brief The variable type.
   using variable_type = typename C::variable_type;
 
@@ -44,23 +41,20 @@ private:
   const variable_type variable_;
 
   /// @brief The homomorphism's F part.
-  const optional_type F_;
+  const optional_homomorphism<C> F_;
 
   /// @brief The homomorphism's G part.
   const g_type G_;
 
   /// @brief The homomorphism's L part.
-  const optional_type L_;
+  const optional_homomorphism<C> L_;
 
 public:
 
   /// @brief Constructor.
-  saturation_intersection( variable_type var, const optional_type& f, g_type&& g
-                         , const optional_type& l)
-    : variable_(var)
-    , F_(f)
-    , G_(std::move(g))
-    , L_(l)
+  saturation_intersection( variable_type var, optional_homomorphism<C>&& f, g_type&& g
+                         , optional_homomorphism<C>&& l)
+    : variable_(var), F_(std::move(f)), G_(std::move(g)), L_(std::move(l))
   {}
 
   /// @brief Evaluation.
@@ -68,7 +62,7 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    dd::intersection_builder<C, SDD<C>> operands;
+    dd::intersection_builder<C, SDD<C>> operands(cxt.sdd_context());
     operands.reserve(G_.size() + 2);
 
     if (F_)
@@ -126,7 +120,7 @@ public:
   }
 
   /// @brief Get the forwardable part.
-  const optional_type&
+  const optional_homomorphism<C>&
   F()
   const noexcept
   {
@@ -142,7 +136,7 @@ public:
   }
 
   /// @brief Get the local part.
-  const optional_type&
+  const optional_homomorphism<C>&
   L()
   const noexcept
   {
@@ -171,24 +165,24 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const saturation_intersection<C>& s)
 {
-  os << "SatInter(@" << (int)s.variable() << ",  ";
+  os << "SatInter(@" << +s.variable() << ", F=";
   if (s.F())
   {
     os << *s.F();
   }
-  os << " + ";
+  os << ", G=";
+  if (not s.G().empty())
+  {
+    std::copy( s.G().begin(), std::prev(s.G().end())
+             , std::ostream_iterator<homomorphism<C>>(os, " & "));
+    os << *std::prev(s.G().end()) << ")";
+  }
+  os << ", L=";
   if (s.L())
   {
     os << *s.L();
   }
-  if (not s.G().empty())
-  {
-    os << " + ";
-    std::copy( s.G().begin(), std::prev(s.G().end())
-             , std::ostream_iterator<homomorphism<C>>(os, " + "));
-    os << *std::prev(s.G().end()) << ")";
-  }
-  return os;
+  return os << ")";
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -202,13 +196,11 @@ operator<<(std::ostream& os, const saturation_intersection<C>& s)
 template <typename C, typename InputIterator>
 homomorphism<C>
 SaturationIntersection( typename C::variable_type var
-                      , const typename saturation_intersection<C>::optional_type& f
+                      , optional_homomorphism<C>&& f
                       , InputIterator gbegin, InputIterator gend
-                      , const typename saturation_intersection<C>::optional_type& l)
+                      , optional_homomorphism<C>&& l)
 {
-  const std::size_t g_size = std::distance(gbegin, gend);
-
-  if (g_size == 0)
+  if (std::distance(gbegin, gend) == 0)
   {
     if (f and not l)
     {
@@ -222,9 +214,9 @@ SaturationIntersection( typename C::variable_type var
 
   return homomorphism<C>::create( mem::construct<saturation_intersection<C>>()
                                 , var
-                                , f
+                                , std::move(f)
                                 , typename saturation_intersection<C>::g_type(gbegin, gend)
-                                , l);
+                                , std::move(l));
 }
 
 /*------------------------------------------------------------------------------------------------*/

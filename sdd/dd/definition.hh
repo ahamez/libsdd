@@ -7,6 +7,7 @@
 
 #include "sdd/dd/alpha.hh"
 #include "sdd/dd/context_fwd.hh"
+#include "sdd/dd/count_combinations_fwd.hh"
 #include "sdd/dd/definition_fwd.hh"
 #include "sdd/dd/node.hh"
 #include "sdd/dd/path_generator_fwd.hh"
@@ -17,6 +18,8 @@
 #include "sdd/mem/variant.hh"
 #include "sdd/order/order.hh"
 #include "sdd/values/empty.hh"
+
+// Include for forwards at the end of the file.
 
 namespace sdd {
 
@@ -324,6 +327,14 @@ public:
     return std::hash<SDD>()(*this);
   }
 
+  /// @brief Get the number of combinations stored in this SDD.
+  boost::multiprecision::cpp_int
+  size()
+  const
+  {
+    return dd::count_combinations(*this);
+  }
+
 private:
 
   /// @internal
@@ -552,5 +563,8 @@ struct hash<sdd::SDD<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
+
+#include "sdd/dd/count_combinations.hh"
+#include "sdd/dd/path_generator.hh"
 
 #endif // _SDD_DD_DEFINITION_HH_

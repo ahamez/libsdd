@@ -6,14 +6,10 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-struct conf
-  : public sdd::conf1
-{
-  typedef unsigned int Identifier;
-};
-typedef sdd::SDD<conf> SDD;
-typedef sdd::homomorphism<conf> hom;
-typedef sdd::conf1::Values Values;
+using conf   = sdd::conf2;
+using SDD    = sdd::SDD<conf>;
+using hom    = sdd::homomorphism<conf>;
+using Values = conf::Values;
 
 using sdd::Cons;
 using sdd::Constant;
@@ -245,7 +241,7 @@ main(int argc, char** argv)
   elapsed = std::chrono::duration_cast<std::chrono::seconds>(end-start).count();
   std::cout << "Time: " << elapsed << "s" << std::endl;
   // Number of distinct paths
-  std::cout << "Number of states : " << sdd::count_combinations(sat_final) << std::endl;
+  std::cout << "Number of states : " << sat_final.size() << std::endl;
 
   std::cout << manager << std::endl;
 

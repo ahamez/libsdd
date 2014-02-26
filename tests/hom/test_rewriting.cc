@@ -67,7 +67,6 @@ TYPED_TEST(rewriting_test, sum)
 {
   using ob = order_builder;
   {
-//    const order o(ob().push("b").push("a", ob {"x"}));
     const order o(ob("a", ob {"x"}) << ob("b"));
     const homomorphism h0 = Sum<conf>( o
                             , { id
@@ -99,7 +98,12 @@ TYPED_TEST(rewriting_test, sum)
 
 TYPED_TEST(rewriting_test, intersection)
 {
+  using optional = sdd::hom::optional_homomorphism<conf>;
   using ob = order_builder;
+  const auto ia = Inductive<conf>(targeted_incr<conf>("a", 0));
+  const auto ib = Inductive<conf>(targeted_incr<conf>("b", 0));
+  const auto ic = Inductive<conf>(targeted_incr<conf>("c", 0));
+
   {
     const order o(ob("a", ob {"x"}) << ob("b"));
     const homomorphism h0
@@ -113,13 +117,31 @@ TYPED_TEST(rewriting_test, intersection)
   }
   {
     const order o(ob({"a", "b", "c"}));
-    const homomorphism h0
-      = Intersection<conf>( o
-                         , { Inductive<conf>(targeted_incr<conf>("a", 0))
-                           , Inductive<conf>(targeted_incr<conf>("b", 0))
-                           , Inductive<conf>(targeted_incr<conf>("c", 0))});
+    const homomorphism h0 = Intersection<conf>(o, {ia, ib, ic});
     const homomorphism h1 = sdd::rewrite(o, h0);
     ASSERT_NE(h1, h0);
+    SDD s0(2, {0}, SDD(1, {0}, SDD(0, {0}, one)));
+    ASSERT_EQ(h0(o, s0), h1(o, s0));
+  }
+  {
+    const order o(ob({"a", "b", "c"}));
+    const homomorphism h0 = Intersection<conf>(o, {ia, ib, ic});
+    const homomorphism h1 = sdd::rewrite(o, h0);
+    const auto ga = {ia};
+    const auto gb = {ib};
+
+    const auto r0 = SaturationIntersection<conf>
+      ( 2
+      , /*F*/ SaturationIntersection<conf>
+        ( 1
+        , /*F*/ ic
+        , /*G*/ gb.begin(), gb.end()
+        , /*L*/ optional())
+      , /*G*/ ga.begin(), ga.end()
+      , /*L*/ optional());
+
+    ASSERT_NE(h1, h0);
+    ASSERT_EQ(r0, h1);
     SDD s0(2, {0}, SDD(1, {0}, SDD(0, {0}, one)));
     ASSERT_EQ(h0(o, s0), h1(o, s0));
   }

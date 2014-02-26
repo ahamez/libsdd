@@ -1,11 +1,11 @@
-#ifndef _SDD_DD_LUA_HH_
-#define _SDD_DD_LUA_HH_
+#ifndef _SDD_TOOLS_LUA_HH_
+#define _SDD_TOOLS_LUA_HH_
 
 #include <unordered_map>
 
 #include "sdd/dd/definition.hh"
 
-namespace sdd {
+namespace sdd { namespace tools {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -37,9 +37,12 @@ struct to_lua_visitor
   /// @brief The node counter.
   mutable unsigned int next_id_;
 
+  /// @brief
+  const unsigned int table_height_;
+
   /// @brief Constructor.
-  to_lua_visitor(std::ostream& os)
-    : os_(os), next_id_(0)
+  to_lua_visitor(std::ostream& os, unsigned int table_height)
+    : os_(os), next_id_(0), table_height_(table_height)
   {}
 
   /// @brief |0|.
@@ -51,10 +54,15 @@ struct to_lua_visitor
     if (insertion.second)
     {
       const auto id = next_id_++;
-      os_ << "n" << id << " = {\n";
-      os_ << " variable = 0,\n";
-      os_ << " terminal = 0\n";
-      os_ << "}\n\n";
+      if ((id  % table_height_) == 0)
+      {
+        os_ << "table.insert(create, function()\n";
+      }
+      os_ << "  nodes[" << id << "] = {variable = 0, terminal = 0}\n";
+      if ((id  % table_height_) == (table_height_ - 1))
+      {
+        os_ << "end)\n";
+      }
       insertion.first->second.height = 0;
       insertion.first->second.id = id;
     }
@@ -70,10 +78,15 @@ struct to_lua_visitor
     if (insertion.second)
     {
       const auto id = next_id_++;
-      os_ << "n" << id << " = {\n";
-      os_ << " variable = 0,\n";
-      os_ << " terminal = 1\n";
-      os_ << "}\n\n";
+      if ((id  % table_height_) == 0)
+      {
+        os_ << "table.insert(create, function()\n";
+      }
+      os_ << "  nodes[" << id << "] = {variable = 0, terminal = 1}\n";
+      if ((id  % table_height_) == (table_height_ - 1))
+      {
+        os_ << "end)\n";
+      }
       insertion.first->second.height = 0;
       insertion.first->second.id = id;
     }
@@ -100,25 +113,31 @@ struct to_lua_visitor
 
       result_type res(succs.front().height + 1, next_id_++);
 
-      os_ << "n" << res.id << " = {\n";
-      os_ << " variable = " << res.height << ",\n";
+      if ((res.id  % table_height_) == 0)
+      {
+        os_ << "table.insert(create, function()\n";
+      }
+
+      os_ << "  nodes[" << res.id << "] = { variable = " << res.height << "\n";
       auto arc_cit = n.begin();
       for (auto succs_cit = succs.cbegin(); succs_cit != succs.end(); ++succs_cit, ++arc_cit)
       {
-        os_ << " {\n";
-        os_ << "  ";
+        os_ << "             , {";
         for (const auto& v : arc_cit->valuation())
         {
           os_ << v << ",";
         }
-        os_ << "\n";
-        os_ << "  successor = n" << succs_cit->id << "\n";
-        os_ << " },\n";
+        os_ << " successor = nodes[" << succs_cit->id << "]}\n";
       }
-      os_ << "}\n\n";
-      insertion.first->second = res;
-    }
+      os_ << "             }\n";
 
+      insertion.first->second = res;
+
+      if ((res.id  % table_height_) == (table_height_ - 1))
+      {
+        os_ << "end)\n";
+      }
+    }
     return insertion.first->second;
   }
 
@@ -127,44 +146,7 @@ struct to_lua_visitor
   operator()(const hierarchical_node<C>& n)
   const
   {
-    const auto insertion = cache_.emplace(reinterpret_cast<const char*>(&n), result_type());
-    if (insertion.second)
-    {
-      using arc_type = typename flat_node<C>::arc_type;
-
-      std::vector<result_type> succs;
-      succs.reserve(n.size());
-
-      std::vector<result_type> nested;
-      nested.reserve(n.size());
-
-      for (const auto& arc : n)
-      {
-        succs.push_back(visit(*this, arc.successor()));
-      }
-
-      for (const auto& arc : n)
-      {
-        nested.push_back(visit(*this, arc.valuation()));
-      }
-
-      result_type res(succs.front().height + 1, next_id_++);
-
-      os_ << "n" << res.id << " = {\n";
-      os_ << " variable = " << res.height << ",\n";
-      auto nested_cit = nested.cbegin();
-      for (auto succs_cit = succs.cbegin(); succs_cit != succs.end(); ++succs_cit, ++nested_cit)
-      {
-        os_ << " {\n";
-        os_ << "  n" << nested_cit->id << ",\n";
-        os_ << "  successor = n" << succs_cit->id << "\n";
-        os_ << " },\n";
-      }
-      os_ << "}\n\n";
-
-      insertion.first->second = res;
-    }
-    return insertion.first->second;
+    os_ << "Hierarchial SDD not supported yet." << std::endl;
   }
 };
 
@@ -184,8 +166,14 @@ struct to_lua
   std::ostream&
   operator<<(std::ostream& out, const to_lua& manip)
   {
-    const auto res = visit(to_lua_visitor<C>(out), manip.x_);
-    return out << "return n" << res.id << "\n";
+    const unsigned int table_height = 100;
+    out << "local nodes = {}\nlocal create = {}\n";
+    const auto last = visit(to_lua_visitor<C>(out, table_height), manip.x_);
+    if ((last.id  % table_height) != (table_height - 1))
+    {
+      out << "end)\n";
+    }
+    return out << "for _, f in ipairs(create) do f() end\nreturn nodes[#nodes]";
   }
 };
 
@@ -201,6 +189,6 @@ lua(const SDD<C>& x)
 
 /*------------------------------------------------------------------------------------------------*/
 
-} // namespace sdd
+}} // namespace sdd::tools
 
-#endif // _SDD_DD_LUA_HH_
+#endif // _SDD_TOOLS_LUA_HH_

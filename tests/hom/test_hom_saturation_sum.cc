@@ -38,12 +38,12 @@ struct hom_saturation_sum_test
 
 TYPED_TEST_CASE(hom_saturation_sum_test, configurations);
 #include "tests/macros.hh"
-#define optional typename sdd::hom::saturation_sum<conf>::optional_type
 
 /*------------------------------------------------------------------------------------------------*/
 
 TYPED_TEST(hom_saturation_sum_test, construction)
 {
+  using optional = sdd::hom::optional_homomorphism<conf>;
   {
     std::vector<homomorphism> g {id, Inductive<conf>(targeted_noop<conf>("0"))};
     ASSERT_EQ( SaturationSum<conf>(0, optional(), g.begin(), g.end(), optional())
@@ -61,6 +61,7 @@ TYPED_TEST(hom_saturation_sum_test, construction)
 
 TYPED_TEST(hom_saturation_sum_test, evaluation)
 {
+  using optional = sdd::hom::optional_homomorphism<conf>;
   {
     const order o(order_builder {"a", "b", "c"});
     SDD s0(2, {0}, SDD(1, {0}, SDD(0, {0}, one)));

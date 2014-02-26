@@ -3,12 +3,11 @@
 
 #include <unordered_map>
 
-#include <boost/multiprecision/cpp_int.hpp>
-
+#include "sdd/dd/count_combinations_fwd.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/values/size.hh"
 
-namespace sdd {
+namespace sdd { namespace dd {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -80,6 +79,7 @@ struct count_combinations_visitor
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Compute the number of combinations in an SDD.
 ///
 /// O(N) where N is the number of nodes in x.
@@ -93,6 +93,6 @@ count_combinations(const SDD<C>& x)
 
 /*------------------------------------------------------------------------------------------------*/
 
-} // namespace sdd
+}} // namespace sdd::dd
 
 #endif // _SDD_DD_COUNT_COMBINATIONS_HH_
