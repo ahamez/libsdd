@@ -60,7 +60,7 @@ private:
   using values_type = typename C::Values;
 
   /// @brief Keep the configuration.
-  const C& conf_;
+  const C conf_;
 
   /// @brief The manager of Values.
   values_manager<values_type>* values_;
