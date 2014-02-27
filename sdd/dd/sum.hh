@@ -130,7 +130,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
             if (not values::empty_values(diff))
             {
               // (res_val - inter) can't be in intersection, but we need to keep it
-              // for the next arcs of the current alpha. So we put in a temporary storage.
+              // for the next arcs of the current alpha. So we put it in a temporary storage.
               // It will be added back in res when we have finished with the current valuation.
               remainder.emplace_back(std::move(diff), std::move(res_succs));
             }
@@ -149,7 +149,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
               break;
             }
 
-            // Continue with what remains of val. if val is empy, the loop will stop at the
+            // Continue with what remains of val. If val is empty, the loop will stop at the
             // next iteration.
             current_val = difference(cxt, current_val, inter);
           }
