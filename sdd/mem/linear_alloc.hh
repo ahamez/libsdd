@@ -32,6 +32,7 @@ struct arena
     assert(used() == 0 && "Memory arena not rewound.");
   }
 
+  // Can't copy an arena.
   arena(const arena&) = delete;
   arena& operator=(const arena&) = delete;
 
@@ -113,18 +114,35 @@ struct arena
 /// Use RAII to ensure that the arena is always rewound to its initial position .
 struct rewinder
 {
+  /// @brief The associated memory arena.
   arena& a_;
+
+  /// @brief The position where to rewind the associated arena.
   const arena::position_type pos_;
 
+  /// @brief Constructor.
+  ///
+  /// Initialize the position to the current position of the arena.
   rewinder(arena& a)
   noexcept
     : a_(a), pos_(a.position())
   {}
 
+  /// @brief Destructor.
+  ///
+  /// Rewind the arena to its position when this object was constructed;
   ~rewinder()
   {
     a_.rewind(pos_);
   }
+
+  // Can't copy a rewinder.
+  rewinder(const rewinder&) = delete;
+  rewinder& operator=(const rewinder&) = delete;
+
+  // Can't move a rewinder.
+  rewinder(rewinder&&) = delete;
+  rewinder& operator=(rewinder&&) = delete;
 };
 
 /*------------------------------------------------------------------------------------------------*/
@@ -137,7 +155,7 @@ struct rewinder
 /// @brief Allocate memory contiguously in a preallocated buffer.
 ///
 /// Memory is allocated by moving a pointer in the buffer. Only the memory which was the last
-/// one thas was allcoated can be deallocated. Thus, this allocator would mostly benefit to
+/// one thas was allocated can be deallocated. Thus, this allocator would mostly benefit to
 /// recursive algorithms which need a stack. 
 /// It's an adaptation of http://home.roadrunner.com/~hinnant/stack_alloc.html .
 template <class T>
