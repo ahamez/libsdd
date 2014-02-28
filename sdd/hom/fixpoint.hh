@@ -9,7 +9,6 @@
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
-#include "sdd/util/packed.hh"
 
 namespace sdd {
 
@@ -25,7 +24,7 @@ namespace hom {
 /// @internal
 /// @brief Fixpoint homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED _fixpoint
+class _fixpoint
 {
 private:
 

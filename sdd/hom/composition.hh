@@ -8,7 +8,6 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/order/order.hh"
-#include "sdd/util/packed.hh"
 
 namespace sdd { namespace hom {
 
@@ -17,7 +16,7 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief composition homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED _composition
+class _composition
 {
 private:
 

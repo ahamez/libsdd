@@ -7,7 +7,6 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/order/order.hh"
-#include "sdd/util/packed.hh"
 
 namespace sdd { namespace hom {
 
@@ -16,7 +15,7 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief cons homomorphism.
 template <typename C, typename Valuation>
-class LIBSDD_ATTRIBUTE_PACKED _cons
+class _cons
 {
 private:
 
