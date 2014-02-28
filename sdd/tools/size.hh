@@ -99,7 +99,7 @@ struct size_visitor
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @internal
+/// @brief Get the memory usage of an SDD, in bytes.
 template <typename C>
 std::size_t
 size(const SDD<C>& x)

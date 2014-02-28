@@ -115,7 +115,9 @@ struct to_dot
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Export
+/// @brief Export an SDD to the DOT format.
+///
+/// Hierarchical SDD are not supported yet.
 template <typename C>
 to_dot<C>
 dot(const SDD<C>& x)
