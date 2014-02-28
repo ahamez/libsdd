@@ -5,11 +5,11 @@
 #include <deque>
 #include <tuple>
 
+#include "sdd/hom/common_types.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/fixpoint.hh"
 #include "sdd/hom/local.hh"
-#include "sdd/hom/optional_homomorphism.hh"
 #include "sdd/hom/saturation_fixpoint.hh"
 #include "sdd/hom/saturation_intersection.hh"
 #include "sdd/hom/saturation_sum.hh"

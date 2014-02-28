@@ -5,15 +5,13 @@
 #include <iosfwd>
 #include <stdexcept>  //invalid_argument
 
-#include <boost/container/flat_set.hpp>
-
 #include "sdd/dd/definition.hh"
+#include "sdd/hom/common_types.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
-#include "sdd/hom/optional_homomorphism.hh"
 #include "sdd/hom/sum.hh"
 #include "sdd/order/order.hh"
 #include "sdd/util/packed.hh"
@@ -32,9 +30,6 @@ public:
   /// @brief The variable type.
   using variable_type = typename C::variable_type;
 
-  /// @brief The type of the homomorphism G part.
-  using g_type = boost::container::flat_set<homomorphism<C>>;
-
 private:
 
   /// @brief The variable on which this sum works.
@@ -44,7 +39,7 @@ private:
   const optional_homomorphism<C> F_;
 
   /// @brief The homomorphism's G part.
-  const g_type G_;
+  const homomorphism_set<C> G_;
 
   /// @brief The homomorphism's L part.
   const optional_homomorphism<C> L_;
@@ -52,7 +47,7 @@ private:
 public:
 
   /// @brief Constructor.
-  _saturation_sum( variable_type var, optional_homomorphism<C>&& f, g_type&& g
+  _saturation_sum( variable_type var, optional_homomorphism<C>&& f, homomorphism_set<C>&& g
                  , optional_homomorphism<C>&& l)
     : variable_(var), F_(std::move(f)), G_(std::move(g)), L_(std::move(l))
   {}
@@ -128,7 +123,7 @@ public:
   }
 
   /// @brief Get the global part.
-  const g_type&
+  const homomorphism_set<C>&
   G()
   const noexcept
   {
@@ -218,7 +213,7 @@ saturation_sum( typename C::variable_type var
   return homomorphism<C>::create( mem::construct<_saturation_sum<C>>()
                                 , var
                                 , std::move(f)
-                                , typename _saturation_sum<C>::g_type(gbegin, gend)
+                                , homomorphism_set<C>(gbegin, gend)
                                 , std::move(l));
 }
 
