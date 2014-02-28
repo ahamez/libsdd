@@ -25,7 +25,7 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief Saturation Fixpoint homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED saturation_fixpoint
+class LIBSDD_ATTRIBUTE_PACKED _saturation_fixpoint
 {
 public:
 
@@ -55,9 +55,9 @@ private:
 public:
 
   /// @brief Constructor.
-  saturation_fixpoint( variable_type var, const homomorphism<C>& f
-                     , boost::container::flat_set<homomorphism<C>>& g
-                     , const homomorphism<C>& l)
+  _saturation_fixpoint( variable_type var, const homomorphism<C>& f
+                      , boost::container::flat_set<homomorphism<C>>& g
+                      , const homomorphism<C>& l)
     : variable_(var)
     , F_(f)
     , G_size_(static_cast<operands_size_type>(g.size()))
@@ -68,7 +68,7 @@ public:
   }
 
   /// @brief Destructor.
-  ~saturation_fixpoint()
+  ~_saturation_fixpoint()
   {
     for (auto it = G_begin(); it != G_end(); ++it)
     {
@@ -189,20 +189,19 @@ private:
   G_operands_addr()
   const noexcept
   {
-    return reinterpret_cast<char*>(const_cast<saturation_fixpoint*>(this))
-         + sizeof(saturation_fixpoint);
+    return reinterpret_cast<char*>(const_cast<_saturation_fixpoint*>(this))
+         + sizeof(_saturation_fixpoint);
   }
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Equality of two saturation_fixpoint.
 /// @related saturation_fixpoint
 template <typename C>
 inline
 bool
-operator==(const saturation_fixpoint<C>& lhs, const saturation_fixpoint<C>& rhs)
+operator==(const _saturation_fixpoint<C>& lhs, const _saturation_fixpoint<C>& rhs)
 noexcept
 {
   return lhs.variable() == rhs.variable()
@@ -213,10 +212,10 @@ noexcept
 }
 
 /// @internal
-/// @related saturation_fixpoint
+/// @related _saturation_fixpoint
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const saturation_fixpoint<C>& s)
+operator<<(std::ostream& os, const _saturation_fixpoint<C>& s)
 {
   os << "Sat(@" << s.variable() << ",  " << s.F() << " + " << s.L();
   if (not (s.G_size() == 0))
@@ -239,7 +238,7 @@ operator<<(std::ostream& os, const saturation_fixpoint<C>& s)
 /// that operands of the G part are already optimized (e.g. local merged and sums flatten).
 template <typename C, typename InputIterator>
 homomorphism<C>
-SaturationFixpoint( typename C::variable_type var
+saturation_fixpoint( typename C::variable_type var
                   , const homomorphism<C>& f
                   , InputIterator gbegin, InputIterator gend
                   , const homomorphism<C>& l)
@@ -248,11 +247,11 @@ SaturationFixpoint( typename C::variable_type var
 
   if (gsize == 0)
   {
-    if (f != Id<C>() and l == Id<C>())
+    if (f != id<C>() and l == id<C>())
     {
       return f;
     }
-    if (f == Id<C>() and l != Id<C>())
+    if (f == id<C>() and l != id<C>())
     {
       return l;
     }
@@ -263,7 +262,7 @@ SaturationFixpoint( typename C::variable_type var
   g.clear();
   g.insert(gbegin, gend);
   const std::size_t extra_bytes = g.size() * sizeof(homomorphism<C>);
-  return homomorphism<C>::create_variable_size( mem::construct<saturation_fixpoint<C>>()
+  return homomorphism<C>::create_variable_size( mem::construct<_saturation_fixpoint<C>>()
                                               , extra_bytes, var, f, g, l);
 }
 
@@ -276,12 +275,12 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Hash specialization for sdd::hom::saturation_fixpoint.
+/// @brief Hash specialization for sdd::hom::_saturation_fixpoint.
 template <typename C>
-struct hash<sdd::hom::saturation_fixpoint<C>>
+struct hash<sdd::hom::_saturation_fixpoint<C>>
 {
   std::size_t
-  operator()(const sdd::hom::saturation_fixpoint<C>& s)
+  operator()(const sdd::hom::_saturation_fixpoint<C>& s)
   const
   {
     std::size_t seed = sdd::util::hash(s.variable());

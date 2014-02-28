@@ -29,7 +29,7 @@ struct hom_values_function_test
     : m(sdd::manager<C>::init(small_conf<C>()))
     , zero(sdd::zero<C>())
     , one(sdd::one<C>())
-    , id(sdd::Id<C>())
+    , id(sdd::id<C>())
   {}
 };
 
@@ -122,18 +122,18 @@ TYPED_TEST(hom_values_function_test, construction)
 {
   const order o(order_builder {"a", "b"});
   {
-    const auto h0 = ValuesFunction<conf>(o, "a", threshold_fun<conf, true>(3));
-    const auto h1 = ValuesFunction<conf>(o, "a", threshold_fun<conf, true>(3));
+    const auto h0 = values_function<conf>(o, "a", threshold_fun<conf, true>(3));
+    const auto h1 = values_function<conf>(o, "a", threshold_fun<conf, true>(3));
     ASSERT_EQ(h0, h1);
   }
   {
-    const auto h0 = ValuesFunction<conf>(o, "a", threshold_fun<conf, true>(3));
-    const auto h1 = ValuesFunction<conf>(o, "a", threshold_fun<conf, true>(0));
+    const auto h0 = values_function<conf>(o, "a", threshold_fun<conf, true>(3));
+    const auto h1 = values_function<conf>(o, "a", threshold_fun<conf, true>(0));
     ASSERT_NE(h0, h1);
   }
   {
-    const auto h0 = ValuesFunction<conf>(o, "a", threshold_fun<conf, true>(3));
-    const auto h1 = ValuesFunction<conf>(o, "b", threshold_fun<conf, true>(3));
+    const auto h0 = values_function<conf>(o, "a", threshold_fun<conf, true>(3));
+    const auto h1 = values_function<conf>(o, "b", threshold_fun<conf, true>(3));
     ASSERT_NE(h0, h1);
   }
 }
@@ -145,14 +145,14 @@ TYPED_TEST(hom_values_function_test, evaluation_selector)
   {
     const order o(order_builder {"a"});
     const SDD s0(0, {1,2,3}, one);
-    const auto h0 = ValuesFunction<conf>(o, "a", threshold_fun<conf, true>(2));
+    const auto h0 = values_function<conf>(o, "a", threshold_fun<conf, true>(2));
     const SDD s1(0, {1,2}, one);
     ASSERT_EQ(s1, h0(o, s0));
   }
   {
     const order o(order_builder {"a"});
     const SDD s0(0, {0,1,3}, one);
-    const auto h0 = ValuesFunction<conf>(o, "a", threshold_fun<conf, true>(2));
+    const auto h0 = values_function<conf>(o, "a", threshold_fun<conf, true>(2));
     const SDD s1(0, {0,1}, one);
     ASSERT_EQ(s1, h0(o, s0));
   }
@@ -160,7 +160,7 @@ TYPED_TEST(hom_values_function_test, evaluation_selector)
     const order o(order_builder {"a", "b"});
     const SDD s0 = SDD(1, {1,2,3}, SDD(0, {1,2,3}, one))
                  + SDD(1, {4,5,6}, SDD(0, {4,5,6}, one));
-    const auto h0 = ValuesFunction<conf>(o, "a", threshold_fun<conf, true>(2));
+    const auto h0 = values_function<conf>(o, "a", threshold_fun<conf, true>(2));
     const SDD s1 = SDD(1, {1,2}, SDD(0, {1,2,3}, one));
     ASSERT_EQ(s1, h0(o, s0));
   }
@@ -168,7 +168,7 @@ TYPED_TEST(hom_values_function_test, evaluation_selector)
     const order o(order_builder {"a", "b"});
     const SDD s0 = SDD(1, {1,2,3}, SDD(0, {1,2,3}, one))
                  + SDD(1, {4,5,6}, SDD(0, {4,5,6}, one));
-    const auto h0 = ValuesFunction<conf>(o, "b", threshold_fun<conf, true>(2));
+    const auto h0 = values_function<conf>(o, "b", threshold_fun<conf, true>(2));
     const SDD s1 = SDD(1, {1,2,3}, SDD(0, {1,2}, one));
     ASSERT_EQ(s1, h0(o, s0));
   }
@@ -176,14 +176,14 @@ TYPED_TEST(hom_values_function_test, evaluation_selector)
     const order o(order_builder {"a", "b"});
     const SDD s0 = SDD(1, {1,2,3}, SDD(0, {1,2,3}, one))
                  + SDD(1, {4,5,6}, SDD(0, {4,5,6}, one));
-    const auto h0 = ValuesFunction<conf>(o, "a", threshold_fun<conf, true>(0));
+    const auto h0 = values_function<conf>(o, "a", threshold_fun<conf, true>(0));
     ASSERT_EQ(zero, h0(o, s0));
   }
   {
     const order o(order_builder {"a", "b"});
     const SDD s0 = SDD(1, {1,2,3}, SDD(0, {1,2,3}, one))
                  + SDD(1, {4,5,6}, SDD(0, {4,5,6}, one));
-    const auto h0 = ValuesFunction<conf>(o, "b", threshold_fun<conf, true>(0));
+    const auto h0 = values_function<conf>(o, "b", threshold_fun<conf, true>(0));
     ASSERT_EQ(zero, h0(o, s0));
   }
 }
@@ -195,14 +195,14 @@ TYPED_TEST(hom_values_function_test, evaluation_no_selector)
   {
     const order o(order_builder {"a"});
     const SDD s0(0, {1,2,3}, one);
-    const auto h0 = ValuesFunction<conf>(o, "a", threshold_fun<conf, false>(2));
+    const auto h0 = values_function<conf>(o, "a", threshold_fun<conf, false>(2));
     const SDD s1(0, {1,2}, one);
     ASSERT_EQ(s1, h0(o, s0));
   }
   {
     const order o(order_builder {"a"});
     const SDD s0(0, {0,1,3}, one);
-    const auto h0 = ValuesFunction<conf>(o, "a", threshold_fun<conf, false>(2));
+    const auto h0 = values_function<conf>(o, "a", threshold_fun<conf, false>(2));
     const SDD s1(0, {0,1}, one);
     ASSERT_EQ(s1, h0(o, s0));
   }
@@ -210,7 +210,7 @@ TYPED_TEST(hom_values_function_test, evaluation_no_selector)
     const order o(order_builder {"a", "b"});
     const SDD s0 = SDD(1, {1,2,3}, SDD(0, {1,2,3}, one))
                  + SDD(1, {4,5,6}, SDD(0, {4,5,6}, one));
-    const auto h0 = ValuesFunction<conf>(o, "a", threshold_fun<conf, false>(2));
+    const auto h0 = values_function<conf>(o, "a", threshold_fun<conf, false>(2));
     const SDD s1 = SDD(1, {1,2}, SDD(0, {1,2,3}, one));
     ASSERT_EQ(s1, h0(o, s0));
   }
@@ -218,7 +218,7 @@ TYPED_TEST(hom_values_function_test, evaluation_no_selector)
     const order o(order_builder {"a", "b"});
     const SDD s0 = SDD(1, {1,2,3}, SDD(0, {1,2,3}, one))
                  + SDD(1, {4,5,6}, SDD(0, {4,5,6}, one));
-    const auto h0 = ValuesFunction<conf>(o, "b", threshold_fun<conf, false>(2));
+    const auto h0 = values_function<conf>(o, "b", threshold_fun<conf, false>(2));
     const SDD s1 = SDD(1, {1,2,3}, SDD(0, {1,2}, one));
     ASSERT_EQ(s1, h0(o, s0));
   }
@@ -226,14 +226,14 @@ TYPED_TEST(hom_values_function_test, evaluation_no_selector)
     const order o(order_builder {"a", "b"});
     const SDD s0 = SDD(1, {1,2,3}, SDD(0, {1,2,3}, one))
                  + SDD(1, {4,5,6}, SDD(0, {4,5,6}, one));
-    const auto h0 = ValuesFunction<conf>(o, "a", threshold_fun<conf, false>(0));
+    const auto h0 = values_function<conf>(o, "a", threshold_fun<conf, false>(0));
     ASSERT_EQ(zero, h0(o, s0));
   }
   {
     const order o(order_builder {"a", "b"});
     const SDD s0 = SDD(1, {1,2,3}, SDD(0, {1,2,3}, one))
                  + SDD(1, {4,5,6}, SDD(0, {4,5,6}, one));
-    const auto h0 = ValuesFunction<conf>(o, "b", threshold_fun<conf, false>(0));
+    const auto h0 = values_function<conf>(o, "b", threshold_fun<conf, false>(0));
     ASSERT_EQ(zero, h0(o, s0));
   }
 }

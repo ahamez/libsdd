@@ -16,9 +16,9 @@ namespace sdd { namespace hom {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Local homomorphism.
+/// @brief local homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED local
+class LIBSDD_ATTRIBUTE_PACKED _local
 {
 private:
 
@@ -31,7 +31,7 @@ private:
 public:
 
   /// @brief Constructor.
-  local(order_position_type target, const homomorphism<C>& h)
+  _local(order_position_type target, const homomorphism<C>& h)
     : target_(target)
     , h_(h)
   {}
@@ -93,7 +93,7 @@ public:
       }
     }
 
-    /// @brief Error case: Local only applies on hierarchical nodes.
+    /// @brief Error case: local only applies on hierarchical nodes.
     template <typename T>
     SDD<C>
     operator()(const T&)
@@ -147,22 +147,21 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Equality of two Local homomorphisms.
-/// @related local
+/// @related _local
 template <typename C>
 inline
 bool
-operator==(const local<C>& lhs, const local<C>& rhs)
+operator==(const _local<C>& lhs, const _local<C>& rhs)
 noexcept
 {
   return lhs.target() == rhs.target() and lhs.hom() == rhs.hom();
 }
 
 /// @internal
-/// @related local
+/// @related _local
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const local<C>& l)
+operator<<(std::ostream& os, const _local<C>& l)
 {
   return os << "@(" << l.target() << ", " << l.hom() << ")";
 }
@@ -175,25 +174,25 @@ operator<<(std::ostream& os, const local<C>& l)
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-Local(order_position_type pos, const homomorphism<C>& h)
+local(order_position_type pos, const homomorphism<C>& h)
 {
-  if (h == Id<C>())
+  if (h == id<C>())
   {
     return h;
   }
   else
   {
-    return homomorphism<C>::create(mem::construct<hom::local<C>>(), pos, h);
+    return homomorphism<C>::create(mem::construct<hom::_local<C>>(), pos, h);
   }
 }
 
-/// @brief Create the Local homomorphism.
+/// @brief Create the local homomorphism.
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-Local(const typename C::Identifier& id, const order<C>& o, const homomorphism<C>& h)
+local(const typename C::Identifier& id, const order<C>& o, const homomorphism<C>& h)
 {
-  return Local(o.node(id).position(), h);
+  return local(o.node(id).position(), h);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -205,12 +204,12 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Hash specialization for sdd::hom::local.
+/// @brief Hash specialization for sdd::hom::_local.
 template <typename C>
-struct hash<sdd::hom::local<C>>
+struct hash<sdd::hom::_local<C>>
 {
   std::size_t
-  operator()(const sdd::hom::local<C>& l)
+  operator()(const sdd::hom::_local<C>& l)
   const
   {
     std::size_t seed = sdd::util::hash(l.target());

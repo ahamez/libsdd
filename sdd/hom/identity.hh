@@ -19,7 +19,7 @@ namespace sdd { namespace hom {
 ///
 /// Its evaluation is done in homomorphism<C>::operator().
 template <typename C>
-struct identity
+struct _identity
 {
   /// @brief Evaluation.
   ///
@@ -57,7 +57,7 @@ struct identity
 template <typename C>
 inline
 constexpr bool
-operator==(const identity<C>&, const identity<C>&)
+operator==(const _identity<C>&, const _identity<C>&)
 noexcept
 {
   return true;
@@ -67,7 +67,7 @@ noexcept
 /// @related identity
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const identity<C>&)
+operator<<(std::ostream& os, const _identity<C>&)
 {
   return os << "Id";
 }
@@ -76,12 +76,12 @@ operator<<(std::ostream& os, const identity<C>&)
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Create the Identity homomorphism.
+/// @brief Create the identity homomorphism.
 /// @related homomorphism
 template <typename C>
 inline
 homomorphism<C>
-Id()
+id()
 noexcept
 {
   return global<C>().id;
@@ -96,13 +96,13 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Hash specialization for sdd::hom::identity.
+/// @brief Hash specialization for sdd::hom::_identity.
 template <typename C>
-struct hash<sdd::hom::identity<C>>
+struct hash<sdd::hom::_identity<C>>
 {
   constexpr
   std::size_t
-  operator()(const sdd::hom::identity<C>&)
+  operator()(const sdd::hom::_identity<C>&)
   const noexcept
   {
     return sdd::util::hash(607769);

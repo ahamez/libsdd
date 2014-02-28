@@ -5,19 +5,19 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-using sdd::Composition;
-using sdd::Cons;
-using sdd::Expression;
-using sdd::Fixpoint;
-using sdd::Inductive;
-using sdd::Intersection;
-using sdd::Id;
-using sdd::Local;
-using sdd::hom::SaturationFixpoint;
-using sdd::hom::SaturationIntersection;
-using sdd::hom::SaturationSum;
-using sdd::Sum;
-using sdd::ValuesFunction;
+using sdd::composition;
+using sdd::cons;
+using sdd::expression;
+using sdd::fixpoint;
+using sdd::inductive;
+using sdd::intersection;
+using sdd::id;
+using sdd::local;
+using sdd::hom::saturation_fixpoint;
+using sdd::hom::saturation_intersection;
+using sdd::hom::saturation_sum;
+using sdd::sum;
+using sdd::values_function;
 
 /*------------------------------------------------------------------------------------------------*/
 

@@ -28,7 +28,7 @@ struct hom_fixpoint_test
     : m(sdd::manager<C>::init(small_conf<C>()))
     , zero(sdd::zero<C>())
     , one(sdd::one<C>())
-    , id(sdd::Id<C>())
+    , id(sdd::id<C>())
   {}
 };
 
@@ -42,21 +42,21 @@ TYPED_TEST_CASE(hom_fixpoint_test, configurations);
 TYPED_TEST(hom_fixpoint_test, construction)
 {
   {
-    ASSERT_EQ(id, Fixpoint(id));
+    ASSERT_EQ(id, fixpoint(id));
   }
   {
-    ASSERT_EQ( Fixpoint(Inductive<conf>(targeted_incr<conf>("0",1)))
-             , Fixpoint(Inductive<conf>(targeted_incr<conf>("0",1)))
+    ASSERT_EQ( fixpoint(inductive<conf>(targeted_incr<conf>("0",1)))
+             , fixpoint(inductive<conf>(targeted_incr<conf>("0",1)))
              );
   }
   {
-    ASSERT_NE( Fixpoint(Inductive<conf>(targeted_incr<conf>("0",1)))
-             , Fixpoint(Inductive<conf>(targeted_incr<conf>("0",2)))
+    ASSERT_NE( fixpoint(inductive<conf>(targeted_incr<conf>("0",1)))
+             , fixpoint(inductive<conf>(targeted_incr<conf>("0",2)))
              );
   }
   {
-    ASSERT_EQ( Fixpoint(Inductive<conf>(targeted_incr<conf>("0",1)))
-             , Fixpoint(Fixpoint(Inductive<conf>(targeted_incr<conf>("0",1))))
+    ASSERT_EQ( fixpoint(inductive<conf>(targeted_incr<conf>("0",1)))
+             , fixpoint(fixpoint(inductive<conf>(targeted_incr<conf>("0",1))))
              );
   }
 }
@@ -68,7 +68,7 @@ TYPED_TEST(hom_fixpoint_test, evaluation)
   {
     order o(order_builder {"0"});
     SDD s0(0, {0}, one);
-    homomorphism h0 = Fixpoint(Sum(o, {Inductive<conf>(targeted_incr<conf>("0", 1)), id}));
+    homomorphism h0 = fixpoint(sum(o, {inductive<conf>(targeted_incr<conf>("0", 1)), id}));
     ASSERT_EQ(SDD(0, {0,1,2}, one), h0(o, s0));
   }
 }

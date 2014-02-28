@@ -23,9 +23,9 @@ namespace sdd { namespace hom {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Saturation Sum homomorphism.
+/// @brief Saturation sum homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED saturation_sum
+class LIBSDD_ATTRIBUTE_PACKED _saturation_sum
 {
 public:
 
@@ -52,8 +52,8 @@ private:
 public:
 
   /// @brief Constructor.
-  saturation_sum( variable_type var, optional_homomorphism<C>&& f, g_type&& g
-                , optional_homomorphism<C>&& l)
+  _saturation_sum( variable_type var, optional_homomorphism<C>&& f, g_type&& g
+                 , optional_homomorphism<C>&& l)
     : variable_(var), F_(std::move(f)), G_(std::move(g)), L_(std::move(l))
   {}
 
@@ -147,12 +147,11 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Equality of two saturation_sum.
-/// @related saturation_sum
+/// @related _saturation_sum
 template <typename C>
 inline
 bool
-operator==(const saturation_sum<C>& lhs, const saturation_sum<C>& rhs)
+operator==(const _saturation_sum<C>& lhs, const _saturation_sum<C>& rhs)
 noexcept
 {
   return lhs.variable() == rhs.variable()
@@ -162,10 +161,10 @@ noexcept
 }
 
 /// @internal
-/// @related saturation_sum
+/// @related _saturation_sum
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const saturation_sum<C>& s)
+operator<<(std::ostream& os, const _saturation_sum<C>& s)
 {
   os << "SatSum(@" << +s.variable() << ", F=";
   if (s.F())
@@ -190,17 +189,17 @@ operator<<(std::ostream& os, const saturation_sum<C>& s)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Create the Saturation Sum homomorphism.
+/// @brief Create the Saturation sum homomorphism.
 /// @related sdd::homomorphism
 ///
 /// We suppose that a saturation sum is created in the rewriting process. Thus, we assume that
 /// operands are already optimized (local merged, etc.).
 template <typename C, typename InputIterator>
 homomorphism<C>
-SaturationSum( typename C::variable_type var
-             , optional_homomorphism<C>&& f
-             , InputIterator gbegin, InputIterator gend
-             , optional_homomorphism<C>&& l)
+saturation_sum( typename C::variable_type var
+              , optional_homomorphism<C>&& f
+              , InputIterator gbegin, InputIterator gend
+              , optional_homomorphism<C>&& l)
 {
   const std::size_t g_size = std::distance(gbegin, gend);
 
@@ -216,10 +215,10 @@ SaturationSum( typename C::variable_type var
     }
   }
 
-  return homomorphism<C>::create( mem::construct<saturation_sum<C>>()
+  return homomorphism<C>::create( mem::construct<_saturation_sum<C>>()
                                 , var
                                 , std::move(f)
-                                , typename saturation_sum<C>::g_type(gbegin, gend)
+                                , typename _saturation_sum<C>::g_type(gbegin, gend)
                                 , std::move(l));
 }
 
@@ -232,12 +231,12 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Hash specialization for sdd::hom::saturation_sum.
+/// @brief Hash specialization for sdd::hom::_saturation_sum.
 template <typename C>
-struct hash<sdd::hom::saturation_sum<C>>
+struct hash<sdd::hom::_saturation_sum<C>>
 {
   std::size_t
-  operator()(const sdd::hom::saturation_sum<C>& s)
+  operator()(const sdd::hom::_saturation_sum<C>& s)
   const
   {
     std::size_t seed = sdd::util::hash(s.variable());

@@ -37,24 +37,24 @@ class homomorphism final
 private:
 
   /// @brief A canonized homomorphism.
-  typedef mem::variant< hom::composition<C>
-                      , hom::cons<C, SDD<C>>
-                      , hom::cons<C, typename C::Values>
-                      , hom::constant<C>
+  typedef mem::variant< hom::_composition<C>
+                      , hom::_cons<C, SDD<C>>
+                      , hom::_cons<C, typename C::Values>
+                      , hom::_constant<C>
 #if !defined(HAS_NO_BOOST_COROUTINE)
-                      , hom::expression<C>
+                      , hom::_expression<C>
 #endif // !defined(HAS_NO_BOOST_COROUTINE)
-                      , hom::fixpoint<C>
-                      , hom::identity<C>
-                      , hom::inductive<C>
-                      , hom::intersection<C>
-                      , hom::local<C>
-                      , hom::saturation_fixpoint<C>
-                      , hom::saturation_intersection<C>
-                      , hom::saturation_sum<C>
-                      , hom::simple_expression<C>
-                      , hom::sum<C>
-                      , hom::values_function<C>
+                      , hom::_fixpoint<C>
+                      , hom::_identity<C>
+                      , hom::_inductive<C>
+                      , hom::_intersection<C>
+                      , hom::_local<C>
+                      , hom::_saturation_fixpoint<C>
+                      , hom::_saturation_intersection<C>
+                      , hom::_saturation_sum<C>
+                      , hom::_simple_expression<C>
+                      , hom::_sum<C>
+                      , hom::_values_function<C>
                       >
           data_type;
 
@@ -170,7 +170,7 @@ public:
     // hard-wired cases:
     // - if the current homomorphism is Id, then directly return the operand
     // - if the current operand is |0|, then directly return it
-    if (*this == Id<C>() or x.empty())
+    if (*this == id<C>() or x.empty())
     {
       return x;
     }
@@ -178,7 +178,7 @@ public:
   }
 
   /// @internal
-  /// @brief Create an homomorphism from a concrete type of fixed size (e.g. Id, Cons, etc.).
+  /// @brief Create an homomorphism from a concrete type of fixed size (e.g. Id, cons, etc.).
   template<typename T, typename... Args>
   static
   homomorphism
@@ -191,7 +191,7 @@ public:
   }
 
   /// @internal
-  /// @brief Create an homomorphism from a concrete type of variable size (e.g. Sum).
+  /// @brief Create an homomorphism from a concrete type of variable size (e.g. sum).
   template<typename T, typename... Args>
   static
   homomorphism

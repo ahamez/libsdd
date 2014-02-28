@@ -194,7 +194,7 @@ struct simple
             , order_positions_iterator cit, order_positions_iterator end)
   const
   {
-    assert(app && "Target never encountered while evaluating SimpleExpression");
+    assert(app && "Target never encountered while evaluating Simple Expression");
     // Continue to the stacked successor of a previously visited hierachical node.
     const auto stacked_succ = visit_self(*this, app->sdd, app->ord, app->next, res->next, cit, end);
     res->result.add(stacked_succ);

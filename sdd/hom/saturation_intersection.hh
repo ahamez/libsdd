@@ -23,9 +23,9 @@ namespace sdd { namespace hom {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Saturation Sum homomorphism.
+/// @brief Saturation intersection homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED saturation_intersection
+class LIBSDD_ATTRIBUTE_PACKED _saturation_intersection
 {
 public:
 
@@ -52,8 +52,8 @@ private:
 public:
 
   /// @brief Constructor.
-  saturation_intersection( variable_type var, optional_homomorphism<C>&& f, g_type&& g
-                         , optional_homomorphism<C>&& l)
+  _saturation_intersection( variable_type var, optional_homomorphism<C>&& f, g_type&& g
+                          , optional_homomorphism<C>&& l)
     : variable_(var), F_(std::move(f)), G_(std::move(g)), L_(std::move(l))
   {}
 
@@ -147,12 +147,11 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Equality of two saturation_intersection.
-/// @related saturation_intersection
+/// @related _saturation_intersection
 template <typename C>
 inline
 bool
-operator==(const saturation_intersection<C>& lhs, const saturation_intersection<C>& rhs)
+operator==(const _saturation_intersection<C>& lhs, const _saturation_intersection<C>& rhs)
 noexcept
 {
   return lhs.variable() == rhs.variable() and lhs.F() == rhs.F() and lhs.L() == rhs.L()
@@ -160,10 +159,10 @@ noexcept
 }
 
 /// @internal
-/// @related saturation_intersection
+/// @related _saturation_intersection
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const saturation_intersection<C>& s)
+operator<<(std::ostream& os, const _saturation_intersection<C>& s)
 {
   os << "SatInter(@" << +s.variable() << ", F=";
   if (s.F())
@@ -188,17 +187,17 @@ operator<<(std::ostream& os, const saturation_intersection<C>& s)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Create the Saturation Intersection homomorphism.
+/// @brief Create the Saturation intersection homomorphism.
 /// @related sdd::homomorphism
 ///
 /// We suppose that a saturation intersection is created in the rewriting process. Thus, we assume
 /// that operands are already optimized (local merged, etc.).
 template <typename C, typename InputIterator>
 homomorphism<C>
-SaturationIntersection( typename C::variable_type var
-                      , optional_homomorphism<C>&& f
-                      , InputIterator gbegin, InputIterator gend
-                      , optional_homomorphism<C>&& l)
+saturation_intersection( typename C::variable_type var
+                       , optional_homomorphism<C>&& f
+                       , InputIterator gbegin, InputIterator gend
+                       , optional_homomorphism<C>&& l)
 {
   if (std::distance(gbegin, gend) == 0)
   {
@@ -212,10 +211,10 @@ SaturationIntersection( typename C::variable_type var
     }
   }
 
-  return homomorphism<C>::create( mem::construct<saturation_intersection<C>>()
+  return homomorphism<C>::create( mem::construct<_saturation_intersection<C>>()
                                 , var
                                 , std::move(f)
-                                , typename saturation_intersection<C>::g_type(gbegin, gend)
+                                , typename _saturation_intersection<C>::g_type(gbegin, gend)
                                 , std::move(l));
 }
 
@@ -228,12 +227,12 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Hash specialization for sdd::hom::saturation_intersection.
+/// @brief Hash specialization for sdd::hom::_saturation_intersection.
 template <typename C>
-struct hash<sdd::hom::saturation_intersection<C>>
+struct hash<sdd::hom::_saturation_intersection<C>>
 {
   std::size_t
-  operator()(const sdd::hom::saturation_intersection<C>& s)
+  operator()(const sdd::hom::_saturation_intersection<C>& s)
   const
   {
     std::size_t seed = sdd::util::hash(s.variable());

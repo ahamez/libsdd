@@ -24,7 +24,7 @@ namespace sdd { namespace hom { namespace expr {
 namespace bcoro = boost::coroutines;
 
 /// @internal
-/// @brief The signature of the coroutine used to implement the Expression evaluation.
+/// @brief The signature of the coroutine used to implement the expression evaluation.
 template <typename C>
 using coro = bcoro::coroutine<SDD<C>()>;
 
@@ -67,7 +67,7 @@ expression_post( yield_type<C>& yield, expression_post_visitor<C>& v, const SDD<
                , order_positions_iterator cit, order_positions_iterator end);
 
 /// @internal
-/// @brief Handle the Expression evaluation below the target.
+/// @brief Handle the expression evaluation below the target.
 template <typename C>
 struct expression_post_visitor
 {

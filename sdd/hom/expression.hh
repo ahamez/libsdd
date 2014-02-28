@@ -26,9 +26,9 @@ namespace sdd { namespace hom {
 
 #if !defined(HAS_NO_BOOST_COROUTINE)
 /// @internal
-/// @brief Expression homomorphism.
+/// @brief expression homomorphism.
 template <typename C>
-class expression
+class _expression
 {
 public:
 
@@ -49,8 +49,8 @@ private:
 public:
 
   /// @brief Constructor.
-  expression( std::unique_ptr<expr::evaluator_base<C>>&& e_ptr, order_positions_type&& positions
-            , order_position_type target)
+  _expression( std::unique_ptr<expr::evaluator_base<C>>&& e_ptr, order_positions_type&& positions
+             , order_position_type target)
     : eval_ptr_(std::move(e_ptr)), positions_(std::move(positions)), target_(target)
   {}
 
@@ -111,12 +111,11 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Equality of two expression homomorphisms.
-/// @related expression
+/// @related _expression
 template <typename C>
 inline
 bool
-operator==(const expression<C>& lhs, const expression<C>& rhs)
+operator==(const _expression<C>& lhs, const _expression<C>& rhs)
 noexcept
 {
   return lhs.target() == rhs.target() and lhs.operands() == rhs.operands()
@@ -124,12 +123,12 @@ noexcept
 }
 
 /// @internal
-/// @related expression
+/// @related _expression
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const expression<C>& e)
+operator<<(std::ostream& os, const _expression<C>& e)
 {
-  os << "Expression(" << e.target() << " = ";
+  os << "expression(" << e.target() << " = ";
   e.evaluator().print(os);
   return os << ")";
 }
@@ -138,9 +137,9 @@ operator<<(std::ostream& os, const expression<C>& e)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Expression homomorphism.
+/// @brief Simple expression homomorphism.
 template <typename C>
-class simple_expression
+class _simple_expression
 {
 public:
 
@@ -161,8 +160,8 @@ private:
 public:
 
   /// @brief Constructor.
-  simple_expression( std::unique_ptr<expr::evaluator_base<C>>&& e_ptr
-                   , order_positions_type&& positions, order_position_type target)
+  _simple_expression( std::unique_ptr<expr::evaluator_base<C>>&& e_ptr
+                    , order_positions_type&& positions, order_position_type target)
     : eval_ptr_(std::move(e_ptr)), positions_(std::move(positions)), target_(target)
   {}
 
@@ -223,12 +222,11 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Equality of two expression homomorphisms.
-/// @related expression
+/// @related _simple_expression
 template <typename C>
 inline
 bool
-operator==(const simple_expression<C>& lhs, const simple_expression<C>& rhs)
+operator==(const _simple_expression<C>& lhs, const _simple_expression<C>& rhs)
 noexcept
 {
   return lhs.target() == rhs.target() and lhs.operands() == rhs.operands()
@@ -239,9 +237,9 @@ noexcept
 /// @related expression
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const simple_expression<C>& e)
+operator<<(std::ostream& os, const _simple_expression<C>& e)
 {
-  os << "SimpleExpression(" << e.target() << " = ";
+  os << "SimpleExpr(" << e.target() << " = ";
   e.evaluator().print(os);
   return os << ")";
 }
@@ -250,14 +248,14 @@ operator<<(std::ostream& os, const simple_expression<C>& e)
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Create the Expression homomorphism.
+/// @brief Create the expression homomorphism.
 /// @related homomorphism
 /// @todo How to handle the dumb case where there is only one identifier, which is also the target?
 ///
 /// Elements of [begin, end) must be unique.
 template <typename C, typename Evaluator, typename InputIterator>
 homomorphism<C>
-Expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIterator end
+expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIterator end
           , const typename C::Identifier& target)
 {
   using identifier_type = typename C::Identifier;
@@ -267,7 +265,7 @@ Expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIte
 
   if (size == 0)
   {
-    return Id<C>();
+    return id<C>();
   }
 
   const auto target_pos = o.node(target).position();
@@ -285,7 +283,7 @@ Expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIte
   if (target_pos < last_position)
   {
 #if !defined(HAS_NO_BOOST_COROUTINE)
-    return homomorphism<C>::create( mem::construct<hom::expression<C>>()
+    return homomorphism<C>::create( mem::construct<hom::_expression<C>>()
                                   , std::move(evaluator_ptr), std::move(positions), target_pos);
 #else
     throw std::runtime_error("Can't create full expressions without Boost.Coroutine.");
@@ -294,21 +292,21 @@ Expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIte
   else
   {
     // The target is below all operands, it's a much simpler case to handle
-    return homomorphism<C>::create( mem::construct<hom::simple_expression<C>>()
+    return homomorphism<C>::create( mem::construct<hom::_simple_expression<C>>()
                                   , std::move(evaluator_ptr), std::move(positions), target_pos);
   }
 }
 
-/// @brief Create the Expression homomorphism.
+/// @brief Create the expression homomorphism.
 /// @related homomorphism
 ///
 /// Elements of ids must be unique.
 template <typename C, typename Evaluator>
 homomorphism<C>
-Expression( const order<C>& o, const Evaluator& u, std::initializer_list<typename C::Identifier> ids
+expression( const order<C>& o, const Evaluator& u, std::initializer_list<typename C::Identifier> ids
           , const typename C::Identifier& target)
 {
-  return Expression(o, u, ids.cbegin(), ids.cend(), target);
+  return expression(o, u, ids.cbegin(), ids.cend(), target);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -321,12 +319,12 @@ namespace std {
 
 #if !defined(HAS_NO_BOOST_COROUTINE)
 /// @internal
-/// @brief Hash specialization for sdd::hom::expression.
+/// @brief Hash specialization for sdd::hom::_expression.
 template <typename C>
-struct hash<sdd::hom::expression<C>>
+struct hash<sdd::hom::_expression<C>>
 {
   std::size_t
-  operator()(const sdd::hom::expression<C>& e)
+  operator()(const sdd::hom::_expression<C>& e)
   const
   {
     std::size_t seed = e.evaluator().hash();
@@ -338,12 +336,12 @@ struct hash<sdd::hom::expression<C>>
 #endif // !defined(HAS_NO_BOOST_COROUTINE)
 
 /// @internal
-/// @brief Hash specialization for sdd::hom::simple_expression.
+/// @brief Hash specialization for sdd::hom::s_imple_expression.
 template <typename C>
-struct hash<sdd::hom::simple_expression<C>>
+struct hash<sdd::hom::_simple_expression<C>>
 {
   std::size_t
-  operator()(const sdd::hom::simple_expression<C>& e)
+  operator()(const sdd::hom::_simple_expression<C>& e)
   const noexcept
   {
     std::size_t seed = e.evaluator().hash();

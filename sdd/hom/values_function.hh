@@ -161,7 +161,7 @@ private:
 /// @internal
 /// @brief Values homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED values_function
+class LIBSDD_ATTRIBUTE_PACKED _values_function
 {
 private:
 
@@ -198,7 +198,7 @@ private:
       return one<C>();
     }
 
-    /// @brief A ValuesFunction can't be applied on an hierarchical node.
+    /// @brief A values_function can't be applied on an hierarchical node.
     SDD<C>
     operator()( const hierarchical_node<C>&, const SDD<C>& s
               , const values_function_base<C>&, context<C>&, const order<C>&)
@@ -252,7 +252,7 @@ private:
 public:
 
   /// @brief Constructor.
-  values_function(order_position_type pos, const values_function_base<C>* f_ptr)
+  _values_function(order_position_type pos, const values_function_base<C>* f_ptr)
     : target_(pos)
     , fun_ptr_(f_ptr)
   {}
@@ -301,22 +301,21 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Equality of two values_function.
-/// @related values_function
+/// @related _values_function
 template <typename C>
 inline
 bool
-operator==(const values_function<C>& lhs, const values_function<C>& rhs)
+operator==(const _values_function<C>& lhs, const _values_function<C>& rhs)
 noexcept
 {
   return lhs.target() == rhs.target() and lhs.fun() == rhs.fun();
 }
 
 /// @internal
-/// @related values_function
+/// @related _values_function
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const values_function<C>& x)
+operator<<(std::ostream& os, const _values_function<C>& x)
 {
   os << "Function(" << x.target() << ", ";
   x.fun().print(os);
@@ -332,9 +331,9 @@ operator<<(std::ostream& os, const values_function<C>& x)
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-ValuesFunction(order_position_type pos, const User& u)
+values_function(order_position_type pos, const User& u)
 {
-  return homomorphism<C>::create( mem::construct<hom::values_function<C>>()
+  return homomorphism<C>::create( mem::construct<hom::_values_function<C>>()
                                 , pos, new hom::values_function_derived<C, User>(u));
 }
 
@@ -343,9 +342,9 @@ ValuesFunction(order_position_type pos, const User& u)
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-ValuesFunction(order_position_type pos, User&& u)
+values_function(order_position_type pos, User&& u)
 {
-  return homomorphism<C>::create( mem::construct<hom::values_function<C>>()
+  return homomorphism<C>::create( mem::construct<hom::_values_function<C>>()
                                 , pos, new hom::values_function_derived<C, User>(std::move(u)));
 }
 
@@ -354,9 +353,9 @@ ValuesFunction(order_position_type pos, User&& u)
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-ValuesFunction(const order<C>& o, const typename C::Identifier& i, const User& u)
+values_function(const order<C>& o, const typename C::Identifier& i, const User& u)
 {
-  return ValuesFunction<C>(o.node(i).position(), u);
+  return values_function<C>(o.node(i).position(), u);
 }
 
 /// @brief Create the Values Function homomorphism.
@@ -364,9 +363,9 @@ ValuesFunction(const order<C>& o, const typename C::Identifier& i, const User& u
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-ValuesFunction(const order<C>& o, const typename C::Identifier& i, User&& u)
+values_function(const order<C>& o, const typename C::Identifier& i, User&& u)
 {
-  return ValuesFunction<C>(o.node(i).position(), std::move(u));
+  return values_function<C>(o.node(i).position(), std::move(u));
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -378,12 +377,12 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Hash specialization for sdd::hom::values.
+/// @brief Hash specialization for sdd::hom::_values_function.
 template <typename C>
-struct hash<sdd::hom::values_function<C>>
+struct hash<sdd::hom::_values_function<C>>
 {
   std::size_t
-  operator()(const sdd::hom::values_function<C>& x)
+  operator()(const sdd::hom::_values_function<C>& x)
   const noexcept
   {
     std::size_t seed = x.fun().hash();

@@ -14,9 +14,9 @@ namespace sdd { namespace hom {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Cons homomorphism.
+/// @brief cons homomorphism.
 template <typename C, typename Valuation>
-class LIBSDD_ATTRIBUTE_PACKED cons
+class LIBSDD_ATTRIBUTE_PACKED _cons
 {
 private:
 
@@ -32,10 +32,8 @@ private:
 public:
 
   /// @brief Constructor.
-  cons(const order<C>& o, const Valuation& val, const homomorphism<C>& h)
-    : order_(o)
-    , valuation_(val)
-    , next_(h)
+  _cons(const order<C>& o, const Valuation& val, const homomorphism<C>& h)
+    : order_(o), valuation_(val), next_(h)
   {}
 
   /// @brief Evaluation.
@@ -62,7 +60,7 @@ public:
     return false;
   }
 
-  /// @brief Return the order of this Cons.
+  /// @brief Return the order of this cons.
   const order<C>&
   get_order()
   const noexcept
@@ -90,9 +88,9 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Describe Cons characteristics.
+/// @brief Describe cons characteristics.
 template <typename C, typename Valuation>
-struct homomorphism_traits<cons<C, Valuation>>
+struct homomorphism_traits<_cons<C, Valuation>>
 {
   static constexpr bool should_cache = false;
 };
@@ -100,12 +98,12 @@ struct homomorphism_traits<cons<C, Valuation>>
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Equality of two Cons homomorphisms.
-/// @related cons
+/// @brief Equality of two _cons homomorphisms.
+/// @related _cons
 template <typename C, typename Valuation>
 inline
 bool
-operator==(const cons<C, Valuation>& lhs, const cons<C, Valuation>& rhs)
+operator==(const _cons<C, Valuation>& lhs, const _cons<C, Valuation>& rhs)
 noexcept
 {
   return lhs.valuation() == rhs.valuation() and lhs.next() == rhs.next()
@@ -113,12 +111,12 @@ noexcept
 }
 
 /// @internal
-/// @related cons
+/// @related _cons
 template <typename C, typename Valuation>
 std::ostream&
-operator<<(std::ostream& os, const cons<C, Valuation>& c)
+operator<<(std::ostream& os, const _cons<C, Valuation>& c)
 {
-  return os << "Cons(" << c.get_order().identifier() << ", " << c.valuation() << ", " << c.next()
+  return os << "cons(" << c.get_order().identifier() << ", " << c.valuation() << ", " << c.next()
             << ")";
 }
 
@@ -126,13 +124,13 @@ operator<<(std::ostream& os, const cons<C, Valuation>& c)
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Create the Cons homomorphism.
+/// @brief Create the cons homomorphism.
 /// @related homomorphism
 template <typename C, typename Valuation>
 homomorphism<C>
-Cons(const order<C> o, const Valuation& val, const homomorphism<C>& h)
+cons(const order<C> o, const Valuation& val, const homomorphism<C>& h)
 {
-  return homomorphism<C>::create(mem::construct<hom::cons<C, Valuation>>(), o, val, h);
+  return homomorphism<C>::create(mem::construct<hom::_cons<C, Valuation>>(), o, val, h);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -146,10 +144,10 @@ namespace std {
 /// @internal
 /// @brief Hash specialization for sdd::hom::cons.
 template <typename C, typename Valuation>
-struct hash<sdd::hom::cons<C, Valuation>>
+struct hash<sdd::hom::_cons<C, Valuation>>
 {
   std::size_t
-  operator()(const sdd::hom::cons<C, Valuation>& h)
+  operator()(const sdd::hom::_cons<C, Valuation>& h)
   const
   {
     std::size_t seed = sdd::util::hash(h.get_order());
