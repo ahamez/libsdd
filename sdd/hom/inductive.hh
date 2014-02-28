@@ -188,7 +188,7 @@ private:
   print_impl(std::ostream& os, const H& h, long)
   -> decltype(void())
   {
-    os << "Inductive(" << &h << ")";
+    os << "inductive(" << &h << ")";
   }
 
   /// @brief Called when the user's inductive has skip().
@@ -246,9 +246,9 @@ private:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Inductive homomorphism.
+/// @brief inductive homomorphism.
 template <typename C>
-class inductive
+class _inductive
 {
 private:
 
@@ -313,7 +313,7 @@ private:
 public:
 
   /// @brief Constructor.
-  inductive(const inductive_base<C>* i_ptr)
+  _inductive(const inductive_base<C>* i_ptr)
     : hom_ptr_(i_ptr)
   {}
 
@@ -353,22 +353,21 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Equality of two inductive homomorphisms.
-/// @related inductive
+/// @related _inductive
 template <typename C>
 inline
 bool
-operator==(const inductive<C>& lhs, const inductive<C>& rhs)
+operator==(const _inductive<C>& lhs, const _inductive<C>& rhs)
 noexcept
 {
   return lhs.hom() == rhs.hom();
 }
 
 /// @internal
-/// @related inductive
+/// @related _inductive
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const inductive<C>& i)
+operator<<(std::ostream& os, const _inductive<C>& i)
 {
   i.hom().print(os);
   return os;
@@ -378,23 +377,23 @@ operator<<(std::ostream& os, const inductive<C>& i)
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Create the Inductive homomorphism.
+/// @brief Create the inductive homomorphism.
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-Inductive(const User& u)
+inductive(const User& u)
 {
-  return homomorphism<C>::create( mem::construct<hom::inductive<C>>()
+  return homomorphism<C>::create( mem::construct<hom::_inductive<C>>()
                                 , new hom::inductive_derived<C, User>(u));
 }
 
-/// @brief Create the Inductive homomorphism.
+/// @brief Create the inductive homomorphism.
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-Inductive(User&& u)
+inductive(User&& u)
 {
-  return homomorphism<C>::create( mem::construct<hom::inductive<C>>()
+  return homomorphism<C>::create( mem::construct<hom::_inductive<C>>()
                                 , new hom::inductive_derived<C, User>(std::move(u)));
 }
 
@@ -407,12 +406,12 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Hash specialization for sdd::hom::inductive.
+/// @brief Hash specialization for sdd::hom::_inductive.
 template <typename C>
-struct hash<sdd::hom::inductive<C>>
+struct hash<sdd::hom::_inductive<C>>
 {
   std::size_t
-  operator()(const sdd::hom::inductive<C>& i)
+  operator()(const sdd::hom::_inductive<C>& i)
   const
   {
     return i.hom().hash();

@@ -27,7 +27,7 @@ struct hom_inductive_test
     : m(sdd::manager<C>::init(small_conf<C>()))
     , zero(sdd::zero<C>())
     , one(sdd::one<C>())
-    , id(sdd::Id<C>())
+    , id(sdd::id<C>())
   {}
 };
 
@@ -55,14 +55,14 @@ struct f0
   operator()(const sdd::order<C>&, const sdd::SDD<C>&)
   const
   {
-    return sdd::Id<C>();
+    return sdd::id<C>();
   }
 
   sdd::homomorphism<C>
   operator()(const sdd::order<C>& o, const sdd::values::bitset<64>& val)
   const
   {
-    return Cons<C>(o, val << 1, sdd::Id<C>());
+    return cons<C>(o, val << 1, sdd::id<C>());
   }
 
   template <typename T>
@@ -75,7 +75,7 @@ struct f0
     {
       new_val.insert(v + 1);
     }
-    return Cons<C>(o, new_val, sdd::Id<C>());
+    return cons<C>(o, new_val, sdd::id<C>());
   }
 
   sdd::SDD<C>
@@ -124,14 +124,14 @@ struct f1
   operator()(const sdd::order<C>&, const sdd::SDD<C>&)
   const
   {
-    return sdd::Id<C>();
+    return sdd::id<C>();
   }
 
   sdd::homomorphism<C>
   operator()(const sdd::order<C>& o, const sdd::values::bitset<64>& val)
   const
   {
-    return Cons<C>(o, val << 2, sdd::Id<C>());
+    return cons<C>(o, val << 2, sdd::id<C>());
   }
 
   template <typename T>
@@ -144,7 +144,7 @@ struct f1
     {
       new_val.insert(v + 2);
     }
-    return Cons<C>(o, new_val, sdd::Id<C>());
+    return cons<C>(o, new_val, sdd::id<C>());
   }
 
   sdd::SDD<C>
@@ -185,14 +185,14 @@ struct cut
   operator()(const sdd::order<C>& o, const sdd::SDD<C>&)
   const
   {
-    return Cons<C>(o, sdd::zero<C>(), sdd::Id<C>());
+    return cons<C>(o, sdd::zero<C>(), sdd::id<C>());
   }
 
   sdd::homomorphism<C>
   operator()(const sdd::order<C>& o, const typename C::Values&)
   const
   {
-    return Cons<C>(o, typename C::Values {}, sdd::Id<C>());
+    return cons<C>(o, typename C::Values {}, sdd::id<C>());
   }
 
   sdd::SDD<C>
@@ -240,14 +240,14 @@ struct id_prime
   operator()(const sdd::order<C>& o, const sdd::SDD<C>& x)
   const
   {
-    return Cons<C>(o, x, Inductive<C>(*this));
+    return cons<C>(o, x, inductive<C>(*this));
   }
 
   sdd::homomorphism<C>
   operator()(const sdd::order<C>& o, const typename C::Values& val)
   const
   {
-    return Cons<C>(o, val, Inductive<C>(*this));
+    return cons<C>(o, val, inductive<C>(*this));
   }
 
   sdd::SDD<C>
@@ -296,7 +296,7 @@ struct consume
   operator()(const sdd::order<C>&, const T&)
   const
   {
-    return Inductive<C>(*this);
+    return inductive<C>(*this);
   }
 
   sdd::SDD<C>
@@ -392,13 +392,13 @@ TYPED_TEST_CASE(hom_inductive_test, configurations);
 TYPED_TEST(hom_inductive_test, construction)
 {
   {
-    const auto h1 = Inductive<conf>(f0<conf>());
-    const auto h2 = Inductive<conf>(f0<conf>());
+    const auto h1 = inductive<conf>(f0<conf>());
+    const auto h2 = inductive<conf>(f0<conf>());
     ASSERT_EQ(h1, h2);
   }
   {
-    const auto h1 = Inductive<conf>(f0<conf>());
-    const auto h2 = Inductive<conf>(f1<conf>());
+    const auto h1 = inductive<conf>(f0<conf>());
+    const auto h2 = inductive<conf>(f1<conf>());
     ASSERT_NE(h1, h2);
   }
 }
@@ -409,13 +409,13 @@ TYPED_TEST(hom_inductive_test, evaluation_flat)
 {
   {
     order o (order_builder {"0"});
-    const auto h1 = Inductive<conf>(f0<conf>());
+    const auto h1 = inductive<conf>(f0<conf>());
     ASSERT_EQ(SDD(0, {1,2,3}, one), h1(o, SDD(0, {0,1,2}, one)));
   }
   {
     order o (order_builder {"0", "1"});
-    const auto h1 = Inductive<conf>(f0<conf>());
-    const auto h2 = Inductive<conf>(f1<conf>());
+    const auto h1 = inductive<conf>(f0<conf>());
+    const auto h2 = inductive<conf>(f1<conf>());
     ASSERT_EQ( SDD(1, {1,2,3}, SDD(0, {2,3,4}, one))
              , h2(o, h1(o, SDD(1, {0,1,2}, SDD(0, {0,1,2}, one)))));
     ASSERT_EQ( SDD(1, {1,2,3}, SDD(0, {2,3,4}, one))
@@ -425,17 +425,17 @@ TYPED_TEST(hom_inductive_test, evaluation_flat)
     order o (order_builder {"0", "1"});
     const SDD s0 = SDD(1, {0}, SDD(0, {0}, one)) + SDD(1, {1}, SDD(0, {1}, one));
     const SDD s1 = SDD(1, {1}, SDD(0, {0}, one)) + SDD(1, {2}, SDD(0, {1}, one));
-    const auto h1 = Inductive<conf>(f0<conf>());
+    const auto h1 = inductive<conf>(f0<conf>());
     ASSERT_EQ(s1, h1(o, s0));
   }
   {
     order o (order_builder {"0"});
-    const auto h1 = Inductive<conf>(id_prime<conf>());
+    const auto h1 = inductive<conf>(id_prime<conf>());
     ASSERT_EQ(SDD(0, {0,1,2}, one), h1(o, SDD(0, {0,1,2}, one)));
   }
   {
     order o (order_builder {"1", "0"});
-    const auto h1 = Inductive<conf>(consume<conf>());
+    const auto h1 = inductive<conf>(consume<conf>());
     ASSERT_EQ(one, h1(o, SDD(1, {0,1,2}, SDD(0, one, one))));
   }
 }
@@ -446,13 +446,13 @@ TYPED_TEST(hom_inductive_test, evaluation_hierarchical)
 {
   {
     order o (order_builder {"0"});
-    const auto h1 = Inductive<conf>(f0<conf>());
+    const auto h1 = inductive<conf>(f0<conf>());
     ASSERT_EQ(SDD(0, {1,2,3}, one), h1(o, SDD(0, {0,1,2}, one)));
   }
   {
     order o (order_builder {"1", "0"});
-    const auto h0 = Inductive<conf>(f0<conf>());
-    const auto h1 = Inductive<conf>(f1<conf>());
+    const auto h0 = inductive<conf>(f0<conf>());
+    const auto h1 = inductive<conf>(f1<conf>());
     ASSERT_NE(h0, h1);
     ASSERT_EQ(       SDD(1, {1,2,3}, SDD(0, {2,3,4}, one))
              , h0(o, SDD(1, {1,2,3}, SDD(0, {1,2,3}, one))));
@@ -461,8 +461,8 @@ TYPED_TEST(hom_inductive_test, evaluation_hierarchical)
   }
   {
     order o (order_builder {"1", "0"});
-    const auto h1 = Inductive<conf>(f0<conf>());
-    const auto h2 = Inductive<conf>(f1<conf>());
+    const auto h1 = inductive<conf>(f0<conf>());
+    const auto h2 = inductive<conf>(f1<conf>());
     ASSERT_NE(h1, h2);
     ASSERT_EQ(             SDD(1, {2,3,4}, SDD(0, {1,2,3}, one))
              , h2(o, h1(o, SDD(1, {0,1,2}, SDD(0, {0,1,2}, one)))));
@@ -473,7 +473,7 @@ TYPED_TEST(hom_inductive_test, evaluation_hierarchical)
     order o (order_builder {"0", "1"});
     const SDD s0 = SDD(1, {0}, SDD(0, {0}, one)) + SDD(1, {1}, SDD(0, {1}, one));
     const SDD s1 = SDD(1, {1}, SDD(0, {0}, one)) + SDD(1, {2}, SDD(0, {1}, one));
-    const auto h1 = Inductive<conf>(f0<conf>());
+    const auto h1 = inductive<conf>(f0<conf>());
     ASSERT_EQ(s1, h1(o, s0));
   }
 }
@@ -483,15 +483,15 @@ TYPED_TEST(hom_inductive_test, evaluation_hierarchical)
 TYPED_TEST(hom_inductive_test, cut_path)
 {
   {
-    const auto h0 = Inductive<conf>(cut<conf>());
+    const auto h0 = inductive<conf>(cut<conf>());
     ASSERT_EQ(zero, h0(order(order_builder()), one));
   }
   {
-    const auto h0 = Inductive<conf>(cut<conf>());
+    const auto h0 = inductive<conf>(cut<conf>());
     ASSERT_EQ(zero, h0(order(order_builder {"a"}), SDD(0, {0}, one)));
   }
   {
-    const auto h0 = Inductive<conf>(cut<conf>());
+    const auto h0 = inductive<conf>(cut<conf>());
     ASSERT_EQ(zero, h0(order(order_builder {"a"}), SDD(0, one, one)));
   }
 }

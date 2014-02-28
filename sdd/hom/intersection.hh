@@ -25,9 +25,9 @@ namespace sdd { namespace hom {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Intersection homomorphism.
+/// @brief intersection homomorphism.
 template <typename C>
-class intersection
+class _intersection
 {
 public:
 
@@ -45,7 +45,7 @@ private:
 public:
 
   /// @brief Constructor.
-  intersection(operands_type&& operands)
+  _intersection(operands_type&& operands)
     : operands_(std::move(operands))
   {}
 
@@ -122,22 +122,21 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Equality of two intersection.
-/// @related intersection
+/// @related _intersection
 template <typename C>
 inline
 bool
-operator==(const intersection<C>& lhs, const intersection<C>& rhs)
+operator==(const _intersection<C>& lhs, const _intersection<C>& rhs)
 noexcept
 {
   return lhs.operands() == rhs.operands();
 }
 
 /// @internal
-/// @related intersection
+/// @related _intersection
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const intersection<C>& s)
+operator<<(std::ostream& os, const _intersection<C>& s)
 {
   os << "(";
   std::copy( s.operands().begin(), std::prev(s.operands().end())
@@ -153,7 +152,7 @@ template <typename C>
 struct intersection_builder_helper
 {
   using result_type   = void;
-  using operands_type = typename intersection<C>::operands_type;
+  using operands_type = typename _intersection<C>::operands_type;
   using hom_list_type = std::deque<homomorphism<C>> ;
   using locals_type   = std::unordered_map<order_position_type, hom_list_type>;
 
@@ -168,7 +167,7 @@ struct intersection_builder_helper
 
   /// @brief Flatten nested intersections.
   void
-  operator()(const intersection<C>& s, const homomorphism<C>&)
+  operator()(const _intersection<C>& s, const homomorphism<C>&)
   const
   {
     for (const auto& op : s.operands())
@@ -179,7 +178,7 @@ struct intersection_builder_helper
 
   /// @brief Regroup locals.
   void
-  operator()(const local<C>& l, const homomorphism<C>&)
+  operator()(const _local<C>& l, const homomorphism<C>&)
   const
   {
     auto insertion = locals_.emplace(l.target(), hom_list_type());
@@ -201,20 +200,20 @@ struct intersection_builder_helper
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Create the Intersection homomorphism.
+/// @brief Create the intersection homomorphism.
 /// @related homomorphism
 template <typename C, typename InputIterator>
 homomorphism<C>
-Intersection(const order<C>& o, InputIterator begin, InputIterator end)
+intersection(const order<C>& o, InputIterator begin, InputIterator end)
 {
   const std::size_t size = std::distance(begin, end);
 
   if (size == 0)
   {
-    throw std::invalid_argument("Empty operands at Intersection construction.");
+    throw std::invalid_argument("Empty operands at intersection construction.");
   }
 
-  typename hom::intersection<C>::operands_type operands;
+  typename hom::_intersection<C>::operands_type operands;
   operands.reserve(size);
 
   typename hom::intersection_builder_helper<C>::locals_type locals;
@@ -227,7 +226,7 @@ Intersection(const order<C>& o, InputIterator begin, InputIterator end)
   // insert remaining locals
   for (const auto& l : locals)
   {
-    operands.insert(Local<C>(l.first, Intersection<C>(o, l.second.begin(), l.second.end())));
+    operands.insert(local<C>(l.first, intersection(o, l.second.begin(), l.second.end())));
   }
 
   if (operands.size() == 1)
@@ -237,19 +236,19 @@ Intersection(const order<C>& o, InputIterator begin, InputIterator end)
   else
   {
     operands.shrink_to_fit();
-    return homomorphism<C>::create(mem::construct<hom::intersection<C>>(), std::move(operands));
+    return homomorphism<C>::create(mem::construct<hom::_intersection<C>>(), std::move(operands));
   }
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Create the Intersection homomorphism.
+/// @brief Create the intersection homomorphism.
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-Intersection(const order<C>& o, std::initializer_list<homomorphism<C>> operands)
+intersection(const order<C>& o, std::initializer_list<homomorphism<C>> operands)
 {
-  return Intersection<C>(o, operands.begin(), operands.end());
+  return intersection(o, operands.begin(), operands.end());
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -261,12 +260,12 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Hash specialization for sdd::hom::intersection.
+/// @brief Hash specialization for sdd::hom::_intersection.
 template <typename C>
-struct hash<sdd::hom::intersection<C>>
+struct hash<sdd::hom::_intersection<C>>
 {
   std::size_t
-  operator()(const sdd::hom::intersection<C>& s)
+  operator()(const sdd::hom::_intersection<C>& s)
   const
   {
     return sdd::util::hash(s.operands().begin(), s.operands().end());

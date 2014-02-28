@@ -33,7 +33,7 @@ struct targeted_incr
   operator()(const sdd::order<C>& o, const sdd::SDD<C>& x)
   const
   {
-    return sdd::Cons(o, x, sdd::Inductive<C>(*this));
+    return sdd::cons(o, x, sdd::inductive<C>(*this));
   }
 
   template <typename T>
@@ -43,7 +43,7 @@ struct targeted_incr
   {
     if (val.find(2) != val.end())
     {
-      return Cons(o, val, sdd::Id<C>());
+      return cons(o, val, sdd::id<C>());
     }
     else
     {
@@ -52,7 +52,7 @@ struct targeted_incr
       {
         new_val.insert(v + value_);
       }
-      return Cons(o, new_val, sdd::Id<C>());
+      return cons(o, new_val, sdd::id<C>());
     }
   }
 
@@ -62,11 +62,11 @@ struct targeted_incr
   {
     if (val.content().test(2))
     {
-      return Cons(o, val, sdd::Id<C>());
+      return cons(o, val, sdd::id<C>());
     }
     else
     {
-      return Cons(o, val << value_, sdd::Id<C>());
+      return cons(o, val << value_, sdd::id<C>());
     }
   }
 
@@ -123,7 +123,7 @@ struct incr
   operator()(const sdd::order<C>& o, const sdd::SDD<C>& x)
   const
   {
-    return Cons(o, x, Inductive<C>(*this));
+    return cons(o, x, inductive<C>(*this));
   }
 
   sdd::homomorphism<C>
@@ -132,11 +132,11 @@ struct incr
   {
     if (val.content().test(2))
     {
-      return Cons(o, val, sdd::Id<C>());
+      return cons(o, val, sdd::id<C>());
     }
     else
     {
-      return Cons(o, val << value_, sdd::Id<C>());
+      return cons(o, val << value_, sdd::id<C>());
     }
   }
 
@@ -193,14 +193,14 @@ struct targeted_noop
   operator()(const sdd::order<C>& o, const sdd::SDD<C>& val)
   const
   {
-    return Cons(o, val, sdd::Id<C>());
+    return cons(o, val, sdd::id<C>());
   }
 
   sdd::homomorphism<C>
   operator()(const sdd::order<C>& o, const values_type& val)
   const
   {
-    return Cons(o, val, sdd::Id<C>());
+    return cons(o, val, sdd::id<C>());
   }
 
   sdd::SDD<C>
@@ -247,14 +247,14 @@ struct ind
   operator()(const sdd::order<C>&, const sdd::SDD<C>&)
   const
   {
-    return sdd::Id<C>();
+    return sdd::id<C>();
   }
 
   sdd::homomorphism<C>
   operator()(const sdd::order<C>&, const typename C::Values&)
   const
   {
-    return sdd::Id<C>();
+    return sdd::id<C>();
   }
 
   sdd::SDD<C>

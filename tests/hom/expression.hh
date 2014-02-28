@@ -395,7 +395,7 @@ struct hom_expression_test
     : m(sdd::manager<C>::init(small_conf<C>()))
     , zero(sdd::zero<C>())
     , one(sdd::one<C>())
-    , id(sdd::Id<C>())
+    , id(sdd::id<C>())
     , ast1(mk_ast1())
     , ast2(mk_ast2())
     , ast3(mk_ast3())

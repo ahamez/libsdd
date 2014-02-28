@@ -13,9 +13,9 @@ namespace sdd { namespace hom {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Constant homomorphism.
+/// @brief constant homomorphism.
 template <typename C>
-struct constant
+struct _constant
 {
 private:
 
@@ -25,7 +25,7 @@ private:
 public:
 
   /// @brief Constructor.
-  constant(const SDD<C>& s)
+  _constant(const SDD<C>& s)
     : sdd_(s)
   {}
 
@@ -64,9 +64,9 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Describe Constant characteristics.
+/// @brief Describe _constant characteristics.
 template <typename C>
-struct homomorphism_traits<constant<C>>
+struct homomorphism_traits<_constant<C>>
 {
   static constexpr bool should_cache = false;
 };
@@ -74,37 +74,36 @@ struct homomorphism_traits<constant<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Equality of two constant.
-/// @related constant
+/// @related _constant
 template <typename C>
 inline
 bool
-operator==(const constant<C>& lhs, const constant<C>& rhs)
+operator==(const _constant<C>& lhs, const _constant<C>& rhs)
 noexcept
 {
   return lhs.sdd() == rhs.sdd();
 }
 
 /// @internal
-/// @related constant
+/// @related _constant
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const constant<C>& c)
+operator<<(std::ostream& os, const _constant<C>& c)
 {
-  return os << "Constant(" << c.sdd() << ")";
+  return os << "const(" << c.sdd() << ")";
 }
 
 } // namespace hom
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Create the Constant homomorphism.
+/// @brief Create the constant homomorphism.
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-Constant(const SDD<C>& s)
+constant(const SDD<C>& s)
 {
-  return homomorphism<C>::create(mem::construct<hom::constant<C>>(), s);
+  return homomorphism<C>::create(mem::construct<hom::_constant<C>>(), s);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -118,11 +117,11 @@ namespace std {
 /// @internal
 /// @brief Hash specialization for sdd::hom::constant.
 template <typename C>
-struct hash<sdd::hom::constant<C>>
+struct hash<sdd::hom::_constant<C>>
 {
   constexpr
   std::size_t
-  operator()(const sdd::hom::constant<C>& c)
+  operator()(const sdd::hom::_constant<C>& c)
   const
   {
     return sdd::util::hash(c.sdd());

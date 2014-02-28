@@ -9,14 +9,13 @@
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
-#include "sdd/util/packed.hh"
 
 namespace sdd {
 
 // Forward declaration needed by fixpoint_builder_helper.
 template <typename C>
 homomorphism<C>
-Fixpoint(const homomorphism<C>&);
+fixpoint(const homomorphism<C>&);
 
 namespace hom {
 
@@ -25,7 +24,7 @@ namespace hom {
 /// @internal
 /// @brief Fixpoint homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED fixpoint
+class _fixpoint
 {
 private:
 
@@ -35,7 +34,7 @@ private:
 public:
 
   /// @brief Constructor.
-  fixpoint(const homomorphism<C>& h)
+  _fixpoint(const homomorphism<C>& h)
     : h_(h)
   {}
 
@@ -83,11 +82,11 @@ public:
 
 /// @internal
 /// @brief Equality of fixpoint.
-/// @related fixpoint
+/// @related _fixpoint
 template <typename C>
 inline
 bool
-operator==(const fixpoint<C>& lhs, const fixpoint<C>& rhs)
+operator==(const _fixpoint<C>& lhs, const _fixpoint<C>& rhs)
 noexcept
 {
   return lhs.hom() == rhs.hom();
@@ -97,7 +96,7 @@ noexcept
 /// @related fixpoint
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const fixpoint<C>& f)
+operator<<(std::ostream& os, const _fixpoint<C>& f)
 {
   return os << "(" << f.hom() << ")*";
 }
@@ -112,14 +111,14 @@ struct fixpoint_builder_helper
   using result_type = homomorphism<C>;
 
   homomorphism<C>
-  operator()(const identity<C>&, const homomorphism<C>& h)
+  operator()(const _identity<C>&, const homomorphism<C>& h)
   const noexcept
   {
     return h;
   }
 
   homomorphism<C>
-  operator()(const fixpoint<C>&, const homomorphism<C>& h)
+  operator()(const _fixpoint<C>&, const homomorphism<C>& h)
   const noexcept
   {
     return h;
@@ -130,7 +129,7 @@ struct fixpoint_builder_helper
   operator()(const T&, const homomorphism<C>& h)
   const noexcept
   {
-    return homomorphism<C>::create(mem::construct<fixpoint<C>>(), h);
+    return homomorphism<C>::create(mem::construct<_fixpoint<C>>(), h);
   }
 };
 
@@ -142,7 +141,7 @@ struct fixpoint_builder_helper
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-Fixpoint(const homomorphism<C>& h)
+fixpoint(const homomorphism<C>& h)
 {
   return visit_self(hom::fixpoint_builder_helper<C>(), h);
 }
@@ -156,12 +155,12 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Hash specialization for sdd::hom::fixpoint.
+/// @brief Hash specialization for sdd::hom::_fixpoint.
 template <typename C>
-struct hash<sdd::hom::fixpoint<C>>
+struct hash<sdd::hom::_fixpoint<C>>
 {
   std::size_t
-  operator()(const sdd::hom::fixpoint<C>& f)
+  operator()(const sdd::hom::_fixpoint<C>& f)
   const
   {
     std::size_t seed = 345789; // avoid to have the same hash as the contained homormorphism

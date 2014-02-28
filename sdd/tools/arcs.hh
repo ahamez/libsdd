@@ -80,6 +80,9 @@ struct arcs_visitor
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+/// @brief Get the arc frequency map of an SDD.
+///
+/// An arc frequency map indicates the number of nodes with 1, 2, etc. arcs.
 template <typename C>
 arcs_frequency_type
 arcs(const SDD<C>& x)
@@ -92,6 +95,7 @@ arcs(const SDD<C>& x)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+/// @brief Get the total number of arcs from an arc frequency map.
 std::pair<std::size_t /* flat arcs */, std::size_t /* hierarchical arcs */>
 number_of_arcs(const arcs_frequency_type& freq)
 noexcept

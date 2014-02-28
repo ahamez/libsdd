@@ -26,9 +26,9 @@ namespace sdd { namespace hom {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Sum homomorphism.
+/// @brief sum homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED sum
+class LIBSDD_ATTRIBUTE_PACKED _sum
 {
 public:
 
@@ -46,15 +46,15 @@ private:
 public:
 
   /// @brief Constructor.
-  sum(boost::container::flat_set<homomorphism<C>>& operands)
-    : size_(static_cast<operands_size_type>(operands.size()))
+  _sum(boost::container::flat_set<homomorphism<C>>& operands)
+      : size_(static_cast<operands_size_type>(operands.size()))
   {
     // Put all homomorphisms operands right after this sum instance.
     hom::consolidate(operands_addr(), operands.begin(), operands.end());
   }
 
   /// @brief Destructor.
-  ~sum()
+  ~_sum()
   {
     for (auto& h : *this)
     {
@@ -149,29 +149,28 @@ private:
   operands_addr()
   const noexcept
   {
-    return reinterpret_cast<char*>(const_cast<sum*>(this)) + sizeof(sum);
+    return reinterpret_cast<char*>(const_cast<_sum*>(this)) + sizeof(_sum);
   }
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Equality of two sum.
-/// @related sum
+/// @related _sum
 template <typename C>
 inline
 bool
-operator==(const sum<C>& lhs, const sum<C>& rhs)
+operator==(const _sum<C>& lhs, const _sum<C>& rhs)
 noexcept
 {
   return lhs.size() == rhs.size() and std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 /// @internal
-/// @related sum
+/// @related _sum
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const sum<C>& s)
+operator<<(std::ostream& os, const _sum<C>& s)
 {
   os << "(";
   std::copy(s.begin(), std::prev(s.end()), std::ostream_iterator<homomorphism<C>>(os, " + "));
@@ -194,7 +193,7 @@ struct sum_builder_helper
   /// @brief We use a deque to store the list of homomorphisms as the needed size is unknown.
   using hom_list_type = std::deque<homomorphism<C>>;
 
-  /// @brief Map Local homomorphisms to the identifiers they work on.
+  /// @brief Map local homomorphisms to the identifiers they work on.
   using locals_type = std::unordered_map<order_position_type, hom_list_type>;
 
   /// @brief Store local homomorphisms.
@@ -210,7 +209,7 @@ struct sum_builder_helper
 
   /// @brief Flatten nested sums.
   void
-  operator()(const sum<C>& s, const homomorphism<C>&)
+  operator()(const _sum<C>& s, const homomorphism<C>&)
   const
   {
     for (const auto& op : s)
@@ -221,7 +220,7 @@ struct sum_builder_helper
 
   /// @brief Regroup locals.
   void
-  operator()(const local<C>& l, const homomorphism<C>&)
+  operator()(const _local<C>& l, const homomorphism<C>&)
   const
   {
     auto insertion = locals_.emplace(l.target(), hom_list_type());
@@ -242,17 +241,17 @@ struct sum_builder_helper
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Create the Sum homomorphism.
+/// @brief Create the sum homomorphism.
 /// @related homomorphism
 template <typename C, typename InputIterator>
 homomorphism<C>
-Sum(const order<C>& o, InputIterator begin, InputIterator end)
+sum(const order<C>& o, InputIterator begin, InputIterator end)
 {
   const std::size_t size = std::distance(begin, end);
 
   if (size == 0)
   {
-    throw std::invalid_argument("Empty operands at Sum construction.");
+    throw std::invalid_argument("Empty operands at sum construction.");
   }
 
   boost::container::flat_set<homomorphism<C>> operands;
@@ -267,7 +266,7 @@ Sum(const order<C>& o, InputIterator begin, InputIterator end)
   // insert remaining locals
   for (const auto& l : locals)
   {
-    operands.insert(Local<C>(l.first, Sum<C>(o, l.second.begin(), l.second.end())));
+    operands.insert(local<C>(l.first, sum(o, l.second.begin(), l.second.end())));
   }
 
   if (operands.size() == 1)
@@ -277,20 +276,20 @@ Sum(const order<C>& o, InputIterator begin, InputIterator end)
   else
   {
     const std::size_t extra_bytes = operands.size() * sizeof(homomorphism<C>);
-    return homomorphism<C>::create_variable_size( mem::construct<hom::sum<C>>()
+    return homomorphism<C>::create_variable_size( mem::construct<hom::_sum<C>>()
                                                 , extra_bytes, operands);
   }
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Create the Sum homomorphism.
+/// @brief Create the sum homomorphism.
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-Sum(const order<C>& o, std::initializer_list<homomorphism<C>> operands)
+sum(const order<C>& o, std::initializer_list<homomorphism<C>> operands)
 {
-  return Sum<C>(o, operands.begin(), operands.end());
+  return sum(o, operands.begin(), operands.end());
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -302,12 +301,12 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Hash specialization for sdd::hom::sum.
+/// @brief Hash specialization for sdd::hom::_sum.
 template <typename C>
-struct hash<sdd::hom::sum<C>>
+struct hash<sdd::hom::_sum<C>>
 {
   std::size_t
-  operator()(const sdd::hom::sum<C>& s)
+  operator()(const sdd::hom::_sum<C>& s)
   const
   {
     return sdd::util::hash(s.begin(), s.end());

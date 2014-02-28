@@ -8,16 +8,15 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/order/order.hh"
-#include "sdd/util/packed.hh"
 
 namespace sdd { namespace hom {
 
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Composition homomorphism.
+/// @brief composition homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED composition
+class _composition
 {
 private:
 
@@ -30,7 +29,7 @@ private:
 public:
 
   /// @brief Constructor.
-  composition(const homomorphism<C>& left, const homomorphism<C>& right)
+  _composition(const homomorphism<C>& left, const homomorphism<C>& right)
     : left_(left)
     , right_(right)
   {}
@@ -79,22 +78,22 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Equality of two composition homomorphisms.
-/// @related composition
+/// @brief Equality of two _composition homomorphisms.
+/// @related _composition
 template <typename C>
 inline
 bool
-operator==(const composition<C>& lhs, const composition<C>& rhs)
+operator==(const _composition<C>& lhs, const _composition<C>& rhs)
 noexcept
 {
   return lhs.left() == rhs.left() and lhs.right() == rhs.right();
 }
 
 /// @internal
-/// @related composition
+/// @related _composition
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const composition<C>& c)
+operator<<(std::ostream& os, const _composition<C>& c)
 {
   return os << c.left() << " o " << c.right();
 }
@@ -107,17 +106,17 @@ operator<<(std::ostream& os, const composition<C>& c)
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-Composition(const homomorphism<C>& left, const homomorphism<C>& right)
+composition(const homomorphism<C>& left, const homomorphism<C>& right)
 {
-  if (left == Id<C>())
+  if (left == id<C>())
   {
     return right;
   }
-  else if (right == Id<C>())
+  else if (right == id<C>())
   {
     return left;
   }
-  return homomorphism<C>::create(mem::construct<hom::composition<C>>(), left, right);
+  return homomorphism<C>::create(mem::construct<hom::_composition<C>>(), left, right);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -131,10 +130,10 @@ namespace std {
 /// @internal
 /// @brief Hash specialization for sdd::hom::composition.
 template <typename C>
-struct hash<sdd::hom::composition<C>>
+struct hash<sdd::hom::_composition<C>>
 {
   std::size_t
-  operator()(const sdd::hom::composition<C>& c)
+  operator()(const sdd::hom::_composition<C>& c)
   const
   {
     std::size_t seed = sdd::util::hash(c.left());

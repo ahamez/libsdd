@@ -30,7 +30,7 @@ struct hom_saturation_sum_test
     : m(sdd::manager<C>::init(small_conf<C>()))
     , zero(sdd::zero<C>())
     , one(sdd::one<C>())
-    , id(sdd::Id<C>())
+    , id(sdd::id<C>())
   {}
 };
 
@@ -45,15 +45,15 @@ TYPED_TEST(hom_saturation_sum_test, construction)
 {
   using optional = sdd::hom::optional_homomorphism<conf>;
   {
-    std::vector<homomorphism> g {id, Inductive<conf>(targeted_noop<conf>("0"))};
-    ASSERT_EQ( SaturationSum<conf>(0, optional(), g.begin(), g.end(), optional())
-             , SaturationSum<conf>(0, optional(), g.begin(), g.end(), optional()));
+    std::vector<homomorphism> g {id, inductive<conf>(targeted_noop<conf>("0"))};
+    ASSERT_EQ( saturation_sum<conf>(0, optional(), g.begin(), g.end(), optional())
+             , saturation_sum<conf>(0, optional(), g.begin(), g.end(), optional()));
   }
   {
-    std::vector<homomorphism> g1 {id, Inductive<conf>(targeted_noop<conf>("0"))};
-    std::vector<homomorphism> g2 {id, Inductive<conf>(targeted_noop<conf>("2"))};
-    ASSERT_NE( SaturationSum<conf>(0, optional(), g1.begin(), g1.end(), optional())
-             , SaturationSum<conf>(0, optional(), g2.begin(), g2.end(), optional()));
+    std::vector<homomorphism> g1 {id, inductive<conf>(targeted_noop<conf>("0"))};
+    std::vector<homomorphism> g2 {id, inductive<conf>(targeted_noop<conf>("2"))};
+    ASSERT_NE( saturation_sum<conf>(0, optional(), g1.begin(), g1.end(), optional())
+             , saturation_sum<conf>(0, optional(), g2.begin(), g2.end(), optional()));
   }
 }
 
@@ -66,10 +66,10 @@ TYPED_TEST(hom_saturation_sum_test, evaluation)
     const order o(order_builder {"a", "b", "c"});
     SDD s0(2, {0}, SDD(1, {0}, SDD(0, {0}, one)));
     std::vector<homomorphism> empty_g;
-    const auto s = SaturationSum<conf>( 0, Inductive<conf>(targeted_incr<conf>("c", 1))
+    const auto s = saturation_sum<conf>( 0, inductive<conf>(targeted_incr<conf>("c", 1))
                                      , empty_g.begin(), empty_g.end(), optional());
-    std::vector<homomorphism> g {Inductive<conf>(targeted_incr<conf>("b", 1))};
-    const auto h = SaturationSum<conf>(1, s, g.begin(), g.end(), optional());
+    std::vector<homomorphism> g {inductive<conf>(targeted_incr<conf>("b", 1))};
+    const auto h = saturation_sum<conf>(1, s, g.begin(), g.end(), optional());
     SDD ref = SDD(2, {0}, SDD(1, {1}, SDD(0, {0}, one)))
             + SDD(2, {0}, SDD(1, {0}, SDD(0, {1}, one)));
     ASSERT_EQ(ref, h(o, s0));

@@ -2,7 +2,6 @@
 #define _SDD_DD_NARY_HH_
 
 #include <algorithm> // copy, equal
-#include <cassert>
 #include <initializer_list>
 #include <iosfwd>
 

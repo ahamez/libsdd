@@ -92,6 +92,9 @@ private:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+/// @brief Get the number of unique nodes of an SDD.
+///
+/// Each node is counted only once.
 template <typename C>
 std::pair<std::size_t, std::size_t>
 nodes(const SDD<C>& x)

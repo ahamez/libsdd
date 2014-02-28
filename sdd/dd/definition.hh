@@ -2,8 +2,6 @@
 #define _SDD_DD_DEFINITION_HH_
 
 #include <cassert>
-#include <initializer_list>
-#include <type_traits> // is_integral
 
 #include "sdd/dd/alpha.hh"
 #include "sdd/dd/context_fwd.hh"

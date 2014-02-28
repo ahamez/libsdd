@@ -180,6 +180,7 @@ struct to_lua
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+/// @brief Dump an SDD as a Lua data structure for inspection purposes.
 template <typename C>
 to_lua<C>
 lua(const SDD<C>& x)

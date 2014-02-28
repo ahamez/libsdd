@@ -28,7 +28,7 @@ struct hom_local_test
     : m(sdd::manager<C>::init(small_conf<C>()))
     , zero(sdd::zero<C>())
     , one(sdd::one<C>())
-    , id(sdd::Id<C>())
+    , id(sdd::id<C>())
   {}
 };
 
@@ -43,16 +43,16 @@ TYPED_TEST(hom_local_test, construction)
 {
   order o(order_builder {"0"});;
   {
-    ASSERT_EQ(id, Local("0", o, id));
+    ASSERT_EQ(id, local("0", o, id));
   }
   {
-    const homomorphism h1 = Local("0", o, Inductive<conf>(targeted_incr<conf>("0",1)));
-    const homomorphism h2 = Local("0", o, Inductive<conf>(targeted_incr<conf>("0",1)));
+    const homomorphism h1 = local("0", o, inductive<conf>(targeted_incr<conf>("0",1)));
+    const homomorphism h2 = local("0", o, inductive<conf>(targeted_incr<conf>("0",1)));
     ASSERT_EQ(h1, h2);
   }
   {
-    const homomorphism h1 = Local("0", o, Inductive<conf>(targeted_incr<conf>("0",1)));
-    const homomorphism h2 = Local("0", o, Inductive<conf>(targeted_incr<conf>("0",2)));
+    const homomorphism h1 = local("0", o, inductive<conf>(targeted_incr<conf>("0",1)));
+    const homomorphism h2 = local("0", o, inductive<conf>(targeted_incr<conf>("0",2)));
     ASSERT_NE(h1, h2);
   }
 }
@@ -66,11 +66,11 @@ TYPED_TEST(hom_local_test, evaluation)
 
   const SDD s0 = SDD(1, SDD(0, {0}, one), SDD(0, SDD(0, {1}, one), one));
 
-  const homomorphism h1 = Local("x", o, Inductive<conf>(targeted_incr<conf>("a",1)));
+  const homomorphism h1 = local("x", o, inductive<conf>(targeted_incr<conf>("a",1)));
   ASSERT_EQ( SDD(1, SDD(0, {1}, one), SDD(0, SDD(0, {1}, one), one))
            , h1(o, s0));
 
-  const homomorphism h2 = Local("y", o, Inductive<conf>(targeted_incr<conf>("b",1)));
+  const homomorphism h2 = local("y", o, inductive<conf>(targeted_incr<conf>("b",1)));
   ASSERT_EQ( SDD(1, SDD(0, {0}, one), SDD(0, SDD(0, {2}, one), one))
            , h2(o, s0));
 }
@@ -82,7 +82,7 @@ TYPED_TEST(hom_local_test, error)
   const order o(order_builder {"a", "b"});
 
   const SDD s0 = SDD(1, {0}, SDD(0, {1}, one));
-  const homomorphism h1 = Local("a", o, Inductive<conf>(targeted_incr<conf>("x",1)));
+  const homomorphism h1 = local("a", o, inductive<conf>(targeted_incr<conf>("x",1)));
   ASSERT_THROW(h1(o, s0), sdd::evaluation_error<conf>);
   try
   {

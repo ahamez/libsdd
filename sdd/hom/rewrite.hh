@@ -5,11 +5,11 @@
 #include <deque>
 #include <tuple>
 
+#include "sdd/hom/common_types.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/fixpoint.hh"
 #include "sdd/hom/local.hh"
-#include "sdd/hom/optional_homomorphism.hh"
 #include "sdd/hom/saturation_fixpoint.hh"
 #include "sdd/hom/saturation_intersection.hh"
 #include "sdd/hom/saturation_sum.hh"
@@ -43,14 +43,14 @@ struct rewriter
   using hom_list_type = std::deque<homomorphism<C>>;
 
   /// @internal
-  /// @brief Tell if an homomorphism is Local.
+  /// @brief Tell if an homomorphism is local.
   struct is_local
   {
     /// @brief Needed by mem::variant.
     using result_type = bool;
 
     constexpr bool
-    operator()(const local<C>&)
+    operator()(const _local<C>&)
     const noexcept
     {
       return true;
@@ -66,13 +66,13 @@ struct rewriter
   };
 
   /// @internal
-  /// @brief Tell if an homomorphism is Sum.
+  /// @brief Tell if an homomorphism is sum.
   struct is_sum
   {
     using result_type = bool;
 
     constexpr bool
-    operator()(const sum<C>&)
+    operator()(const _sum<C>&)
     const noexcept
     {
       return true;
@@ -99,7 +99,7 @@ struct rewriter
     hom_list_type L;
     for (; begin != end; ++begin)
     {
-      if (*begin == Id<C>())
+      if (*begin == id<C>())
       {
         has_id = true;
       }
@@ -109,7 +109,7 @@ struct rewriter
       }
       else if (visit(is_local{}, *begin))
       {
-        const local<C>& l = mem::variant_cast<const local<C>>(**begin);
+        const _local<C>& l = mem::variant_cast<const _local<C>>(**begin);
         L.push_back(l.hom());
       }
       else
@@ -120,9 +120,9 @@ struct rewriter
     return std::make_tuple(std::move(F), std::move(G), std::move(L), has_id);
   }
 
-  /// @brief Rewrite Sum into a Saturation Sum, if possible.
+  /// @brief Rewrite sum into a Saturation sum, if possible.
   homomorphism<C>
-  operator()(const sum<C>& s, const homomorphism<C>& h, const order<C>& o)
+  operator()(const _sum<C>& s, const homomorphism<C>& h, const order<C>& o)
   const
   {
     auto&& p = partition(o, s.begin(), s.end());
@@ -138,24 +138,24 @@ struct rewriter
 
     if (has_id)
     {
-      F.push_back(Id<C>());
+      F.push_back(id<C>());
     }
 
-    return SaturationSum<C>( o.variable()
-                           , F.size() > 0 ? rewrite(o.next(), Sum<C>(o.next(), F.begin(), F.end()))
-                                          : optional_homomorphism<C>()
-                           , G.begin(), G.end()
-                           , L.size() > 0 ? Local( o.position()
-                                                 , rewrite( o.nested()
-                                                          , Sum<C>(o.nested(), L.begin(), L.end())
-                                                          ))
-                                          : optional_homomorphism<C>()
-                           );
+    return saturation_sum( o.variable()
+                         , F.size() > 0 ? rewrite(o.next(), sum(o.next(), F.begin(), F.end()))
+                                        : optional_homomorphism<C>()
+                         , G.begin(), G.end()
+                         , L.size() > 0 ? local( o.position()
+                                               , rewrite( o.nested()
+                                                        , sum(o.nested(), L.begin(), L.end())
+                                                        ))
+                                        : optional_homomorphism<C>()
+                         );
   }
 
-  /// @brief Rewrite Intersection into a Saturation Intersection, if possible.
+  /// @brief Rewrite intersection into a Saturation intersection, if possible.
   homomorphism<C>
-  operator()(const intersection<C>& s, const homomorphism<C>& h, const order<C>& o)
+  operator()(const _intersection<C>& s, const homomorphism<C>& h, const order<C>& o)
   const
   {
     auto&& p = partition(o, s.begin(), s.end());
@@ -171,25 +171,25 @@ struct rewriter
 
     if (has_id)
     {
-      F.push_back(Id<C>());
+      F.push_back(id<C>());
     }
 
-    return SaturationIntersection<C>( o.variable()
+    return saturation_intersection( o.variable()
                            , F.size() > 0 ? rewrite( o.next()
-                                                   , Intersection<C>(o.next(), F.begin(), F.end()))
+                                                   , intersection(o.next(), F.begin(), F.end()))
                                           : optional_homomorphism<C>()
                            , G.begin(), G.end()
-                           , L.size() > 0 ? Local( o.position()
+                           , L.size() > 0 ? local( o.position()
                                                  , rewrite( o.nested()
-                                                          , Intersection<C>( o.nested(), L.begin()
-                                                                           , L.end())))
+                                                          , intersection( o.nested(), L.begin()
+                                                                        , L.end())))
                                           : optional_homomorphism<C>()
                            );
   }
 
   /// @brief Rewrite a Fixpoint into a Saturation Fixpoint, if possible.
   homomorphism<C>
-  operator()(const fixpoint<C>& f, const homomorphism<C>& h, const order<C>& o)
+  operator()(const _fixpoint<C>& f, const homomorphism<C>& h, const order<C>& o)
   const
   {
     if (not visit(is_sum{}, f.hom()))
@@ -197,7 +197,7 @@ struct rewriter
       return h;
     }
 
-    const sum<C>& s = mem::variant_cast<const sum<C>>(*f.hom());
+    const _sum<C>& s = mem::variant_cast<const _sum<C>>(*f.hom());
 
     auto&& p = partition(o, s.begin(), s.end());
     auto& F = std::get<0>(p);
@@ -211,19 +211,19 @@ struct rewriter
     }
 
     // Don't forget to add id to F and L parts!.
-    F.push_back(Id<C>());
-    L.push_back(Id<C>());
+    F.push_back(id<C>());
+    L.push_back(id<C>());
 
     // Put selectors in front. It might help cut paths sooner in the Saturation Fixpoint's
     // evaluation.
     std::partition(G.begin(), G.end(), [](const homomorphism<C>& g){return g.selector();});
 
-    return SaturationFixpoint( o.variable()
-                             , rewrite(o.next(), Fixpoint(Sum<C>(o.next(), F.begin(), F.end())))
+    return saturation_fixpoint( o.variable()
+                             , rewrite(o.next(), fixpoint(sum(o.next(), F.begin(), F.end())))
                              , G.begin(), G.end()
-                             , Local( o.position()
+                             , local( o.position()
                                     , rewrite( o.nested()
-                                             , Fixpoint(Sum<C>(o.nested(), L.begin(), L.end())))
+                                             , fixpoint(sum(o.nested(), L.begin(), L.end())))
                                     )
                              );
   }

@@ -80,7 +80,7 @@ struct internal_manager
   /// @brief The cached Id homomorphism.
   const hom_ptr_type id;
 
-  /// @brief Used to avoid frequent useless reallocations in SaturationFixpoint().
+  /// @brief Used to avoid frequent useless reallocations in saturation_fixpoint().
   boost::container::flat_set<homomorphism<C>> saturation_fixpoint_data;
 
   /// @brief Constructor with a given configuration.
@@ -116,7 +116,7 @@ private:
   mk_id()
   {
     char* addr = hom_unique_table.allocate(0 /*extra bytes*/);
-    hom_unique_type* u = new (addr) hom_unique_type(mem::construct<hom::identity<C>>());
+    hom_unique_type* u = new (addr) hom_unique_type(mem::construct<hom::_identity<C>>());
     return hom_ptr_type(hom_unique_table(u));
   }
 };

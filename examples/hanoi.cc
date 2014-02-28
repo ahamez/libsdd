@@ -11,12 +11,12 @@ using SDD    = sdd::SDD<conf>;
 using hom    = sdd::homomorphism<conf>;
 using Values = conf::Values;
 
-using sdd::Cons;
-using sdd::Constant;
-using sdd::Fixpoint;
-using sdd::Id;
-using sdd::Inductive;
-using sdd::Sum;
+using sdd::cons;
+using sdd::constant;
+using sdd::fixpoint;
+using sdd::id;
+using sdd::inductive;
+using sdd::sum;
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -52,7 +52,7 @@ struct no_ring_above
   {
     Values v(val);
     v.erase_keys(i, j);
-    return Cons<conf>(o, std::move(v), Inductive<conf>(*this));
+    return cons<conf>(o, std::move(v), inductive<conf>(*this));
   }
 
   SDD
@@ -113,13 +113,13 @@ struct swap_pole
   {
     if (val.find(source) == val.cend())
     {
-      return Constant<conf>(sdd::zero<conf>());
+      return constant<conf>(sdd::zero<conf>());
     }
     else
     {
-      return Cons<conf>( o
+      return cons<conf>( o
                        , Values {destination}
-                       , Inductive<conf>(no_ring_above(source,destination)));
+                       , inductive<conf>(no_ring_above(source,destination)));
     }
   }
 
@@ -221,14 +221,14 @@ main(int argc, char** argv)
       {
         if (source != destination)
         {
-          union_swap_pole.insert(Inductive<conf>(swap_pole(i, source, destination)));
+          union_swap_pole.insert(inductive<conf>(swap_pole(i, source, destination)));
         }
       }
     }
   }
 
-  union_swap_pole.insert(Id<conf>());
-  hom events = Fixpoint(Sum<conf>(o, union_swap_pole.begin(), union_swap_pole.end()));
+  union_swap_pole.insert(id<conf>());
+  hom events = fixpoint(sum(o, union_swap_pole.begin(), union_swap_pole.end()));
   events = sdd::rewrite(o, events);
 
   std::chrono::time_point<std::chrono::system_clock> start, end;
