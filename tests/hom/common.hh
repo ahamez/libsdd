@@ -17,7 +17,7 @@ using sdd::hom::saturation_fixpoint;
 using sdd::hom::saturation_intersection;
 using sdd::hom::saturation_sum;
 using sdd::sum;
-using sdd::values_function;
+using sdd::function;
 
 /*------------------------------------------------------------------------------------------------*/
 

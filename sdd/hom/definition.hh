@@ -21,7 +21,7 @@
 #include "sdd/hom/saturation_intersection.hh"
 #include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
-#include "sdd/hom/values_function.hh"
+#include "sdd/hom/function.hh"
 #include "sdd/mem/ptr.hh"
 #include "sdd/mem/ref_counted.hh"
 #include "sdd/mem/variant.hh"
@@ -45,6 +45,7 @@ private:
                       , hom::_expression<C>
 #endif // !defined(HAS_NO_BOOST_COROUTINE)
                       , hom::_fixpoint<C>
+                      , hom::_function<C>
                       , hom::_identity<C>
                       , hom::_inductive<C>
                       , hom::_intersection<C>
@@ -54,7 +55,6 @@ private:
                       , hom::_saturation_sum<C>
                       , hom::_simple_expression<C>
                       , hom::_sum<C>
-                      , hom::_values_function<C>
                       >
           data_type;
 

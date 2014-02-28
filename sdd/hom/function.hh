@@ -1,5 +1,5 @@
-#ifndef _SDD_HOM_VALUES_FUNCTION_HH_
-#define _SDD_HOM_VALUES_FUNCTION_HH_
+#ifndef _SDD_HOM_FUNCTION_HH_
+#define _SDD_HOM_FUNCTION_HH_
 
 #include <algorithm> // find
 #include <iosfwd>
@@ -21,7 +21,7 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief Used to wrap user's values function.
 template <typename C>
-class values_function_base
+class function_base
 {
 public:
 
@@ -30,7 +30,7 @@ public:
 
   /// @brief Destructor.
   virtual
-  ~values_function_base()
+  ~function_base()
   {}
 
   /// @brief Tell if the user's function is a selector.
@@ -46,7 +46,7 @@ public:
   /// @brief Compare values_base.
   virtual
   bool
-  operator==(const values_function_base&) const noexcept = 0;
+  operator==(const function_base&) const noexcept = 0;
 
   /// @brief Get the user's function hash value.
   virtual
@@ -64,8 +64,8 @@ public:
 /// @internal
 /// @brief Used to wrap user's values function.
 template <typename C, typename User>
-class values_function_derived
-  : public values_function_base<C>
+class function_derived
+  : public function_base<C>
 {
 private:
 
@@ -78,12 +78,12 @@ public:
   using values_type = typename C::Values;
 
   /// @brief Constructor.
-  values_function_derived(const User& f)
+  function_derived(const User& f)
     : fun_(f)
   {}
 
   /// @brief Constructor.
-  values_function_derived(User&& f)
+  function_derived(User&& f)
     : fun_(std::move(f))
   {}
 
@@ -105,11 +105,11 @@ public:
 
   /// @brief Compare values_derived.
   bool
-  operator==(const values_function_base<C>& other)
+  operator==(const function_base<C>& other)
   const noexcept override
   {
     return typeid(*this) == typeid(other)
-         ? fun_ == reinterpret_cast<const values_function_derived&>(other).fun_
+         ? fun_ == reinterpret_cast<const function_derived&>(other).fun_
          : false;
   }
 
@@ -161,7 +161,7 @@ private:
 /// @internal
 /// @brief Values homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED _values_function
+class LIBSDD_ATTRIBUTE_PACKED _function
 {
 private:
 
@@ -172,7 +172,7 @@ private:
   const order_position_type target_;
 
   /// @brief Ownership of the user's values function.
-  const std::unique_ptr<const values_function_base<C>> fun_ptr_;
+  const std::unique_ptr<const function_base<C>> fun_ptr_;
 
   /// @brief Dispatch the Values homomorphism evaluation.
   struct helper
@@ -182,7 +182,7 @@ private:
     /// @brief |0| case, should never happen.
     SDD<C>
     operator()( const zero_terminal<C>&, const SDD<C>&
-              , const values_function_base<C>&, context<C>&, const order<C>&)
+              , const function_base<C>&, context<C>&, const order<C>&)
     const noexcept
     {
       assert(false);
@@ -192,16 +192,16 @@ private:
     /// @brief |1| case.
     SDD<C>
     operator()( const one_terminal<C>&, const SDD<C>&
-              , const values_function_base<C>&, context<C>&, const order<C>&)
+              , const function_base<C>&, context<C>&, const order<C>&)
     const
     {
       return one<C>();
     }
 
-    /// @brief A values_function can't be applied on an hierarchical node.
+    /// @brief A function can't be applied on an hierarchical node.
     SDD<C>
     operator()( const hierarchical_node<C>&, const SDD<C>& s
-              , const values_function_base<C>&, context<C>&, const order<C>&)
+              , const function_base<C>&, context<C>&, const order<C>&)
     const
     {
       throw evaluation_error<C>(s);
@@ -210,7 +210,7 @@ private:
     /// @brief Evaluation on a flat node.
     SDD<C>
     operator()( const flat_node<C>& node, const SDD<C>& s
-              , const values_function_base<C>& fun, context<C>& cxt, const order<C>& o)
+              , const function_base<C>& fun, context<C>& cxt, const order<C>& o)
     const
     {
       if (fun.selector())
@@ -252,7 +252,7 @@ private:
 public:
 
   /// @brief Constructor.
-  _values_function(order_position_type pos, const values_function_base<C>* f_ptr)
+  _function(order_position_type pos, const function_base<C>* f_ptr)
     : target_(pos)
     , fun_ptr_(f_ptr)
   {}
@@ -290,7 +290,7 @@ public:
   }
 
   /// @brief Return the user's values function.
-  const values_function_base<C>&
+  const function_base<C>&
   fun()
   const noexcept
   {
@@ -301,21 +301,21 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @related _values_function
+/// @related _function
 template <typename C>
 inline
 bool
-operator==(const _values_function<C>& lhs, const _values_function<C>& rhs)
+operator==(const _function<C>& lhs, const _function<C>& rhs)
 noexcept
 {
   return lhs.target() == rhs.target() and lhs.fun() == rhs.fun();
 }
 
 /// @internal
-/// @related _values_function
+/// @related _function
 template <typename C>
 std::ostream&
-operator<<(std::ostream& os, const _values_function<C>& x)
+operator<<(std::ostream& os, const _function<C>& x)
 {
   os << "Function(" << x.target() << ", ";
   x.fun().print(os);
@@ -331,10 +331,10 @@ operator<<(std::ostream& os, const _values_function<C>& x)
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-values_function(order_position_type pos, const User& u)
+function(order_position_type pos, const User& u)
 {
-  return homomorphism<C>::create( mem::construct<hom::_values_function<C>>()
-                                , pos, new hom::values_function_derived<C, User>(u));
+  return homomorphism<C>::create( mem::construct<hom::_function<C>>()
+                                , pos, new hom::function_derived<C, User>(u));
 }
 
 /// @internal
@@ -342,10 +342,10 @@ values_function(order_position_type pos, const User& u)
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-values_function(order_position_type pos, User&& u)
+function(order_position_type pos, User&& u)
 {
-  return homomorphism<C>::create( mem::construct<hom::_values_function<C>>()
-                                , pos, new hom::values_function_derived<C, User>(std::move(u)));
+  return homomorphism<C>::create( mem::construct<hom::_function<C>>()
+                                , pos, new hom::function_derived<C, User>(std::move(u)));
 }
 
 /// @brief Create the Values Function homomorphism.
@@ -353,9 +353,9 @@ values_function(order_position_type pos, User&& u)
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-values_function(const order<C>& o, const typename C::Identifier& i, const User& u)
+function(const order<C>& o, const typename C::Identifier& i, const User& u)
 {
-  return values_function<C>(o.node(i).position(), u);
+  return function<C>(o.node(i).position(), u);
 }
 
 /// @brief Create the Values Function homomorphism.
@@ -363,9 +363,9 @@ values_function(const order<C>& o, const typename C::Identifier& i, const User& 
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-values_function(const order<C>& o, const typename C::Identifier& i, User&& u)
+function(const order<C>& o, const typename C::Identifier& i, User&& u)
 {
-  return values_function<C>(o.node(i).position(), std::move(u));
+  return function<C>(o.node(i).position(), std::move(u));
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -377,12 +377,12 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Hash specialization for sdd::hom::_values_function.
+/// @brief Hash specialization for sdd::hom::_function.
 template <typename C>
-struct hash<sdd::hom::_values_function<C>>
+struct hash<sdd::hom::_function<C>>
 {
   std::size_t
-  operator()(const sdd::hom::_values_function<C>& x)
+  operator()(const sdd::hom::_function<C>& x)
   const noexcept
   {
     std::size_t seed = x.fun().hash();
@@ -395,4 +395,4 @@ struct hash<sdd::hom::_values_function<C>>
 
 } // namespace std
 
-#endif // _SDD_HOM_VALUES_FUNCTION_HH_
+#endif // _SDD_HOM_FUNCTION_HH_
