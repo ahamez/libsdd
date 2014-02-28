@@ -2,7 +2,6 @@
 #define _SDD_HOM_EXPRESSION_HH_
 
 #include <algorithm> // any_of, copy, find
-#include <cassert>
 #include <iterator>  // back_insert
 #include <iosfwd>
 #include <initializer_list>
