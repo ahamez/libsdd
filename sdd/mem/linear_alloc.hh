@@ -77,13 +77,6 @@ struct arena
   }
 
   void
-  reset()
-  noexcept
-  {
-    position_ = buffer_.get();
-  }
-
-  void
   rewind(position_type pos)
   noexcept
   {
