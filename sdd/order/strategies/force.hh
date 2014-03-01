@@ -1,7 +1,12 @@
 #ifndef _SDD_ORDER_STRATEGIES_FORCE_HH_
 #define _SDD_ORDER_STRATEGIES_FORCE_HH_
 
-#include <stdexcept> // runtime_error
+#include <algorithm>  // minmax_element
+#include <cassert>
+#include <functional> // reference_wrapper
+#include <limits>
+#include <numeric>    // accumulate
+#include <stdexcept>  // runtime_error
 #include <vector>
 
 #include <boost/container/flat_set.hpp>
@@ -15,23 +20,8 @@ namespace sdd { namespace force {
 
 namespace /* anonymous */ {
 
-// Forward declaration for hyperedge.
-struct vertex;
-
-/// @internal
-struct hyperedge
-{
-  /// @brief The center of gravity.
-  double cog;
-
-  /// @brief Vertices connected to this hyperedge.
-  boost::container::flat_set<const vertex*> vertices;
-
-  /// @brief Constructor with an already existing container of vertices.
-  hyperedge(const boost::container::flat_set<const vertex*>& v)
-    : vertices(v)
-  {}
-};
+// Forward declaration for vertex.
+struct hyperedge;
 
 /// @internal
 struct vertex
@@ -51,6 +41,44 @@ struct vertex
   {}
 };
 
+/// @internal
+struct hyperedge
+{
+  /// @brief The center of gravity.
+  double cog;
+
+  /// @brief Vertices connected to this hyperedge.
+  boost::container::flat_set<vertex*> vertices;
+
+  /// @brief Constructor with an already existing container of vertices.
+  hyperedge(const boost::container::flat_set<vertex*>& v)
+    : cog(0), vertices(v)
+  {}
+
+  /// @brief Compute the center of gravity.
+  void
+  center_of_gravity()
+  noexcept
+  {
+    assert(not vertices.empty());
+    cog = std::accumulate( vertices.cbegin(), vertices.cend(), 0
+                         , [](double acc, const vertex* v){return acc + v->location;}
+                         ) / vertices.size();
+  }
+
+  /// @brief Compute the span of all vertices.
+  double
+  span()
+  const noexcept
+  {
+    assert(not vertices.empty());
+    const auto minmax = std::minmax_element( vertices.cbegin(), vertices.cend()
+                                           , [](const vertex* lhs, const vertex* rhs)
+                                               {return lhs->location < rhs->location;});
+    return *minmax.second - *minmax.first;
+  }
+};
+
 } // namespace anonymous
 
 /*------------------------------------------------------------------------------------------------*/
@@ -62,7 +90,7 @@ class mk_hyperedges_visitor
 private:
 
   /// @brief Where to get vertices to connect to hyperedges.
-  const std::vector<vertex>& vertices_;
+  std::vector<vertex>& vertices_;
 
   /// @brief Where to put hyperedges created by this visitor.
   std::vector<hyperedge>& hyperedges_;
@@ -70,11 +98,10 @@ private:
 public:
 
   /// @brief Required by the mem::variant visitor mechanism.
-//  using result_type = std::vector<const vertex*>;
-  using result_type = boost::container::flat_set<const vertex*>;
+  using result_type = boost::container::flat_set<vertex*>;
 
   /// @brief Constructor.
-  mk_hyperedges_visitor(const std::vector<vertex>& v, std::vector<hyperedge>& h)
+  mk_hyperedges_visitor(std::vector<vertex>& v, std::vector<hyperedge>& h)
     : vertices_(v), hyperedges_(h)
   {}
 
@@ -320,11 +347,20 @@ public:
     vertices_.reserve(o_.nodes().size());
     for (std::size_t i = 0; i < o_.nodes().size(); ++i)
     {
-      vertices_.emplace_back(i, i);
+      vertices_.emplace_back(i /* position in order.nodes */, i /* initial location */);
     }
 
     // Build hyperedges
     visit(mk_hyperedges_visitor<C>(vertices_, hyperedges_), h);
+
+    // Update all vertices with their connected hyperedges
+    for (auto& edge : hyperedges_)
+    {
+      for (auto& vertex_ptr : edge.vertices)
+      {
+        vertex_ptr->hyperedges.push_back(&edge);
+      }
+    }
   }
 
   /// @brief Dump the hypergraph to the DOT format.
@@ -353,9 +389,60 @@ public:
   /// @brief Effectively apply the FORCE ordering strategy.
   order<C>
   operator()()
-  const
   {
-    return o_;
+    std::vector<std::reference_wrapper<vertex>> sorted_vertices(vertices_.begin(), vertices_.end());
+
+    double span = std::numeric_limits<double>::max();
+    double old_span = 0;
+
+    do
+    {
+      old_span = span;
+
+      // Compute the new center of gravity for every hyperedge.
+      for (auto& edge : hyperedges_)
+      {
+        edge.center_of_gravity();
+      }
+
+      // Compute the tentative new location of every vertex.
+      for (auto& vertex : vertices_)
+      {
+        assert(not vertex.hyperedges.empty());
+        vertex.location = std::accumulate( vertex.hyperedges.cbegin(), vertex.hyperedges.cend(), 0
+                                         , [](double acc, const hyperedge* e){return acc + e->cog;}
+                                         ) / vertex.hyperedges.size();
+      }
+
+      // Sort tentative vertex locations.
+      std::sort( sorted_vertices.begin(), sorted_vertices.end()
+               , [](vertex& lhs, vertex& rhs){return lhs.location < rhs.location;});
+
+      // Assign integer indices to the vertices.
+      unsigned int pos = 0;;
+      std::for_each( sorted_vertices.begin(), sorted_vertices.end()
+                   , [&pos](vertex& v){v.location = pos++;});
+
+      span = get_total_span();
+    } while (old_span > span);
+
+    order_builder<C> ob;
+    for (auto rcit = sorted_vertices.rbegin(); rcit != sorted_vertices.rend(); ++rcit)
+    {
+      ob.push(o_.nodes()[rcit->get().pos].identifier().user());
+    }
+
+    return order<C>(ob);
+  }
+
+private:
+
+  double
+  get_total_span()
+  const noexcept
+  {
+    return std::accumulate( hyperedges_.cbegin(), hyperedges_.cend(), 0
+                          , [](double acc, const hyperedge& h){return acc + h.span();});
   }
 };
 
