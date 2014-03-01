@@ -3,26 +3,28 @@
 
 #include <cassert>
 #include <cstddef>
-#include <memory>
+#include <memory> // unique_ptr
 
 namespace sdd { namespace mem {
 
 /*------------------------------------------------------------------------------------------------*/
 
-namespace {
+namespace /* anonymous */ {
 
 /// @internal
 /// @brief A memory arena for linear_alloc.
-///
-/// Everything is private in this class: this arena can only be manipulated with a rewinder and
-/// a linear_alloc.
-struct arena
+class arena
 {
   // Can't copy an arena.
   arena(const arena&) = delete;
   arena& operator=(const arena&) = delete;
 
+public:
+
+  /// @brief The type of position in the memory buffer.
   using position_type = char*;
+
+private:
 
   /// @brief The size of this memory arena.
   const std::size_t size_;
@@ -40,6 +42,8 @@ struct arena
   /// @brief The number of allocated bytes when this arena wasn't referenced by any rewinder.
   std::size_t unactive_allocated_;
 #endif
+
+public:
 
   /// @brief Construct an arena with a given size.
   arena(std::size_t size)
@@ -124,13 +128,6 @@ struct arena
     return position_;
   }
 
-  bool
-  pointer_in_buffer(char* p)
-  const noexcept
-  {
-    return buffer_.get() <= p and p <= buffer_.get() + size_;
-  }
-
 #ifndef NDEBUG
   std::size_t
   used()
@@ -153,6 +150,15 @@ struct arena
     active_ -= 1;
   }
 #endif
+
+private:
+
+  bool
+  pointer_in_buffer(char* p)
+  const noexcept
+  {
+    return buffer_.get() <= p and p <= buffer_.get() + size_;
+    }
 };
 
 /*------------------------------------------------------------------------------------------------*/
