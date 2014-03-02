@@ -10,6 +10,34 @@ namespace sdd { namespace mem {
 
 /*------------------------------------------------------------------------------------------------*/
 
+namespace /* anonymous */ {
+
+/// @brief A unique table statistics.
+struct unique_table_statistics
+{
+  /// @brief The actual number of unified elements.
+  std::size_t size;
+
+  /// @brief The maximum number of stored elements.
+  std::size_t peak;
+
+  /// @brief The actual load factor.
+  double load_factor;
+
+  /// @brief The total number of access.
+  std::size_t access;
+
+  /// @brief The number of hits.
+  std::size_t hit;
+
+  /// @brief The number of misses.
+  std::size_t miss;
+};
+
+} // namespace anonymous
+
+/*------------------------------------------------------------------------------------------------*/
+
 /// @internal
 /// @brief A table to unify data.
 template <typename Unique>
@@ -19,37 +47,13 @@ class unique_table
   unique_table(const unique_table&) = delete;
   unique_table& operator=(const unique_table&) = delete;
 
-public:
-
-  /// @brief Some statistics.
-  struct statistics
-  {
-    /// @brief The actual number of unified elements.
-    std::size_t size;
-
-    /// @brief The maximum number of stored elements.
-    std::size_t peak;
-
-    /// @brief The actual load factor.
-    double load_factor;
-
-    /// @brief The total number of access.
-    std::size_t access;
-
-    /// @brief The number of hits.
-    std::size_t hit;
-
-    /// @brief The number of misses.
-    std::size_t miss;
-  };
-
 private:
 
   /// @brief The actual container of unified data.
   mem::hash_table<Unique> set_;
 
   /// @brief The statistics of this unique_table.
-  mutable statistics stats_;
+  mutable unique_table_statistics stats_;
 
   /// @brief Index re-usable memory blocks by size.
   boost::container::flat_multimap<std::size_t, char*> blocks_;
@@ -155,7 +159,7 @@ public:
   }
 
   /// @brief Get the statistics of this unique_table.
-  statistics
+  unique_table_statistics
   stats()
   const noexcept
   {
