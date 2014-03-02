@@ -86,8 +86,11 @@ TEST(unique_table_test, insertion)
     const foo& i2 = ut(i2_ptr);
 
     ASSERT_NE(&i1, &i2);
+    ASSERT_EQ(2ul, ut.stats().peak);
     ut.erase(const_cast<foo&>(i1));
+    ASSERT_EQ(2ul, ut.stats().peak);
     ut.erase(const_cast<foo&>(i2));
+    ASSERT_EQ(2ul, ut.stats().peak);
   }
 }
 

@@ -27,6 +27,9 @@ public:
     /// @brief The actual number of unified elements.
     std::size_t size;
 
+    /// @brief The maximum number of stored elements.
+    std::size_t peak;
+
     /// @brief The actual load factor.
     double load_factor;
 
@@ -104,6 +107,7 @@ public:
     else
     {
       ++stats_.miss;
+      stats_.peak = std::max(stats_.peak, set_.size());
     }
     return *insertion.first;
   }
