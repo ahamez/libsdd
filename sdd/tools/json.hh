@@ -9,15 +9,36 @@
 #include <cereal/types/utility.hpp>
 
 #include "sdd/manager.hh"
+#include "sdd/mem/unique_table.hh"
 #include "sdd/tools/arcs.hh"
 #include "sdd/tools/nodes.hh"
 #include "sdd/tools/size.hh"
 
-namespace sdd { namespace tools {
+namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
-namespace /* anonymous */ {
+namespace mem { namespace {
+
+template<class Archive>
+void save(Archive & archive, const unique_table_statistics& s)
+{
+  archive( cereal::make_nvp("#", static_cast<unsigned int>(s.size))
+         , cereal::make_nvp("# peak", static_cast<unsigned int>(s.peak))
+         , cereal::make_nvp("# access", static_cast<unsigned int>(s.access))
+         , cereal::make_nvp("# hits", static_cast<unsigned int>(s.hit))
+         , cereal::make_nvp("# miss", static_cast<unsigned int>(s.miss))
+         , cereal::make_nvp("load factor", static_cast<unsigned int>(s.load_factor))
+         );
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+}} // namespace mem::anonymous
+
+namespace tools { namespace /* anonymous */ {
+
+/*------------------------------------------------------------------------------------------------*/
 
 struct sdd_stats
 {
@@ -29,7 +50,9 @@ struct sdd_stats
   arcs_frequency_type frequency;
 
   template<class Archive>
-  void serialize(Archive& archive)
+  void
+  save(Archive& archive)
+  const
   {
     archive( cereal::make_nvp("bytes", bytes)
            , cereal::make_nvp("flat nodes", flat_nodes)
@@ -59,6 +82,19 @@ json(const SDD<C>& x, std::ostream& os)
   std::tie(stats.flat_arcs, stats.hierarchical_arcs) = number_of_arcs(stats.frequency);
 
   archive(cereal::make_nvp("sdd", stats));
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+template <typename C>
+void
+json(const manager<C>& m, std::ostream& os)
+{
+  cereal::JSONOutputArchive archive(os);
+
+  archive( cereal::make_nvp("SDD unique table", m.sdd_stats())
+         , cereal::make_nvp("hom unique table", m.hom_stats()));
 }
 
 /*------------------------------------------------------------------------------------------------*/
