@@ -92,9 +92,10 @@ public:
     return std::find(path.begin(), path.end(), upper) != path.end();
   }
 
-  /// @brief
+  /// @internal
+  /// @brief Get the nodes of this order.
   const nodes_type&
-  identifiers()
+  nodes()
   const noexcept
   {
     return *nodes_ptr_;

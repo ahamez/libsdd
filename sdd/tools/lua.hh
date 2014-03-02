@@ -147,6 +147,7 @@ struct to_lua_visitor
   const
   {
     os_ << "Hierarchial SDD not supported yet." << std::endl;
+    return result_type();
   }
 };
 
