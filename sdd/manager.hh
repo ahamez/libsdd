@@ -99,6 +99,12 @@ public:
     }
   }
 
+  /// @brief Default move constructor.
+  manager(manager&&) = default;
+
+  /// @brief Default move operator.
+  manager& operator=(manager&&) = default;
+
   /// @brief Reset homomorphisms evaluation cache.
   void
   reset_hom_cache()
@@ -106,6 +112,7 @@ public:
     m_->hom_context.clear();
   }
 
+  /// @internal
   /// @brief Get the statistics for SDDs.
   mem::unique_table_statistics
   sdd_stats()
@@ -114,6 +121,7 @@ public:
     return m_->sdd_unique_table.stats();
   }
 
+  /// @internal
   /// @brief Get the statistics for homomorphisms.
   mem::unique_table_statistics
   hom_stats()
@@ -121,12 +129,6 @@ public:
   {
     return m_->hom_unique_table.stats();
   }
-
-  /// @brief Default move constructor.
-  manager(manager&&) = default;
-
-  /// @brief Default move operator.
-  manager& operator=(manager&&) = default;
 };
 
 /*------------------------------------------------------------------------------------------------*/
