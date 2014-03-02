@@ -58,6 +58,8 @@ struct apply_filters<T, Filter, Filters...>
 
 /*------------------------------------------------------------------------------------------------*/
 
+namespace /* anonymous */ {
+
 /// @internal
 /// @brief The statistics of a cache.
 ///
@@ -125,6 +127,8 @@ struct cache_statistics
                           );
   }
 };
+
+} // namespace anonymous
 
 /*------------------------------------------------------------------------------------------------*/
 

@@ -14,7 +14,7 @@ template <typename C>
 struct nb_nodes_visitor
 {
   /// @brief Required by mem::variant visitor mechanism.
-  using result_type = std::pair<std::size_t, std::size_t>;
+  using result_type = std::pair<unsigned int, unsigned int>;
 
   /// @brief A cache is necessary to to know if a node has already been encountered.
   ///
@@ -96,7 +96,7 @@ private:
 ///
 /// Each node is counted only once.
 template <typename C>
-std::pair<std::size_t, std::size_t>
+std::pair<unsigned int, unsigned int>
 nodes(const SDD<C>& x)
 {
   return visit(nb_nodes_visitor<C>(), x);
