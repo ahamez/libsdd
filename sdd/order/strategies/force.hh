@@ -11,6 +11,8 @@
 
 #include <boost/container/flat_set.hpp>
 
+#include <fstream>
+
 #include "sdd/hom/definition.hh"
 #include "sdd/order/order.hh"
 
@@ -352,6 +354,12 @@ public:
 
     // Build hyperedges
     visit(mk_hyperedges_visitor<C>(vertices_, hyperedges_), h);
+
+    std::ofstream dot_file("/tmp/force.dot");
+    if (dot_file.is_open())
+    {
+      to_dot(dot_file);
+    }
 
     // Update all vertices with their connected hyperedges
     for (auto& edge : hyperedges_)
