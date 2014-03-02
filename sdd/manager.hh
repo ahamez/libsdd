@@ -114,7 +114,7 @@ public:
 
   /// @internal
   /// @brief Get the statistics for SDDs.
-  mem::unique_table_statistics
+  const mem::unique_table_statistics&
   sdd_stats()
   const noexcept
   {
@@ -122,12 +122,48 @@ public:
   }
 
   /// @internal
+  /// @brief Get the statistics for SDD difference operations.
+  const mem::cache_statistics&
+  sdd_difference_cache_stats()
+  const noexcept
+  {
+    return m_->sdd_context.difference_cache().statistics();
+  }
+
+  /// @internal
+  /// @brief Get the statistics for SDD intersection operations.
+  const mem::cache_statistics&
+  sdd_intersection_cache_stats()
+  const noexcept
+  {
+    return m_->sdd_context.intersection_cache().statistics();
+  }
+
+  /// @internal
+  /// @brief Get the statistics for SDD sum operations.
+  const mem::cache_statistics&
+  sdd_sum_cache_stats()
+  const noexcept
+  {
+    return m_->sdd_context.sum_cache().statistics();
+  }
+
+  /// @internal
   /// @brief Get the statistics for homomorphisms.
-  mem::unique_table_statistics
+  const mem::unique_table_statistics&
   hom_stats()
   const noexcept
   {
     return m_->hom_unique_table.stats();
+  }
+
+  /// @internal
+  /// @brief Get the statistics for SDD sum operations.
+  const mem::cache_statistics&
+  hom_cache_stats()
+  const noexcept
+  {
+    return m_->hom_context.cache().statistics();
   }
 };
 

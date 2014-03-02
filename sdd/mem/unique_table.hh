@@ -28,10 +28,10 @@ struct unique_table_statistics
   std::size_t access;
 
   /// @brief The number of hits.
-  std::size_t hit;
+  std::size_t hits;
 
   /// @brief The number of misses.
-  std::size_t miss;
+  std::size_t misses;
 };
 
 } // namespace anonymous
@@ -96,7 +96,7 @@ public:
     {
       // The inserted Unique already exists. We keep its allocated memory to avoid deallocating
       // memory each time there is a hit.
-      ++stats_.hit;
+      ++stats_.hits;
       const std::size_t size = sizeof(Unique) + ptr->extra_bytes();
       ptr->~Unique();
       if (blocks_.size() == nb_blocks)
@@ -110,7 +110,7 @@ public:
     }
     else
     {
-      ++stats_.miss;
+      ++stats_.misses;
       stats_.peak = std::max(stats_.peak, set_.size());
     }
     return *insertion.first;
@@ -159,7 +159,7 @@ public:
   }
 
   /// @brief Get the statistics of this unique_table.
-  unique_table_statistics
+  const unique_table_statistics&
   stats()
   const noexcept
   {
