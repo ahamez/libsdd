@@ -435,9 +435,13 @@ public:
     } while (old_span > span);
 
     order_builder<C> ob;
-    for (auto rcit = sorted_vertices.rbegin(); rcit != sorted_vertices.rend(); ++rcit)
+//    for (auto rcit = sorted_vertices.rbegin(); rcit != sorted_vertices.rend(); ++rcit)
+//    {
+//      ob.push(o_.nodes()[rcit->get().pos].identifier().user());
+//    }
+    for (const auto& vertex : sorted_vertices)
     {
-      ob.push(o_.nodes()[rcit->get().pos].identifier().user());
+      ob.push(o_.nodes()[vertex.get().pos].identifier().user());
     }
 
     return order<C>(ob);
