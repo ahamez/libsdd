@@ -66,9 +66,9 @@ struct evaluation
       // to the following levels.
       dd::square_union<C, typename Node::valuation_type> su;
       su.reserve(node.size());
-      try
+      for (const auto& arc : node)
       {
-        for (const auto& arc : node)
+        try
         {
           SDD<C> new_successor = hom(cxt, o.next(), arc.successor());
           if (not new_successor.empty())
@@ -76,13 +76,14 @@ struct evaluation
             su.add(new_successor, arc.valuation());
           }
         }
-        return {node.variable(), su(cxt.sdd_context())};
+        catch (interrupt<SDD<C>>& i)
+        {
+          su.add(i.result(), arc.valuation());
+          i.result() = {node.variable(), su(cxt.sdd_context())};
+          throw;
+        }
       }
-      catch (interrupt<SDD<C>>& i)
-      {
-        i.result() = {node.variable(), su(cxt.sdd_context())};
-        throw;
-      }
+      return {node.variable(), su(cxt.sdd_context())};
     }
     else
     {
