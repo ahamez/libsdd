@@ -29,6 +29,15 @@ public:
   {
     return result_;
   }
+
+  /// @brief Get the last computed result before the interruption.
+  const T&
+  result()
+  const noexcept
+  {
+    return result_;
+  }
+
 };
 
 /*------------------------------------------------------------------------------------------------*/
