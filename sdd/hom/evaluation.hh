@@ -5,7 +5,6 @@
 #include <iosfwd>
 
 #include "sdd/hom/context_fwd.hh"
-#include "sdd/hom/rewrite.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
