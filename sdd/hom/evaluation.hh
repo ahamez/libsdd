@@ -87,14 +87,7 @@ struct evaluation
     }
     else
     {
-      try
-      {
-        return h(cxt, o, x);
-      }
-      catch (interrupt<SDD<C>>& i)
-      {
-        throw;
-      }
+      return h(cxt, o, x);
     }
   }
 };
