@@ -78,7 +78,10 @@ struct evaluation
         }
         catch (interrupt<SDD<C>>& i)
         {
-          su.add(i.result(), arc.valuation());
+          if (not i.result().empty())
+          {
+            su.add(i.result(), arc.valuation());
+          }
           i.result() = {node.variable(), su(cxt.sdd_context())};
           throw;
         }
