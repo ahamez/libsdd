@@ -14,6 +14,7 @@ namespace sdd { namespace force {
 
 /*------------------------------------------------------------------------------------------------*/
 
+template <typename Identifier>
 struct hyperedge
 {
   /// @internal
@@ -22,11 +23,12 @@ struct hyperedge
 
   /// @internal
   /// @brief Vertices connected to this hyperedge.
-  boost::container::flat_set<vertex*> vertices;
+//  boost::container::flat_set<vertex<Identifier>*> vertices;
+  std::vector<vertex<Identifier>*> vertices;
 
   /// @brief Constructor with an already existing container of vertices.
-  hyperedge(const boost::container::flat_set<vertex*>& v)
-    : cog(0), vertices(v)
+  hyperedge(std::vector<vertex<Identifier>*>&& v)
+    : cog(0), vertices(std::move(v))
   {}
 
   /// @internal
@@ -37,7 +39,7 @@ struct hyperedge
   {
     assert(not vertices.empty());
     cog = std::accumulate( vertices.cbegin(), vertices.cend(), 0
-                         , [](double acc, const vertex* v){return acc + v->location;}
+                         , [](double acc, const vertex<Identifier>* v){return acc + v->location;}
                          ) / vertices.size();
   }
 
@@ -48,9 +50,10 @@ struct hyperedge
   const noexcept
   {
     assert(not vertices.empty());
-    const auto minmax = std::minmax_element( vertices.cbegin(), vertices.cend()
-                                           , [](const vertex* lhs, const vertex* rhs)
-                                               {return lhs->location < rhs->location;});
+    const auto minmax
+      = std::minmax_element( vertices.cbegin(), vertices.cend()
+                           , [](const vertex<Identifier>* lhs, const vertex<Identifier>* rhs)
+                               {return lhs->location < rhs->location;});
     return *minmax.second - *minmax.first;
   }
 };

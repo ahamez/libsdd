@@ -10,20 +10,23 @@ namespace sdd { namespace force {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+template <typename Identifier>
 struct vertex
 {
-  /// @brief The corresponding index in the order's nodes.
-  const unsigned int pos;
+  using identifier_type = Identifier;
+
+  /// @brief The corresponding identifier.
+  const identifier_type id;
 
   /// @brief This vertex's tentative location.
   double location;
 
   /// @brief The hyperedges this vertex is connected to.
-  std::vector<hyperedge*> hyperedges;
+  std::vector<hyperedge<Identifier>*> hyperedges;
 
   /// @brief Constructor.
-  vertex(unsigned int p, double l)
-    : pos(p), location(l), hyperedges()
+  vertex(const Identifier& id, double l)
+    : id(id), location(l), hyperedges()
   {}
 };
 
