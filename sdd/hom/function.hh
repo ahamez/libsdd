@@ -11,6 +11,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
+#include "sdd/mem/interrupt.hh"
 #include "sdd/util/packed.hh"
 #include "sdd/order/order.hh"
 
@@ -215,29 +216,45 @@ private:
     {
       if (fun.selector())
       {
-        dd::alpha_builder<C, values_type> alpha_buidler;
-        alpha_buidler.reserve(node.size());
-        for (const auto& arc : node)
+        dd::alpha_builder<C, values_type> alpha_builder;
+        alpha_builder.reserve(node.size());
+        try
         {
-          values_type val = fun(arc.valuation());
-          if (not val.empty())
+          for (const auto& arc : node)
           {
-            alpha_buidler.add(std::move(val), arc.successor());
+            values_type val = fun(arc.valuation());
+            if (not val.empty())
+            {
+              alpha_builder.add(std::move(val), arc.successor());
+            }
           }
+          return {o.variable(), std::move(alpha_builder)};
         }
-        return {o.variable(), std::move(alpha_buidler)};
+        catch (interrupt<SDD<C>>& i)
+        {
+          i.result() = {o.variable(), std::move(alpha_builder)};
+          throw;
+        }
       }
       else
       {
         dd::sum_builder<C, SDD<C>> sum_operands;
         sum_operands.reserve(node.size());
-        for (const auto& arc : node)
-        {
-          sum_operands.add(SDD<C>(o.variable(), fun(arc.valuation()), arc.successor()));
-        }
         try
         {
-          return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+          try
+          {
+            for (const auto& arc : node)
+            {
+              sum_operands.add(SDD<C>(o.variable(), fun(arc.valuation()), arc.successor()));
+            }
+            return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+          }
+          catch (interrupt<SDD<C>>& i)
+          {
+            i.result() = dd::sum(cxt.sdd_context(), std::move(sum_operands));
+            throw;
+          }
         }
         catch (top<C>& t)
         {

@@ -14,6 +14,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
+#include "sdd/mem/interrupt.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
 #include "sdd/util/packed.hh"
@@ -84,29 +85,45 @@ public:
     SDD<C> s1 = s;
     SDD<C> s2 = s;
 
-    do
+    try
     {
-      s1 = s2;
-
-      s2 = F_(cxt, o, s2); // apply (F + Id)*
-      s2 = L_(cxt, o, s2); // apply (L + Id)*
-
-      for (auto cit = G_begin(); cit != G_end(); ++cit)
+      do
       {
-        const auto& g = *cit;
+        s1 = s2;
+
         try
         {
-          // chain applications of G
-          s2 = dd::sum(cxt.sdd_context(), {s2, g(cxt, o, s2)});
+          s2 = F_(cxt, o, s2); // apply (F + Id)*
+          s2 = L_(cxt, o, s2); // apply (L + Id)*
         }
-        catch (top<C>& t)
+        catch (interrupt<SDD<C>>& i)
         {
-          evaluation_error<C> e(s);
-          e.add_top(t);
-          throw e;
+          i.result() = s2;
+          throw;
         }
-      }
-    } while (s1 != s2);
+
+        for (auto cit = G_begin(); cit != G_end(); ++cit)
+        {
+          const auto& g = *cit;
+          try
+          {
+            // chain applications of G
+            s2 = dd::sum(cxt.sdd_context(), {s2, g(cxt, o, s2)});
+          }
+          catch(interrupt<SDD<C>>& i)
+          {
+            i.result() = dd::sum(cxt.sdd_context(), {s2, i.result()});
+            throw;
+          }
+        }
+      } while (s1 != s2);
+    }
+    catch (top<C>& t)
+    {
+      evaluation_error<C> e(s);
+      e.add_top(t);
+      throw e;
+    }
 
     return s1;
   }

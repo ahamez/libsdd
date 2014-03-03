@@ -11,6 +11,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
+#include "sdd/mem/interrupt.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/hom/sum.hh"
 #include "sdd/order/order.hh"
@@ -57,27 +58,35 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    dd::sum_builder<C, SDD<C>> sum_operands;
-    sum_operands.reserve(G_.size() + 2);
-
-    if (F_)
-    {
-      sum_operands.add((*F_)(cxt, o, s));
-    }
-
-    for (const auto& g : G_)
-    {
-      sum_operands.add(g(cxt, o, s));
-    }
-
-    if (L_)
-    {
-      sum_operands.add((*L_)(cxt, o, s));
-    }
+    dd::sum_builder<C, SDD<C>> operands;
+    operands.reserve(G_.size() + 2);
 
     try
     {
-      return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+      try
+      {
+        if (F_)
+        {
+          operands.add((*F_)(cxt, o, s));
+        }
+
+        for (const auto& g : G_)
+        {
+          operands.add(g(cxt, o, s));
+        }
+
+        if (L_)
+        {
+          operands.add((*L_)(cxt, o, s));
+        }
+      }
+      catch (interrupt<SDD<C>>& i)
+      {
+        operands.add(i.result());
+        i.result() = dd::sum(cxt.sdd_context(), std::move(operands));
+        throw;
+      }
+      return dd::sum(cxt.sdd_context(), std::move(operands));
     }
     catch (top<C>& t)
     {

@@ -7,6 +7,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
+#include "sdd/mem/interrupt.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
@@ -39,7 +40,18 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
-    return left_(cxt, o, right_(cxt, o, x));
+    SDD<C> tmp = x;
+    try
+    {
+      tmp = right_(cxt, o, x);
+      tmp = left_(cxt, o, tmp);
+      return tmp;
+    }
+    catch (interrupt<SDD<C>>& i)
+    {
+      i.result() = tmp;
+      throw;
+    }
   }
 
   /// @brief Skip predicate.

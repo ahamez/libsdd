@@ -5,6 +5,7 @@
 #include <iosfwd>
 
 #include "sdd/hom/context_fwd.hh"
+#include "sdd/mem/interrupt.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
@@ -65,19 +66,34 @@ struct evaluation
       // to the following levels.
       dd::square_union<C, typename Node::valuation_type> su;
       su.reserve(node.size());
-      for (const auto& arc : node)
+      try
       {
-        SDD<C> new_successor = hom(cxt, o.next(), arc.successor());
-        if (not new_successor.empty())
+        for (const auto& arc : node)
         {
-          su.add(new_successor, arc.valuation());
+          SDD<C> new_successor = hom(cxt, o.next(), arc.successor());
+          if (not new_successor.empty())
+          {
+            su.add(new_successor, arc.valuation());
+          }
         }
+        return {node.variable(), su(cxt.sdd_context())};
       }
-      return {node.variable(), su(cxt.sdd_context())};
+      catch (interrupt<SDD<C>>& i)
+      {
+        i.result() = {node.variable(), su(cxt.sdd_context())};
+        throw;
+      }
     }
     else
     {
-      return h(cxt, o, x);
+      try
+      {
+        return h(cxt, o, x);
+      }
+      catch (interrupt<SDD<C>>& i)
+      {
+        throw;
+      }
     }
   }
 };
