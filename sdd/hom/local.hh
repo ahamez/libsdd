@@ -8,6 +8,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
+#include "sdd/mem/interrupt.hh"
 #include "sdd/order/order.hh"
 #include "sdd/util/packed.hh"
 
@@ -65,10 +66,19 @@ public:
           su.reserve(node.size());
           for (const auto& arc : node)
           {
-            const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
-            if (not new_valuation.empty())
+            try
             {
-              su.add(arc.successor(), new_valuation);
+              const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
+              if (not new_valuation.empty())
+              {
+                su.add(arc.successor(), new_valuation);
+              }
+            }
+            catch (interrupt<SDD<C>>& i)
+            {
+              su.add(arc.successor(), i.result());
+              i.result() = {node.variable(), su(cxt_.sdd_context())};
+              throw;
             }
           }
           return {node.variable(), su(cxt_.sdd_context())};
@@ -79,8 +89,17 @@ public:
           sum_operands.reserve(node.size());
           for (const auto& arc : node)
           {
-            const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
-            sum_operands.add(SDD<C>(node.variable(), new_valuation, arc.successor()));
+            try
+            {
+              const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
+              sum_operands.add(SDD<C>(node.variable(), new_valuation, arc.successor()));
+            }
+            catch (interrupt<SDD<C>>& i)
+            {
+              sum_operands.add(SDD<C>(node.variable(), i.result(), arc.successor()));
+              i.result() = dd::sum(cxt_.sdd_context(), std::move(sum_operands));
+              throw;
+            }
           }
           return dd::sum(cxt_.sdd_context(), std::move(sum_operands));
         }

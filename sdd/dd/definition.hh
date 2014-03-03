@@ -89,6 +89,11 @@ private:
 
 public:
 
+  /// @brief Default constructor.
+  SDD()
+    : ptr_(zero_ptr())
+  {}
+
   /// @brief Copy constructor.
   ///
   /// O(1).
