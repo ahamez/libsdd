@@ -295,9 +295,9 @@ private:
       {
         for (const auto& arc : node)
         {
-          const homomorphism<C> next_hom = inductive(order_, arc.valuation());
           try
           {
+            const homomorphism<C> next_hom = inductive(order_, arc.valuation());
             sum_operands.add(next_hom(cxt_, order_.next(), arc.successor()));
           }
           catch (interrupt<SDD<C>>& i)
