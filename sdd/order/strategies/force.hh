@@ -1,7 +1,6 @@
 #ifndef _SDD_ORDER_STRATEGIES_FORCE_HH_
 #define _SDD_ORDER_STRATEGIES_FORCE_HH_
 
-#include <algorithm>  // minmax_element
 #include <cassert>
 #include <functional> // reference_wrapper
 #include <limits>
@@ -15,73 +14,10 @@
 
 #include "sdd/hom/definition.hh"
 #include "sdd/order/order.hh"
+#include "sdd/order/strategies/force_hyperedge.hh"
+#include "sdd/order/strategies/force_vertex.hh"
 
 namespace sdd { namespace force {
-
-/*------------------------------------------------------------------------------------------------*/
-
-namespace /* anonymous */ {
-
-// Forward declaration for vertex.
-struct hyperedge;
-
-/// @internal
-struct vertex
-{
-  /// @brief The corresponding index in the order's nodes.
-  const unsigned int pos;
-
-  /// @brief This vertex's tentative location.
-  double location;
-
-  /// @brief The hyperedges this vertex is connected to.
-  std::vector<hyperedge*> hyperedges;
-
-  /// @brief Constructor.
-  vertex(unsigned int p, double l)
-    : pos(p), location(l), hyperedges()
-  {}
-};
-
-/// @internal
-struct hyperedge
-{
-  /// @brief The center of gravity.
-  double cog;
-
-  /// @brief Vertices connected to this hyperedge.
-  boost::container::flat_set<vertex*> vertices;
-
-  /// @brief Constructor with an already existing container of vertices.
-  hyperedge(const boost::container::flat_set<vertex*>& v)
-    : cog(0), vertices(v)
-  {}
-
-  /// @brief Compute the center of gravity.
-  void
-  center_of_gravity()
-  noexcept
-  {
-    assert(not vertices.empty());
-    cog = std::accumulate( vertices.cbegin(), vertices.cend(), 0
-                         , [](double acc, const vertex* v){return acc + v->location;}
-                         ) / vertices.size();
-  }
-
-  /// @brief Compute the span of all vertices.
-  double
-  span()
-  const noexcept
-  {
-    assert(not vertices.empty());
-    const auto minmax = std::minmax_element( vertices.cbegin(), vertices.cend()
-                                           , [](const vertex* lhs, const vertex* rhs)
-                                               {return lhs->location < rhs->location;});
-    return *minmax.second - *minmax.first;
-  }
-};
-
-} // namespace anonymous
 
 /*------------------------------------------------------------------------------------------------*/
 
