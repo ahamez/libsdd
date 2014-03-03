@@ -45,7 +45,6 @@ struct interrupt_incr
   {
     if (val.find(2) != val.end())
     {
-//      return cons(o, val, sdd::id<C>());
       throw sdd::interrupt<sdd::SDD<C>>();
     }
     else
@@ -66,7 +65,6 @@ struct interrupt_incr
     if (val.content().test(2))
     {
       throw sdd::interrupt<sdd::SDD<C>>();
-//      return cons(o, val, sdd::id<C>());
     }
     else
     {
@@ -149,6 +147,32 @@ TYPED_TEST(hom_interruption_test, fixpoint)
     catch (const sdd::interrupt<SDD>& i)
     {
       ASSERT_EQ(SDD(2, {0}, SDD(1, {0}, SDD(0, {0,1,2}, one))), i.result());
+    }
+  }
+  {
+    order o(order_builder {"2", "1", "0"});
+    SDD s0(o, [](const std::string&){return values_type{0};});
+    homomorphism h0 = fixpoint(sum(o, { inductive<conf>(interrupt_incr<conf>("0", 1))
+                                      , inductive<conf>(interrupt_incr<conf>("2", 1))
+                                      , id
+                                      }));
+    ASSERT_THROW(h0(o, s0), sdd::interrupt<SDD>);
+    try
+    {
+      h0(o, s0);
+    }
+    catch (const sdd::interrupt<SDD>& i)
+    {
+      // It's hard to test the result as the order of application of the sum operands is not
+      // determinist. Thus, we can't check for an exact result.
+      ASSERT_NE(zero, i.result());
+      // At least, we know that it can't be the same result as if interrupt_incr didn't interrupt
+      // the evaluation.
+      homomorphism h1 = fixpoint(sum(o, { inductive<conf>(targeted_incr<conf>("0", 1))
+                                        , inductive<conf>(targeted_incr<conf>("2", 1))
+                                        , id
+                                        }));
+      ASSERT_NE(h1(o, s0), i.result());
     }
   }
 }
