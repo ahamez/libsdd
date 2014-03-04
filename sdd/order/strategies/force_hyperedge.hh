@@ -5,8 +5,6 @@
 #include <numeric>    // accumulate
 #include <vector>
 
-#include <boost/container/flat_set.hpp>
-
 #include "sdd/order/strategies/force_hyperedge_fwd.hh"
 #include "sdd/order/strategies/force_vertex.hh"
 
@@ -14,46 +12,68 @@ namespace sdd { namespace force {
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <typename Identifier>
-struct hyperedge
+class hyperedge
 {
-  /// @internal
-  /// @brief The center of gravity.
-  double cog;
+private:
 
-  /// @internal
+  /// @brief The center of gravity.
+  double cog_;
+
   /// @brief Vertices connected to this hyperedge.
-//  boost::container::flat_set<vertex<Identifier>*> vertices;
-  std::vector<vertex<Identifier>*> vertices;
+  std::vector<vertex<Identifier>*> vertices_;
+
+public:
 
   /// @brief Constructor with an already existing container of vertices.
   hyperedge(std::vector<vertex<Identifier>*>&& v)
-    : cog(0), vertices(std::move(v))
+    : cog_(0), vertices_(std::move(v))
   {}
 
-  /// @internal
-  /// @brief Compute the center of gravity.
-  void
+  /// @brief Return the computed center of gravity.
+  double
   center_of_gravity()
-  noexcept
+  const noexcept
   {
-    assert(not vertices.empty());
-    cog = std::accumulate( vertices.cbegin(), vertices.cend(), 0
-                         , [](double acc, const vertex<Identifier>* v){return acc + v->location;}
-                         ) / vertices.size();
+    return cog_;
   }
 
-  /// @internal
+  std::vector<vertex<Identifier>*>&
+  vertices()
+  noexcept
+  {
+    return vertices_;
+  }
+
+  const std::vector<vertex<Identifier>*>&
+  vertices()
+  const noexcept
+  {
+    return vertices_;
+  }
+
+  /// @brief Compute the center of gravity.
+  void
+  compute_center_of_gravity()
+  noexcept
+  {
+    assert(not vertices_.empty());
+    cog_ = std::accumulate( vertices_.cbegin(), vertices_.cend(), 0
+                          , [](double acc, const vertex<Identifier>* v){return acc + v->location();}
+                          ) / vertices_.size();
+  }
+
   /// @brief Compute the span of all vertices.
   double
   span()
   const noexcept
   {
-    assert(not vertices.empty());
+    assert(not vertices_.empty());
     const auto minmax
-      = std::minmax_element( vertices.cbegin(), vertices.cend()
+      = std::minmax_element( vertices_.cbegin(), vertices_.cend()
                            , [](const vertex<Identifier>* lhs, const vertex<Identifier>* rhs)
-                               {return lhs->location < rhs->location;});
+                               {return lhs->location() < rhs->location();});
     return *minmax.second - *minmax.first;
   }
 };

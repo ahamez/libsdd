@@ -11,23 +11,70 @@ namespace sdd { namespace force {
 
 /// @internal
 template <typename Identifier>
-struct vertex
+class vertex
 {
+public:
+
+  /// @brief The user's identifier.
   using identifier_type = Identifier;
 
+private:
+
   /// @brief The corresponding identifier.
-  const identifier_type id;
+  const identifier_type id_;
 
   /// @brief This vertex's tentative location.
-  double location;
+  double location_;
 
   /// @brief The hyperedges this vertex is connected to.
-  std::vector<hyperedge<Identifier>*> hyperedges;
+  std::vector<hyperedge<Identifier>*> hyperedges_;
+
+public:
 
   /// @brief Constructor.
   vertex(const Identifier& id, double l)
-    : id(id), location(l), hyperedges()
+    : id_(id), location_(l), hyperedges_()
   {}
+
+  /// @brief Get the tentative location.
+  double&
+  location()
+  noexcept
+  {
+    return location_;
+  }
+
+  /// @brief Get the tentative location.
+  double
+  location()
+  const noexcept
+  {
+    return location_;
+  }
+
+  /// @brief Get the identifier associated to this vertex.
+  const identifier_type&
+  id()
+  const noexcept
+  {
+    return id_;
+  }
+
+  /// @brief Get the hyperedges this vertex is connected to.
+  std::vector<hyperedge<Identifier>*>&
+  hyperedges()
+  noexcept
+  {
+    return hyperedges_;
+  }
+
+  /// @brief Get the hyperedges this vertex is connected to.
+  const std::vector<hyperedge<Identifier>*>&
+  hyperedges()
+  const noexcept
+  {
+    return hyperedges_;
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/

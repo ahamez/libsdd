@@ -61,27 +61,29 @@ public:
       // Compute the new center of gravity for every hyperedge.
       for (auto& edge : hyperedges_)
       {
-        edge.center_of_gravity();
+        edge.compute_center_of_gravity();
       }
 
       // Compute the tentative new location of every vertex.
       for (auto& vertex : vertices_)
       {
-        assert(not vertex.hyperedges.empty());
-        vertex.location = std::accumulate( vertex.hyperedges.cbegin(), vertex.hyperedges.cend(), 0
-                                         , [](double acc, const hyperedge_type* e)
-                                             {return acc + e->cog;}
-                                         ) / vertex.hyperedges.size();
+        assert(not vertex.hyperedges().empty());
+        vertex.location() = std::accumulate( vertex.hyperedges().cbegin()
+                                           , vertex.hyperedges().cend()
+                                           , 0
+                                           , [](double acc, const hyperedge_type* e)
+                                               {return acc + e->center_of_gravity();}
+                                           ) / vertex.hyperedges().size();
       }
 
       // Sort tentative vertex locations.
       std::sort( sorted_vertices.begin(), sorted_vertices.end()
-               , [](vertex_type& lhs, vertex_type& rhs){return lhs.location < rhs.location;});
+               , [](vertex_type& lhs, vertex_type& rhs){return lhs.location() < rhs.location();});
 
       // Assign integer indices to the vertices.
       unsigned int pos = 0;;
       std::for_each( sorted_vertices.begin(), sorted_vertices.end()
-                   , [&pos](vertex_type& v){v.location = pos++;});
+                   , [&pos](vertex_type& v){v.location() = pos++;});
 
       span = get_total_span();
     } while (old_span > span);
@@ -93,7 +95,7 @@ public:
 //    }
     for (const auto& vertex : sorted_vertices)
     {
-      ob.push(vertex.get().id);
+      ob.push(vertex.get().id());
     }
 
     return order<C>(ob);
