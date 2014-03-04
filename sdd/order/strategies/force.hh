@@ -5,12 +5,9 @@
 #include <functional> // reference_wrapper
 #include <limits>
 #include <numeric>    // accumulate
-#include <stdexcept>  // runtime_error
 #include <vector>
 
 #include <boost/container/flat_set.hpp>
-
-#include <fstream>
 
 #include "sdd/hom/definition.hh"
 #include "sdd/order/order.hh"
