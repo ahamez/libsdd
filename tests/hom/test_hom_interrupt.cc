@@ -45,7 +45,7 @@ struct interrupt_incr
   {
     if (val.find(2) != val.end())
     {
-      throw sdd::interrupt<sdd::SDD<C>>();
+      throw sdd::interrupt<C>();
     }
     else
     {
@@ -64,7 +64,7 @@ struct interrupt_incr
   {
     if (val.content().test(2))
     {
-      throw sdd::interrupt<sdd::SDD<C>>();
+      throw sdd::interrupt<C>();
     }
     else
     {
@@ -107,7 +107,7 @@ struct interrupt_incr_fun
   {
     if (val.find(2) != val.end())
     {
-      throw sdd::interrupt<sdd::SDD<C>>();
+      throw sdd::interrupt<C>();
     }
     else
     {
@@ -126,7 +126,7 @@ struct interrupt_incr_fun
   {
     if (val.content().test(2))
     {
-      throw sdd::interrupt<sdd::SDD<C>>();
+      throw sdd::interrupt<C>();
     }
     else
     {
@@ -212,12 +212,12 @@ TYPED_TEST(hom_interruption_test, function_fixpoint)
     order o(order_builder {"2", "1", "0"});
     SDD s0(o, [](const std::string&){return values_type{0};});
     homomorphism h0 = fixpoint(sum(o, {function(o, "0", interrupt_incr_fun<conf>(1)), id}));
-    ASSERT_THROW(h0(o, s0), sdd::interrupt<SDD>);
+    ASSERT_THROW(h0(o, s0), sdd::interrupt<conf>);
     try
     {
       h0(o, s0);
     }
-    catch (const sdd::interrupt<SDD>& i)
+    catch (const sdd::interrupt<conf>& i)
     {
       ASSERT_EQ(SDD(2, {0}, SDD(1, {0}, SDD(0, {0,1,2}, one))), i.result());
     }
@@ -229,12 +229,12 @@ TYPED_TEST(hom_interruption_test, function_fixpoint)
                                       , function(o, "2", interrupt_incr_fun<conf>(1))
                                       , id
                                       }));
-    ASSERT_THROW(h0(o, s0), sdd::interrupt<SDD>);
+    ASSERT_THROW(h0(o, s0), sdd::interrupt<conf>);
     try
     {
       h0(o, s0);
     }
-    catch (const sdd::interrupt<SDD>& i)
+    catch (const sdd::interrupt<conf>& i)
     {
       // It's hard to test the result as the order of application of the sum operands is not
       // determinist. Thus, we can't check for an exact result.
@@ -258,12 +258,12 @@ TYPED_TEST(hom_interruption_test, inductive_fixpoint)
     order o(order_builder {"2", "1", "0"});
     SDD s0(o, [](const std::string&){return values_type{0};});
     homomorphism h0 = fixpoint(sum(o, {inductive<conf>(interrupt_incr<conf>("0", 1)), id}));
-    ASSERT_THROW(h0(o, s0), sdd::interrupt<SDD>);
+    ASSERT_THROW(h0(o, s0), sdd::interrupt<conf>);
     try
     {
       h0(o, s0);
     }
-    catch (const sdd::interrupt<SDD>& i)
+    catch (const sdd::interrupt<conf>& i)
     {
       ASSERT_EQ(SDD(2, {0}, SDD(1, {0}, SDD(0, {0,1,2}, one))), i.result());
     }
@@ -275,12 +275,12 @@ TYPED_TEST(hom_interruption_test, inductive_fixpoint)
                                       , inductive<conf>(interrupt_incr<conf>("2", 1))
                                       , id
                                       }));
-    ASSERT_THROW(h0(o, s0), sdd::interrupt<SDD>);
+    ASSERT_THROW(h0(o, s0), sdd::interrupt<conf>);
     try
     {
       h0(o, s0);
     }
-    catch (const sdd::interrupt<SDD>& i)
+    catch (const sdd::interrupt<conf>& i)
     {
       // It's hard to test the result as the order of application of the sum operands is not
       // determinist. Thus, we can't check for an exact result.
@@ -305,12 +305,12 @@ TYPED_TEST(hom_interruption_test, saturation)
     SDD s0(o, [](const std::string&){return values_type{0};});
     homomorphism h0
       = sdd::rewrite(o, fixpoint(sum(o, {inductive<conf>(interrupt_incr<conf>("0", 1)), id})));
-    ASSERT_THROW(h0(o, s0), sdd::interrupt<SDD>);
+    ASSERT_THROW(h0(o, s0), sdd::interrupt<conf>);
     try
     {
       h0(o, s0);
     }
-    catch (const sdd::interrupt<SDD>& i)
+    catch (const sdd::interrupt<conf>& i)
     {
       ASSERT_EQ(SDD(2, {0}, SDD(1, {0}, SDD(0, {0,1,2}, one))), i.result());
     }
@@ -323,12 +323,12 @@ TYPED_TEST(hom_interruption_test, saturation)
                                                     , inductive<conf>(interrupt_incr<conf>("2", 1))
                                                     , id
                                                     })));
-    ASSERT_THROW(h0(o, s0), sdd::interrupt<SDD>);
+    ASSERT_THROW(h0(o, s0), sdd::interrupt<conf>);
     try
     {
       h0(o, s0);
     }
-    catch (const sdd::interrupt<SDD>& i)
+    catch (const sdd::interrupt<conf>& i)
     {
       // It's hard to test the result as the order of application of the sum operands is not
       // determinist. Thus, we can't check for an exact result.
