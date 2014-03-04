@@ -17,7 +17,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
-#include "sdd/mem/interrupt.hh"
+#include "sdd/hom/interrupt.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
 #include "sdd/util/packed.hh"
@@ -78,7 +78,7 @@ public:
         {
           sum_operands.add(op(cxt, o, x));
         }
-        catch (interrupt<SDD<C>>& i)
+        catch (interrupt<C>& i)
         {
           sum_operands.add(i.result());
           i.result() = dd::sum(cxt.sdd_context(), std::move(sum_operands));

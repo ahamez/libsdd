@@ -16,7 +16,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
-#include "sdd/mem/interrupt.hh"
+#include "sdd/hom/interrupt.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
 #include "sdd/util/packed.hh"
@@ -65,7 +65,7 @@ public:
         {
           intersection_operands.add(op(cxt, o, x));
         }
-        catch (interrupt<SDD<C>>& i)
+        catch (interrupt<C>& i)
         {
           intersection_operands.add(i.result());
           i.result() = dd::intersection(cxt.sdd_context(), std::move(intersection_operands));

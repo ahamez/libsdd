@@ -7,7 +7,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
-#include "sdd/mem/interrupt.hh"
+#include "sdd/hom/interrupt.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
 
@@ -55,7 +55,7 @@ public:
       } while (x1 != x2);
       return x1;
     }
-    catch (interrupt<SDD<C>>& i)
+    catch (interrupt<C>& i)
     {
       i.result() = x1;
       throw;

@@ -10,6 +10,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
+#include "sdd/hom/interrupt.hh"
 #include "sdd/util/packed.hh"
 #include "sdd/order/order.hh"
 
@@ -300,7 +301,7 @@ private:
             const homomorphism<C> next_hom = inductive(order_, arc.valuation());
             sum_operands.add(next_hom(cxt_, order_.next(), arc.successor()));
           }
-          catch (interrupt<SDD<C>>& i)
+          catch (interrupt<C>& i)
           {
             i.result() = dd::sum(cxt_.sdd_context(), std::move(sum_operands));
             throw;

@@ -11,7 +11,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
-#include "sdd/mem/interrupt.hh"
+#include "sdd/hom/interrupt.hh"
 #include "sdd/util/packed.hh"
 #include "sdd/order/order.hh"
 
@@ -230,7 +230,7 @@ private:
           }
           return {o.variable(), std::move(alpha_builder)};
         }
-        catch (interrupt<SDD<C>>& i)
+        catch (interrupt<C>& i)
         {
           i.result() = {o.variable(), std::move(alpha_builder)};
           throw;
@@ -250,7 +250,7 @@ private:
             }
             return dd::sum(cxt.sdd_context(), std::move(sum_operands));
           }
-          catch (interrupt<SDD<C>>& i)
+          catch (interrupt<C>& i)
           {
             i.result() = dd::sum(cxt.sdd_context(), std::move(sum_operands));
             throw;

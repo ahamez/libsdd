@@ -3,10 +3,11 @@
 
 #include <exception>
 
-namespace sdd {
+namespace sdd { namespace mem {
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @exception interrupt
 /// @brief Interrupt an evaluation in the cache.
 template <typename T>
@@ -42,6 +43,6 @@ public:
 
 /*------------------------------------------------------------------------------------------------*/
 
-} // namespace sdd
+}} // namespace sdd::mem
 
 #endif // _SDD_MEM_INTERRUPT_HH_
