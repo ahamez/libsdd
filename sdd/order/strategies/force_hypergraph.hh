@@ -85,7 +85,6 @@ public:
     std::vector<vertex_type*> vertices;
     for (; it != end; ++it)
     {
-      const std::size_t sz = id_to_vertex_ptr_->size();
       auto insertion = id_to_vertex_ptr_->emplace(*it, nullptr);
       if (insertion.second) // new vertex
       {
