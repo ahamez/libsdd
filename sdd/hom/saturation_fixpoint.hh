@@ -14,7 +14,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
-#include "sdd/mem/interrupt.hh"
+#include "sdd/hom/interrupt.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
 #include "sdd/util/packed.hh"
@@ -96,7 +96,7 @@ public:
           s2 = F_(cxt, o, s2); // apply (F + Id)*
           s2 = L_(cxt, o, s2); // apply (L + Id)*
         }
-        catch (interrupt<SDD<C>>& i)
+        catch (interrupt<C>& i)
         {
           i.result() = s2;
           throw;
@@ -110,7 +110,7 @@ public:
             // chain applications of G
             s2 = dd::sum(cxt.sdd_context(), {s2, g(cxt, o, s2)});
           }
-          catch(interrupt<SDD<C>>& i)
+          catch(interrupt<C>& i)
           {
             i.result() = dd::sum(cxt.sdd_context(), {s2, i.result()});
             throw;

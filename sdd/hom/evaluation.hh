@@ -5,7 +5,7 @@
 #include <iosfwd>
 
 #include "sdd/hom/context_fwd.hh"
-#include "sdd/mem/interrupt.hh"
+#include "sdd/hom/interrupt.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
@@ -76,7 +76,7 @@ struct evaluation
             su.add(new_successor, arc.valuation());
           }
         }
-        catch (interrupt<SDD<C>>& i)
+        catch (interrupt<C>& i)
         {
           if (not i.result().empty())
           {
