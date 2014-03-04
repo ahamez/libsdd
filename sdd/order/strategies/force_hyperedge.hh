@@ -16,18 +16,22 @@ namespace sdd { namespace force {
 template <typename Identifier>
 class hyperedge
 {
+public:
+
+  using identifier_type = Identifier;
+
 private:
 
   /// @brief The center of gravity.
   double cog_;
 
   /// @brief Vertices connected to this hyperedge.
-  std::vector<vertex<Identifier>*> vertices_;
+  std::vector<vertex<identifier_type>*> vertices_;
 
 public:
 
   /// @brief Constructor with an already existing container of vertices.
-  hyperedge(std::vector<vertex<Identifier>*>&& v)
+  hyperedge(std::vector<vertex<identifier_type>*>&& v)
     : cog_(0), vertices_(std::move(v))
   {}
 
@@ -39,14 +43,14 @@ public:
     return cog_;
   }
 
-  std::vector<vertex<Identifier>*>&
+  std::vector<vertex<identifier_type>*>&
   vertices()
   noexcept
   {
     return vertices_;
   }
 
-  const std::vector<vertex<Identifier>*>&
+  const std::vector<vertex<identifier_type>*>&
   vertices()
   const noexcept
   {
@@ -60,7 +64,8 @@ public:
   {
     assert(not vertices_.empty());
     cog_ = std::accumulate( vertices_.cbegin(), vertices_.cend(), 0
-                          , [](double acc, const vertex<Identifier>* v){return acc + v->location();}
+                          , [](double acc, const vertex<identifier_type>* v)
+                              {return acc + v->location();}
                           ) / vertices_.size();
   }
 
@@ -72,7 +77,8 @@ public:
     assert(not vertices_.empty());
     const auto minmax
       = std::minmax_element( vertices_.cbegin(), vertices_.cend()
-                           , [](const vertex<Identifier>* lhs, const vertex<Identifier>* rhs)
+                           , []( const vertex<identifier_type>* lhs
+                               , const vertex<identifier_type>* rhs)
                                {return lhs->location() < rhs->location();});
     return *minmax.second - *minmax.first;
   }

@@ -27,12 +27,12 @@ private:
   double location_;
 
   /// @brief The hyperedges this vertex is connected to.
-  std::vector<hyperedge<Identifier>*> hyperedges_;
+  std::vector<hyperedge<identifier_type>*> hyperedges_;
 
 public:
 
   /// @brief Constructor.
-  vertex(const Identifier& id, double l)
+  vertex(const identifier_type& id, double l)
     : id_(id), location_(l), hyperedges_()
   {}
 
@@ -61,7 +61,7 @@ public:
   }
 
   /// @brief Get the hyperedges this vertex is connected to.
-  std::vector<hyperedge<Identifier>*>&
+  std::vector<hyperedge<identifier_type>*>&
   hyperedges()
   noexcept
   {
@@ -69,7 +69,7 @@ public:
   }
 
   /// @brief Get the hyperedges this vertex is connected to.
-  const std::vector<hyperedge<Identifier>*>&
+  const std::vector<hyperedge<identifier_type>*>&
   hyperedges()
   const noexcept
   {

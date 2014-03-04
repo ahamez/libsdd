@@ -15,6 +15,7 @@
 #include "sdd/hom/definition.hh"
 #include "sdd/order/order.hh"
 #include "sdd/order/strategies/force_hyperedge.hh"
+#include "sdd/order/strategies/force_hypergraph.hh"
 #include "sdd/order/strategies/force_vertex.hh"
 
 namespace sdd { namespace force {
@@ -32,16 +33,16 @@ private:
   using hyperedge_type = hyperedge<id_type>;
 
   /// @brief
-  std::vector<vertex_type> vertices_;
+  std::deque<vertex_type>& vertices_;
 
   /// @brief The hyperedges that link together vertices.
-  std::vector<hyperedge_type> hyperedges_;
+  std::deque<hyperedge_type>& hyperedges_;
 
 public:
 
   /// @brief Constructor.
-  worker(std::vector<vertex_type>&& vertices, std::vector<hyperedge_type>&& hyperedges)
-    : vertices_(std::move(vertices)), hyperedges_(std::move(hyperedges))
+  worker(std::deque<vertex_type>& vertices, std::deque<hyperedge_type>& hyperedges)
+    : vertices_(vertices), hyperedges_(hyperedges)
   {}
 
   /// @brief Effectively apply the FORCE ordering strategy.
@@ -122,10 +123,9 @@ private:
 /// See http://dx.doi.org/10.1145/764808.764839 for the details.
 template <typename C>
 order<C>
-force_ordering( std::vector<force::vertex<typename C::Identifier>>&& vertices
-              , std::vector<force::hyperedge<typename C::Identifier>>&& hyperedges)
+force_ordering(force::hypergraph<C>& graph)
 {
-  return force::worker<C>(std::move(vertices), std::move(hyperedges))();
+  return force::worker<C>(graph.vertices(), graph.hyperedges())();
 }
 
 /*------------------------------------------------------------------------------------------------*/
