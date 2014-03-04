@@ -1,7 +1,6 @@
 #ifndef _SDD_ORDER_STRATEGIES_FORCE_HH_
 #define _SDD_ORDER_STRATEGIES_FORCE_HH_
 
-#include <algorithm>  // minmax_element
 #include <cassert>
 #include <functional> // reference_wrapper
 #include <limits>
@@ -15,390 +14,42 @@
 
 #include "sdd/hom/definition.hh"
 #include "sdd/order/order.hh"
+#include "sdd/order/strategies/force_hyperedge.hh"
+#include "sdd/order/strategies/force_vertex.hh"
 
 namespace sdd { namespace force {
 
 /*------------------------------------------------------------------------------------------------*/
 
-namespace /* anonymous */ {
-
-// Forward declaration for vertex2.
-struct hyperedge2;
-
-/// @internal
-struct vertex2
-{
-  /// @brief The corresponding index in the order's nodes.
-  const unsigned int pos;
-
-  /// @brief This vertex's tentative location.
-  double location;
-
-  /// @brief The hyperedges this vertex2 is connected to.
-  std::vector<hyperedge2*> hyperedges;
-
-  /// @brief Constructor.
-  vertex2(unsigned int p, double l)
-    : pos(p), location(l), hyperedges()
-  {}
-};
-
-/// @internal
-struct hyperedge2
-{
-  /// @brief The center of gravity.
-  double cog;
-
-  /// @brief Vertices connected to this hyperedge2.
-  boost::container::flat_set<vertex2*> vertices;
-
-  /// @brief Constructor with an already existing container of vertices.
-  hyperedge2(const boost::container::flat_set<vertex2*>& v)
-    : cog(0), vertices(v)
-  {}
-
-  /// @brief Compute the center of gravity.
-  void
-  center_of_gravity()
-  noexcept
-  {
-    assert(not vertices.empty());
-    cog = std::accumulate( vertices.cbegin(), vertices.cend(), 0
-                         , [](double acc, const vertex2* v){return acc + v->location;}
-                         ) / vertices.size();
-  }
-
-  /// @brief Compute the span of all vertices.
-  double
-  span()
-  const noexcept
-  {
-    assert(not vertices.empty());
-    const auto minmax = std::minmax_element( vertices.cbegin(), vertices.cend()
-                                           , [](const vertex2* lhs, const vertex2* rhs)
-                                               {return lhs->location < rhs->location;});
-    return *minmax.second - *minmax.first;
-  }
-};
-
-} // namespace anonymous
-
-/*------------------------------------------------------------------------------------------------*/
-
 /// @internal
 template <typename C>
-class mk_hyperedges_visitor
+class worker
 {
 private:
 
-  /// @brief Where to get vertices to connect to hyperedges.
-  std::vector<vertex2>& vertices_;
+  using id_type = typename C::Identifier;
+  using vertex_type = vertex<id_type>;
+  using hyperedge_type = hyperedge<id_type>;
 
-  /// @brief Where to put hyperedges created by this visitor.
-  std::vector<hyperedge2>& hyperedges_;
-
-public:
-
-  /// @brief Required by the mem::variant visitor mechanism.
-  using result_type = boost::container::flat_set<vertex2*>;
-
-  /// @brief Constructor.
-  mk_hyperedges_visitor(std::vector<vertex2>& v, std::vector<hyperedge2>& h)
-    : vertices_(v), hyperedges_(h)
-  {}
-
-  /// @brief composition is a node of the AST.
-  result_type
-  operator()(const hom::_composition<C>& c)
-  const
-  {
-    result_type&& res = visit(*this, c.left());
-    auto&& r = visit(*this, c.right());
-    res.insert(r.begin(), r.end());
-    if (not res.empty())
-    {
-      hyperedges_.emplace_back(res);
-    }
-    return res;
-  }
-
-#if !defined(HAS_NO_BOOST_COROUTINE)
-  /// @brief expression is a leaf of the AST.
-  result_type
-  operator()(const hom::_expression<C>& e)
-  const
-  {
-    // There are several variables touched by an expression, we keep this information.
-    result_type res;
-    res.reserve(e.operands().size());
-    for (const auto& position : e.operands())
-    {
-      res.insert(&vertices_[position]);
-    }
-    if (not res.empty())
-    {
-      hyperedges_.emplace_back(res);
-    }
-    return res;
-  }
-#endif // !defined(HAS_NO_BOOST_COROUTINE)
-
-  /// @brief fixpoint is a node of the AST.
-  result_type
-  operator()(const hom::_fixpoint<C>& f)
-  const
-  {
-    // We don't need  to create an hyperedge2 as it's the same as the nested operand.
-    return visit(*this, f.hom());
-  }
-
-  /// @brief function is a leaf of the AST.
-  result_type
-  operator()(const hom::_function<C>& f)
-  const
-  {
-    result_type res;
-    res.insert(&vertices_[f.target()]);
-    return res;
-  }
-
-  /// @brief inductive is a leaf of the AST.
-  ///
-  /// There's a problem: we don't know ahead of time on what variable an inductive applies.
-  /// @todo Ask the inductive if it skips for every variable of the order (it will just be an
-  /// approximation though).
-  result_type
-  operator()(const hom::_inductive<C>&)
-  const
-  {
-    return result_type();
-  }
-
-  /// @brief intersection is a node of the AST.
-  result_type
-  operator()(const hom::_intersection<C>& i)
-  const
-  {
-    result_type res;
-    for (const auto& h : i)
-    {
-      auto&& tmp = visit(*this, h);
-      res.insert(tmp.begin(), tmp.end());
-    }
-    if (not res.empty())
-    {
-      hyperedges_.emplace_back(res);
-    }
-    return res;
-  }
-
-  /// @brief local is a node of the AST.
-  ///
-  /// Hierarchy is unsupported for the moment.
-  result_type
-  operator()(const hom::_local<C>& l)
-  const
-  {
-    throw std::runtime_error("FORCE:  local homomorphism is unsupported.");
-  }
-
-  /// @brief saturation_fixpoint is a node of the AST.
-  result_type
-  operator()(const hom::_saturation_fixpoint<C>& sf)
-  const
-  {
-    // We don't want to create an hyperedge2 for saturation operations.
-    result_type&& res = visit(*this, sf.F());
-    auto&& l = visit(*this, sf.L());
-    res.insert(l.begin(), l.end());
-    for (auto cit = sf.G_begin(); cit != sf.G_end(); ++cit)
-    {
-      auto&& g = visit(*this, *cit);
-      res.insert(g.begin(), g.end());
-    }
-    return res;
-  }
-
-  /// @brief saturation_intersection is a node of the AST.
-  result_type
-  operator()(const hom::_saturation_intersection<C>& si)
-  const
-  {
-    // We don't want to create an hyperedge2 for saturation operations.
-    result_type res;
-    if (si.F())
-    {
-      auto&& f = visit(*this, *si.F());
-      res.insert(f.begin(), f.end());
-    }
-    if (si.L())
-    {
-      auto&& l = visit(*this, *si.L());
-      res.insert(l.begin(), l.end());
-    }
-    for (const auto& h : si.G())
-    {
-      auto&& g = visit(*this, h);
-      res.insert(g.begin(), g.end());
-    }
-    return res;
-  }
-
-  /// @brief saturation_sum is a node of the AST.
-  result_type
-  operator()(const hom::_saturation_sum<C>& si)
-  const
-  {
-    // We don't want to create an hyperedge2 for saturation operations.
-    result_type res;
-    if (si.F())
-    {
-      auto&& f = visit(*this, *si.F());
-      res.insert(f.begin(), f.end());
-    }
-    if (si.L())
-    {
-      auto&& l = visit(*this, *si.L());
-      res.insert(l.begin(), l.end());
-    }
-    for (const auto& h : si.G())
-    {
-      auto&& g = visit(*this, h);
-      res.insert(g.begin(), g.end());
-    }
-    return res;
-  }
-
-  /// @brief simple_expression is a leaf of the AST.
-  result_type
-  operator()(const hom::_simple_expression<C>& e)
-  const
-  {
-    // There are several variables touched by a simple expression, we keep this information.
-    result_type res;
-    res.reserve(e.operands().size());
-    for (const auto& position : e.operands())
-    {
-      res.insert(&vertices_[position]);
-    }
-    if (not res.empty())
-    {
-      hyperedges_.emplace_back(res);
-    }
-    return res;
-  }
-
-  /// @brief sum is a node of the AST.
-  result_type
-  operator()(const hom::_sum<C>& s)
-  const
-  {
-    result_type res;
-    for (const auto& h : s)
-    {
-      auto&& tmp = visit(*this, h);
-      res.insert(tmp.begin(), tmp.end());
-    }
-    if (not res.empty())
-    {
-      hyperedges_.emplace_back(res);
-    }
-    return res;
-  }
-
-  /// @brief All other homomorphisms that are leaves of the AST, but that do not target a specific
-  /// variable.
-  template <typename T>
-  result_type
-  operator()(const T&)
-  const
-  {
-    return result_type();
-  }
-};
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-template <typename C>
-class worker1
-{
-private:
-
-  /// @brief Keep the order.
-  const order<C> o_;
-
-  /// @brief Keep the homomorphism.
-  const homomorphism<C> h_;
-
-  /// @brief Map an order_node position to its corresponding vertex2;
-  ///
-  /// The order_node position is the index in this vector.
-  std::vector<vertex2> vertices_;
+  /// @brief
+  std::vector<vertex_type> vertices_;
 
   /// @brief The hyperedges that link together vertices.
-  std::vector<hyperedge2> hyperedges_;
+  std::vector<hyperedge_type> hyperedges_;
 
 public:
 
   /// @brief Constructor.
-  worker1(const order<C>& o, const homomorphism<C>& h)
-    : o_(o), h_(h), vertices_(), hyperedges_()
-  {
-    // Assign a initial location for every vertex2.
-    vertices_.reserve(o_.nodes().size());
-    for (std::size_t i = 0; i < o_.nodes().size(); ++i)
-    {
-      vertices_.emplace_back(i /* position in order.nodes */, i /* initial location */);
-    }
-
-    // Build hyperedges
-    visit(mk_hyperedges_visitor<C>(vertices_, hyperedges_), h);
-
-    std::ofstream dot_file("/tmp/force.dot");
-    if (dot_file.is_open())
-    {
-      to_dot(dot_file);
-    }
-
-    // Update all vertices with their connected hyperedges
-    for (auto& edge : hyperedges_)
-    {
-      for (auto& vertex_ptr : edge.vertices)
-      {
-        vertex_ptr->hyperedges.push_back(&edge);
-      }
-    }
-  }
-
-  /// @brief Dump the hypergraph to the DOT format.
-  void
-  to_dot(std::ostream& os)
-  const
-  {
-    os << "graph hypergraph { layout=fdp;" << std::endl;
-    for (const auto& vertex2 : vertices_)
-    {
-      os << "vertex_" << vertex2.pos << " [label=\"" << o_.nodes()[vertex2.pos].identifier().user()
-         << "\"];" << std::endl;
-    }
-    for (const auto& edge : hyperedges_)
-    {
-      os << "hyperedge_" << &edge << " [label=\"\",shape=point]" << std::endl;
-      for (const auto& vertex_ptr : edge.vertices)
-      {
-        os << "hyperedge_" << &edge << " -- vertex_" << vertex_ptr->pos << ";"
-           << std::endl;
-      }
-    }
-    os << "}" << std::endl;
-  }
+  worker(std::vector<vertex_type>&& vertices, std::vector<hyperedge_type>&& hyperedges)
+    : vertices_(std::move(vertices)), hyperedges_(std::move(hyperedges))
+  {}
 
   /// @brief Effectively apply the FORCE ordering strategy.
   order<C>
   operator()()
   {
-    std::vector<std::reference_wrapper<vertex2>> sorted_vertices(vertices_.begin(), vertices_.end());
+    std::vector<std::reference_wrapper<vertex_type>>
+      sorted_vertices(vertices_.begin(), vertices_.end());
 
     double span = std::numeric_limits<double>::max();
     double old_span = 0;
@@ -407,29 +58,32 @@ public:
     {
       old_span = span;
 
-      // Compute the new center of gravity for every hyperedge2.
+      // Compute the new center of gravity for every hyperedge.
       for (auto& edge : hyperedges_)
       {
-        edge.center_of_gravity();
+        edge.compute_center_of_gravity();
       }
 
-      // Compute the tentative new location of every vertex2.
-      for (auto& vertex2 : vertices_)
+      // Compute the tentative new location of every vertex.
+      for (auto& vertex : vertices_)
       {
-        assert(not vertex2.hyperedges.empty());
-        vertex2.location = std::accumulate( vertex2.hyperedges.cbegin(), vertex2.hyperedges.cend(), 0
-                                         , [](double acc, const hyperedge2* e){return acc + e->cog;}
-                                         ) / vertex2.hyperedges.size();
+        assert(not vertex.hyperedges().empty());
+        vertex.location() = std::accumulate( vertex.hyperedges().cbegin()
+                                           , vertex.hyperedges().cend()
+                                           , 0
+                                           , [](double acc, const hyperedge_type* e)
+                                               {return acc + e->center_of_gravity();}
+                                           ) / vertex.hyperedges().size();
       }
 
-      // Sort tentative vertex2 locations.
+      // Sort tentative vertex locations.
       std::sort( sorted_vertices.begin(), sorted_vertices.end()
-               , [](vertex2& lhs, vertex2& rhs){return lhs.location < rhs.location;});
+               , [](vertex_type& lhs, vertex_type& rhs){return lhs.location() < rhs.location();});
 
       // Assign integer indices to the vertices.
       unsigned int pos = 0;;
       std::for_each( sorted_vertices.begin(), sorted_vertices.end()
-                   , [&pos](vertex2& v){v.location = pos++;});
+                   , [&pos](vertex_type& v){v.location() = pos++;});
 
       span = get_total_span();
     } while (old_span > span);
@@ -437,11 +91,11 @@ public:
     order_builder<C> ob;
 //    for (auto rcit = sorted_vertices.rbegin(); rcit != sorted_vertices.rend(); ++rcit)
 //    {
-//      ob.push(o_.nodes()[rcit->get().pos].identifier().user());
+//      ob.push(vertex.get().id);
 //    }
-    for (const auto& vertex2 : sorted_vertices)
+    for (const auto& vertex : sorted_vertices)
     {
-      ob.push(o_.nodes()[vertex2.get().pos].identifier().user());
+      ob.push(vertex.get().id());
     }
 
     return order<C>(ob);
@@ -449,12 +103,13 @@ public:
 
 private:
 
+  /// @brief Add the span of all hyperedges.
   double
   get_total_span()
   const noexcept
   {
     return std::accumulate( hyperedges_.cbegin(), hyperedges_.cend(), 0
-                          , [](double acc, const hyperedge2& h){return acc + h.span();});
+                          , [](double acc, const hyperedge_type& h){return acc + h.span();});
   }
 };
 
@@ -467,14 +122,10 @@ private:
 /// See http://dx.doi.org/10.1145/764808.764839 for the details.
 template <typename C>
 order<C>
-force_ordering(const order<C>& o, const homomorphism<C>& h)
+force_ordering( std::vector<force::vertex<typename C::Identifier>>&& vertices
+              , std::vector<force::hyperedge<typename C::Identifier>>&& hyperedges)
 {
-  if (o.empty() or h == id<C>())
-  {
-    return o;
-  }
-
-  return force::worker1<C>(o, h)();
+  return force::worker<C>(std::move(vertices), std::move(hyperedges))();
 }
 
 /*------------------------------------------------------------------------------------------------*/
