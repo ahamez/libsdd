@@ -15,7 +15,7 @@ namespace sdd {
 /// It can only be created by the init() function. It is safe to use the library as long as the
 /// instance returned by manager::init() exists.
 template <typename C>
-class manager final
+class manager
 {
   // Can't copy a manager.
   manager(const manager&) = delete;

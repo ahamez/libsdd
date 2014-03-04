@@ -1,10 +1,9 @@
-#ifndef _SDD_TOOLS_JSON_HH_
-#define _SDD_TOOLS_JSON_HH_
+#ifndef _SDD_TOOLS_SERIALIZATION_HH_
+#define _SDD_TOOLS_SERIALIZATION_HH_
 
 #include <iosfwd>
 #include <tuple>
 
-#include <cereal/archives/json.hpp>
 #include <cereal/types/forward_list.hpp>
 #include <cereal/types/unordered_map.hpp>
 #include <cereal/types/utility.hpp>
@@ -13,13 +12,12 @@
 #include "sdd/mem/unique_table.hh"
 #include "sdd/tools/arcs.hh"
 #include "sdd/tools/nodes.hh"
+#include "sdd/tools/sdd_statistics.hh"
 #include "sdd/tools/size.hh"
 
-namespace sdd {
+namespace sdd { namespace mem { namespace /* anonymous */ {
 
 /*------------------------------------------------------------------------------------------------*/
-
-namespace mem { namespace /* anonymous */ {
 
 template<class Archive>
 void
@@ -46,6 +44,8 @@ save(Archive& archive, const cache_statistics::round& r)
          );
 }
 
+/*------------------------------------------------------------------------------------------------*/
+
 template<class Archive>
 void
 save(Archive& archive, const cache_statistics& s)
@@ -60,62 +60,12 @@ save(Archive& archive, const cache_statistics& s)
 
 }} // namespace mem::anonymous
 
-namespace tools { namespace /* anonymous */ {
-
 /*------------------------------------------------------------------------------------------------*/
 
-struct sdd_stats
-{
-  unsigned int flat_nodes;
-  unsigned int hierarchical_nodes;
-  unsigned int flat_arcs;
-  unsigned int hierarchical_arcs;
-  unsigned int bytes;
-  arcs_frequency_type frequency;
-
-  template<class Archive>
-  void
-  save(Archive& archive)
-  const
-  {
-    archive( cereal::make_nvp("bytes", bytes)
-           , cereal::make_nvp("flat nodes", flat_nodes)
-           , cereal::make_nvp("hierarchical nodes", hierarchical_nodes)
-           , cereal::make_nvp("flat arcs", flat_arcs)
-           , cereal::make_nvp("hierarchical arcs", hierarchical_nodes)
-           , cereal::make_nvp("arcs frequency", frequency)
-           );
-  }
-};
-
-} // namespace anonymous
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-template <typename C>
+template<typename C, typename Archive>
 void
-json(const SDD<C>& x, std::ostream& os)
+save(Archive& archive, const manager<C>& m)
 {
-  cereal::JSONOutputArchive archive(os);
-  sdd_stats stats;
-
-  std::tie(stats.flat_nodes, stats.hierarchical_nodes) = nodes(x);
-  stats.bytes = static_cast<unsigned int>(size(x));
-  stats.frequency = arcs(x);
-  std::tie(stats.flat_arcs, stats.hierarchical_arcs) = number_of_arcs(stats.frequency);
-
-  archive(cereal::make_nvp("sdd", stats));
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-template <typename C>
-void
-json(const manager<C>& m, std::ostream& os)
-{
-  cereal::JSONOutputArchive archive(os);
   archive( cereal::make_nvp("SDD unique table", m.sdd_stats())
          , cereal::make_nvp("SDD differences cache", m.sdd_difference_cache_stats())
          , cereal::make_nvp("SDD intersections cache", m.sdd_intersection_cache_stats())
@@ -127,6 +77,24 @@ json(const manager<C>& m, std::ostream& os)
 
 /*------------------------------------------------------------------------------------------------*/
 
+namespace tools {
+
+
+template<typename C, typename Archive>
+void
+save(Archive& archive, const sdd_statistics<C>& stats)
+{
+  archive( cereal::make_nvp("bytes", static_cast<unsigned int>(stats.bytes))
+         , cereal::make_nvp("flat nodes", stats.all_nodes.first)
+         , cereal::make_nvp("hierarchical nodes", stats.all_nodes.second)
+         , cereal::make_nvp("flat arcs", stats.all_arcs.first)
+         , cereal::make_nvp("hierarchical arcs", stats.all_arcs.second)
+         , cereal::make_nvp("arcs frequency", stats.frequency)
+         );
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
 }} // namespace sdd::tools
 
-#endif // _SDD_TOOLS_JSON_HH_
+#endif // _SDD_TOOLS_SERIALIZATION_HH_
