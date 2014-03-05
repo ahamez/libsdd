@@ -3,6 +3,7 @@
 
 #include <cassert>
 
+#include "sdd/internal_manager_fwd.hh"
 #include "sdd/dd/alpha.hh"
 #include "sdd/dd/count_combinations_fwd.hh"
 #include "sdd/dd/definition_fwd.hh"
