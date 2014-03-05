@@ -99,9 +99,26 @@ public:
   }
 
   /// @internal
+  const std::deque<vertex_type>&
+  vertices()
+  const noexcept
+  {
+    return *vertices_ptr_;
+  }
+
+
+  /// @internal
   std::deque<hyperedge_type>&
   hyperedges()
   noexcept
+  {
+    return *hyperedges_ptr_;
+  }
+
+  /// @internal
+  const std::deque<hyperedge_type>&
+  hyperedges()
+  const noexcept
   {
     return *hyperedges_ptr_;
   }
