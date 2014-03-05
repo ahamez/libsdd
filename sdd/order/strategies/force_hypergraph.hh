@@ -6,8 +6,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include <boost/iterator/transform_iterator.hpp>
-
 #include "sdd/order/strategies/force_hyperedge.hh"
 #include "sdd/order/strategies/force_vertex.hh"
 
@@ -26,21 +24,11 @@ public:
 
 private:
 
+  /// @brief An hypergraph's vertex.
   using vertex_type = vertex<identifier_type>;
+
+  /// @brief An hypergraph's hyperedge.
   using hyperedge_type = hyperedge<identifier_type>;
-
-  /// @brief Help transform iterator.
-  struct extract_identifier
-  {
-    using result_type = const identifier_type&;
-
-    result_type
-    operator()(const vertex_type& v)
-    const noexcept
-    {
-      return v.id();
-    }
-  };
 
   /// @brief All the vertices of this hypergraph.
   ///
@@ -58,11 +46,6 @@ private:
   std::shared_ptr<std::unordered_map<identifier_type, vertex_type*>> id_to_vertex_ptr_;
 
 public:
-
-  /// @brief Iterator on identifiers.
-  using const_iterator
-    = boost::transform_iterator< extract_identifier
-                               , typename std::deque<vertex_type>::const_iterator>;
 
   /// @brief Default constructor.
   hypergraph()
@@ -122,23 +105,6 @@ public:
   {
     return *hyperedges_ptr_;
   }
-
-  /// @brief Get the beginning of identifiers.
-  const_iterator
-  cbegin()
-  const noexcept
-  {
-    return const_iterator(vertices_ptr_->cbegin(), extract_identifier());
-  }
-
-  /// @brief Get the end of identifiers.
-  const_iterator
-  cend()
-  const noexcept
-  {
-    return const_iterator(vertices_ptr_->cend(), extract_identifier());
-  }
-
 
 private:
 
