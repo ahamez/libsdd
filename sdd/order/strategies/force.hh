@@ -7,8 +7,6 @@
 #include <numeric>    // accumulate
 #include <vector>
 
-#include <boost/container/flat_set.hpp>
-
 #include "sdd/order/order.hh"
 #include "sdd/order/strategies/force_hyperedge.hh"
 #include "sdd/order/strategies/force_hypergraph.hh"
