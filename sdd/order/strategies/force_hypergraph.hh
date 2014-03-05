@@ -90,7 +90,6 @@ public:
       {
         vertices_ptr_->emplace_back(*it, next_location());
         insertion.first->second = &vertices_ptr_->back();
-        assert(id_to_vertex_ptr_->size() == (sz + 1));
       }
       vertices.emplace_back(insertion.first->second);
     }
