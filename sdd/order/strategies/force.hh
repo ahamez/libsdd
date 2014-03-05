@@ -7,7 +7,7 @@
 #include <numeric>    // accumulate
 #include <vector>
 
-#include "sdd/order/order.hh"
+#include "sdd/order/order_builder.hh"
 #include "sdd/order/strategies/force_hyperedge.hh"
 #include "sdd/order/strategies/force_hypergraph.hh"
 #include "sdd/order/strategies/force_vertex.hh"
@@ -40,7 +40,7 @@ public:
   {}
 
   /// @brief Effectively apply the FORCE ordering strategy.
-  order<C>
+  order_builder<C>
   operator()()
   {
     std::vector<std::reference_wrapper<vertex_type>>
@@ -88,8 +88,7 @@ public:
     {
       ob.push(vertex.get().id());
     }
-
-    return order<C>(ob);
+    return ob;
   }
 
 private:
@@ -112,7 +111,7 @@ private:
 ///
 /// See http://dx.doi.org/10.1145/764808.764839 for the details.
 template <typename C>
-order<C>
+order_builder<C>
 force_ordering(force::hypergraph<C>& graph)
 {
   return force::worker<C>(graph.vertices(), graph.hyperedges())();
