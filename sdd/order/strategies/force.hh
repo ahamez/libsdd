@@ -86,10 +86,6 @@ public:
     } while (old_span > span);
 
     order_builder<C> ob;
-//    for (auto rcit = sorted_vertices.rbegin(); rcit != sorted_vertices.rend(); ++rcit)
-//    {
-//      ob.push(vertex.get().id);
-//    }
     for (const auto& vertex : sorted_vertices)
     {
       ob.push(vertex.get().id());
