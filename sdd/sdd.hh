@@ -8,7 +8,6 @@
 #include "sdd/hom/definition.hh"
 #include "sdd/hom/rewrite.hh"
 #include "sdd/order/carrier.hh"
-#include "sdd/order/ordering.hh"
 
 #include "sdd/manager.hh"
 
