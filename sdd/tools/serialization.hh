@@ -25,7 +25,7 @@ save(Archive& archive, const unique_table_statistics& s)
 {
   archive( cereal::make_nvp("#", static_cast<unsigned int>(s.size))
          , cereal::make_nvp("# peak", static_cast<unsigned int>(s.peak))
-         , cereal::make_nvp("# access", static_cast<unsigned int>(s.access))
+         , cereal::make_nvp("# accesses", static_cast<unsigned int>(s.access))
          , cereal::make_nvp("# hits", static_cast<unsigned int>(s.hits))
          , cereal::make_nvp("# misses", static_cast<unsigned int>(s.misses))
          , cereal::make_nvp("load factor", static_cast<unsigned int>(s.load_factor))
