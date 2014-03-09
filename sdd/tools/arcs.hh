@@ -12,9 +12,9 @@ namespace sdd { namespace tools {
 /*------------------------------------------------------------------------------------------------*/
 
 using arcs_frequency_type
-  = std::unordered_map< std::size_t /*number of arcs*/
-                      , std::pair< std::size_t /* flat arcs frequency */
-                      , std::size_t /* hierarchical arcs frequency */>>;
+  = std::unordered_map< unsigned int /*number of arcs*/
+                      , std::pair< unsigned int /* flat arcs frequency */
+                                 , unsigned int /* hierarchical arcs frequency */>>;
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -96,11 +96,11 @@ arcs(const SDD<C>& x)
 
 /// @internal
 /// @brief Get the total number of arcs from an arc frequency map.
-std::pair<std::size_t /* flat arcs */, std::size_t /* hierarchical arcs */>
+std::pair<unsigned int /* flat arcs */, unsigned int /* hierarchical arcs */>
 number_of_arcs(const arcs_frequency_type& freq)
 noexcept
 {
-  std::pair<std::size_t, std::size_t> res {0, 0};
+  std::pair<unsigned int, unsigned int> res {0, 0};
   for (const auto& kv : freq)
   {
     res.first += kv.first * kv.second.first;

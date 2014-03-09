@@ -7,6 +7,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
+#include "sdd/hom/interrupt.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
 
@@ -45,12 +46,20 @@ public:
   {
     SDD<C> x1 = x;
     SDD<C> x2 = x1;
-    do
+    try
     {
-      x2 = x1;
-      x1 = h_(cxt, o, x1);
-    } while (x1 != x2);
-    return x1;
+      do
+      {
+        x2 = x1;
+        x1 = h_(cxt, o, x1);
+      } while (x1 != x2);
+      return x1;
+    }
+    catch (interrupt<C>& i)
+    {
+      i.result() = x1;
+      throw;
+    }
   }
 
   /// @brief Skip predicate.

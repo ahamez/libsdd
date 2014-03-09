@@ -11,6 +11,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
+#include "sdd/hom/interrupt.hh"
 #include "sdd/util/packed.hh"
 #include "sdd/order/order.hh"
 
@@ -218,12 +219,21 @@ private:
         dd::alpha_builder<C, values_type> alpha_builder(cxt.sdd_context());
         alpha_builder.reserve(node.size());
         for (const auto& arc : node)
+        try
         {
-          values_type val = fun(arc.valuation());
-          if (not val.empty())
+          for (const auto& arc : node)
           {
-            alpha_builder.add(std::move(val), arc.successor());
+            values_type val = fun(arc.valuation());
+            if (not val.empty())
+            {
+              alpha_builder.add(std::move(val), arc.successor());
+            }
           }
+        }
+        catch (interrupt<C>& i)
+        {
+          i.result() = {o.variable(), std::move(alpha_builder)};
+          throw;
         }
         return {o.variable(), std::move(alpha_builder)};
       }
@@ -231,13 +241,18 @@ private:
       {
         dd::sum_builder<C, SDD<C>> sum_operands(cxt.sdd_context());
         sum_operands.reserve(node.size());
-        for (const auto& arc : node)
-        {
-          sum_operands.add(SDD<C>(o.variable(), fun(arc.valuation()), arc.successor()));
-        }
         try
         {
+          for (const auto& arc : node)
+          {
+            sum_operands.add(SDD<C>(o.variable(), fun(arc.valuation()), arc.successor()));
+          }
           return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+        }
+        catch (interrupt<C>& i)
+        {
+          i.result() = dd::sum(cxt.sdd_context(), std::move(sum_operands));
+          throw;
         }
         catch (top<C>& t)
         {

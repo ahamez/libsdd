@@ -12,6 +12,7 @@
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/intersection.hh"
+#include "sdd/hom/interrupt.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
 #include "sdd/util/packed.hh"
@@ -60,23 +61,31 @@ public:
     dd::intersection_builder<C, SDD<C>> operands(cxt.sdd_context());
     operands.reserve(G_.size() + 2);
 
-    if (F_)
-    {
-      operands.add((*F_)(cxt, o, s));
-    }
-
-    for (const auto& g : G_)
-    {
-      operands.add(g(cxt, o, s));
-    }
-
-    if (L_)
-    {
-      operands.add((*L_)(cxt, o, s));
-    }
-
     try
     {
+      try
+      {
+        if (F_)
+        {
+          operands.add((*F_)(cxt, o, s));
+        }
+
+        for (const auto& g : G_)
+        {
+          operands.add(g(cxt, o, s));
+        }
+
+        if (L_)
+        {
+          operands.add((*L_)(cxt, o, s));
+        }
+      }
+      catch (interrupt<C>& i)
+      {
+        operands.add(i.result());
+        i.result() = dd::intersection(cxt.sdd_context(), std::move(operands));
+        throw;
+      }
       return dd::intersection(cxt.sdd_context(), std::move(operands));
     }
     catch (top<C>& t)

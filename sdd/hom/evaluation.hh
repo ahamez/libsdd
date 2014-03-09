@@ -5,7 +5,7 @@
 #include <iosfwd>
 
 #include "sdd/hom/context_fwd.hh"
-#include "sdd/hom/rewrite.hh"
+#include "sdd/hom/interrupt.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
@@ -69,10 +69,22 @@ struct evaluation
       su.reserve(node.size());
       for (const auto& arc : node)
       {
-        SDD<C> new_successor = hom(cxt, o.next(), arc.successor());
-        if (not new_successor.empty())
+        try
         {
-          su.add(new_successor, arc.valuation());
+          SDD<C> new_successor = hom(cxt, o.next(), arc.successor());
+          if (not new_successor.empty())
+          {
+            su.add(new_successor, arc.valuation());
+          }
+        }
+        catch (interrupt<C>& i)
+        {
+          if (not i.result().empty())
+          {
+            su.add(i.result(), arc.valuation());
+          }
+          i.result() = {node.variable(), su()};
+          throw;
         }
       }
       return {node.variable(), su()};

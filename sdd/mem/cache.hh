@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "sdd/mem/hash_table.hh"
+#include "sdd/mem/interrupt.hh"
 #include "sdd/util/hash.hh"
 #include "sdd/util/packed.hh"
 
@@ -57,6 +58,8 @@ struct apply_filters<T, Filter, Filters...>
 };
 
 /*------------------------------------------------------------------------------------------------*/
+
+namespace /* anonymous */ {
 
 /// @internal
 /// @brief The statistics of a cache.
@@ -126,6 +129,8 @@ struct cache_statistics
   }
 };
 
+} // namespace anonymous
+
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
@@ -135,7 +140,8 @@ struct cache_statistics
 /// @tparam Filters is a list of filters that reject some operations.
 ///
 /// It uses the LFU strategy to cleanup old entries.
-template <typename Context, typename Operation, typename EvaluationError, typename... Filters>
+template < typename Context, typename Operation, typename EvaluationError
+         , typename... Filters>
 class cache
 {
   // Can't copy a cache.
@@ -339,13 +345,10 @@ public:
     // Clean up the cache, if necessary.
     cleanup();
 
+    cache_entry* entry;
     try
     {
-      cache_entry* entry = new cache_entry(std::move(op), op(cxt_));
-      // A cache entry is constructed with the 'in use' bit set.
-      entry->reset_in_use();
-      set_.insert_commit(*entry, commit_data); // doesn't throw
-      return entry->result;
+      entry = new cache_entry(std::move(op), op(cxt_));
     }
     catch (EvaluationError& e)
     {
@@ -353,6 +356,15 @@ public:
       e.add_step(std::move(op));
       throw;
     }
+    catch (interrupt<result_type>&)
+    {
+      --stats_.rounds.front().misses;
+      throw;
+    }
+    // A cache entry is constructed with the 'in use' bit set.
+    entry->reset_in_use();
+    set_.insert_commit(*entry, commit_data); // doesn't throw
+    return entry->result;
   }
 
   /// @brief The load factor of the underlying hash table.

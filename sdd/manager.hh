@@ -10,45 +10,12 @@ namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
-// Foward declaration
-template <typename C>
-class manager;
-
-/// @brief Show some statistics of the library
-/// @related manager
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const manager<C>& m)
-{
-  const auto sdd_stats = m.m_->sdd_unique_table.stats();
-  const auto hom_stats = m.m_->hom_unique_table.stats();
-
-  os << "SDD" << std::endl;
-  os << "size        : " << sdd_stats.size << std::endl;
-  os << "load_factor : " << sdd_stats.load_factor << std::endl;
-  os << "access      : " << sdd_stats.access << std::endl;
-  os << "hit         : " << sdd_stats.hit << std::endl;
-  os << "miss        : " << sdd_stats.miss << std::endl;
-  os << std::endl;
-
-  os << "Hom" << std::endl;
-  os << "size        : " << hom_stats.size << std::endl;
-  os << "load_factor : " << hom_stats.load_factor << std::endl;
-  os << "access      : " << hom_stats.access << std::endl;
-  os << "hit         : " << hom_stats.hit << std::endl;
-  os << "miss        : " << hom_stats.miss << std::endl;
-
-  return os;
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
 /// @brief This class represents the global context of the library.
 ///
 /// It can only be created by the init() function. It is safe to use the library as long as the
 /// instance returned by manager::init() exists.
 template <typename C>
-class manager final
+class manager
 {
   // Can't copy a manager.
   manager(const manager&) = delete;
@@ -72,10 +39,6 @@ private:
   manager(const C& conf, values_manager<values_type>* v, internal_manager<C>* m)
     : conf_(conf), values_(v), m_(m)
   {}
-
-  friend
-  std::ostream&
-  operator<< <C>(std::ostream&, const manager&);
 
 public:
 
@@ -136,6 +99,12 @@ public:
     }
   }
 
+  /// @brief Default move constructor.
+  manager(manager&&) = default;
+
+  /// @brief Default move operator.
+  manager& operator=(manager&&) = default;
+
   /// @brief Reset homomorphisms evaluation cache.
   void
   reset_hom_cache()
@@ -143,11 +112,59 @@ public:
     m_->hom_context.clear();
   }
 
-  /// @brief Default move constructor.
-  manager(manager&&) = default;
+  /// @internal
+  /// @brief Get the statistics for SDDs.
+  const mem::unique_table_statistics&
+  sdd_stats()
+  const noexcept
+  {
+    return m_->sdd_unique_table.stats();
+  }
 
-  /// @brief Default move operator.
-  manager& operator=(manager&&) = default;
+  /// @internal
+  /// @brief Get the statistics for SDD difference operations.
+  const mem::cache_statistics&
+  sdd_difference_cache_stats()
+  const noexcept
+  {
+    return m_->sdd_context.difference_cache().statistics();
+  }
+
+  /// @internal
+  /// @brief Get the statistics for SDD intersection operations.
+  const mem::cache_statistics&
+  sdd_intersection_cache_stats()
+  const noexcept
+  {
+    return m_->sdd_context.intersection_cache().statistics();
+  }
+
+  /// @internal
+  /// @brief Get the statistics for SDD sum operations.
+  const mem::cache_statistics&
+  sdd_sum_cache_stats()
+  const noexcept
+  {
+    return m_->sdd_context.sum_cache().statistics();
+  }
+
+  /// @internal
+  /// @brief Get the statistics for homomorphisms.
+  const mem::unique_table_statistics&
+  hom_stats()
+  const noexcept
+  {
+    return m_->hom_unique_table.stats();
+  }
+
+  /// @internal
+  /// @brief Get the statistics for SDD sum operations.
+  const mem::cache_statistics&
+  hom_cache_stats()
+  const noexcept
+  {
+    return m_->hom_context.cache().statistics();
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/

@@ -95,7 +95,5 @@ main(int argc, char** argv)
     dot_file << sdd::tools::dot(dict);
   }
 
-  std::cout << manager << std::endl;
-
   return 0;
 }

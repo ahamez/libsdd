@@ -40,7 +40,7 @@ TYPED_TEST_CASE(intersection_test, configurations);
 
 TYPED_TEST(intersection_test, empty_operand)
 {
-  ASSERT_EQ(zero, intersection(cxt, {cxt, {SDD('a', {}, one)}}));
+  ASSERT_EQ(zero, intersection(cxt, {cxt, {SDD('a', values_type(), one)}}));
 }
 
 /*------------------------------------------------------------------------------------------------*/

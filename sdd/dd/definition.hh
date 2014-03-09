@@ -3,6 +3,7 @@
 
 #include <cassert>
 
+#include "sdd/internal_manager_fwd.hh"
 #include "sdd/dd/alpha.hh"
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/count_combinations_fwd.hh"
@@ -89,6 +90,11 @@ private:
   ptr_type ptr_;
 
 public:
+
+  /// @brief Default constructor.
+  SDD()
+    : ptr_(zero_ptr())
+  {}
 
   /// @brief Copy constructor.
   ///

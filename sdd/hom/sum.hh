@@ -17,6 +17,7 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
+#include "sdd/hom/interrupt.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
 #include "sdd/util/packed.hh"
@@ -69,12 +70,21 @@ public:
   {
     dd::sum_builder<C, SDD<C>> sum_operands(cxt.sdd_context());
     sum_operands.reserve(size_);
-    for (const auto& op : *this)
-    {
-      sum_operands.add(op(cxt, o, x));
-    }
     try
     {
+      for (const auto& op : *this)
+      {
+        try
+        {
+          sum_operands.add(op(cxt, o, x));
+        }
+        catch (interrupt<C>& i)
+        {
+          sum_operands.add(i.result());
+          i.result() = dd::sum(cxt.sdd_context(), std::move(sum_operands));
+          throw;
+        }
+      }
       return dd::sum(cxt.sdd_context(), std::move(sum_operands));
     }
     catch (top<C>& t)

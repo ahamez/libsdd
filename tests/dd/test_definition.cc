@@ -39,18 +39,13 @@ TYPED_TEST_CASE(definition_test, configurations);
 TYPED_TEST(definition_test, empty_successor)
 {
   ASSERT_EQ(zero, SDD('a', {0}, zero));
-  values_type val;
-  val.insert(0);
-  ASSERT_EQ(zero, SDD('a', val, zero));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
 TYPED_TEST(definition_test, empty_valuation)
 {
-  ASSERT_EQ(zero, SDD('a', {}, one));
-  values_type val;
-  ASSERT_EQ(zero, SDD('a', val, one));
+  ASSERT_EQ(zero, SDD('a', values_type(), one));
   ASSERT_EQ(zero, SDD('a', zero, one));
 }
 

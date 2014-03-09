@@ -21,6 +21,7 @@ set(SOURCES
     hom/test_hom_function.cc
     hom/test_hom_identity.cc
     hom/test_hom_inductive.cc
+    hom/test_hom_interrupt.cc
     hom/test_hom_local.cc
     hom/test_hom_saturation_fixpoint.cc
     hom/test_hom_saturation_sum.cc
