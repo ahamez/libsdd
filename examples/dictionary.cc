@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "sdd/sdd.hh"
-#include "sdd/tools/dot.hh"
+#include "sdd/tools/dot/sdd.hh"
 
 /*------------------------------------------------------------------------------------------------*/
 
