@@ -218,7 +218,6 @@ private:
       {
         dd::alpha_builder<C, values_type> alpha_builder(cxt.sdd_context());
         alpha_builder.reserve(node.size());
-        for (const auto& arc : node)
         try
         {
           for (const auto& arc : node)
