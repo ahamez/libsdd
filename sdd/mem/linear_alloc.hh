@@ -273,14 +273,28 @@ public:
   template <typename U, typename V>
   friend
   bool
-  operator==(const linear_alloc<U>& lhs, const linear_alloc<V>& rhs)
-  noexcept
-  {
-    return &lhs.a_ == &rhs.a_;
-  }
+  operator==(const linear_alloc<U>&, const linear_alloc<V>&) noexcept;
 
   template <typename U> friend class linear_alloc;
 };
+
+/*------------------------------------------------------------------------------------------------*/
+
+template <typename U, typename V>
+bool
+operator==(const linear_alloc<U>& lhs, const linear_alloc<V>& rhs)
+noexcept
+{
+  return &lhs.a_ == &rhs.a_;
+}
+
+template <typename U, typename V>
+bool
+operator!=(const linear_alloc<U>& lhs, const linear_alloc<V>& rhs)
+noexcept
+{
+  return not(lhs == rhs);
+}
 
 /*------------------------------------------------------------------------------------------------*/
 
