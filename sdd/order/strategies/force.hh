@@ -62,7 +62,10 @@ public:
       // Compute the tentative new location of every vertex.
       for (auto& vertex : vertices_)
       {
-        assert(not vertex.hyperedges().empty());
+        if (vertex.hyperedges().empty())
+        {
+          continue;
+        }
         vertex.location() = std::accumulate( vertex.hyperedges().cbegin()
                                            , vertex.hyperedges().cend()
                                            , 0

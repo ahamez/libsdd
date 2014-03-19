@@ -42,17 +42,33 @@ private:
 
   /// @brief Map identifiers to vertices.
   ///
-  /// Enable fast retrieving of a vertex's address.
+  /// Enable fast retrieval of a vertex's address.
   std::shared_ptr<std::unordered_map<identifier_type, vertex_type*>> id_to_vertex_ptr_;
 
 public:
 
   /// @brief Default constructor.
-  hypergraph()
+  template <typename InputIterator>
+  hypergraph(InputIterator it, InputIterator end)
     : vertices_ptr_(std::make_shared<std::deque<vertex_type>>())
     , hyperedges_ptr_(std::make_shared<std::deque<hyperedge_type>>())
     , id_to_vertex_ptr_(std::make_shared<std::unordered_map<identifier_type, vertex_type*>>())
-  {}
+  {
+    static double location = 0;
+    assert(it != end);
+    for (; it != end; ++it)
+    {
+      vertices_ptr_->emplace_back(*it, location++);
+      const auto insertion = id_to_vertex_ptr_->emplace(*it, &vertices_ptr_->back());
+      if (not insertion.second)
+      {
+        std::stringstream ss;
+        ss << *it << " appears twice";
+        throw std::runtime_error(ss.str());
+      }
+    }
+    assert(id_to_vertex_ptr_->size() != 0);
+  }
 
   /// @brief Add a new hyperedge with a set of identifiers.
   template <typename InputIterator>
@@ -66,15 +82,12 @@ public:
 
     // Create, if necessary all connected vertices.
     std::vector<vertex_type*> vertices;
+    vertices.reserve(std::distance(it, end));
     for (; it != end; ++it)
     {
-      auto insertion = id_to_vertex_ptr_->emplace(*it, nullptr);
-      if (insertion.second) // new vertex
-      {
-        vertices_ptr_->emplace_back(*it, next_location());
-        insertion.first->second = &vertices_ptr_->back();
-      }
-      vertices.emplace_back(insertion.first->second);
+      const auto search = id_to_vertex_ptr_->find(*it);
+      assert(search != id_to_vertex_ptr_->end());
+      vertices.emplace_back(search->second);
     }
     assert(vertices.size() != 0);
 
@@ -121,18 +134,6 @@ public:
   const noexcept
   {
     return *hyperedges_ptr_;
-  }
-
-private:
-
-  /// @brief Get the next initial location for a new vertex.
-  static
-  double
-  next_location()
-  noexcept
-  {
-    static double location = 0;
-    return location++;
   }
 };
 
