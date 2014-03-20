@@ -63,7 +63,7 @@ public:
       if (not insertion.second)
       {
         std::stringstream ss;
-        ss << *it << " appears twice";
+        ss << "Identifier " <<  *it << " appears twice.";
         throw std::runtime_error(ss.str());
       }
     }
