@@ -1,7 +1,6 @@
 #ifndef _SDD_ORDER_STRATEGIES_FORCE_HH_
 #define _SDD_ORDER_STRATEGIES_FORCE_HH_
 
-#include <cassert>
 #include <functional> // reference_wrapper
 #include <limits>
 #include <numeric>    // accumulate
@@ -32,7 +31,7 @@ private:
   /// @brief The hyperedges that link together vertices.
   std::deque<hyperedge_type>& hyperedges_;
 
-  /// @brief
+  /// @brief Keep all computed total spans for statistics.
   std::deque<double> spans_;
 
 public:
@@ -44,18 +43,17 @@ public:
 
   /// @brief Effectively apply the FORCE ordering strategy.
   order_builder<C>
-  operator()(unsigned int iterations = 100)
+  operator()(unsigned int iterations = 200)
   {
     std::vector<std::reference_wrapper<vertex_type>>
       sorted_vertices(vertices_.begin(), vertices_.end());
 
-    long double span = std::numeric_limits<double>::max();
-//    double old_span = 0;
+    // Keep a copy of the order with the smallest span.
+    std::vector<std::reference_wrapper<vertex_type>> best_order(sorted_vertices);
+    double smallest_span = std::numeric_limits<double>::max();
 
-    do
+    while (iterations-- != 0)
     {
-//      old_span = span;
-
       // Compute the new center of gravity for every hyperedge.
       for (auto& edge : hyperedges_)
       {
@@ -86,13 +84,17 @@ public:
       std::for_each( sorted_vertices.begin(), sorted_vertices.end()
                    , [&pos](vertex_type& v){v.location() = pos++;});
 
-      span = get_total_span();
+      const double span = get_total_span();
       spans_.push_back(span);
-//    } while (old_span > span);
-    } while (iterations-- != 0);
+      if (span < smallest_span)
+      {
+        // We keep the order that minimizes the span.
+        best_order = sorted_vertices;
+      }
+    }
 
     order_builder<C> ob;
-    for (const auto& vertex : sorted_vertices)
+    for (const auto& vertex : best_order)
     {
       ob.push(vertex.get().id());
     }
