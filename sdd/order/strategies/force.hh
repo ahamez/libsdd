@@ -1,7 +1,6 @@
 #ifndef _SDD_ORDER_STRATEGIES_FORCE_HH_
 #define _SDD_ORDER_STRATEGIES_FORCE_HH_
 
-#include <cassert>
 #include <functional> // reference_wrapper
 #include <limits>
 #include <numeric>    // accumulate
@@ -32,27 +31,29 @@ private:
   /// @brief The hyperedges that link together vertices.
   std::deque<hyperedge_type>& hyperedges_;
 
+  /// @brief Keep all computed total spans for statistics.
+  std::deque<double> spans_;
+
 public:
 
   /// @brief Constructor.
-  worker(std::deque<vertex_type>& vertices, std::deque<hyperedge_type>& hyperedges)
-    : vertices_(vertices), hyperedges_(hyperedges)
+  worker(hypergraph<C>& graph)
+    : vertices_(graph.vertices()), hyperedges_(graph.hyperedges())
   {}
 
   /// @brief Effectively apply the FORCE ordering strategy.
   order_builder<C>
-  operator()()
+  operator()(unsigned int iterations = 200)
   {
     std::vector<std::reference_wrapper<vertex_type>>
       sorted_vertices(vertices_.begin(), vertices_.end());
 
-    double span = std::numeric_limits<double>::max();
-    double old_span = 0;
+    // Keep a copy of the order with the smallest span.
+    std::vector<std::reference_wrapper<vertex_type>> best_order(sorted_vertices);
+    double smallest_span = std::numeric_limits<double>::max();
 
-    do
+    while (iterations-- != 0)
     {
-      old_span = span;
-
       // Compute the new center of gravity for every hyperedge.
       for (auto& edge : hyperedges_)
       {
@@ -62,7 +63,10 @@ public:
       // Compute the tentative new location of every vertex.
       for (auto& vertex : vertices_)
       {
-        assert(not vertex.hyperedges().empty());
+        if (vertex.hyperedges().empty())
+        {
+          continue;
+        }
         vertex.location() = std::accumulate( vertex.hyperedges().cbegin()
                                            , vertex.hyperedges().cend()
                                            , 0
@@ -80,15 +84,28 @@ public:
       std::for_each( sorted_vertices.begin(), sorted_vertices.end()
                    , [&pos](vertex_type& v){v.location() = pos++;});
 
-      span = get_total_span();
-    } while (old_span > span);
+      const double span = get_total_span();
+      spans_.push_back(span);
+      if (span < smallest_span)
+      {
+        // We keep the order that minimizes the span.
+        best_order = sorted_vertices;
+      }
+    }
 
     order_builder<C> ob;
-    for (const auto& vertex : sorted_vertices)
+    for (const auto& vertex : best_order)
     {
       ob.push(vertex.get().id());
     }
     return ob;
+  }
+
+  const std::deque<double>&
+  spans()
+  const noexcept
+  {
+    return spans_;
   }
 
 private:
@@ -104,18 +121,6 @@ private:
 };
 
 } // namespace force
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @brief The FORCE ordering strategy.
-///
-/// See http://dx.doi.org/10.1145/764808.764839 for the details.
-template <typename C>
-order_builder<C>
-force_ordering(force::hypergraph<C>& graph)
-{
-  return force::worker<C>(graph.vertices(), graph.hyperedges())();
-}
 
 /*------------------------------------------------------------------------------------------------*/
 
