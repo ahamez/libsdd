@@ -80,7 +80,7 @@ public:
                            , []( const vertex<identifier_type>* lhs
                                , const vertex<identifier_type>* rhs)
                                {return lhs->location() < rhs->location();});
-    return *minmax.second - *minmax.first;
+    return (*minmax.second)->location() - (*minmax.first)->location();
   }
 };
 
