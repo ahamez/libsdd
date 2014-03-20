@@ -32,26 +32,29 @@ private:
   /// @brief The hyperedges that link together vertices.
   std::deque<hyperedge_type>& hyperedges_;
 
+  /// @brief
+  std::deque<double> spans_;
+
 public:
 
   /// @brief Constructor.
-  worker(std::deque<vertex_type>& vertices, std::deque<hyperedge_type>& hyperedges)
-    : vertices_(vertices), hyperedges_(hyperedges)
+  worker(hypergraph<C>& graph)
+    : vertices_(graph.vertices()), hyperedges_(graph.hyperedges())
   {}
 
   /// @brief Effectively apply the FORCE ordering strategy.
   order_builder<C>
-  operator()()
+  operator()(unsigned int iterations = 100)
   {
     std::vector<std::reference_wrapper<vertex_type>>
       sorted_vertices(vertices_.begin(), vertices_.end());
 
-    double span = std::numeric_limits<double>::max();
-    double old_span = 0;
+    long double span = std::numeric_limits<double>::max();
+//    double old_span = 0;
 
     do
     {
-      old_span = span;
+//      old_span = span;
 
       // Compute the new center of gravity for every hyperedge.
       for (auto& edge : hyperedges_)
@@ -84,7 +87,9 @@ public:
                    , [&pos](vertex_type& v){v.location() = pos++;});
 
       span = get_total_span();
-    } while (old_span > span);
+      spans_.push_back(span);
+//    } while (old_span > span);
+    } while (iterations-- != 0);
 
     order_builder<C> ob;
     for (const auto& vertex : sorted_vertices)
@@ -92,6 +97,13 @@ public:
       ob.push(vertex.get().id());
     }
     return ob;
+  }
+
+  const std::deque<double>&
+  spans()
+  const noexcept
+  {
+    return spans_;
   }
 
 private:
@@ -107,18 +119,6 @@ private:
 };
 
 } // namespace force
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @brief The FORCE ordering strategy.
-///
-/// See http://dx.doi.org/10.1145/764808.764839 for the details.
-template <typename C>
-order_builder<C>
-force_ordering(force::hypergraph<C>& graph)
-{
-  return force::worker<C>(graph.vertices(), graph.hyperedges())();
-}
 
 /*------------------------------------------------------------------------------------------------*/
 
