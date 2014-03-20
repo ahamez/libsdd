@@ -2,8 +2,11 @@
 #define _SDD_ORDER_STRATEGIES_FORCE_HH_
 
 #include <functional> // reference_wrapper
+#include <fstream>
+#include <iomanip>
 #include <limits>
 #include <numeric>    // accumulate
+#include <sstream>
 #include <vector>
 
 #include "sdd/order/order_builder.hh"
@@ -52,6 +55,7 @@ public:
     std::vector<std::reference_wrapper<vertex_type>> best_order(sorted_vertices);
     double smallest_span = std::numeric_limits<double>::max();
 
+    unsigned int file_name = 0;
     while (iterations-- != 0)
     {
       // Compute the new center of gravity for every hyperedge.
@@ -90,6 +94,23 @@ public:
       {
         // We keep the order that minimizes the span.
         best_order = sorted_vertices;
+      }
+
+      std::stringstream ss;
+      ss << std::setfill('0') << std::setw(5) << file_name++;
+      std::ofstream out(ss.str());
+      out << vertices_.size() << std::endl;
+      for (const auto& var : vertices_)
+      {
+        out << var.id() << std::endl;
+      }
+      for (const auto& edge : hyperedges_)
+      {
+        out << edge.vertices().size() << std::endl;
+        for (const auto var_ptr : edge.vertices())
+        {
+          out << var_ptr->location() << std::endl;
+        }
       }
     }
 
