@@ -100,9 +100,9 @@ public:
       ss << std::setfill('0') << std::setw(5) << file_name++;
       std::ofstream out(ss.str());
       out << vertices_.size() << std::endl;
-      for (const auto& var : vertices_)
+      for (const auto var : sorted_vertices)
       {
-        out << var.id() << std::endl;
+        out << var.get().id() << std::endl;
       }
       for (const auto& edge : hyperedges_)
       {
