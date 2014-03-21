@@ -216,7 +216,7 @@ template <typename C, typename InputIterator>
 homomorphism<C>
 intersection(const order<C>& o, InputIterator begin, InputIterator end)
 {
-  const std::size_t size = std::distance(begin, end);
+  const auto size = std::distance(begin, end);
 
   if (size == 0)
   {

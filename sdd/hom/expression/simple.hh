@@ -189,7 +189,7 @@ struct simple
   /// @brief Evaluation on |1|.
   SDD<C>
   operator()( const one_terminal<C>&, const SDD<C>&
-            , const order<C>& o
+            , const order<C>&
             , const std::shared_ptr<app_stack<C>>& app, const std::shared_ptr<res_stack<C>>& res
             , order_positions_iterator cit, order_positions_iterator end)
   const
