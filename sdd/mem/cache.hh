@@ -394,7 +394,7 @@ public:
     }
 
     // Compute the number of elements to keep in order to reduce the load factor by a factor of 2.
-    const std::size_t to_keep = max_size_ * max_load_factor_/2;
+    const std::size_t to_keep = static_cast<std::size_t>(max_size_ * max_load_factor_/2);
     const std::size_t cut_point = vec.size() - to_keep;
 
     // Find the median of the number of hits.

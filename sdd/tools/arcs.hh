@@ -35,13 +35,13 @@ struct arcs_visitor
 
   /// @brief |0|.
   result_type
-  operator()(const zero_terminal<C>& n)
+  operator()(const zero_terminal<C>&)
   const
   {}
 
   /// @brief |1|.
   result_type
-  operator()(const one_terminal<C>& n)
+  operator()(const one_terminal<C>&)
   const
   {}
 

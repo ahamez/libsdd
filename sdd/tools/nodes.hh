@@ -23,7 +23,7 @@ struct nb_nodes_visitor
 
   /// @brief |0|.
   result_type
-  operator()(const zero_terminal<C>& n)
+  operator()(const zero_terminal<C>&)
   const
   {
     return std::make_pair(0, 0);
@@ -31,7 +31,7 @@ struct nb_nodes_visitor
 
   /// @brief |1|.
   result_type
-  operator()(const one_terminal<C>& n)
+  operator()(const one_terminal<C>&)
   const
   {
     return std::make_pair(0, 0);
