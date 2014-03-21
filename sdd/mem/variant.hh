@@ -159,12 +159,10 @@ public:
 
 /// @internal
 /// @related variant
-template < typename Visitor
-         , typename... Types, template <typename...> class Variant
-         , typename... Args>
+template <typename Visitor, typename... Types, typename... Args>
 inline
 typename Visitor::result_type
-apply_visitor(const Visitor& v, const Variant<Types...>& x, Args&&... args)
+apply_visitor(const Visitor& v, const variant<Types...>& x, Args&&... args)
 {
   return dispatch( v
                  , x.storage(), util::typelist<Types...>(), x.index()
@@ -173,14 +171,11 @@ apply_visitor(const Visitor& v, const Variant<Types...>& x, Args&&... args)
 
 /// @internal
 /// @related variant
-template < typename Visitor
-         , typename... Types1, template <typename...> class Variant1
-         , typename... Types2, template <typename...> class Variant2
-         , typename... Args>
+template < typename Visitor, typename... Types1, typename... Types2, typename... Args>
 inline
 typename Visitor::result_type
 apply_binary_visitor( const Visitor& v
-                    , const Variant1<Types1...>& x, const Variant2<Types2...>& y
+                    , const variant<Types1...>& x, const variant<Types2...>& y
                     , Args&&... args)
 {
   return binary_dispatch( v
