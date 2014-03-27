@@ -3,6 +3,7 @@
 
 #include <deque>
 #include <memory> // shared_ptr
+#include <sstream>
 #include <unordered_map>
 #include <vector>
 
