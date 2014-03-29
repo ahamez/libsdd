@@ -54,6 +54,7 @@ std::size_t
 hash(InputIterator cit, InputIterator cend)
 noexcept(noexcept(std::hash<typename std::decay<decltype(*cit)>::type>()(*cit)))
 {
+  assert(cit != cend && "Empty range to hash.");
   std::size_t seed = hash(*cit);
   hash_combine(seed, cit + 1, cend);
   return seed;
