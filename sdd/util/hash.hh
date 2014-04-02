@@ -2,6 +2,7 @@
 #define _SDD_UTIL_HASH_HH_
 
 #include <algorithm> // for_each
+#include <assert.h>
 #include <iterator>
 
 namespace sdd { namespace util {
