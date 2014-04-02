@@ -68,11 +68,11 @@ struct to_dot_visitor
     const auto search = visited_.find(addr);
     if (search == visited_.end())
     {
+      os_ << "node_" << addr << " [label=\"" << +n.variable() << "\"];" << std::endl;
       for (const auto& arc : n)
       {
         const auto succ = visit(*this, arc.successor());
-        os_ << "node_" << addr << " [label=\"" << +n.variable() << "\"];" << std::endl
-            << "node_" << addr << " -> " << "node_" << succ
+        os_ << "node_" << addr << " -> " << "node_" << succ
             << " [label=\"" << arc.valuation() << "\"];"
             << std::endl;
       }
