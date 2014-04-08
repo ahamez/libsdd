@@ -15,6 +15,7 @@
 #include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/intersection.hh"
 #include "sdd/hom/sum.hh"
+#include "sdd/hom/xsum.hh"
 
 namespace sdd {
 
@@ -73,6 +74,28 @@ struct rewriter
 
     constexpr bool
     operator()(const _sum<C>&)
+    const noexcept
+    {
+      return true;
+    }
+
+    template <typename T>
+    constexpr bool
+    operator()(const T&)
+    const noexcept
+    {
+      return false;
+    }
+  };
+
+  /// @internal
+  /// @brief Tell if an homomorphism is xsum.
+  struct is_xsum
+  {
+    using result_type = bool;
+
+    constexpr bool
+    operator()(const _xsum<C>&)
     const noexcept
     {
       return true;
@@ -208,6 +231,21 @@ struct rewriter
     if ((not has_id) or (F.empty() and L.empty()))
     {
       return h;
+    }
+
+    for (const auto& g : G)
+    {
+      if (visit(is_xsum{}, g))
+      {
+        const auto x = mem::variant_cast<const _xsum<C>>(*g);
+        auto&& xp = partition(o, x.begin(), x.end());
+        auto& xF = std::get<0>(xp);
+        auto& xG = std::get<1>(xp);
+        auto& xL = std::get<2>(xp);
+        F.emplace_back(xsum(o.next(), xF.begin(), xF.end()));
+        G.emplace_back(xsum(o, xG.begin(), xG.end()));
+        L.emplace_back(xsum(o.nested(), xL.begin(), xL.end()));
+      }
     }
 
     // Don't forget to add id to F and L parts!.
