@@ -22,6 +22,7 @@
 #include "sdd/hom/saturation_intersection.hh"
 #include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
+#include "sdd/hom/xsum.hh"
 #include "sdd/mem/ptr.hh"
 #include "sdd/mem/ref_counted.hh"
 #include "sdd/mem/variant.hh"
@@ -55,6 +56,7 @@ private:
                       , hom::_saturation_sum<C>
                       , hom::_simple_expression<C>
                       , hom::_sum<C>
+                      , hom::_xsum<C>
                       >
           data_type;
 

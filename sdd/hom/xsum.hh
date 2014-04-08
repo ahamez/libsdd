@@ -68,24 +68,24 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
-    dd::sum_builder<C, SDD<C>> sum_operands;
-    sum_operands.reserve(size_);
     try
     {
       for (const auto& op : *this)
       {
         try
         {
-          sum_operands.add(op(cxt, o, x));
+          const auto res = op(cxt, o, x);
+          if (not res.empty())
+          {
+            return res;
+          }
         }
         catch (interrupt<C>& i)
         {
-          sum_operands.add(i.result());
-          i.result() = dd::sum(cxt.sdd_context(), std::move(sum_operands));
           throw;
         }
       }
-      return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+      return zero<C>();
     }
     catch (top<C>& t)
     {
@@ -159,7 +159,7 @@ private:
   operands_addr()
   const noexcept
   {
-    return reinterpret_cast<char*>(const_cast<_sum*>(this)) + sizeof(_sum);
+    return reinterpret_cast<char*>(const_cast<_xsum*>(this)) + sizeof(_xsum);
   }
 };
 
@@ -183,7 +183,7 @@ std::ostream&
 operator<<(std::ostream& os, const _xsum<C>& s)
 {
   os << "(";
-  std::copy(s.begin(), std::prev(s.end()), std::ostream_iterator<homomorphism<C>>(os, " x "));
+  std::copy(s.begin(), std::prev(s.end()), std::ostream_iterator<homomorphism<C>>(os, " xor "));
   return os << *std::prev(s.end()) << ")";
 }
 
@@ -212,14 +212,17 @@ struct xsum_builder_helper
   /// @brief Store all other operands.
   operands_type& operands_;
 
+  /// @brief Tell if the xsum contains an Id.
+  bool& has_id_;
+
   /// @brief Constructor.
-  xsum_builder_helper(locals_type& locals, operands_type& operands)
-    : locals_(locals), operands_(operands)
+  xsum_builder_helper(locals_type& locals, operands_type& operands, bool& has_id)
+    : locals_(locals), operands_(operands), has_id_(has_id)
   {}
 
   /// @brief Flatten nested sums.
   void
-  operator()(const _sum<C>& s, const homomorphism<C>&)
+  operator()(const _xsum<C>& s, const homomorphism<C>&)
   const
   {
     for (const auto& op : s)
@@ -237,6 +240,14 @@ struct xsum_builder_helper
     insertion.first->second.emplace_back(l.hom());
   }
 
+  /// @brief An Id was found.
+  void
+  operator()(const _identity<C>&, const homomorphism<C>&)
+  const noexcept
+  {
+    has_id_ = true;
+  }
+
   /// @brief Insert normally all other operands.
   template <typename T>
   void
@@ -251,7 +262,7 @@ struct xsum_builder_helper
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Create the sum homomorphism.
+/// @brief Create the xsum homomorphism.
 /// @related homomorphism
 template <typename C, typename InputIterator>
 homomorphism<C>
@@ -261,22 +272,28 @@ xsum(const order<C>& o, InputIterator begin, InputIterator end)
 
   if (size == 0)
   {
-    throw std::invalid_argument("Empty operands at sum construction.");
+    throw std::invalid_argument("Empty operands at xsum construction.");
   }
 
   boost::container::flat_set<homomorphism<C>> operands;
   operands.reserve(size);
-  typename hom::sum_builder_helper<C>::locals_type locals;
-  hom::sum_builder_helper<C> sbv{locals, operands};
+  typename hom::xsum_builder_helper<C>::locals_type locals;
+  bool has_id = false;
+  hom::xsum_builder_helper<C> sbv{locals, operands, has_id};
   for (; begin != end; ++begin)
   {
     visit_self(sbv, *begin);
   }
 
+  if (has_id)
+  {
+    return id<C>();
+  }
+
   // insert remaining locals
   for (const auto& l : locals)
   {
-    operands.insert(local<C>(l.first, sum(o, l.second.begin(), l.second.end())));
+    operands.insert(local<C>(l.first, xsum(o, l.second.begin(), l.second.end())));
   }
 
   if (operands.size() == 1)
@@ -286,20 +303,20 @@ xsum(const order<C>& o, InputIterator begin, InputIterator end)
   else
   {
     const std::size_t extra_bytes = operands.size() * sizeof(homomorphism<C>);
-    return homomorphism<C>::create_variable_size( mem::construct<hom::_sum<C>>()
+    return homomorphism<C>::create_variable_size( mem::construct<hom::_xsum<C>>()
                                                 , extra_bytes, operands);
   }
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Create the sum homomorphism.
+/// @brief Create the xsum homomorphism.
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-xor(const order<C>& o, std::initializer_list<homomorphism<C>> operands)
+xsum(const order<C>& o, std::initializer_list<homomorphism<C>> operands)
 {
-  return _xsum(o, operands.begin(), operands.end());
+  return xsum(o, operands.begin(), operands.end());
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -311,7 +328,7 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Hash specialization for sdd::hom::_xor.
+/// @brief Hash specialization for sdd::hom::_xsum.
 template <typename C>
 struct hash<sdd::hom::_xsum<C>>
 {
