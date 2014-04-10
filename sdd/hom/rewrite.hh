@@ -205,27 +205,34 @@ struct rewriter
     auto& L = std::get<2>(p);
     const bool has_id = std::get<3>(p);
 
-    if ((not has_id) or (F.empty() and L.empty()))
+    if ((not has_id))
     {
       return h;
     }
 
-    // Don't forget to add id to F and L parts!.
-    F.push_back(id<C>());
-    L.push_back(id<C>());
+
+    auto rewritten_F = id<C>();
+    if (not F.empty())
+    {
+      // Don't forget to add id to F!.
+      F.push_back(id<C>());
+      rewritten_F = rewrite(o.next(), fixpoint(sum(o.next(), F.begin(), F.end())));
+    }
+
+    auto rewritten_L = id<C>();
+    if (not L.empty())
+    {
+      // Don't forget to add id to L!.
+      L.push_back(id<C>());
+      rewritten_L
+        = local(o.position(), rewrite(o.nested(), fixpoint(sum(o.nested(), L.begin(), L.end()))));
+    }
 
     // Put selectors in front. It might help cut paths sooner in the Saturation Fixpoint's
     // evaluation.
     std::partition(G.begin(), G.end(), [](const homomorphism<C>& g){return g.selector();});
 
-    return saturation_fixpoint( o.variable()
-                             , rewrite(o.next(), fixpoint(sum(o.next(), F.begin(), F.end())))
-                             , G.begin(), G.end()
-                             , local( o.position()
-                                    , rewrite( o.nested()
-                                             , fixpoint(sum(o.nested(), L.begin(), L.end())))
-                                    )
-                             );
+    return saturation_fixpoint(o.variable(), rewritten_F, G.begin(), G.end(), rewritten_L);
   }
 
   /// @brief General case.
