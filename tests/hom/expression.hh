@@ -392,7 +392,7 @@ struct hom_expression_test
   const std::shared_ptr<indexed_ast<C>> ast3;
 
   hom_expression_test()
-    : m(sdd::manager<C>::init(small_conf<C>()))
+    : m(sdd::init(small_conf<C>()))
     , zero(sdd::zero<C>())
     , one(sdd::one<C>())
     , id(sdd::id<C>())

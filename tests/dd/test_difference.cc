@@ -22,7 +22,7 @@ struct difference_test
   const sdd::SDD<C> one;
 
   difference_test()
-    : m(sdd::manager<C>::init(small_conf<C>()))
+    : m(init(small_conf<C>()))
     , cxt(sdd::global<C>().sdd_context)
     , zero(sdd::zero<C>())
     , one(sdd::one<C>())

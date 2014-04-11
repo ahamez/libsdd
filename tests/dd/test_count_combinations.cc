@@ -21,7 +21,7 @@ struct count_combinations_test
   const sdd::SDD<C> one;
 
   count_combinations_test()
-    : m(sdd::manager<C>::init(small_conf<C>()))
+    : m(sdd::init(small_conf<C>()))
     , zero(sdd::zero<C>())
     , one(sdd::one<C>())
   {}

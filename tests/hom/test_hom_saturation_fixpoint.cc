@@ -27,7 +27,7 @@ struct hom_saturation_fixpoint_test
   const sdd::homomorphism<C> id;
 
   hom_saturation_fixpoint_test()
-    : m(sdd::manager<C>::init(small_conf<C>()))
+    : m(sdd::init(small_conf<C>()))
     , zero(sdd::zero<C>())
     , one(sdd::one<C>())
     , id(sdd::id<C>())
