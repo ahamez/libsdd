@@ -206,12 +206,12 @@ private:
       return operation == other.operation;
     }
 
-    /// @brief Get the number of hits, with the 'in use' bit possibly set.
+    /// @brief Get the last access date of this entry.
     std::uint32_t
-    raw_date()
+    date()
     const noexcept
     {
-      return date_;
+      return date_ & ~in_use_mask;
     }
 
     /// @brief Set this cache entry to a 'never accessed' state.
@@ -414,41 +414,39 @@ public:
     vec.reserve(set_.size());
     for (auto& e : set_)
     {
-      vec.push_back(&e);
+      if (not e.in_use())
+      {
+        vec.push_back(&e);
+      }
     }
 
     // Compute the number of elements to keep in order to reduce the load factor by a factor of 2.
     const std::size_t to_keep = static_cast<std::size_t>(max_size_ * max_load_factor_/2);
     const std::size_t cut_point = vec.size() - to_keep;
 
-    // Find the median of the number of hits.
+    // All entries after the entry at cut_point are more recent and more frequently used.
     std::nth_element( vec.begin(), vec.begin() + cut_point, vec.end()
                     , [](cache_entry* lhs, cache_entry* rhs)
                         {
-                          // We sort using the raw_date counter, with the 'in use' bit possibly
-                          // set. As this is the highest bit, the value of date may be large.
-                          // Thus, it's very unlikely that cache entries currently in use will be
-                          // put below the median.
-                          return lhs->raw_date() < rhs->raw_date();
+                          if (lhs->date() < rhs->date())
+                          {
+                            return true;
+                          }
+                          else if (lhs->date() == rhs->date())
+                          {
+                            return lhs->nb_hits() < rhs->nb_hits();
+                          }
+                          return false;
                         });
-
-    // Give a chance to frequently used elements, but not so recently, to live.
-    std::sort( vec.begin() + cut_point - (cut_point/2), vec.begin() + cut_point + (cut_point/2)
-             , [](cache_entry* lhs, cache_entry* rhs){return lhs->nb_hits() < rhs->nb_hits();});
 
     // Delete all cache entries with a number of entries smaller than the median.
     std::for_each( vec.begin(), vec.begin() + cut_point
                  , [&](cache_entry* e)
                       {
-                        if (not e->in_use())
-                        {
-                          const auto cit = set_.find(*e);
-                          if (cit != set_.end())
-                          {
-                            set_.erase(cit);
-                            delete e;
-                          }
-                        }
+                        const auto cit = set_.find(*e);
+                        assert(cit != set_.end());
+                        set_.erase(cit);
+                        delete e;
                       });
 
     // Reset the number of hits of all remaining cache entries.
