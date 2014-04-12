@@ -2,6 +2,7 @@
 #define _SDD_UTIL_HASH_HH_
 
 #include <algorithm> // for_each
+#include <assert.h>
 #include <iterator>
 
 namespace sdd { namespace util {
@@ -54,6 +55,7 @@ std::size_t
 hash(InputIterator cit, InputIterator cend)
 noexcept(noexcept(std::hash<typename std::decay<decltype(*cit)>::type>()(*cit)))
 {
+  assert(cit != cend && "Empty range to hash.");
   std::size_t seed = hash(*cit);
   hash_combine(seed, cit + 1, cend);
   return seed;

@@ -23,7 +23,7 @@ struct hom_id_test
   const sdd::SDD<C> one;
 
   hom_id_test()
-    : m(sdd::manager<C>::init(small_conf<C>()))
+    : m(sdd::init(small_conf<C>()))
     , cxt(sdd::global<C>().hom_context)
     , zero(sdd::zero<C>())
     , one(sdd::one<C>())
@@ -33,33 +33,35 @@ struct hom_id_test
 /*------------------------------------------------------------------------------------------------*/
 
 TYPED_TEST_CASE(hom_id_test, configurations);
-#include "tests/macros.hh"
 
 /*------------------------------------------------------------------------------------------------*/
 
 TYPED_TEST(hom_id_test, construction)
 {
-//  homomorphism h1 = id<conf>();
-//  homomorphism h2 = id<conf>();
-//  ASSERT_EQ(h1, h2);
+  using conf = typename TestFixture::configuration_type;
+  const auto h1 = sdd::id<conf>();
+  const auto h2 = sdd::id<conf>();
+  ASSERT_EQ(h1, h2);
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
 TYPED_TEST(hom_id_test, evaluation)
 {
-//  homomorphism h = id<conf>();
-//  ASSERT_EQ(one, h(order(order_builder()), one));
+  using conf = typename TestFixture::configuration_type;
+  const auto h = sdd::id<conf>();
+  ASSERT_EQ(this->one, h(sdd::order<conf>(sdd::order_builder<conf>()), this->one));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
 TYPED_TEST(hom_id_test, no_cache)
 {
-//  homomorphism h = id<conf>();
-//  ASSERT_EQ(0u, cxt.cache().size());
-//  ASSERT_EQ(one, h(cxt, order(order_builder()), one));
-//  ASSERT_EQ(0u, cxt.cache().size());
+  using conf = typename TestFixture::configuration_type;
+  const auto h = sdd::id<conf>();
+  ASSERT_EQ(0u, this->cxt.cache().size());
+  ASSERT_EQ(this->one, h(this->cxt, sdd::order<conf>(sdd::order_builder<conf>()), this->one));
+  ASSERT_EQ(0u, this->cxt.cache().size());
 }
 
 /*------------------------------------------------------------------------------------------------*/
