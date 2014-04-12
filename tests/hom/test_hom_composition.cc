@@ -25,7 +25,7 @@ struct hom_composition_test
   const sdd::homomorphism<C> id;
 
   hom_composition_test()
-    : m(sdd::manager<C>::init(small_conf<C>()))
+    : m(sdd::init(small_conf<C>()))
     , zero(sdd::zero<C>())
     , one(sdd::one<C>())
     , id(sdd::id<C>())

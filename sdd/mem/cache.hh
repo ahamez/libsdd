@@ -139,7 +139,7 @@ struct cache_statistics
 /// @tparam EvaluationError is the exception that the evaluation of an Operation can throw.
 /// @tparam Filters is a list of filters that reject some operations.
 ///
-/// It uses the LFU strategy to cleanup old entries.
+/// It uses the LRU strategy to cleanup old entries.
 template < typename Context, typename Operation, typename EvaluationError
          , typename... Filters>
 class cache
@@ -178,9 +178,11 @@ private:
     /// @brief The result of the evaluation of operation.
     const result_type result;
 
-    /// @brief Count the number of times this entry has been accessed.
+    /// @brief The last time this entry has been used.
     ///
-    /// Used by the LFU cache cleanup strategy.
+    /// Used by the LRU cache cleanup strategy.
+    std::uint32_t date_;
+
     std::uint32_t nb_hits_;
 
     /// brief The 'in use' bit position in nb_hits_.
@@ -192,7 +194,8 @@ private:
       : hook()
       , operation(std::move(op))
       , result(std::forward<Args>(args)...)
-      , nb_hits_(in_use_mask) // initially in use
+      , date_(in_use_mask) // initially in use
+      , nb_hits_(0)
     {}
 
     /// @brief Cache entries are only compared using their operations.
@@ -203,20 +206,44 @@ private:
       return operation == other.operation;
     }
 
-    /// @brief Get the number of hits, with the 'in use' bit possibly set.
-    unsigned int
-    raw_nb_hits()
+    /// @brief Get the last access date of this entry.
+    std::uint32_t
+    date()
     const noexcept
     {
-      return nb_hits_;
+      return date_ & ~in_use_mask;
     }
 
-    /// @brief Set this cache entry to a 'never used' state.
+    /// @brief Set this cache entry to a 'never accessed' state.
     void
-    reset_nb_hits()
+    reset_date()
     noexcept
     {
-      nb_hits_ &= in_use_mask;
+      date_ &= in_use_mask;
+    }
+
+    /// @brief Increment the number of hits.
+    void
+    set_date(std::uint32_t last_date)
+    noexcept
+    {
+      date_ = last_date | (date_ & in_use_mask);
+    }
+
+    /// @brief Set this cache entry to a 'not in use' state.
+    void
+    reset_in_use()
+    noexcept
+    {
+      date_ &= ~in_use_mask;
+    }
+
+    /// @brief Tell if this cache entry is in an 'in use' state.
+    bool
+    in_use()
+    const noexcept
+    {
+      return date_ & in_use_mask;
     }
 
     /// @brief Increment the number of hits.
@@ -227,20 +254,12 @@ private:
       ++nb_hits_;
     }
 
-    /// @brief Set this cache entry to a 'not in use' state.
-    void
-    reset_in_use()
-    noexcept
-    {
-      nb_hits_ &= ~in_use_mask;
-    }
-
-    /// @brief Tell if this cache entry is in an 'in use' state.
-    bool
-    in_use()
+    /// @brief Get the number of hits.
+    std::uint32_t
+    nb_hits()
     const noexcept
     {
-      return nb_hits_ & in_use_mask;
+      return nb_hits_;
     }
   };
 
@@ -279,6 +298,9 @@ private:
   /// @brief The statistics of this cache.
   cache_statistics stats_;
 
+  /// @brief The date of last access.
+  std::uint32_t date_;
+
 public:
 
   /// @brief Construct a cache.
@@ -287,7 +309,7 @@ public:
   /// @param size tells how many cache entries are keeped in the cache.
   ///
   /// When the maximal size is reached, a cleanup is launched: half of the cache is removed,
-  /// using an LFU strategy. This cache will never perform a rehash, therefore it allocates
+  /// using a LRU strategy. This cache will never perform a rehash, therefore it allocates
   /// all the memory it needs at its construction.
   cache(context_type& context, const std::string& name, std::size_t size)
     : cxt_(context)
@@ -296,6 +318,7 @@ public:
     , set_(size)
     , max_size_(set_.bucket_count())
     , stats_()
+    , date_(0)
   {}
 
   /// @brief Destructor.
@@ -336,6 +359,7 @@ public:
     if (not insertion.second)
     {
       ++stats_.rounds.front().hits;
+      insertion.first->set_date(++date_);
       insertion.first->increment_nb_hits();
       return insertion.first->result;
     }
@@ -375,7 +399,7 @@ public:
     return static_cast<double>(set_.size()) / static_cast<double>(max_size_);
   }
 
-  /// @brief Remove half of the cache (LFU strategy).
+  /// @brief Remove half of the cache (LRU strategy).
   void
   cleanup()
   {
@@ -390,41 +414,46 @@ public:
     vec.reserve(set_.size());
     for (auto& e : set_)
     {
-      vec.push_back(&e);
+      if (not e.in_use())
+      {
+        vec.push_back(&e);
+      }
     }
 
     // Compute the number of elements to keep in order to reduce the load factor by a factor of 2.
     const std::size_t to_keep = static_cast<std::size_t>(max_size_ * max_load_factor_/2);
     const std::size_t cut_point = vec.size() - to_keep;
 
-    // Find the median of the number of hits.
+    // All entries after the entry at cut_point are more recent and more frequently used.
     std::nth_element( vec.begin(), vec.begin() + cut_point, vec.end()
                     , [](cache_entry* lhs, cache_entry* rhs)
                         {
-                          // We sort using the raw nb_hits counter, with the 'in use' bit possibly
-                          // set. As this is the highest bit, the value of nb_hits may be large.
-                          // Thus, it's very unlikely that cache entries currently in use will be
-                          // put below the median.
-                          return lhs->raw_nb_hits() < rhs->raw_nb_hits();
+                          if (lhs->date() < rhs->date())
+                          {
+                            return true;
+                          }
+                          else if (lhs->date() == rhs->date())
+                          {
+                            return lhs->nb_hits() < rhs->nb_hits();
+                          }
+                          return false;
                         });
 
     // Delete all cache entries with a number of entries smaller than the median.
     std::for_each( vec.begin(), vec.begin() + cut_point
                  , [&](cache_entry* e)
                       {
-                        if (not e->in_use())
-                        {
-                          const auto cit = set_.find(*e);
-                          if (cit != set_.end())
-                          {
-                            set_.erase(cit);
-                            delete e;
-                          }
-                        }
+                        const auto cit = set_.find(*e);
+                        assert(cit != set_.end());
+                        set_.erase(cit);
+                        delete e;
                       });
 
     // Reset the number of hits of all remaining cache entries.
-    std::for_each(vec.begin() + cut_point, vec.end(), [](cache_entry* e){e->reset_nb_hits();});
+    std::for_each(vec.begin() + cut_point, vec.end(), [](cache_entry* e){e->reset_date();});
+
+    // Reset the global date.
+    date_ = 0;
   }
 
   /// @brief Remove all entries of the cache.

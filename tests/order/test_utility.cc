@@ -18,7 +18,7 @@ struct order_utility_test
   const sdd::SDD<C> one;
 
   order_utility_test()
-    : m(sdd::manager<C>::init(small_conf<C>()))
+    : m(sdd::init(small_conf<C>()))
     , zero(sdd::zero<C>())
     , one(sdd::one<C>())
   {}

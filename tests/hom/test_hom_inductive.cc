@@ -24,7 +24,7 @@ struct hom_inductive_test
   const sdd::homomorphism<C> id;
 
   hom_inductive_test()
-    : m(sdd::manager<C>::init(small_conf<C>()))
+    : m(sdd::init(small_conf<C>()))
     , zero(sdd::zero<C>())
     , one(sdd::one<C>())
     , id(sdd::id<C>())
