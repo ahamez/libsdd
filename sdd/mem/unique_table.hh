@@ -108,21 +108,13 @@ public:
     delete[] reinterpret_cast<const char*>(&x); // match new char[] of allocate().
   }
 
-  /// @brief Get the load factor of the internal hash table.
-  double
-  load_factor()
-  const noexcept
-  {
-    return static_cast<double>(set_.size()) / static_cast<double>(set_.bucket_count());
-  }
-
   /// @brief Get the statistics of this unique_table.
   const unique_table_statistics&
   stats()
   const noexcept
   {
     stats_.size = set_.size();
-    stats_.load_factor = load_factor();
+    stats_.load_factor = set_.load_factor();
     return stats_;
   }
 };
