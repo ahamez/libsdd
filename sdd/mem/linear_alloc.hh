@@ -30,7 +30,7 @@ private:
   const std::size_t size_;
 
   /// @brief The underlying memory buffer.
-  std::unique_ptr<char> buffer_;
+  std::unique_ptr<char[]> buffer_;
 
   /// @brief The beginning of the free memory.
   position_type position_;
