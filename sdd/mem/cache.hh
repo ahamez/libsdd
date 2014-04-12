@@ -183,6 +183,8 @@ private:
     /// Used by the LRU cache cleanup strategy.
     std::uint32_t date_;
 
+    std::uint32_t nb_hits_;
+
     /// brief The 'in use' bit position in nb_hits_.
     static constexpr std::uint32_t in_use_mask = (1u << 31);
 
@@ -193,6 +195,7 @@ private:
       , operation(std::move(op))
       , result(std::forward<Args>(args)...)
       , date_(in_use_mask) // initially in use
+      , nb_hits_(0)
     {}
 
     /// @brief Cache entries are only compared using their operations.
@@ -204,7 +207,7 @@ private:
     }
 
     /// @brief Get the number of hits, with the 'in use' bit possibly set.
-    unsigned int
+    std::uint32_t
     raw_date()
     const noexcept
     {
@@ -241,6 +244,22 @@ private:
     const noexcept
     {
       return date_ & in_use_mask;
+    }
+
+    /// @brief Increment the number of hits.
+    void
+    increment_nb_hits()
+    noexcept
+    {
+      ++nb_hits_;
+    }
+
+    /// @brief Get the number of hits.
+    std::uint32_t
+    nb_hits()
+    const noexcept
+    {
+      return nb_hits_;
     }
   };
 
@@ -341,6 +360,7 @@ public:
     {
       ++stats_.rounds.front().hits;
       insertion.first->set_date(++date_);
+      insertion.first->increment_nb_hits();
       return insertion.first->result;
     }
 
@@ -411,6 +431,10 @@ public:
                           // put below the median.
                           return lhs->raw_date() < rhs->raw_date();
                         });
+
+    // Give a chance to frequently used elements, but not so recently, to live.
+    std::sort( vec.begin() + cut_point - (cut_point/2), vec.begin() + cut_point + (cut_point/2)
+             , [](cache_entry* lhs, cache_entry* rhs){return lhs->nb_hits() < rhs->nb_hits();});
 
     // Delete all cache entries with a number of entries smaller than the median.
     std::for_each( vec.begin(), vec.begin() + cut_point
