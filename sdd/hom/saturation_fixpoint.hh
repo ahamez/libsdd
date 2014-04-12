@@ -93,8 +93,14 @@ public:
 
         try
         {
-          s2 = F_(cxt, o, s2); // apply (F + Id)*
-          s2 = L_(cxt, o, s2); // apply (L + Id)*
+          if (F_ != id<C>())
+          {
+            s2 = F_(cxt, o, s2); // apply (F + Id)*
+          }
+          if (L_ != id<C>())
+          {
+            s2 = L_(cxt, o, s2); // apply (L + Id)*
+          }
         }
         catch (interrupt<C>& i)
         {
