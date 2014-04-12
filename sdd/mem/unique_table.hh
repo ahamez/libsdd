@@ -4,7 +4,6 @@
 #include <cassert>
 
 #include "sdd/mem/hash_table.hh"
-#include "sdd/util/boost_flat_map_no_warnings.hh"
 
 namespace sdd { namespace mem {
 
@@ -55,32 +54,13 @@ private:
   /// @brief The statistics of this unique_table.
   mutable unique_table_statistics stats_;
 
-  /// @brief Index re-usable memory blocks by size.
-  boost::container::flat_multimap<std::size_t, char*> blocks_;
-
-  /// @brief The number of re-usable memory blocks to keep.
-  static constexpr std::size_t nb_blocks = 4096;
-
 public:
 
   /// @brief Constructor.
   /// @param initial_size Initial capacity of the container.
   unique_table(std::size_t initial_size)
-    : set_(initial_size)
-    , stats_()
-    , blocks_()
-  {
-    blocks_.reserve(nb_blocks);
-  }
-
-  /// @brief Destructor.
-  ~unique_table()
-  {
-    for (auto& b : blocks_)
-    {
-      delete[] b.second;
-    }
-  }
+    : set_(initial_size), stats_()
+  {}
 
   /// @brief Unify a data.
   /// @param ptr A pointer to a data constructed with a placement new into the storage returned by
@@ -94,19 +74,9 @@ public:
     auto insertion = set_.insert(*ptr);
     if (not insertion.second)
     {
-      // The inserted Unique already exists. We keep its allocated memory to avoid deallocating
-      // memory each time there is a hit.
       ++stats_.hits;
-      const std::size_t size = sizeof(Unique) + ptr->extra_bytes();
       ptr->~Unique();
-      if (blocks_.size() == nb_blocks)
-      {
-        // Erase last block (the biggest one).
-        auto it = blocks_.end() - 1;
-        delete[] it->second;
-        blocks_.erase(it);
-      }
-      blocks_.emplace(size, reinterpret_cast<char*>(ptr));
+      delete[] reinterpret_cast<const char*>(ptr);  // match new char[] of allocate().
     }
     else
     {
@@ -120,19 +90,7 @@ public:
   char*
   allocate(std::size_t extra_bytes)
   {
-    const std::size_t size = sizeof(Unique) + extra_bytes;
-    const auto it = blocks_.lower_bound(size);
-    if (it != blocks_.end() and it->first <= (2 * size))
-    {
-      // re-use allocated blocks
-      char* addr = it->second;
-      blocks_.erase(it);
-      return addr;
-    }
-    else
-    {
-      return new char[size];
-    }
+    return new char[sizeof(Unique) + extra_bytes];
   }
 
   /// @brief Erase the given unified data.
