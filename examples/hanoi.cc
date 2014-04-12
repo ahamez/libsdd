@@ -184,7 +184,7 @@ struct hash<swap_pole>
 int
 main(int argc, char** argv)
 {
-  auto manager = sdd::manager<conf>::init();
+  auto manager = sdd::init<conf>();
 
   // The default number of rings
   unsigned int nb_rings = 5;
