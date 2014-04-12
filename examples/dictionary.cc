@@ -23,7 +23,7 @@ int
 main(int argc, char** argv)
 {
   // Intialize the library.
-  auto manager = sdd::manager<conf>::init();
+  auto manager = sdd::init<conf>();
 
   // We need a dictionary.
   if (argc < 2)
