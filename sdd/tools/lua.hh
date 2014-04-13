@@ -101,8 +101,6 @@ struct to_lua_visitor
     const auto insertion = cache_.emplace(reinterpret_cast<const char*>(&n), result_type());
     if (insertion.second)
     {
-      using arc_type = typename flat_node<C>::arc_type;
-
       std::vector<result_type> succs;
       succs.reserve(n.size());
 
