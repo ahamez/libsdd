@@ -31,6 +31,9 @@ struct unique_table_statistics
 
   /// @brief The number of misses.
   std::size_t misses;
+
+  /// @brief The number of times the underlying hash table has been rehashed.
+  std::size_t rehash;
 };
 
 } // namespace anonymous
@@ -115,6 +118,7 @@ public:
   {
     stats_.size = set_.size();
     stats_.load_factor = set_.load_factor();
+    stats_.rehash = set_.nb_rehash();
     return stats_;
   }
 };

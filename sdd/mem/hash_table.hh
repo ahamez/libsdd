@@ -172,8 +172,11 @@ private:
   /// @brief
   Data** buckets_;
 
-  /// @brief
+  /// @brief The maximal allowed load factor.
   const double max_load_factor_;
+
+  /// @brief The number of times this hash table has been rehashed.
+  std::size_t rehash_;
 
 public:
 
@@ -183,6 +186,7 @@ public:
     , size_(0)
     , buckets_(new Data*[nb_buckets_])
     , max_load_factor_(max_load_factor)
+    , rehash_(0)
   {
     std::fill(buckets_, buckets_ + nb_buckets_, nullptr);
   }
@@ -372,6 +376,14 @@ public:
     return static_cast<double>(size()) / static_cast<double>(bucket_count());
   }
 
+  /// @brief The number of times this hash table has been rehashed.
+  std::size_t
+  nb_rehash()
+  const noexcept
+  {
+    return rehash_;
+  }
+
 private:
 
   void
@@ -381,6 +393,7 @@ private:
     {
       return;
     }
+    ++rehash_;
 
     auto new_nb_buckets = nb_buckets_ * 2;
     auto new_buckets = new Data*[new_nb_buckets];
