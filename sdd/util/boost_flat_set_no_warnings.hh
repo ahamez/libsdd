@@ -3,15 +3,12 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
-//#pragma GCC diagnostic push
-
+#pragma GCC diagnostic push
 #if defined(__GNUC__) && !defined(__clang__)
 # pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #endif
-
 #include <boost/container/flat_set.hpp>
-
-//#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
 
 /*------------------------------------------------------------------------------------------------*/
 
