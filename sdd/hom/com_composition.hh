@@ -33,7 +33,7 @@ class LIBSDD_ATTRIBUTE_PACKED _com_composition
 {
 public:
 
-  /// @brief The type of a const iterator on this sum's operands.
+  /// @brief The type of a const iterator on operands.
   using const_iterator = const homomorphism<C>*;
 
 private:
@@ -298,7 +298,7 @@ com_composition(const order<C>& o, InputIterator begin, InputIterator end)
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Create the sum homomorphism.
+/// @brief Create the commutative composition homomorphism.
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
