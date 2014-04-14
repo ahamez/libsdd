@@ -88,3 +88,19 @@ TYPED_TEST(hom_com_composition_test, evaluation)
 }
 
 /*------------------------------------------------------------------------------------------------*/
+
+TYPED_TEST(hom_com_composition_test, saturation)
+{
+  {
+    order o = order_builder {"a", "b", "c"};
+    const auto h1 = inductive<conf>(targeted_incr<conf>("a",1));
+    const auto h2 = inductive<conf>(targeted_incr<conf>("b",1));
+    const auto h3 = inductive<conf>(targeted_incr<conf>("c",1));
+    SDD s0(o, [](const std::string&){return values_type {0};});
+    const auto h = rewrite(o, com_composition(o, {h1, h2, h3}));
+    SDD s1(o, [](const std::string&){return values_type {1};});
+    ASSERT_EQ(s1, h(o, s0));
+  }
+}
+
+/*------------------------------------------------------------------------------------------------*/

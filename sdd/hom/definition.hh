@@ -19,6 +19,7 @@
 #include "sdd/hom/inductive.hh"
 #include "sdd/hom/intersection.hh"
 #include "sdd/hom/local.hh"
+#include "sdd/hom/saturation_com_composition.hh"
 #include "sdd/hom/saturation_fixpoint.hh"
 #include "sdd/hom/saturation_intersection.hh"
 #include "sdd/hom/saturation_sum.hh"
@@ -52,6 +53,7 @@ private:
                       , hom::_inductive<C>
                       , hom::_intersection<C>
                       , hom::_local<C>
+                      , hom::_saturation_com_composition<C>
                       , hom::_saturation_fixpoint<C>
                       , hom::_saturation_intersection<C>
                       , hom::_saturation_sum<C>

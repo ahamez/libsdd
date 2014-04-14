@@ -5,11 +5,13 @@
 #include <deque>
 #include <tuple>
 
+#include "sdd/hom/com_composition.hh"
 #include "sdd/hom/common_types.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/fixpoint.hh"
 #include "sdd/hom/local.hh"
+#include "sdd/hom/saturation_com_composition.hh"
 #include "sdd/hom/saturation_fixpoint.hh"
 #include "sdd/hom/saturation_intersection.hh"
 #include "sdd/hom/saturation_sum.hh"
@@ -151,6 +153,35 @@ struct rewriter
                                                         ))
                                         : optional_homomorphism<C>()
                          );
+  }
+
+  /// @brief Rewrite commutative composition, if possible.
+  homomorphism<C>
+  operator()(const _com_composition<C>& s, const homomorphism<C>& h, const order<C>& o)
+  const
+  {
+    auto&& p = partition(o, s.begin(), s.end());
+    auto& F = std::get<0>(p);
+    auto& G = std::get<1>(p);
+    auto& L = std::get<2>(p);
+    assert(not std::get<3>(p) && "commutative composition with an id in operands");
+
+    if (F.size() == 0 and L.size() == 0)
+    {
+      return h;
+    }
+
+    return saturation_com_composition( o.variable()
+                           , F.size() > 0 ? rewrite( o.next()
+                                                   , com_composition(o.next(), F.begin(), F.end()))
+                                          : optional_homomorphism<C>()
+                           , G.begin(), G.end()
+                           , L.size() > 0 ? local( o.position()
+                                                 , rewrite( o.nested()
+                                                          , com_composition( o.nested(), L.begin()
+                                                                           , L.end())))
+                                          : optional_homomorphism<C>()
+                           );
   }
 
   /// @brief Rewrite intersection into a Saturation intersection, if possible.
