@@ -6,6 +6,7 @@
 #include <tuple>
 
 #include "sdd/hom/com_composition.hh"
+#include "sdd/hom/composition.hh"
 #include "sdd/hom/common_types.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
@@ -218,6 +219,14 @@ struct rewriter
                            );
   }
 
+  /// @brief Rewrite operands of composition.
+  homomorphism<C>
+  operator()(const _composition<C>& c, const homomorphism<C>&, const order<C>& o)
+  const
+  {
+    return composition(rewrite(o, c.left()), rewrite(o, c.right()));
+  }
+
   /// @brief Rewrite a Fixpoint into a Saturation Fixpoint, if possible.
   homomorphism<C>
   operator()(const _fixpoint<C>& f, const homomorphism<C>& h, const order<C>& o)
@@ -241,6 +250,12 @@ struct rewriter
       return h;
     }
 
+    std::transform( F.begin(), F.end(), F.begin()
+                  , [&](const homomorphism<C>& x){return rewrite(o.next(), x);});
+    std::transform( G.begin(), G.end(), G.begin()
+                  , [&](const homomorphism<C>& x){return rewrite(o, x);});
+    std::transform( L.begin(), L.end(), L.begin()
+                  , [&](const homomorphism<C>& x){return rewrite(o.nested(), x);});
 
     auto rewritten_F = id<C>();
     if (not F.empty())
