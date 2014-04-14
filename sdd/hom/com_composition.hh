@@ -282,6 +282,7 @@ com_composition(const order<C>& o, InputIterator begin, InputIterator end)
 
   if (operands.size() == 0)
   {
+    // There were only id in operands.
     return id<C>();
   }
   else if (operands.size() == 1)
