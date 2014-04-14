@@ -334,7 +334,7 @@ template <typename C>
 std::ostream&
 operator<<(std::ostream& os, const _function<C>& x)
 {
-  os << "Function(" << x.target() << ", ";
+  os << "fun(" << x.target() << ", ";
   x.fun().print(os);
   return os << ")";
 }
