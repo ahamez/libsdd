@@ -262,7 +262,7 @@ com_composition(const order<C>& o, InputIterator begin, InputIterator end)
 
   if (size == 0)
   {
-    throw std::invalid_argument("Empty operands at commutative composition construction.");
+    return id<C>();
   }
 
   boost::container::flat_set<homomorphism<C>> operands;
