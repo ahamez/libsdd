@@ -30,6 +30,22 @@ struct hom_to_dot_visitor
   {}
 
   result_type
+  operator()(const hom::_com_composition<C>& h)
+  const
+  {
+    if (not visited(h))
+    {
+      os_ << node("h", &h) << " [label=\"+o+\"];" << std::endl;
+      for (const auto& operand : h)
+      {
+        const auto n = visit(*this, operand);
+        os_ << node("h", &h) << " -> " << n << ";" << std::endl;
+      }
+    }
+    return node("h", &h);
+  }
+
+  result_type
   operator()(const hom::_composition<C>& h)
   const
   {
