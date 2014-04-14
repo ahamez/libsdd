@@ -178,15 +178,19 @@ private:
   /// @brief The number of times this hash table has been rehashed.
   std::size_t rehash_;
 
+  /// @brief
+  const bool no_rehash_;
+
 public:
 
   /// @brief Constructor
-  hash_table(std::size_t size, double max_load_factor = 0.75)
+  hash_table(std::size_t size, double max_load_factor = 0.75, bool no_rehash = false)
     : nb_buckets_(util::next_power_of_2(static_cast<std::uint32_t>(size)))
     , size_(0)
     , buckets_(new Data*[nb_buckets_])
     , max_load_factor_(max_load_factor)
     , rehash_(0)
+    , no_rehash_(no_rehash)
   {
     std::fill(buckets_, buckets_ + nb_buckets_, nullptr);
   }
@@ -389,12 +393,11 @@ private:
   void
   rehash()
   {
-    if (load_factor() < max_load_factor_)
+    if (no_rehash_ or (load_factor() < max_load_factor_))
     {
       return;
     }
     ++rehash_;
-
     auto new_nb_buckets = nb_buckets_ * 2;
     auto new_buckets = new Data*[new_nb_buckets];
     std::fill(new_buckets, new_buckets + new_nb_buckets, nullptr);
