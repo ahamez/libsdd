@@ -183,9 +183,7 @@ private:
     /// Used by the LRU cache cleanup strategy.
     std::uint32_t date_;
 
-    std::uint32_t nb_hits_;
-
-    /// brief The 'in use' bit position in nb_hits_.
+    /// brief The 'in use' bit position in date_.
     static constexpr std::uint32_t in_use_mask = (1u << 31);
 
     /// @brief Constructor.
@@ -195,7 +193,6 @@ private:
       , operation(std::move(op))
       , result(std::forward<Args>(args)...)
       , date_(in_use_mask) // initially in use
-      , nb_hits_(0)
     {}
 
     /// @brief Cache entries are only compared using their operations.
@@ -222,7 +219,7 @@ private:
       date_ &= in_use_mask;
     }
 
-    /// @brief Increment the number of hits.
+    /// @brief Set the date of the last access.
     void
     set_date(std::uint32_t last_date)
     noexcept
@@ -244,22 +241,6 @@ private:
     const noexcept
     {
       return date_ & in_use_mask;
-    }
-
-    /// @brief Increment the number of hits.
-    void
-    increment_nb_hits()
-    noexcept
-    {
-      ++nb_hits_;
-    }
-
-    /// @brief Get the number of hits.
-    std::uint32_t
-    nb_hits()
-    const noexcept
-    {
-      return nb_hits_;
     }
   };
 
@@ -359,7 +340,6 @@ public:
     {
       ++stats_.rounds.front().hits;
       insertion.first->set_date(++date_);
-      insertion.first->increment_nb_hits();
       return insertion.first->result;
     }
 
@@ -387,6 +367,7 @@ public:
 
     // A cache entry is constructed with the 'in use' bit set.
     entry->reset_in_use();
+    entry->set_date(++date_);
     set_.insert_commit(*entry, commit_data); // doesn't throw
 
     return entry->result;
@@ -409,13 +390,14 @@ public:
     {
       if (not e.in_use())
       {
+        // A possible candidate for removal.
         vec.push_back(&e);
       }
     }
 
     if (vec.empty())
     {
-      // Can't clean the cache for now, all entries are in use.
+      // Can't clean the cache for now, all entries are in use or were already erased.
       return;
     }
     else if (vec.size() < max_size_ / 2)
@@ -433,23 +415,11 @@ public:
     }
     else // vec.size() >= max_size / 2
     {
-      const std::size_t to_keep = static_cast<std::size_t>(max_size_ / 2);
-      const std::size_t cut_point = vec.size() - to_keep;
+      const std::size_t cut_point = static_cast<std::size_t>(max_size_ / 2);
 
-      // All entries after the entry at cut_point are more recent and more frequently used.
+      // All entries after the entry at cut_point are more recent than this entry.
       std::nth_element( vec.begin(), vec.begin() + cut_point, vec.end()
-                      , [](cache_entry* lhs, cache_entry* rhs)
-                          {
-                            if (lhs->date() < rhs->date())
-                            {
-                              return true;
-                            }
-                            else if (lhs->date() == rhs->date())
-                            {
-                              return lhs->nb_hits() < rhs->nb_hits();
-                            }
-                            return false;
-                          });
+                      , [](cache_entry* lhs, cache_entry* rhs){return lhs->date() < rhs->date();});
 
       // Delete all cache entries with a number of entries smaller than the median.
       std::for_each( vec.begin(), vec.begin() + cut_point
