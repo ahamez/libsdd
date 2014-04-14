@@ -27,7 +27,7 @@ public:
 
   /// @brief Homomorphism evaluation cache type.
   using cache_type = mem::cache< context, cached_homomorphism<C>, evaluation_error<C>
-                               , should_cache<C>, one_terminal_evaluation<C>>;
+                               , should_cache<C>>;
 
   /// @brief SDD operation context type.
   using sdd_context_type = sdd::dd::context<C>;

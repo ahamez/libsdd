@@ -194,25 +194,6 @@ struct should_cache
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @internal
-/// @brief Used by the cache as a filter to know if an homomorphism should be cached.
-template <typename C>
-struct one_terminal_evaluation
-{
-  /// @brief Needed by me::variant.
-  using result_type = bool;
-
-  /// @brief Application of should_cache.
-  bool
-  operator()(const cached_homomorphism<C>& ch)
-  const noexcept
-  {
-    return ch.sdd != one<C>();
-  }
-};
-
-/*------------------------------------------------------------------------------------------------*/
-
 }} // namespace sdd::hom
 
 namespace std {

@@ -23,12 +23,13 @@ template<class Archive>
 void
 save(Archive& archive, const unique_table_statistics& s)
 {
-  archive( cereal::make_nvp("#", static_cast<unsigned int>(s.size))
-         , cereal::make_nvp("# peak", static_cast<unsigned int>(s.peak))
-         , cereal::make_nvp("# accesses", static_cast<unsigned int>(s.access))
-         , cereal::make_nvp("# hits", static_cast<unsigned int>(s.hits))
-         , cereal::make_nvp("# misses", static_cast<unsigned int>(s.misses))
-         , cereal::make_nvp("load factor", static_cast<unsigned int>(s.load_factor))
+  archive( cereal::make_nvp("#", s.size)
+         , cereal::make_nvp("# peak", s.peak)
+         , cereal::make_nvp("# accesses", s.access)
+         , cereal::make_nvp("# hits", s.hits)
+         , cereal::make_nvp("# misses", s.misses)
+         , cereal::make_nvp("# rehash", s.rehash)
+         , cereal::make_nvp("load factor", s.load_factor)
          );
 }
 
@@ -38,9 +39,9 @@ template<class Archive>
 void
 save(Archive& archive, const cache_statistics::round& r)
 {
-  archive( cereal::make_nvp("# hits", static_cast<unsigned int>(r.hits))
-         , cereal::make_nvp("# misses", static_cast<unsigned int>(r.misses))
-         , cereal::make_nvp("# filtered", static_cast<unsigned int>(r.filtered))
+  archive( cereal::make_nvp("# hits", r.hits)
+         , cereal::make_nvp("# misses", r.misses)
+         , cereal::make_nvp("# filtered", r.filtered)
          );
 }
 
@@ -50,7 +51,7 @@ template<class Archive>
 void
 save(Archive& archive, const cache_statistics& s)
 {
-  archive( cereal::make_nvp("# cleanup", static_cast<unsigned int>(s.cleanups()))
+  archive( cereal::make_nvp("# cleanup", s.cleanups())
          , cereal::make_nvp("total", s.total())
          , cereal::make_nvp("rounds", s.rounds)
          );
@@ -84,7 +85,7 @@ template<typename C, typename Archive>
 void
 save(Archive& archive, const sdd_statistics<C>& stats)
 {
-  archive( cereal::make_nvp("bytes", static_cast<unsigned int>(stats.bytes))
+  archive( cereal::make_nvp("bytes", stats.bytes)
          , cereal::make_nvp("flat nodes", stats.all_nodes.first)
          , cereal::make_nvp("hierarchical nodes", stats.all_nodes.second)
          , cereal::make_nvp("flat arcs", stats.all_arcs.first)
