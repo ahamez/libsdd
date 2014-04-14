@@ -14,6 +14,7 @@ set(SOURCES
     dd/test_path_generator.cc
     dd/test_sum.cc
     dd/test_top.cc
+    hom/test_hom_com_composition.cc
     hom/test_hom_composition.cc
     hom/test_hom_cons.cc
     hom/test_hom_expression.cc

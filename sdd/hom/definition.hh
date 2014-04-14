@@ -6,6 +6,7 @@
 #include "sdd/internal_manager_fwd.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/sum.hh"
+#include "sdd/hom/com_composition.hh"
 #include "sdd/hom/composition.hh"
 #include "sdd/hom/cons.hh"
 #include "sdd/hom/constant.hh"
@@ -37,7 +38,8 @@ class homomorphism final
 private:
 
   /// @brief A canonized homomorphism.
-  typedef mem::variant< hom::_composition<C>
+  typedef mem::variant< hom::_com_composition<C>
+                      , hom::_composition<C>
                       , hom::_cons<C, SDD<C>>
                       , hom::_cons<C, typename C::Values>
                       , hom::_constant<C>

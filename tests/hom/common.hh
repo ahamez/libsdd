@@ -5,6 +5,7 @@
 
 /*------------------------------------------------------------------------------------------------*/
 
+using sdd::com_composition;
 using sdd::composition;
 using sdd::cons;
 using sdd::expression;
