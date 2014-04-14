@@ -362,12 +362,16 @@ public:
       throw;
     }
 
+    // A cache entry is constructed with the 'in use' bit set.
+    entry->reset_in_use();
+
     // Clean up the cache, if necessary.
     cleanup();
 
-    // A cache entry is constructed with the 'in use' bit set.
-    entry->reset_in_use();
+    // Update the last access date.
     entry->set_date(++date_);
+
+    // Finally, set the result associated to op.
     set_.insert_commit(*entry, commit_data); // doesn't throw
 
     return entry->result;
