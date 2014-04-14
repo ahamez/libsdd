@@ -91,6 +91,33 @@ struct hom_to_dot_visitor
   }
 
   result_type
+  operator()(const hom::_saturation_com_composition<C>& h)
+  const
+  {
+    if (not visited(h))
+    {
+      os_ << node("h", &h) << " [label=\"$o\"];" << std::endl;
+      if (h.F())
+      {
+        const auto f = visit(*this, *h.F());
+        os_ << node("h", &h) << " -> " << f << " [label=\"F\"];" << std::endl;
+      }
+      unsigned int i = 0;
+      for (auto g_it = h.G().begin(); g_it != h.G().end(); ++g_it, ++i)
+      {
+        const auto g = visit(*this, *g_it);
+        os_ << node("h", &h) << " -> " << g << " [label=\"g" << i << "\"];" << std::endl;
+      }
+      if (h.L())
+      {
+        const auto l = visit(*this, *h.L());
+        os_ << node("h", &h) << " -> " << l << " [label=\"L\"];"<< std::endl;
+      }
+    }
+    return node("h", &h);
+  }
+
+  result_type
   operator()(const hom::_saturation_fixpoint<C>& h)
   const
   {
