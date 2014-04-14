@@ -267,7 +267,7 @@ com_composition(const order<C>& o, InputIterator begin, InputIterator end)
 
   boost::container::flat_set<homomorphism<C>> operands;
   operands.reserve(size);
-  typename hom::sum_builder_helper<C>::locals_type locals;
+  typename hom::com_composition_builder_helper<C>::locals_type locals;
   hom::com_composition_builder_helper<C> sbv{locals, operands};
   for (; begin != end; ++begin)
   {
