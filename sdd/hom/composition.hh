@@ -7,6 +7,7 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/identity.hh"
+#include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
@@ -102,21 +103,59 @@ operator<<(std::ostream& os, const _composition<C>& c)
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
+/// @brief Help optimize a composition' operands.
+template <typename C>
+struct composition_builder_helper
+{
+  /// @brief Used by mem::variant.
+  using result_type = homomorphism<C>;
+
+  /// @brief Regroup locals.
+  result_type
+  operator()( const hom::_local<C>& l, const hom:: _local<C>& r
+            , const homomorphism<C>& lorig, const homomorphism<C>& rorig)
+  const
+  {
+    if (l.target() == r.target())
+    {
+      return local(l.target(), composition(l.hom(), r.hom()));
+    }
+    else
+    {
+      return homomorphism<C>::create(mem::construct<hom::_composition<C>>(), lorig, rorig);
+    }
+  }
+
+  template <typename T, typename U>
+  result_type
+  operator()(const T&, const U&, const homomorphism<C>& left, const homomorphism<C>& right)
+  const
+  {
+    if (left == id<C>())
+    {
+      return right;
+    }
+    else if (right == id<C>())
+    {
+      return left;
+    }
+    else
+    {
+      return homomorphism<C>::create(mem::construct<hom::_composition<C>>(), left, right);
+    }
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
 /// @brief Create the composition homomorphism.
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
 composition(const homomorphism<C>& left, const homomorphism<C>& right)
 {
-  if (left == id<C>())
-  {
-    return right;
-  }
-  else if (right == id<C>())
-  {
-    return left;
-  }
-  return homomorphism<C>::create(mem::construct<hom::_composition<C>>(), left, right);
+  return binary_visit_self(composition_builder_helper<C>(), left, right);
 }
 
 /*------------------------------------------------------------------------------------------------*/
