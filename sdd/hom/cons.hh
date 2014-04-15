@@ -6,6 +6,7 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
+#include "sdd/hom/traits.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {

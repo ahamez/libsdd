@@ -6,6 +6,7 @@
 
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/interrupt.hh"
+#include "sdd/hom/traits.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
@@ -94,16 +95,6 @@ struct evaluation
       return h(cxt, o, x);
     }
   }
-};
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Default traits for homomorphisms.
-template <typename T>
-struct homomorphism_traits
-{
-  static constexpr bool should_cache = true;
 };
 
 /*------------------------------------------------------------------------------------------------*/
