@@ -426,37 +426,24 @@ private:
   {
     const std::uint32_t pos = Hash()(*x) & (nb_buckets - 1);
 
-    Data* previous = nullptr;
     Data* current = buckets[pos];
-    bool insertion = true;
 
     while (current != nullptr)
     {
       if (*x == *current)
       {
-        insertion = false;
-        break;
+        return std::make_pair(iterator(this, pos, current), false /* no insertion */);
       }
-      previous = current;
       current = current->hook.next;
     }
 
-    if (insertion)
-    {
-      if (previous != nullptr)
-      {
-        previous->hook.next = x;
-      }
-      else
-      {
-        buckets[pos] = x;
-      }
+    // Push in front of the list.
+    x->hook.next = buckets[pos];
+    buckets[pos] = x;
 
-      current = x;
-      ++size_;
-    }
-
-    return std::make_pair(iterator(this, pos, current), insertion);
+    current = x;
+    ++size_;
+    return std::make_pair(iterator(this, pos, current), true /* insertion */);
   }
 };
 
