@@ -183,8 +183,14 @@ private:
     /// Used by the LRU cache cleanup strategy.
     std::uint32_t date_;
 
+    /// @brief Number of time this entry was used.
+    std::uint32_t hits_;
+
     /// brief The 'in use' bit position in date_.
     static constexpr std::uint32_t in_use_mask = (1u << 31);
+
+    /// brief The 'flag' bit position in hits_.
+    static constexpr std::uint32_t flag_mask = (1u << 31);
 
     /// @brief Constructor.
     template <typename... Args>
@@ -193,6 +199,7 @@ private:
       , operation(std::move(op))
       , result(std::forward<Args>(args)...)
       , date_(in_use_mask) // initially in use
+      , hits_(0)
     {}
 
     /// @brief Cache entries are only compared using their operations.
@@ -241,6 +248,46 @@ private:
     const noexcept
     {
       return date_ & in_use_mask;
+    }
+
+    /// @brief Return the number of time this entry was used.
+    std::uint32_t
+    hits()
+    const noexcept
+    {
+      return hits_ & ~flag_mask;
+    }
+
+    /// @brief Increment hit.
+    void
+    increment_hits()
+    noexcept
+    {
+      ++hits_;
+    }
+
+    /// @brief Tell if this entry is flagged.
+    bool
+    flagged()
+    noexcept
+    {
+      return hits_ & flag_mask;
+    }
+
+    /// @brief Flag this entry.
+    void
+    flag()
+    noexcept
+    {
+      hits_ |= flag_mask;
+    }
+
+    /// @brief Unflag this entry.
+    void
+    unflag()
+    noexcept
+    {
+      hits_ &= ~flag_mask;
     }
   };
 
@@ -419,20 +466,47 @@ public:
     }
     else // vec.size() >= max_size / 2
     {
-      const std::size_t cut_point = static_cast<std::size_t>(max_size_ / 2);
+      // Remove from the set of candidates to deletion the 10% most recent entries, they might be
+      // useful in the next run.
+      std::nth_element( vec.begin(), vec.begin() + vec.size() * 0.9, vec.end()
+                      , [](cache_entry* lhs, cache_entry* rhs){return lhs->date() < rhs->date();});
+      vec.erase(vec.begin() + vec.size() * 0.9, vec.end());
 
-      // All entries after the entry at cut_point are more recent than this entry.
-      std::nth_element( vec.begin(), vec.begin() + cut_point, vec.end()
+      // Find the median element with regard to the date.
+      std::nth_element( vec.begin(), vec.begin() + vec.size() / 2, vec.end()
                       , [](cache_entry* lhs, cache_entry* rhs){return lhs->date() < rhs->date();});
 
-      // Delete all cache entries with a number of entries smaller than the median.
-      std::for_each( vec.begin(), vec.begin() + cut_point
-                    , [&](cache_entry* e)
-                    {
-                      const auto cit = set_.find(*e);
-                      assert(cit != set_.end());
-                      set_.erase(cit);
-                      delete e;
+      // Flag all recent entries.
+      std::for_each( vec.begin() + vec.size() / 2, vec.end()
+                   , [](cache_entry* e){e->flag();});
+
+      // Now, find the median element with regard to the number of hits.
+      std::nth_element( vec.begin(), vec.begin() + vec.size() / 2, vec.end()
+                      , [](cache_entry* lhs, cache_entry* rhs){return lhs->hits() < rhs->hits();});
+
+      // Finally, keep all elements above the hits median that were flagged as recent elements.
+      std::for_each( vec.begin(), vec.begin() + vec.size() / 2
+                   , [&](cache_entry* e)
+                     {
+                       const auto cit = set_.find(*e);
+                       assert(cit != set_.end());
+                       set_.erase(cit);
+                       delete e;
+                    });
+      std::for_each( vec.begin() + vec.size() / 2, vec.end()
+                   , [&](cache_entry* e)
+                     {
+                       if (not e->flagged())
+                       {
+                         const auto cit = set_.find(*e);
+                         assert(cit != set_.end());
+                         set_.erase(cit);
+                         delete e;
+                       }
+                       else
+                       {
+                         e->unflag();
+                       }
                     });
     }
     // Reset the date of all remaining cache entries.
