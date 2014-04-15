@@ -468,9 +468,9 @@ public:
     {
       // Remove from the set of candidates to deletion the 10% most recent entries, they might be
       // useful in the next run.
-      std::nth_element( vec.begin(), vec.begin() + vec.size() * 0.9, vec.end()
+      std::nth_element( vec.begin(), vec.begin() + vec.size() * 0.95, vec.end()
                       , [](cache_entry* lhs, cache_entry* rhs){return lhs->date() < rhs->date();});
-      vec.erase(vec.begin() + vec.size() * 0.9, vec.end());
+      vec.erase(vec.begin() + vec.size() * 0.95, vec.end());
 
       // Find the median element with regard to the date.
       std::nth_element( vec.begin(), vec.begin() + vec.size() / 2, vec.end()
@@ -496,14 +496,14 @@ public:
       std::for_each( vec.begin() + vec.size() / 2, vec.end()
                    , [&](cache_entry* e)
                      {
-                       if (not e->flagged())
-                       {
-                         const auto cit = set_.find(*e);
-                         assert(cit != set_.end());
-                         set_.erase(cit);
-                         delete e;
-                       }
-                       else
+//                       if (not e->flagged())
+//                       {
+//                         const auto cit = set_.find(*e);
+//                         assert(cit != set_.end());
+//                         set_.erase(cit);
+//                         delete e;
+//                       }
+//                       else
                        {
                          e->unflag();
                        }
