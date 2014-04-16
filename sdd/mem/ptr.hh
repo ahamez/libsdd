@@ -98,10 +98,6 @@ public:
   ~ptr()
   {
     x_->decrement_reference_counter();
-    if (x_->is_not_referenced())
-    {
-      deletion_handler<Unique>()(*x_);
-    }
   }
 
   /// @brief Get a reference to the unified data.

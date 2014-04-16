@@ -286,20 +286,6 @@ struct flat_set_manager
   /// @brief The type of smart pointer to a unified flat_set.
   using ptr_type = typename flat_set<Value>::ptr_type;
 
-  /// @brief Manage the handler needed by ptr when a unified data is no longer referenced.
-  struct ptr_handler
-  {
-    ptr_handler(mem::unique_table<unique_type>& ut)
-    {
-      mem::set_deletion_handler<unique_type>([&](const unique_type& u){ut.erase(u);});
-    }
-
-    ~ptr_handler()
-    {
-      mem::reset_deletion_handler<unique_type>();
-    }
-  } handler;
-
   /// @brief The set of unified flat_set.
   mem::unique_table<unique_type> unique_table;
 
@@ -309,10 +295,14 @@ struct flat_set_manager
   /// @brief Constructor.
   template <typename C>
   flat_set_manager(const C& configuration)
-    : handler(unique_table)
-    , unique_table(configuration.flat_set_unique_table_size)
+    : unique_table(configuration.flat_set_unique_table_size)
     , empty(mk_empty())
   {}
+
+  ~flat_set_manager()
+  {
+    unique_table.gc();
+  }
 
 private:
 

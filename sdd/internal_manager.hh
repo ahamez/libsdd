@@ -42,23 +42,6 @@ struct internal_manager
   /// @brief The type of a smart pointer to a unified homomorphism.
   using hom_ptr_type = typename homomorphism<C>::ptr_type;
 
-  /// @brief Manage the handlers needed by ptr when a unified data is no longer referenced.
-  struct ptr_handlers
-  {
-    ptr_handlers( mem::unique_table<sdd_unique_type>& sdd_ut
-                , mem::unique_table<hom_unique_type>& hom_ut)
-    {
-      mem::set_deletion_handler<sdd_unique_type>([&](const sdd_unique_type& u){sdd_ut.erase(u);});
-      mem::set_deletion_handler<hom_unique_type>([&](const hom_unique_type& u){hom_ut.erase(u);});
-    }
-
-    ~ptr_handlers()
-    {
-      mem::reset_deletion_handler<sdd_unique_type>();
-      mem::reset_deletion_handler<hom_unique_type>();
-    }
-  } handlers;
-
   /// @brief The set of a unified SDD.
   mem::unique_table<sdd_unique_type> sdd_unique_table;
 
@@ -85,8 +68,7 @@ struct internal_manager
 
   /// @brief Constructor with a given configuration.
   internal_manager(const C& configuration)
-    : handlers(sdd_unique_table, hom_unique_table)
-    , sdd_unique_table(configuration.sdd_unique_table_size)
+    : sdd_unique_table(configuration.sdd_unique_table_size)
     , sdd_context( configuration.sdd_difference_cache_size
                  , configuration.sdd_intersection_cache_size
                  , configuration.sdd_sum_cache_size)
@@ -97,6 +79,12 @@ struct internal_manager
     , id(mk_id())
     , saturation_fixpoint_data()
   {}
+
+  ~internal_manager()
+  {
+    sdd_unique_table.gc();
+    hom_unique_table.gc();
+  }
 
 private:
 

@@ -2,6 +2,7 @@
 #define _SDD_MEM_UNIQUE_TABLE_HH_
 
 #include <cassert>
+#include <vector>
 
 #include "sdd/mem/hash_table.hh"
 
@@ -120,6 +121,26 @@ public:
     stats_.load_factor = set_.load_factor();
     stats_.rehash = set_.nb_rehash();
     return stats_;
+  }
+
+  /// @brief Erase all entries that are marked as unused.
+  void
+  gc()
+  noexcept
+  {
+    static std::vector<const Unique*> to_erase;
+    for (const auto& u : set_)
+    {
+      if (u.is_not_referenced())
+      {
+        to_erase.emplace_back(&u);
+      }
+    }
+    for (auto u_ptr : to_erase)
+    {
+      erase(*u_ptr);
+    }
+    to_erase.clear();
   }
 };
 
