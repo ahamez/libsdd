@@ -141,10 +141,7 @@ public:
         to_erase.emplace_back(&u);
       }
     }
-    for (auto u_ptr : to_erase)
-    {
-      erase(*u_ptr);
-    }
+    std::for_each(to_erase.begin(), to_erase.end(), [this](const Unique* u){erase(*u);});
     to_erase.clear();
   }
 };
