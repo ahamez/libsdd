@@ -133,17 +133,58 @@ public:
   gc()
   noexcept
   {
-    static std::vector<const Unique*> to_erase;
     for (const auto& u : set_)
     {
-      if (u.is_not_referenced())
+      if (not u.is_not_referenced())
       {
-        to_erase.emplace_back(&u);
+        u.mark();
+        mark_nodes(u);
       }
     }
-    std::for_each(to_erase.begin(), to_erase.end(), [this](const Unique* u){erase(*u);});
-    to_erase.clear();
   }
+
+private:
+
+  static
+  void
+  mark_nodes(const Unique& u)
+  noexcept
+  {
+    mark_nodes_impl(u, 0);
+  }
+
+  template <typename T>
+  static
+  auto
+  mark_nodes_impl(const T& u, int)
+  noexcept
+  -> decltype(u.data().index_for_type())
+  {
+    apply_visitor(mark_visitor(), u.data());
+  }
+
+  template <typename T>
+  static
+  auto
+  mark_nodes_impl(const T&, long)
+  noexcept
+  -> decltype(0)
+  {
+    return 0;
+  }
+
+  struct mark_visitor
+  {
+    using result_type = void;
+
+    template <typename T>
+    result_type
+    operator()(const T& x)
+    const noexcept
+    {
+      x.mark();
+    }
+  };
 };
 
 /*------------------------------------------------------------------------------------------------*/

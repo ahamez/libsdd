@@ -152,6 +152,14 @@ public:
     return size_ * sizeof(homomorphism<C>);
   }
 
+  /// @brief
+  void
+  mark()
+  const noexcept
+  {
+    std::for_each(begin(), end(), [](const homomorphism<C>& h){h.mark();});
+  }
+
 private:
 
   /// @brief Return the address of the beginning of the operands.

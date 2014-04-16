@@ -51,7 +51,7 @@ private:
   std::uint32_t ref_count_;
 
   /// @brief
-  bool flag_;
+  mutable bool flag_;
 
   /// @brief The garbage collected data.
   const T data_;
@@ -68,15 +68,15 @@ public:
   {}
 
   void
-  flag()
-  noexcept
+  mark()
+  const noexcept
   {
     flag_ = true;
   }
 
   bool
-  flagged()
-  noexcept
+  marked()
+  const noexcept
   {
     return flag_;
   }

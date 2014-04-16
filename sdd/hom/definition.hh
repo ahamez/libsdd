@@ -232,6 +232,34 @@ public:
       return h.selector();
     }
   };
+
+  /// @internal
+  /// @brief
+  void
+  mark()
+  const noexcept
+  {
+    if (not ptr_->marked())
+    {
+      ptr_->mark();
+      visit(mark_visitor(), *this);
+    }
+  }
+
+private:
+
+  struct mark_visitor
+  {
+    using result_type = void;
+
+    template <typename T>
+    void
+    operator()(const T& x)
+    const noexcept
+    {
+      x.mark();
+    }
+  };
 };
 
 /*------------------------------------------------------------------------------------------------*/

@@ -205,6 +205,16 @@ public:
     return L_;
   }
 
+  /// @brief
+  void
+  mark()
+  const noexcept
+  {
+    F_.mark();
+    L_.mark();
+    std::for_each(G_begin(), G_end(), [](const homomorphism<C>& h){h.mark();});
+  }
+
 private:
 
   /// @brief Return the address of the beginning of the operands of G.

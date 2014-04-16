@@ -134,6 +134,14 @@ public:
     return size_ * sizeof(arc<C, Valuation>);
   }
 
+  /// @internal
+  void
+  mark()
+  const noexcept
+  {
+    std::for_each(begin(), end(), [](const arc_type& arc){arc.successor().mark();});
+  }
+
 private:
 
   /// @internal

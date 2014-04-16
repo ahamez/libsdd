@@ -146,6 +146,22 @@ public:
   {
     return L_;
   }
+
+  /// @brief
+  void
+  mark()
+  const noexcept
+  {
+    if (F_)
+    {
+      F_->mark();
+    }
+    if (L_)
+    {
+      L_->mark();
+    }
+    std::for_each(G_.begin(), G_.end(), [](const homomorphism<C>& h){h.mark();});
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/
