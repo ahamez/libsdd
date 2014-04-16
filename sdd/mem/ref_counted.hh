@@ -51,9 +51,6 @@ private:
   std::uint32_t ref_count_;
 
   /// @brief The garbage collected data.
-  ///
-  /// The ptr class is responsible for the detection of dereferenced data and for
-  /// instructing the unicity table to erase it.
   const T data_;
 
 public:
