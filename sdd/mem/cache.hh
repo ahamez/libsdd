@@ -387,6 +387,7 @@ public:
     {
       ++stats_.rounds.front().hits;
       insertion.first->set_date(++date_);
+      insertion.first->increment_hits();
       return insertion.first->result;
     }
 
@@ -446,71 +447,37 @@ public:
       }
     }
 
-    if (vec.empty())
-    {
-      // Can't clean the cache for now, all entries are in use or were already erased.
-      return;
-    }
-    else if (vec.size() < max_size_ / 2)
-    {
-      // Not enough entries are not in use to divide the size of the cache by 2.
-      // Delete all cache entries which are not in use.
-      std::for_each( vec.begin(), vec.end()
-                   , [&](cache_entry* e)
+    std::size_t sz = set_.size();
+    std::size_t i = 0;
+
+    std::nth_element( vec.begin(), vec.begin() + vec.size() * 0.6, vec.end()
+                    , [](cache_entry* lhs, cache_entry* rhs){return lhs->date() < rhs->date();});
+    std::for_each( vec.begin() + vec.size() * 0.6, vec.end()
+                 , [](cache_entry* e){e->flag();});
+    printf("A hits median = %u\n", (*(vec.begin() + vec.size() * 0.95))->hits());
+    std::nth_element( vec.begin(), vec.begin() + vec.size() * 0.95, vec.end()
+                    , [](cache_entry* lhs, cache_entry* rhs){return lhs->hits() < rhs->hits();});
+    printf("B hits median = %u\n", (*(vec.begin() + vec.size() * 0.95))->hits());
+    std::for_each( vec.begin() + vec.size() * 0.95, vec.end()
+                 , [](cache_entry* e){e->flag();});
+    std::for_each( vec.begin(), vec.end()
+                 , [&](cache_entry* e)
+                   {
+                     if (not e->flagged())
                      {
+                       ++i;
                        const auto cit = set_.find(*e);
                        assert(cit != set_.end());
                        set_.erase(cit);
                        delete e;
-                     });
-    }
-    else // vec.size() >= max_size / 2
-    {
-      // Remove from the set of candidates to deletion the 10% most recent entries, they might be
-      // useful in the next run.
-      std::nth_element( vec.begin(), vec.begin() + vec.size() * 0.95, vec.end()
-                      , [](cache_entry* lhs, cache_entry* rhs){return lhs->date() < rhs->date();});
-      vec.erase(vec.begin() + vec.size() * 0.95, vec.end());
-
-      // Find the median element with regard to the date.
-      std::nth_element( vec.begin(), vec.begin() + vec.size() / 2, vec.end()
-                      , [](cache_entry* lhs, cache_entry* rhs){return lhs->date() < rhs->date();});
-
-      // Flag all recent entries.
-      std::for_each( vec.begin() + vec.size() / 2, vec.end()
-                   , [](cache_entry* e){e->flag();});
-
-      // Now, find the median element with regard to the number of hits.
-      std::nth_element( vec.begin(), vec.begin() + vec.size() / 2, vec.end()
-                      , [](cache_entry* lhs, cache_entry* rhs){return lhs->hits() < rhs->hits();});
-
-      // Finally, keep all elements above the hits median that were flagged as recent elements.
-      std::for_each( vec.begin(), vec.begin() + vec.size() / 2
-                   , [&](cache_entry* e)
+                     }
+                     else
                      {
-                       const auto cit = set_.find(*e);
-                       assert(cit != set_.end());
-                       set_.erase(cit);
-                       delete e;
-                    });
-      std::for_each( vec.begin() + vec.size() / 2, vec.end()
-                   , [&](cache_entry* e)
-                     {
-//                       if (not e->flagged())
-//                       {
-//                         const auto cit = set_.find(*e);
-//                         assert(cit != set_.end());
-//                         set_.erase(cit);
-//                         delete e;
-//                       }
-//                       else
-                       {
-                         e->unflag();
-                       }
-                    });
-    }
-    // Reset the date of all remaining cache entries.
-    std::for_each(set_.begin(), set_.end(), [](cache_entry& e){e.reset_date();});
+                       e->unflag();
+                       e->reset_date();
+                     }
+                  });
+    printf("Remove %lu of %lu\n", i, sz);
     // Reset the global date.
     date_ = 0;
   }
