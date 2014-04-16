@@ -439,6 +439,9 @@ public:
     std::for_each(set_.begin(), set_.end(), [](cache_entry& e){e.reset_date();});
     // Reset the global date.
     date_ = 0;
+
+    // Now let's call the GC to remove entries that were dismissed in this cleanup.
+    cxt_.gc();
   }
 
   /// @brief Remove all entries of the cache.

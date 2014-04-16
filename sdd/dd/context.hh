@@ -10,6 +10,7 @@
 #include "sdd/dd/sum.hh"
 #include "sdd/dd/top.hh"
 #include "sdd/mem/cache.hh"
+#include "sdd/mem/unique_table.hh"
 
 namespace sdd { namespace dd {
 
@@ -37,6 +38,15 @@ public:
 
 private:
 
+  /// @brief The type of a unified SDD.
+  using sdd_unique_type = typename SDD<C>::unique_type;
+
+  /// @brief The type of a smart pointer to a unified SDD.
+  using sdd_ptr_type = typename SDD<C>::ptr_type;
+
+  /// @brief The set of a SDD.
+  mem::unique_table<sdd_unique_type>& unique_table_;
+
   /// @brief Cache of difference on SDD.
   std::shared_ptr<difference_cache_type> difference_cache_;
 
@@ -49,8 +59,10 @@ private:
 public:
 
   /// @brief Create a new empty context.
-  context(std::size_t difference_size, std::size_t intersection_size, std::size_t sum_size)
-	 	: difference_cache_(std::make_shared<difference_cache_type>( *this, "sdd_difference_cache"
+  context( mem::unique_table<sdd_unique_type>& ut
+         , std::size_t difference_size, std::size_t intersection_size, std::size_t sum_size)
+	 	: unique_table_(ut)
+    , difference_cache_(std::make_shared<difference_cache_type>( *this, "sdd_difference_cache"
                                                                , difference_size))
     , intersection_cache_(std::make_shared<intersection_cache_type>( *this, "sdd_intersection_cache"
                                                                    , intersection_size))
@@ -59,6 +71,14 @@ public:
 
   /// @brief Copy constructor.
   context(const context&) = default;
+
+  /// @brief Call the GC to remove unused SDD.
+  void
+  gc()
+  noexcept
+  {
+    unique_table_.gc();
+  }
 
   /// @brief Get the difference cache.
   difference_cache_type&

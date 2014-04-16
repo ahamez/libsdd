@@ -34,6 +34,15 @@ public:
 
 private:
 
+  /// @brief The type of a unified SDD.
+  using sdd_unique_type = typename SDD<C>::unique_type;
+
+  /// @brief The type of a smart pointer to a unified SDD.
+  using sdd_ptr_type = typename SDD<C>::ptr_type;
+
+  /// @brief The set of a SDD.
+  mem::unique_table<sdd_unique_type>& unique_table_;
+
   /// @brief Cache of union homomorphisms.
   std::shared_ptr<cache_type> cache_;
 
@@ -45,13 +54,22 @@ private:
 public:
 
   /// @brief Construct a new context.
-  context(std::size_t size, sdd_context_type& sdd_cxt)
-   	: cache_(std::make_shared<cache_type>(*this, "homomorphism_cache", size))
+  context(mem::unique_table<sdd_unique_type>& ut, std::size_t size, sdd_context_type& sdd_cxt)
+   	: unique_table_(ut)
+    , cache_(std::make_shared<cache_type>(*this, "homomorphism_cache", size))
     , sdd_context_(sdd_cxt)
   {}
 
   /// @brief Copy constructor.
   context(const context&) = default;
+
+  /// @brief Call the GC to remove unused SDD.
+  void
+  gc()
+  noexcept
+  {
+    unique_table_.gc();
+  }
 
   /// @brief Return the cache of homomorphism evaluation.
   cache_type&
