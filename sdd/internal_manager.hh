@@ -82,8 +82,8 @@ struct internal_manager
 
   ~internal_manager()
   {
-    sdd_unique_table.gc();
     hom_unique_table.gc();
+    sdd_unique_table.gc();
   }
 
 private:
