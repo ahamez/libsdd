@@ -66,6 +66,11 @@ public:
     : set_(initial_size), stats_()
   {}
 
+  ~unique_table()
+  {
+    gc();
+  }
+
   /// @brief Unify a data.
   /// @param ptr A pointer to a data constructed with a placement new into the storage returned by
   /// allocate().

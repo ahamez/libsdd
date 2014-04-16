@@ -450,6 +450,7 @@ public:
   noexcept
   {
     set_.clear_and_dispose([](cache_entry* x){delete x;});
+    cxt_.gc();
   }
 
   /// @brief Get the number of cached operations.
