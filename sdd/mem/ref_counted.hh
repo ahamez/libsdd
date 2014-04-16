@@ -50,6 +50,9 @@ private:
   /// Implements a reference-counting garbage collection.
   std::uint32_t ref_count_;
 
+  /// @brief
+  bool flag_;
+
   /// @brief The garbage collected data.
   const T data_;
 
@@ -60,8 +63,23 @@ public:
   noexcept(std::is_nothrow_constructible<T, Args...>::value)
     : hook()
     , ref_count_(0)
+    , flag_(false)
     , data_(std::forward<Args>(args)...)
   {}
+
+  void
+  flag()
+  noexcept
+  {
+    flag_ = true;
+  }
+
+  bool
+  flagged()
+  noexcept
+  {
+    return flag_;
+  }
 
   /// @brief Get a reference of the unified data.
   const T&
