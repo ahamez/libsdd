@@ -13,44 +13,6 @@ namespace sdd { namespace mem {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Define the type of a deletion handler.
-///
-/// A deletion handler is called by ptr whenever a data is no longer referenced.
-template <typename Unique>
-using handler_type = std::function<void (const Unique&)>;
-
-/// @internal
-/// @brief Get the deletion handler for a given Unique type.
-template <typename Unique>
-handler_type<Unique>&
-deletion_handler()
-{
-  static handler_type<Unique> handler = [](const Unique&){assert(false && "Unset handler");};
-  return handler;
-}
-
-/// @internal
-/// @brief Reset the deletion handler for a given Unique type.
-template <typename Unique>
-void
-reset_deletion_handler()
-{
-  deletion_handler<Unique>() = [](const Unique&){assert(false && "Reset handler");};
-}
-
-
-/// @internal
-/// @brief Set the deletion handler for a given Unique type.
-template <typename Unique>
-void
-set_deletion_handler(const handler_type<Unique>& h)
-{
-  deletion_handler<Unique>() = h;
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
 /// @brief A smart pointer to manage unified ressources.
 /// @tparam Unique the type of the unified ressource.
 ///
