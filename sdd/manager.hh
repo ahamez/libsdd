@@ -252,7 +252,7 @@ public:
   hom_cache_stats()
   const noexcept
   {
-    return m_->hom_context.cache().statistics();
+    return m_->hom_context.cache(0).statistics();
   }
 };
 

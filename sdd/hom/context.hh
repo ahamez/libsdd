@@ -2,6 +2,7 @@
 #define _SDD_HOM_CONTEXT_HH_
 
 #include <memory> // make_shared, shared_ptr
+#include <vector>
 
 #include "sdd/dd/context.hh"
 #include "sdd/hom/context_fwd.hh"
@@ -29,13 +30,16 @@ public:
   using cache_type = mem::cache< context, cached_homomorphism<C>, evaluation_error<C>
                                , should_cache<C>>;
 
+  /// @brief Associate a variable to a cache.
+  using caches_type = std::vector<std::shared_ptr<cache_type>>;
+
   /// @brief SDD operation context type.
   using sdd_context_type = sdd::dd::context<C>;
 
 private:
 
   /// @brief Cache of union homomorphisms.
-  std::shared_ptr<cache_type> cache_;
+  caches_type caches_;
 
   /// @brief Context of SDD operations.
   ///
@@ -45,8 +49,8 @@ private:
 public:
 
   /// @brief Construct a new context.
-  context(std::size_t size, sdd_context_type& sdd_cxt)
-   	: cache_(std::make_shared<cache_type>(*this, "homomorphism_cache", size))
+  context(std::size_t /*size*/, sdd_context_type& sdd_cxt)
+    : caches_(8192, nullptr)
     , sdd_context_(sdd_cxt)
   {}
 
@@ -55,10 +59,18 @@ public:
 
   /// @brief Return the cache of homomorphism evaluation.
   cache_type&
-  cache()
+  cache(order_position_type pos)
   noexcept
   {
-    return *cache_;
+    if (__builtin_expect(pos >= caches_.size(), false))
+    {
+      caches_.resize(pos + 32, nullptr);
+    }
+    if (__builtin_expect(caches_[pos] == nullptr, false))
+    {
+      caches_[pos] = std::make_shared<cache_type>(*this, "homomorphism_cache", 100000);
+    }
+    return *caches_[pos];
   }
 
   /// @brief Return the context of SDD operations.
@@ -74,7 +86,10 @@ public:
   clear()
   noexcept
   {
-    cache_->clear();
+    for (auto& cache_ptr : caches_)
+    {
+      cache_ptr->clear();
+    }
   }
 };
 

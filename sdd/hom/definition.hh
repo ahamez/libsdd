@@ -174,7 +174,7 @@ public:
     {
       return x;
     }
-    return cxt.cache()(hom::cached_homomorphism<C>(o, *this, x));
+    return cxt.cache(o.position())(hom::cached_homomorphism<C>(o, *this, x));
   }
 
   /// @internal
