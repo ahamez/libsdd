@@ -141,6 +141,21 @@ public:
         mark_nodes(u);
       }
     }
+    static std::vector<const Unique*> to_erase(2048, nullptr);
+    std::for_each( set_.begin(), set_.end()
+                 , [&](const Unique& u)
+                   {
+                     if (u.marked())
+                       u.unmark();
+                     else
+                       to_erase.emplace_back(&u);
+                   });
+    std::for_each( to_erase.begin(), to_erase.end()
+                 , [this](const Unique* ptr)
+                   {
+                     erase(*ptr);
+                   });
+    to_erase.clear();
   }
 
 private:

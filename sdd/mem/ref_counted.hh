@@ -74,6 +74,13 @@ public:
     flag_ = true;
   }
 
+  void
+  unmark()
+  const noexcept
+  {
+    flag_ = false;
+  }
+
   bool
   marked()
   const noexcept
