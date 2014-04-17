@@ -411,9 +411,7 @@ public:
       std::for_each( vec.begin(), vec.end()
                    , [&](cache_entry* e)
                      {
-                       const auto cit = set_.find(*e);
-                       assert(cit != set_.end());
-                       set_.erase(cit);
+                       set_.erase(*e);
                        delete e;
                      });
     }
@@ -428,12 +426,10 @@ public:
       // Delete all cache entries with a number of entries smaller than the median.
       std::for_each( vec.begin(), vec.begin() + cut_point
                     , [&](cache_entry* e)
-                    {
-                      const auto cit = set_.find(*e);
-                      assert(cit != set_.end());
-                      set_.erase(cit);
-                      delete e;
-                    });
+                      {
+                        set_.erase(*e);
+                        delete e;
+                      });
     }
     // Reset the date of all remaining cache entries.
     std::for_each(set_.begin(), set_.end(), [](cache_entry& e){e.reset_date();});
