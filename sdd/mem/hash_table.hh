@@ -351,8 +351,35 @@ public:
     {
       previous->hook.next = data->hook.next;
     }
-
     --size_;
+  }
+
+  /// @brief Erase an element given its value.
+  void
+  erase(const Data& x)
+  noexcept
+  {
+    const std::uint32_t pos = Hash()(x) & (nb_buckets_ - 1);
+    Data* previous = nullptr;
+    Data* current = buckets_[pos];
+    while (current != nullptr)
+    {
+      if (x == *current)
+      {
+        if (previous == nullptr) // first element in bucket
+        {
+          buckets_[pos] = current->hook.next;
+        }
+        else
+        {
+          previous->hook.next = current->hook.next;
+        }
+        --size_;
+        return;
+      }
+      previous = current;
+      current = current->hook.next;
+    }
   }
 
   /// @brief Clear the whole table.

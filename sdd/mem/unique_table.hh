@@ -104,9 +104,7 @@ public:
   noexcept
   {
     assert(x.is_not_referenced() && "Unique still referenced");
-    const auto cit = set_.find(x);
-    assert(cit != set_.end() && "Unique not found");
-    set_.erase(cit);
+    set_.erase(x);
     x.~Unique();
     delete[] reinterpret_cast<const char*>(&x); // match new char[] of allocate().
   }
