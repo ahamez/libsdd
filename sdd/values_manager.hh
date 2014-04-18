@@ -26,11 +26,22 @@ struct values_state<Values, true>
   /// @brief The actual state.
   typename values::values_traits<Values>::state_type state;
 
+  /// @brief The type of the state's statistics.
+  using statistics_type = typename values::values_traits<Values>::state_type::statistics_type;
+
   /// @brief Constructor.
   template <typename C>
   values_state(const C& configuration)
     : state(configuration)
   {}
+
+  /// @brief Get statistics.
+  const statistics_type&
+  statistics()
+  const noexcept
+  {
+    return state.statistics();
+  }
 };
 
 /// @internal
@@ -38,10 +49,21 @@ struct values_state<Values, true>
 template <typename Values>
 struct values_state<Values, false>
 {
+  /// @brief The type of the state's statistics.
+  using statistics_type = void*;
+
   /// @brief Constructor.
   template <typename C>
   values_state(const C&)
   {}
+
+  /// @brief Get statistics.
+  statistics_type
+  statistics()
+  const noexcept
+  {
+    return nullptr;
+  }
 };
 
 /// @internal
