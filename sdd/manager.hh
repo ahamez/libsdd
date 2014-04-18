@@ -136,6 +136,15 @@ public:
   {
     return ptr_->hom_cache_stats();
   }
+
+  /// @internal
+  auto
+  values_stats()
+  const noexcept
+  -> decltype(ptr_->values_stats())
+  {
+    return ptr_->values_stats();
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/
@@ -253,6 +262,15 @@ public:
   const noexcept
   {
     return m_->hom_context.cache().statistics();
+  }
+
+  /// @internal
+  auto
+  values_stats()
+  const noexcept
+  -> decltype(values_->statistics())
+  {
+    return values_->statistics();
   }
 };
 

@@ -73,6 +73,7 @@ save(Archive& archive, const manager<C>& m)
          , cereal::make_nvp("SDD sums cache", m.sdd_sum_cache_stats())
          , cereal::make_nvp("hom unique table", m.hom_stats())
          , cereal::make_nvp("hom cache", m.hom_cache_stats())
+         , cereal::make_nvp("values", m.values_stats())
          );
 }
 

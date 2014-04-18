@@ -286,6 +286,9 @@ struct flat_set_manager
   /// @brief The type of smart pointer to a unified flat_set.
   using ptr_type = typename flat_set<Value>::ptr_type;
 
+  /// @brief The type of this manager's statistics.
+  using statistics_type = mem::unique_table_statistics;
+
   /// @brief Manage the handler needed by ptr when a unified data is no longer referenced.
   struct ptr_handler
   {
@@ -313,6 +316,13 @@ struct flat_set_manager
     , unique_table(configuration.flat_set_unique_table_size)
     , empty(mk_empty())
   {}
+
+  const statistics_type&
+  statistics()
+  const noexcept
+  {
+    return unique_table.stats();
+  }
 
 private:
 
