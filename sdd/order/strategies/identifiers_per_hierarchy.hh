@@ -1,7 +1,7 @@
-#ifndef _SDD_ORDER_STRATEGIES_VARIABLES_PER_LEVEL_HH_
-#define _SDD_ORDER_STRATEGIES_VARIABLES_PER_LEVEL_HH_
+#ifndef _SDD_ORDER_IDENTIFIERS_VARIABLES_PER_HIERARCHY_HH_
+#define _SDD_ORDER_IDENTIFIERS_VARIABLES_PER_HIERARCHY_HH_
 
-#include <tuple>
+#include <list>
 
 #include "sdd/order/order_builder.hh"
 
@@ -9,61 +9,76 @@ namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief
+/// @brief Creates an order with a maximum number of identifiers per hierarchy.
 template <typename C>
-struct variables_per_level
+class identifiers_per_hierarchy
 {
+private:
+
   const unsigned int nb_variables;
 
-  variables_per_level(unsigned int nb)
+public:
+
+  identifiers_per_hierarchy(unsigned int nb)
   noexcept
     : nb_variables(nb)
   {}
 
   order_builder<C>
-  operator()(const order_builder<C>& ob)
+  operator()(order_builder<C> ob)
   const
   {
     if (ob.empty() or nb_variables == 1)
     {
       return ob;
     }
-    order_builder<C> current = ob;
-    while (current.height() > nb_variables)
+
+    while (ob.height() > nb_variables)
     {
-      const auto tmp = impl(current, current.height() % nb_variables);
-      current = std::get<0>(tmp) << std::get<1>(tmp);
+      const auto packets = packetize(ob);
+      order_builder<C> tmp;
+      for (auto rcit = packets.rbegin(); rcit != packets.rend(); ++rcit)
+      {
+        tmp.push(order_identifier<C>(), *rcit);
+      }
+      ob = tmp;
     }
-    return current.height() == 1 ? current.nested() : current;
+
+    return ob;
   }
 
-  std::tuple<order_builder<C>/*current*/, order_builder<C>/*next*/, unsigned int/*counter*/>
-  impl(const order_builder<C>& ob, unsigned int remainder)
+private:
+
+  std::list<order_builder<C>>
+  packetize(const order_builder<C>& ob)
   const
   {
-    if (ob.next().empty())
+    std::list<order_builder<C>> packets;
+    packetize_impl(ob, packets);
+    return packets;
+  }
+
+  unsigned int
+  packetize_impl(const order_builder<C>& ob, std::list<order_builder<C>>& packets)
+  const
+  {
+    if (ob.empty())
     {
-      return std::make_tuple( order_builder<C>(ob.identifier(), ob.nested())
-                            , order_builder<C>()
-                            , nb_variables + remainder - 2);
+      packets.emplace_front();
+      return 0;
     }
     else
     {
-      const auto tmp = impl(ob.next(), remainder);
-      if (std::get<2>(tmp) == 0) // current hierarchy is full
+      const auto nb = packetize_impl(ob.next(), packets);
+      if (nb == nb_variables)
       {
-        return std::make_tuple( order_builder<C>()
-                              , order_builder<C>( order_identifier<C>()
-                                                , order_builder<C>(ob.identifier(), ob.nested())
-                                                    << std::get<0>(tmp))
-                                  << std::get<1>(tmp)
-                              , nb_variables - 1);
+        packets.emplace_front(ob.identifier(), ob.nested());
+        return 1;
       }
       else
       {
-        return std::make_tuple( order_builder<C>(ob.identifier(), ob.nested()) << std::get<0>(tmp)
-                              , std::get<1>(tmp)
-                              , std::get<2>(tmp) - 1);
+        packets.front().push(ob.identifier(), ob.nested());
+        return nb + 1;
       }
     }
   }
@@ -73,4 +88,4 @@ struct variables_per_level
 
 } // namespace sdd
 
-#endif // _SDD_ORDER_STRATEGIES_VARIABLES_PER_LEVEL_HH_
+#endif // _SDD_ORDER_IDENTIFIERS_VARIABLES_PER_HIERARCHY_HH_
