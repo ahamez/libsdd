@@ -52,7 +52,7 @@ TYPED_TEST(arcs_test, flat_sdd)
   {
     const SDD x(3, {0}, SDD(2, {0}, SDD(1, {0}, SDD(0, {0}, one))));
     const auto freq = sdd::tools::arcs(x);
-    ASSERT_EQ(1, freq.size());
+    ASSERT_EQ(1u, freq.size());
     ASSERT_EQ(freq.end(), freq.find(0));
     ASSERT_EQ(4u, freq.find(1)->second.first);
     ASSERT_EQ(0u, freq.find(1)->second.second);
@@ -62,7 +62,7 @@ TYPED_TEST(arcs_test, flat_sdd)
     const SDD x = SDD(3, {0}, SDD(2, {0}, SDD(1, {0}, SDD(0, {0}, one))))
                 + SDD(3, {1}, SDD(2, {1}, SDD(1, {1}, SDD(0, {1}, one))));
     const auto freq = sdd::tools::arcs(x);
-    ASSERT_EQ(2, freq.size());
+    ASSERT_EQ(2u, freq.size());
     ASSERT_EQ(freq.end(), freq.find(0));
     ASSERT_EQ(6u, freq.find(1)->second.first);
     ASSERT_EQ(0u, freq.find(1)->second.second);
@@ -74,7 +74,7 @@ TYPED_TEST(arcs_test, flat_sdd)
     const SDD x = SDD(3, {0}, SDD(2, {0}, SDD(1, {0}, SDD(0, {0}, one))))
                 + SDD(3, {1}, SDD(2, {1}, SDD(1, {1}, SDD(0, {0}, one))));
     const auto freq = sdd::tools::arcs(x);
-    ASSERT_EQ(2, freq.size());
+    ASSERT_EQ(2u, freq.size());
     ASSERT_EQ(freq.end(), freq.find(0));
     ASSERT_EQ(5u, freq.find(1)->second.first);
     ASSERT_EQ(0u, freq.find(1)->second.second);
@@ -89,7 +89,7 @@ TYPED_TEST(arcs_test, flat_sdd)
                 + SDD(3, {2}, SDD(2, {3}, SDD(1, {3}, SDD(0, {2}, one))));
     const auto freq = sdd::tools::arcs(x);
     ASSERT_EQ(freq.end(), freq.find(0));
-    ASSERT_EQ(2, freq.size());
+    ASSERT_EQ(2u, freq.size());
     ASSERT_EQ(6u, freq.find(1)->second.first);
     ASSERT_EQ(0u, freq.find(1)->second.second);
     ASSERT_EQ(3u, freq.find(2)->second.first);
@@ -114,7 +114,7 @@ TYPED_TEST(arcs_test, hierarchical_sdd)
   {
     const SDD x(1, one, SDD(0, one, one));
     const auto freq = sdd::tools::arcs(x);
-    ASSERT_EQ(1, freq.size());
+    ASSERT_EQ(1u, freq.size());
     ASSERT_EQ(freq.end(), freq.find(0));
     ASSERT_EQ(0u, freq.find(1)->second.first);
     ASSERT_EQ(2u, freq.find(1)->second.second);
@@ -124,7 +124,7 @@ TYPED_TEST(arcs_test, hierarchical_sdd)
     const SDD nested(3, {0}, SDD(2, {0}, SDD(1, {0}, SDD(0, {0}, one))));
     const SDD x(1, nested, SDD(0, nested, one));
     const auto freq = sdd::tools::arcs(x);
-    ASSERT_EQ(1, freq.size());
+    ASSERT_EQ(1u, freq.size());
     ASSERT_EQ(freq.end(), freq.find(0));
     ASSERT_EQ(4u, freq.find(1)->second.first);
     ASSERT_EQ(2u, freq.find(1)->second.second);
@@ -136,7 +136,7 @@ TYPED_TEST(arcs_test, hierarchical_sdd)
     const SDD x = SDD(1, nested0, SDD(0, nested0, one))
                 + SDD(1, nested1, SDD(0, nested1, one));
     const auto freq = sdd::tools::arcs(x);
-    ASSERT_EQ(2, freq.size());
+    ASSERT_EQ(2u, freq.size());
     ASSERT_EQ(freq.end(), freq.find(0));
     ASSERT_EQ(8u, freq.find(1)->second.first);
     ASSERT_EQ(2u, freq.find(1)->second.second);
@@ -149,7 +149,7 @@ TYPED_TEST(arcs_test, hierarchical_sdd)
     const SDD nested1(1, nested0, SDD(0, nested0, one));
     const SDD x(1, nested1, SDD(0, nested1, one));
     const auto freq = sdd::tools::arcs(x);
-    ASSERT_EQ(1, freq.size());
+    ASSERT_EQ(1u, freq.size());
     ASSERT_EQ(freq.end(), freq.find(0));
     ASSERT_EQ(4u, freq.find(1)->second.first);
     ASSERT_EQ(4u, freq.find(1)->second.second);
