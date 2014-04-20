@@ -447,9 +447,6 @@ public:
       }
     }
 
-    std::size_t sz = set_.size();
-    std::size_t i = 0;
-
     std::nth_element( vec.begin(), vec.begin() + vec.size() * 0.6, vec.end()
                     , [](cache_entry* lhs, cache_entry* rhs){return lhs->date() < rhs->date();});
     std::for_each( vec.begin() + vec.size() * 0.6, vec.end()
@@ -463,7 +460,6 @@ public:
                    {
                      if (not e->flagged())
                      {
-                       ++i;
                        const auto cit = set_.find(*e);
                        assert(cit != set_.end());
                        set_.erase(cit);
