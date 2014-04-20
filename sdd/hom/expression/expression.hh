@@ -7,8 +7,6 @@
 #include <cassert>
 #include <vector>
 
-#include <boost/coroutine/coroutine.hpp>
-
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
@@ -16,6 +14,7 @@
 #include "sdd/hom/expression/evaluator.hh"
 #include "sdd/hom/expression/stacks.hh"
 #include "sdd/order/order.hh"
+#include "sdd/util/boost_coroutine_no_warnings.hh"
 
 namespace sdd { namespace hom { namespace expr {
 
