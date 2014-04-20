@@ -106,7 +106,7 @@ TYPED_TEST(arcs_test, hierarchical_sdd)
     const SDD x(0, one, one);
     const auto freq = sdd::tools::arcs(x);
     ASSERT_EQ(freq.end(), freq.find(0));
-    ASSERT_EQ(1, freq.size());
+    ASSERT_EQ(1u, freq.size());
     ASSERT_EQ(0u, freq.find(1)->second.first);
     ASSERT_EQ(1u, freq.find(1)->second.second);
     ASSERT_EQ(std::make_pair(0u, 1u), sdd::tools::number_of_arcs(freq));
