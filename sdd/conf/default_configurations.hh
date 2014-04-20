@@ -77,7 +77,7 @@ struct flat_set_default_configuration
 
   flat_set_default_configuration()
     : default_configuration()
-    , flat_set_unique_table_size(1000)
+    , flat_set_unique_table_size(5000)
   {}
 };
 

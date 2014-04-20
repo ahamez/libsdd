@@ -454,10 +454,8 @@ public:
                     , [](cache_entry* lhs, cache_entry* rhs){return lhs->date() < rhs->date();});
     std::for_each( vec.begin() + vec.size() * 0.6, vec.end()
                  , [](cache_entry* e){e->flag();});
-    printf("A hits median = %u\n", (*(vec.begin() + vec.size() * 0.95))->hits());
     std::nth_element( vec.begin(), vec.begin() + vec.size() * 0.95, vec.end()
                     , [](cache_entry* lhs, cache_entry* rhs){return lhs->hits() < rhs->hits();});
-    printf("B hits median = %u\n", (*(vec.begin() + vec.size() * 0.95))->hits());
     std::for_each( vec.begin() + vec.size() * 0.95, vec.end()
                  , [](cache_entry* e){e->flag();});
     std::for_each( vec.begin(), vec.end()
@@ -477,7 +475,6 @@ public:
                        e->reset_date();
                      }
                   });
-    printf("Remove %lu of %lu\n", i, sz);
     // Reset the global date.
     date_ = 0;
   }
