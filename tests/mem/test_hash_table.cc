@@ -110,7 +110,7 @@ typedef hash_table<bar> bar_hash_table;
 TEST(hash_table, creation)
 {
   foo_hash_table ht{100};
-  ASSERT_EQ(0, ht.size());
+  ASSERT_EQ(0u, ht.size());
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -124,22 +124,22 @@ TEST(hash_table, simple_insertion)
   foo f3{43};
 
   auto insertion = ht.insert(f1);
-  ASSERT_EQ(1, ht.size());
+  ASSERT_EQ(1u, ht.size());
   ASSERT_TRUE(insertion.second);
   ASSERT_EQ(f1, *insertion.first);
 
   insertion = ht.insert(f1);
-  ASSERT_EQ(1, ht.size());
+  ASSERT_EQ(1u, ht.size());
   ASSERT_FALSE(insertion.second);
   ASSERT_EQ(f1, *insertion.first);
 
   insertion = ht.insert(f2);
-  ASSERT_EQ(1, ht.size());
+  ASSERT_EQ(1u, ht.size());
   ASSERT_FALSE(insertion.second);
   ASSERT_EQ(f1, *insertion.first);
 
   insertion = ht.insert(f3);
-  ASSERT_EQ(2, ht.size());
+  ASSERT_EQ(2u, ht.size());
   ASSERT_TRUE(insertion.second);
   ASSERT_EQ(f3, *insertion.first);
 }
@@ -154,12 +154,12 @@ TEST(hash_table, insert_collision)
     bar b2{1, 7};
 
     auto insertion1 = ht.insert(b1);
-    ASSERT_EQ(1, ht.size());
+    ASSERT_EQ(1u, ht.size());
     ASSERT_TRUE(insertion1.second);
     ASSERT_EQ(b1, *insertion1.first);
 
     auto insertion2 = ht.insert(b2);
-    ASSERT_EQ(2, ht.size());
+    ASSERT_EQ(2u, ht.size());
     ASSERT_TRUE(insertion2.second);
     ASSERT_EQ(b2, *insertion2.first);
 
