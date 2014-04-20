@@ -72,7 +72,9 @@ load_order_impl(const rapidjson::Value& v)
     {
       ob = ob << load_order_impl<C>(v[i]);
     }
-    return order_builder<C>(order_identifier<C>(), ob);
+    return ob.height() == 1
+         ? ob
+         : order_builder<C>(order_identifier<C>(), ob);
   }
   else
   {
@@ -102,7 +104,15 @@ load_order(std::istream& in)
   doc.Parse<0>(&buffer[0]);
   assert(doc.IsArray());
 
-  return load_order_impl<C>(doc);
+  const auto ob = load_order_impl<C>(doc);
+  if (ob.height() == 1 and not ob.nested().empty())
+  {
+    return ob.nested();
+  }
+  else
+  {
+    return ob;
+  }
 }
 
 /*------------------------------------------------------------------------------------------------*/
