@@ -354,7 +354,7 @@ public:
     --size_;
   }
 
-  /// @brief Erase an element given its value.
+  /// @brief Remove an element given its value.
   void
   erase(const Data& x)
   noexcept
