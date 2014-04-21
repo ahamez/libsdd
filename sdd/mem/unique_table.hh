@@ -34,6 +34,9 @@ struct unique_table_statistics
 
   /// @brief The number of misses.
   std::size_t misses;
+
+  /// @brief The number of times the underlying hash table has been rehashed.
+  std::size_t rehash;
 };
 
 } // namespace anonymous
@@ -181,10 +184,7 @@ public:
     auto insertion = set_.insert(*ptr);
     if (not insertion.second)
     {
-      // The inserted Unique already exists. We keep its allocated memory to avoid deallocating
-      // memory each time there is a hit.
       ++stats_.hits;
-      const std::size_t size = sizeof(Unique) + ptr->extra_bytes();
       ptr->~Unique();
       blocks_.add_block(ptr, size);
     }
@@ -203,37 +203,14 @@ public:
     return blocks_.get_block(sizeof(Unique) + extra_bytes);
   }
 
-  /// @brief Erase the given unified data.
-  ///
-  /// All subsequent uses of the erased data are invalid.
-  void
-  erase(const Unique& x)
-  noexcept
-  {
-    assert(x.is_not_referenced() && "Unique still referenced");
-    const auto cit = set_.find(x);
-    assert(cit != set_.end() && "Unique not found");
-    set_.erase(cit);
-    const std::size_t size = sizeof(Unique) + x.extra_bytes();
-    x.~Unique();
-    blocks_.add_block(&const_cast<Unique&>(x), size);
-  }
-
-  /// @brief Get the load factor of the internal hash table.
-  double
-  load_factor()
-  const noexcept
-  {
-    return static_cast<double>(set_.size()) / static_cast<double>(set_.bucket_count());
-  }
-
   /// @brief Get the statistics of this unique_table.
   const unique_table_statistics&
   stats()
   const noexcept
   {
     stats_.size = set_.size();
-    stats_.load_factor = load_factor();
+    stats_.load_factor = set_.load_factor();
+    stats_.rehash = set_.nb_rehash();
     return stats_;
   }
 };

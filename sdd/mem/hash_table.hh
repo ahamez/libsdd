@@ -172,13 +172,25 @@ private:
   /// @brief
   Data** buckets_;
 
+  /// @brief The maximal allowed load factor.
+  const double max_load_factor_;
+
+  /// @brief The number of times this hash table has been rehashed.
+  std::size_t rehash_;
+
+  /// @brief
+  const bool no_rehash_;
+
 public:
 
   /// @brief Constructor
-  hash_table(std::size_t size)
+  hash_table(std::size_t size, double max_load_factor = 0.75, bool no_rehash = false)
     : nb_buckets_(util::next_power_of_2(static_cast<std::uint32_t>(size)))
     , size_(0)
     , buckets_(new Data*[nb_buckets_])
+    , max_load_factor_(max_load_factor)
+    , rehash_(0)
+    , no_rehash_(no_rehash)
   {
     std::fill(buckets_, buckets_ + nb_buckets_, nullptr);
   }
@@ -245,6 +257,7 @@ public:
     }
 
     ++size_;
+    rehash();
   }
 
   /// @brief Insert an element.
@@ -252,39 +265,9 @@ public:
   insert(Data& x)
   noexcept(noexcept(Hash()(x)))
   {
-    const std::uint32_t pos = Hash()(x) & (nb_buckets_ - 1);
-
-    Data* previous = nullptr;
-    Data* current = buckets_[pos];
-    bool insertion = true;
-
-    while (current != nullptr)
-    {
-      if (x == *current)
-      {
-        insertion = false;
-        break;
-      }
-      previous = current;
-      current = current->hook.next;
-    }
-
-    if (insertion)
-    {
-      if (previous != nullptr)
-      {
-        previous->hook.next = &x;
-      }
-      else
-      {
-        buckets_[pos] = &x;
-      }
-
-      current = &x;
-      ++size_;
-    }
-
-    return std::make_pair(iterator(this, pos, current), insertion);
+    auto res = insert_impl(&x, buckets_, nb_buckets_);
+    rehash();
+    return res;
   }
 
   /// @brief Return the number of elements.
@@ -368,8 +351,35 @@ public:
     {
       previous->hook.next = data->hook.next;
     }
-
     --size_;
+  }
+
+  /// @brief Erase an element given its value.
+  void
+  erase(const Data& x)
+  noexcept
+  {
+    const std::uint32_t pos = Hash()(x) & (nb_buckets_ - 1);
+    Data* previous = nullptr;
+    Data* current = buckets_[pos];
+    while (current != nullptr)
+    {
+      if (x == *current)
+      {
+        if (previous == nullptr) // first element in bucket
+        {
+          buckets_[pos] = current->hook.next;
+        }
+        else
+        {
+          previous->hook.next = current->hook.next;
+        }
+        --size_;
+        return;
+      }
+      previous = current;
+      current = current->hook.next;
+    }
   }
 
   /// @brief Clear the whole table.
@@ -387,6 +397,80 @@ public:
       erase(to_erase);
       disposer(current);
     }
+  }
+
+  /// @brief Get the load factor of the internal hash table.
+  double
+  load_factor()
+  const noexcept
+  {
+    return static_cast<double>(size()) / static_cast<double>(bucket_count());
+  }
+
+  /// @brief The number of times this hash table has been rehashed.
+  std::size_t
+  nb_rehash()
+  const noexcept
+  {
+    return rehash_;
+  }
+
+private:
+
+  void
+  rehash()
+  {
+    if (no_rehash_ or (load_factor() < max_load_factor_))
+    {
+      return;
+    }
+    ++rehash_;
+    auto new_nb_buckets = nb_buckets_ * 2;
+    auto new_buckets = new Data*[new_nb_buckets];
+    std::fill(new_buckets, new_buckets + new_nb_buckets, nullptr);
+    size_ = 0;
+    for (std::size_t i = 0; i < nb_buckets_; ++i)
+    {
+      Data* data_ptr = buckets_[i];
+      while (data_ptr)
+      {
+        Data* next = data_ptr->hook.next;
+        data_ptr->hook.next = nullptr;
+        insert_impl(data_ptr, new_buckets, new_nb_buckets);
+        data_ptr = next;
+      }
+      // else empty bucket
+    }
+    std::swap(new_buckets, buckets_);
+    std::swap(new_nb_buckets, nb_buckets_);
+    delete[] new_buckets;
+  }
+
+  /// @brief Insert an element.
+  std::pair<iterator, bool>
+  insert_impl(Data* x, Data** buckets, std::uint32_t nb_buckets)
+  noexcept(noexcept(Hash()(*x)))
+  {
+    const std::uint32_t pos = Hash()(*x) & (nb_buckets - 1);
+
+    Data* current = buckets[pos];
+
+    while (current != nullptr)
+    {
+      if (*x == *current)
+      {
+        return std::make_pair(iterator(this, pos, current), false /* no insertion */);
+      }
+      current = current->hook.next;
+    }
+
+    // Push in front of the list.
+    x->hook.next = buckets[pos];
+    buckets[pos] = x;
+
+    current = x;
+    ++size_;
+    return std::make_pair(iterator(this, pos, current), true /* insertion */);
   }
 };
 

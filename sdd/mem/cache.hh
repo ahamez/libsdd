@@ -183,9 +183,7 @@ private:
     /// Used by the LRU cache cleanup strategy.
     std::uint32_t date_;
 
-    std::uint32_t nb_hits_;
-
-    /// brief The 'in use' bit position in nb_hits_.
+    /// brief The 'in use' bit position in date_.
     static constexpr std::uint32_t in_use_mask = (1u << 31);
 
     /// @brief Constructor.
@@ -195,7 +193,6 @@ private:
       , operation(std::move(op))
       , result(std::forward<Args>(args)...)
       , date_(in_use_mask) // initially in use
-      , nb_hits_(0)
     {}
 
     /// @brief Cache entries are only compared using their operations.
@@ -222,7 +219,7 @@ private:
       date_ &= in_use_mask;
     }
 
-    /// @brief Increment the number of hits.
+    /// @brief Set the date of the last access.
     void
     set_date(std::uint32_t last_date)
     noexcept
@@ -244,22 +241,6 @@ private:
     const noexcept
     {
       return date_ & in_use_mask;
-    }
-
-    /// @brief Increment the number of hits.
-    void
-    increment_nb_hits()
-    noexcept
-    {
-      ++nb_hits_;
-    }
-
-    /// @brief Get the number of hits.
-    std::uint32_t
-    nb_hits()
-    const noexcept
-    {
-      return nb_hits_;
     }
   };
 
@@ -283,8 +264,8 @@ private:
   /// @brief The cache name.
   const std::string name_;
 
-  /// @brief The wanted load factor.
-  double max_load_factor_;
+  /// @brief The wanted load factor for the underlying hash table.
+  static constexpr double max_load_factor = 0.85;
 
   /// @brief An intrusive hash table.
   using set_type = mem::hash_table<cache_entry, hash_key>;
@@ -314,9 +295,8 @@ public:
   cache(context_type& context, const std::string& name, std::size_t size)
     : cxt_(context)
     , name_(name)
-    , max_load_factor_(0.9)
-    , set_(size)
-    , max_size_(set_.bucket_count())
+    , set_(size, max_load_factor, true /* no rehash */)
+    , max_size_(set_.bucket_count() * max_load_factor)
     , stats_()
     , date_(0)
   {}
@@ -360,14 +340,10 @@ public:
     {
       ++stats_.rounds.front().hits;
       insertion.first->set_date(++date_);
-      insertion.first->increment_nb_hits();
       return insertion.first->result;
     }
 
     ++stats_.rounds.front().misses;
-
-    // Clean up the cache, if necessary.
-    cleanup();
 
     cache_entry* entry;
     try
@@ -385,25 +361,27 @@ public:
       --stats_.rounds.front().misses;
       throw;
     }
+
     // A cache entry is constructed with the 'in use' bit set.
     entry->reset_in_use();
+
+    // Clean up the cache, if necessary.
+    cleanup();
+
+    // Update the last access date.
+    entry->set_date(++date_);
+
+    // Finally, set the result associated to op.
     set_.insert_commit(*entry, commit_data); // doesn't throw
+
     return entry->result;
   }
 
-  /// @brief The load factor of the underlying hash table.
-  double
-  load_factor()
-  const noexcept
-  {
-    return static_cast<double>(set_.size()) / static_cast<double>(max_size_);
-  }
-
-  /// @brief Remove half of the cache (LRU strategy).
+  /// @brief Remove half of the cache.
   void
   cleanup()
   {
-    if (load_factor() < max_load_factor_)
+    if (set_.size() < max_size_)
     {
       return;
     }
@@ -416,42 +394,45 @@ public:
     {
       if (not e.in_use())
       {
+        // A possible candidate for removal.
         vec.push_back(&e);
       }
     }
 
-    // Compute the number of elements to keep in order to reduce the load factor by a factor of 2.
-    const std::size_t to_keep = static_cast<std::size_t>(max_size_ * max_load_factor_/2);
-    const std::size_t cut_point = vec.size() - to_keep;
+    if (vec.empty())
+    {
+      // Can't clean the cache for now, all entries are in use or were already erased.
+      return;
+    }
+    else if (vec.size() < max_size_ / 2)
+    {
+      // Not enough entries are not in use to divide the size of the cache by 2.
+      // Delete all cache entries which are not in use.
+      std::for_each( vec.begin(), vec.end()
+                   , [&](cache_entry* e)
+                     {
+                       set_.erase(*e);
+                       delete e;
+                     });
+    }
+    else // vec.size() >= max_size / 2
+    {
+      const std::size_t cut_point = static_cast<std::size_t>(max_size_ / 2);
 
-    // All entries after the entry at cut_point are more recent and more frequently used.
-    std::nth_element( vec.begin(), vec.begin() + cut_point, vec.end()
-                    , [](cache_entry* lhs, cache_entry* rhs)
-                        {
-                          if (lhs->date() < rhs->date())
-                          {
-                            return true;
-                          }
-                          else if (lhs->date() == rhs->date())
-                          {
-                            return lhs->nb_hits() < rhs->nb_hits();
-                          }
-                          return false;
-                        });
+      // All entries after the entry at cut_point are more recent than this entry.
+      std::nth_element( vec.begin(), vec.begin() + cut_point, vec.end()
+                      , [](cache_entry* lhs, cache_entry* rhs){return lhs->date() < rhs->date();});
 
-    // Delete all cache entries with a number of entries smaller than the median.
-    std::for_each( vec.begin(), vec.begin() + cut_point
-                 , [&](cache_entry* e)
+      // Delete all cache entries with a number of entries smaller than the median.
+      std::for_each( vec.begin(), vec.begin() + cut_point
+                    , [&](cache_entry* e)
                       {
-                        const auto cit = set_.find(*e);
-                        assert(cit != set_.end());
-                        set_.erase(cit);
+                        set_.erase(*e);
                         delete e;
                       });
-
-    // Reset the number of hits of all remaining cache entries.
-    std::for_each(vec.begin() + cut_point, vec.end(), [](cache_entry* e){e->reset_date();});
-
+    }
+    // Reset the date of all remaining cache entries.
+    std::for_each(set_.begin(), set_.end(), [](cache_entry& e){e.reset_date();});
     // Reset the global date.
     date_ = 0;
   }

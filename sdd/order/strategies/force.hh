@@ -34,11 +34,14 @@ private:
   /// @brief Keep all computed total spans for statistics.
   std::deque<double> spans_;
 
+  /// @brief Reverse order.
+  bool reverse_;
+
 public:
 
   /// @brief Constructor.
-  worker(hypergraph<C>& graph)
-    : vertices_(graph.vertices()), hyperedges_(graph.hyperedges())
+  worker(hypergraph<C>& graph, bool reverse = false)
+    : vertices_(graph.vertices()), hyperedges_(graph.hyperedges()), spans_(), reverse_(reverse)
   {}
 
   /// @brief Effectively apply the FORCE ordering strategy.
@@ -94,9 +97,19 @@ public:
     }
 
     order_builder<C> ob;
-    for (const auto& vertex : best_order)
+    if (reverse_)
     {
-      ob.push(vertex.get().id());
+      for (auto rcit = best_order.rbegin(); rcit != best_order.rend(); ++rcit)
+      {
+        ob.push(rcit->get().id());
+      }
+    }
+    else
+    {
+      for (const auto& vertex : best_order)
+      {
+        ob.push(vertex.get().id());
+      }
     }
     return ob;
   }

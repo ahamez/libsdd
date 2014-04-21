@@ -5,9 +5,8 @@
 #include <memory>
 #include <vector>
 
-#include <boost/coroutine/coroutine.hpp>
-
 #include "sdd/dd/definition_fwd.hh"
+#include "sdd/util/boost_coroutine_no_warnings.hh"
 
 namespace sdd {
 

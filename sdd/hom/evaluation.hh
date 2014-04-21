@@ -6,6 +6,7 @@
 
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/interrupt.hh"
+#include "sdd/hom/traits.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
@@ -98,16 +99,6 @@ struct evaluation
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Default traits for homomorphisms.
-template <typename T>
-struct homomorphism_traits
-{
-  static constexpr bool should_cache = true;
-};
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
 /// @brief The evaluation of an homomorphism in the cache.
 template <typename C>
 struct cached_homomorphism
@@ -188,25 +179,6 @@ struct should_cache
   const noexcept
   {
     return visit(*this, ch.hom);
-  }
-};
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Used by the cache as a filter to know if an homomorphism should be cached.
-template <typename C>
-struct one_terminal_evaluation
-{
-  /// @brief Needed by me::variant.
-  using result_type = bool;
-
-  /// @brief Application of should_cache.
-  bool
-  operator()(const cached_homomorphism<C>& ch)
-  const noexcept
-  {
-    return ch.sdd != one<C>();
   }
 };
 
