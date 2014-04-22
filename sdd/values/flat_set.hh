@@ -387,16 +387,14 @@ noexcept
 
 /// @brief Comparison of flat_set
 /// @related flat_set
-///
-/// O(1). The order on flat_set is arbitrary. 
 template <typename Value>
 inline
 bool
 operator<(const flat_set<Value>& lhs, const flat_set<Value>& rhs)
 noexcept
 {
-  // Pointer comparison.
-  return lhs.ptr() < rhs.ptr();
+  // Comparison on content to provide a deterministic comparison.
+  return lhs.ptr()->data() < rhs.ptr()->data();
 }
 
 /*------------------------------------------------------------------------------------------------*/
