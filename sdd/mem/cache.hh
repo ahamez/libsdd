@@ -327,7 +327,7 @@ public:
     }
 
     // Clean up the cache, if necessary.
-    if (set_.size() > max_size_)
+    while (set_.size() > max_size_)
     {
       auto oldest = lru_list_.front();
       set_.erase(*oldest);
