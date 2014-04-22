@@ -1,15 +1,11 @@
 #ifndef _SDD_MEM_CACHE_HH_
 #define _SDD_MEM_CACHE_HH_
 
-#include <algorithm> // for_each, nth_element
-#include <cstdint>   // uint32_t
 #include <forward_list>
 #include <iterator>  // distance
 #include <list>
 #include <numeric>   // accumulate
-#include <tuple>
 #include <utility>   // forward
-#include <vector>
 
 #include "sdd/mem/hash_table.hh"
 #include "sdd/mem/interrupt.hh"
