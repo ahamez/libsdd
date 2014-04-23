@@ -5,21 +5,15 @@
 #include <list>
 #include <utility>    // forward
 
+#include "sdd/mem/cache_entry_fwd.hh"
 #include "sdd/mem/hash_table.hh"
+#include "sdd/mem/lru_list.hh"
 #include "sdd/mem/interrupt.hh"
 #include "sdd/util/hash.hh"
 
 namespace sdd { namespace mem {
 
 /*------------------------------------------------------------------------------------------------*/
-
-// Forward declaration.
-template <typename Operation, typename Result>
-struct cache_entry;
-
-/// @brief The type of the container that sorts cache entries by last access date.
-template <typename Operation, typename Result>
-using lru_list_type = std::list<cache_entry<Operation, Result>*>;
 
 /// @internal
 /// @brief Associate an operation to its result into the cache.

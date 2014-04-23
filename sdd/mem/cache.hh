@@ -1,11 +1,10 @@
 #ifndef _SDD_MEM_CACHE_HH_
 #define _SDD_MEM_CACHE_HH_
 
-#include <utility>   // forward
-
 #include "sdd/mem/cache_entry.hh"
 #include "sdd/mem/hash_table.hh"
 #include "sdd/mem/interrupt.hh"
+#include "sdd/mem/lru_list.hh"
 #include "sdd/util/hash.hh"
 
 namespace sdd { namespace mem {
