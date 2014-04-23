@@ -1,13 +1,11 @@
 #ifndef _SDD_MEM_CACHE_HH_
 #define _SDD_MEM_CACHE_HH_
 
-#include <list>
-#include <utility>   // forward
-
+#include "sdd/mem/cache_entry.hh"
 #include "sdd/mem/hash_table.hh"
 #include "sdd/mem/interrupt.hh"
+#include "sdd/mem/lru_list.hh"
 #include "sdd/util/hash.hh"
-#include "sdd/util/packed.hh"
 
 namespace sdd { namespace mem {
 
@@ -107,71 +105,11 @@ private:
   /// @brief The type of the result of an operation stored in the cache.
   using result_type = typename Operation::result_type;
 
-  // Forward declaration.
-  struct cache_entry;
-
-  /// @brief The type of the container that sorts cache entries by last access date.
-  using lru_list_type = std::list<cache_entry*>;
-
-  /// @brief Associate an operation to its result into the cache.
-  ///
-  /// The operation acts as a key and the associated result is the value counterpart.
-  struct
-#if defined __clang__
-  LIBSDD_ATTRIBUTE_PACKED
-#endif
-  cache_entry
-  {
-    // Can't copy a cache_entry.
-    cache_entry(const cache_entry&) = delete;
-    cache_entry& operator=(const cache_entry&) = delete;
-
-    /// @brief
-    mem::intrusive_member_hook<cache_entry> hook;
-
-    /// @brief The cached operation.
-    const Operation operation;
-
-    /// @brief The result of the evaluation of operation.
-    const result_type result;
-
-    /// @brief Where this cache entry is stored in the LRU list.
-    typename lru_list_type::const_iterator lru_cit_;
-
-    /// @brief Constructor.
-    template <typename... Args>
-    cache_entry(Operation&& op, Args&&... args)
-      : hook()
-      , operation(std::move(op))
-      , result(std::forward<Args>(args)...)
-      , lru_cit_()
-    {}
-
-    /// @brief Cache entries are only compared using their operations.
-    bool
-    operator==(const cache_entry& other)
-    const noexcept
-    {
-      return operation == other.operation;
-    }
-  };
-
-  /// @brief Hash a cache_entry.
-  ///
-  /// We only use the Operation part of a cache_entry to find it in the cache, in order
-  /// to manage the set that stores cache entries as a map.
-  struct hash_key
-  {
-    std::size_t
-    operator()(const cache_entry& x)
-    const noexcept(noexcept(util::hash(x.operation)))
-    {
-      return util::hash(x.operation);
-    }
-  };
+  /// @brief The of an entry that stores an operation and its result.
+  using cache_entry_type = cache_entry<Operation, result_type>;
 
   /// @brief An intrusive hash table.
-  using set_type = mem::hash_table<cache_entry, hash_key>;
+  using set_type = mem::hash_table<cache_entry_type>;
 
   /// @brief This cache's context.
   context_type& cxt_;
@@ -186,7 +124,7 @@ private:
   set_type set_;
 
   /// @brief The the container that sorts cache entries by last access date.
-  lru_list_type lru_list_;
+  lru_list<Operation, result_type> lru_list_;
 
   /// @brief The maximum size this cache is authorized to grow to.
   std::size_t max_size_;
@@ -243,7 +181,7 @@ public:
     typename set_type::insert_commit_data commit_data;
     auto insertion = set_.insert_check( op
                                       , std::hash<Operation>()
-                                      , [](const Operation& lhs, const cache_entry& rhs)
+                                      , [](const Operation& lhs, const cache_entry_type& rhs)
                                           {return lhs == rhs.operation;}
                                       , commit_data);
 
@@ -259,10 +197,10 @@ public:
 
     ++stats_.misses;
 
-    cache_entry* entry;
+    cache_entry_type* entry;
     try
     {
-      entry = new cache_entry(std::move(op), op(cxt_));
+      entry = new cache_entry_type(std::move(op), op(cxt_));
     }
     catch (EvaluationError& e)
     {
@@ -300,7 +238,7 @@ public:
   clear()
   noexcept
   {
-    set_.clear_and_dispose([](cache_entry* x){delete x;});
+    set_.clear_and_dispose([](cache_entry_type* x){delete x;});
   }
 
   /// @brief Get the number of cached operations.
