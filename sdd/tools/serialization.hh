@@ -37,23 +37,12 @@ save(Archive& archive, const unique_table_statistics& s)
 
 template<class Archive>
 void
-save(Archive& archive, const cache_statistics::round& r)
-{
-  archive( cereal::make_nvp("# hits", r.hits)
-         , cereal::make_nvp("# misses", r.misses)
-         , cereal::make_nvp("# filtered", r.filtered)
-         );
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
-template<class Archive>
-void
 save(Archive& archive, const cache_statistics& s)
 {
-  archive( cereal::make_nvp("# cleanup", s.cleanups())
-         , cereal::make_nvp("total", s.total())
-         , cereal::make_nvp("rounds", s.rounds)
+  archive( cereal::make_nvp("# hits", s.hits)
+         , cereal::make_nvp("# misses", s.misses)
+         , cereal::make_nvp("# filtered", s.filtered)
+         , cereal::make_nvp("# discarded", s.discarded)
          );
 }
 
