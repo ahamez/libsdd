@@ -11,19 +11,19 @@
 #include "sdd/order/strategies/force_hypergraph.hh"
 #include "sdd/order/strategies/force_vertex.hh"
 
-namespace sdd { namespace force {
+namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @internal
+/// @brief Apply the FORCE heuristic.
 template <typename C>
-class worker
+class apply_force
 {
 private:
 
   using id_type = typename C::Identifier;
-  using vertex_type = vertex<id_type>;
-  using hyperedge_type = hyperedge<id_type>;
+  using vertex_type = force::vertex<id_type>;
+  using hyperedge_type = force::hyperedge<id_type>;
 
   /// @brief
   std::deque<vertex_type>& vertices_;
@@ -34,19 +34,16 @@ private:
   /// @brief Keep all computed total spans for statistics.
   std::deque<double> spans_;
 
-  /// @brief Reverse order.
-  bool reverse_;
-
 public:
 
   /// @brief Constructor.
-  worker(hypergraph<C>& graph, bool reverse = false)
-    : vertices_(graph.vertices()), hyperedges_(graph.hyperedges()), spans_(), reverse_(reverse)
+  apply_force(force_hypergraph<C>& graph)
+    : vertices_(graph.vertices()), hyperedges_(graph.hyperedges()), spans_()
   {}
 
   /// @brief Effectively apply the FORCE ordering strategy.
   order_builder<C>
-  operator()(unsigned int iterations = 200)
+  operator()(unsigned int iterations, bool reverse)
   {
     std::vector<std::reference_wrapper<vertex_type>>
       sorted_vertices(vertices_.begin(), vertices_.end());
@@ -97,7 +94,7 @@ public:
     }
 
     order_builder<C> ob;
-    if (reverse_)
+    if (reverse)
     {
       for (auto rcit = best_order.rbegin(); rcit != best_order.rend(); ++rcit)
       {
@@ -114,6 +111,7 @@ public:
     return ob;
   }
 
+  /// @internal
   const std::deque<double>&
   spans()
   const noexcept
@@ -132,8 +130,6 @@ private:
                           , [](double acc, const hyperedge_type& h){return acc + h.span();});
   }
 };
-
-} // namespace force
 
 /*------------------------------------------------------------------------------------------------*/
 

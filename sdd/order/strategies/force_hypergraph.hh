@@ -10,13 +10,13 @@
 #include "sdd/order/strategies/force_hyperedge.hh"
 #include "sdd/order/strategies/force_vertex.hh"
 
-namespace sdd { namespace force {
+namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Represent the connections between the identifiers.
 template <typename C>
-class hypergraph
+class force_hypergraph
 {
 public:
 
@@ -26,10 +26,10 @@ public:
 private:
 
   /// @brief An hypergraph's vertex.
-  using vertex_type = vertex<identifier_type>;
+  using vertex_type = force::vertex<identifier_type>;
 
   /// @brief An hypergraph's hyperedge.
-  using hyperedge_type = hyperedge<identifier_type>;
+  using hyperedge_type = force::hyperedge<identifier_type>;
 
   /// @brief All the vertices of this hypergraph.
   ///
@@ -50,7 +50,7 @@ public:
 
   /// @brief Default constructor.
   template <typename InputIterator>
-  hypergraph(InputIterator it, InputIterator end)
+  force_hypergraph(InputIterator it, InputIterator end)
     : vertices_ptr_(std::make_shared<std::deque<vertex_type>>())
     , hyperedges_ptr_(std::make_shared<std::deque<hyperedge_type>>())
     , id_to_vertex_ptr_(std::make_shared<std::unordered_map<identifier_type, vertex_type*>>())
@@ -140,6 +140,6 @@ public:
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::force
+} // namespace sdd
 
 #endif // _SDD_ORDER_STRATEGIES_FORCE_HYPERGRAPH_HH_

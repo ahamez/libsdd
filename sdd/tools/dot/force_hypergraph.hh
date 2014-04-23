@@ -16,9 +16,9 @@ namespace sdd { namespace tools {
 template <typename C>
 struct force_hypergraph_to_dot
 {
-  const force::hypergraph<C>& g_;
+  const force_hypergraph<C>& g_;
 
-  force_hypergraph_to_dot(const force::hypergraph<C>& g)
+  force_hypergraph_to_dot(const force_hypergraph<C>& g)
     : g_(g)
   {}
 
@@ -48,7 +48,7 @@ struct force_hypergraph_to_dot
 /// @brief Export a FORCE hypergraph to the DOT format.
 template <typename C>
 force_hypergraph_to_dot<C>
-dot(const force::hypergraph<C>& g)
+dot(const force_hypergraph<C>& g)
 {
   return force_hypergraph_to_dot<C>(g);
 }
