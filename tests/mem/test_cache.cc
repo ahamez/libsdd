@@ -92,11 +92,12 @@ struct hash<operation>
 TEST(cache, creation)
 {
   cache<context, operation, error> c(cxt, "c", 100);
-  const auto& stats = c.statistics().rounds.front();
+  const auto& stats = c.statistics();
 
   ASSERT_EQ(0u, stats.hits);
   ASSERT_EQ(0u, stats.misses);
   ASSERT_EQ(0u, stats.filtered);
+  ASSERT_EQ(0u, stats.discarded);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -104,7 +105,7 @@ TEST(cache, creation)
 TEST(cache, insertion)
 {
   cache<context, operation, error> c(cxt, "c", 100);
-  const auto& stats = c.statistics().rounds.front();
+  const auto& stats = c.statistics();
 
   ASSERT_EQ(2u, c(operation(1)));
 
@@ -275,7 +276,7 @@ TEST(cache, filters)
   }
   {
     cache<context, operation, error, filter_0> c(cxt, "c", 100);
-    const auto& stats = c.statistics().rounds.front();
+    const auto& stats = c.statistics();
 
     ASSERT_EQ(2u, c(operation(1)));
     ASSERT_EQ(0u, stats.hits);
@@ -294,7 +295,7 @@ TEST(cache, filters)
   }
   {
     cache<context, operation, error, filter_0, filter_1> c(cxt, "c", 100);
-    const auto& stats = c.statistics().rounds.front();
+    const auto& stats = c.statistics();
 
     ASSERT_EQ(2u, c(operation(1)));
     ASSERT_EQ(0u, stats.hits);
@@ -336,18 +337,5 @@ TEST(cache, exception)
     ASSERT_THROW(c(operation(6666)), error);
   }
 }
-
-/*------------------------------------------------------------------------------------------------*/
-
-TEST(cache, cleanup)
-{
-  cache<context, operation, error> c(cxt, "c", 1024);
-  for (std::size_t i = 0; i < 2048; ++i)
-  {
-    ASSERT_EQ(static_cast<std::size_t>(i + 1), c(operation(i)));
-  }
-  ASSERT_EQ(3u, c.statistics().cleanups());
-}
-
 
 /*------------------------------------------------------------------------------------------------*/
