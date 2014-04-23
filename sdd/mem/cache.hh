@@ -190,8 +190,7 @@ public:
     {
       ++stats_.hits;
       // Move cache entry to the end of the LRU list.
-      lru_list_.erase(insertion.first->lru_cit_);
-      insertion.first->lru_cit_ = lru_list_.insert(lru_list_.end(), &(*insertion.first));
+      lru_list_.splice(lru_list_.end(), lru_list_, insertion.first->lru_cit_);
       return insertion.first->result;
     }
 
