@@ -36,7 +36,7 @@ struct cache_entry
   const Result result;
 
   /// @brief Where this cache entry is stored in the LRU list.
-  typename lru_list_type<Operation, Result>::const_iterator lru_cit_;
+  typename lru_list<Operation, Result>::const_iterator lru_cit_;
 
   /// @brief Constructor.
   template <typename... Args>
