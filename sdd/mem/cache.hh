@@ -1,8 +1,6 @@
 #ifndef _SDD_MEM_CACHE_HH_
 #define _SDD_MEM_CACHE_HH_
 
-#include <forward_list>
-#include <numeric>   // accumulate
 #include <utility>   // forward
 
 #include "sdd/mem/cache_entry.hh"
@@ -63,65 +61,22 @@ namespace /* anonymous */ {
 /// created. Thus, one can have detailed statistics to see how well the cache performed.
 struct cache_statistics
 {
-  /// @internal
-  /// @brief Statistic between two cleanups.
-  struct round
-  {
-    round()
-      : hits(0)
-      , misses(0)
-      , filtered(0)
-    {}
+  /// @brief The number of hits in a round.
+  std::size_t hits;
 
-    /// @brief The number of hits in a round.
-    std::size_t hits;
+  /// @brief The number of misses in a round.
+  std::size_t misses;
 
-    /// @brief The number of misses in a round.
-    std::size_t misses;
+  /// @brief The number of filtered entries in a round.
+  std::size_t filtered;
 
-    /// @brief The number of filtered entries in a round.
-    std::size_t filtered;
-  };
-
-  /// @brief The list of all rounds.
-  std::forward_list<round> rounds;
+  /// @brief The number of entries discarded by the LRU policy.
+  std::size_t discarded;
 
   /// @brief Default constructor.
   cache_statistics()
-    : rounds(1)
+    : hits(0), misses(0), filtered(0), discarded(0)
   {}
-
-  /// @brief Get the number of rounds.
-  std::size_t
-  size()
-  const noexcept
-  {
-    return std::distance(rounds.begin(), rounds.end()); // forward_list lacks a size() function
-  }
-
-  /// @brief Get the number of performed cleanups.
-  std::size_t
-  cleanups()
-  const noexcept
-  {
-    return size() - 1;
-  }
-
-  round
-  total()
-  const noexcept
-  {
-    return std::accumulate( rounds.begin(), rounds.end(), round()
-                          , [&](const round& acc, const round& r) -> round
-                               {
-                                 round res;
-                                 res.hits = acc.hits + r.hits;
-                                 res.misses = acc.misses + r.misses;
-                                 res.filtered = acc.filtered + r.filtered;
-                                 return res;
-                               }
-                          );
-  }
 };
 
 } // namespace anonymous
@@ -210,14 +165,14 @@ public:
     // Check if the current operation should not be cached.
     if (not apply_filters<Operation, Filters...>()(op))
     {
-      ++stats_.rounds.front().filtered;
+      ++stats_.filtered;
       try
       {
         return op(cxt_);
       }
       catch (EvaluationError& e)
       {
-        --stats_.rounds.front().filtered;
+        --stats_.filtered;
         e.add_step(std::move(op));
         throw;
       }
@@ -234,14 +189,14 @@ public:
     // Check if op has already been computed.
     if (not insertion.second)
     {
-      ++stats_.rounds.front().hits;
+      ++stats_.hits;
       // Move cache entry to the end of the LRU list.
       lru_list_.erase(insertion.first->lru_cit_);
       insertion.first->lru_cit_ = lru_list_.insert(lru_list_.end(), &(*insertion.first));
       return insertion.first->result;
     }
 
-    ++stats_.rounds.front().misses;
+    ++stats_.misses;
 
     cache_entry_type* entry;
     try
@@ -250,13 +205,13 @@ public:
     }
     catch (EvaluationError& e)
     {
-      --stats_.rounds.front().misses;
+      --stats_.misses;
       e.add_step(std::move(op));
       throw;
     }
     catch (interrupt<result_type>&)
     {
-      --stats_.rounds.front().misses;
+      --stats_.misses;
       throw;
     }
 
@@ -267,6 +222,7 @@ public:
       set_.erase(*oldest);
       delete oldest;
       lru_list_.pop_front();
+      ++stats_.discarded;
     }
 
     // Add the new cache entry to the end of the LRU list.
