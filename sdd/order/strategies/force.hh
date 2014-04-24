@@ -1,7 +1,8 @@
 #ifndef _SDD_ORDER_STRATEGIES_FORCE_HH_
 #define _SDD_ORDER_STRATEGIES_FORCE_HH_
 
-#include <functional> // reference_wrapper
+#include <algorithm>  // stable_sort
+#include <functional> // function, reference_wrapper
 #include <limits>
 #include <numeric>    // accumulate
 #include <vector>
@@ -16,14 +17,14 @@ namespace sdd {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Apply the FORCE heuristic.
-template <typename C>
+template <typename C, typename EdgeId>
 class apply_force
 {
 private:
 
   using id_type = typename C::Identifier;
-  using vertex_type = force::vertex<id_type>;
-  using hyperedge_type = force::hyperedge<id_type>;
+  using vertex_type = force::vertex<id_type, EdgeId>;
+  using hyperedge_type = force::hyperedge<id_type, EdgeId>;
 
   /// @brief
   std::deque<vertex_type>& vertices_;
@@ -34,17 +35,38 @@ private:
   /// @brief Keep all computed total spans for statistics.
   std::deque<double> spans_;
 
+  /// @brief The number of time the heuristic will be applied.
+  const unsigned int iterations_;
+
+  /// @brief Reverse the computed order.
+  const bool reverse_;
+
+  /// @brief The type of the function used to sort identifiers at each iteration.
+  using sort_identifiers_type = std::function<bool(const EdgeId&, const id_type&, const id_type&)>;
+
+  /// @brief Sort identifiers.
+  sort_identifiers_type sort_identifiers_;
+
 public:
 
   /// @brief Constructor.
-  apply_force(force_hypergraph<C>& graph)
+  apply_force( force_hypergraph<C, EdgeId>& graph, unsigned int iterations, bool reverse
+             , sort_identifiers_type sort)
     : vertices_(graph.vertices()), hyperedges_(graph.hyperedges()), spans_()
+    , iterations_(iterations), reverse_(reverse), sort_identifiers_(sort)
+  {}
+
+  /// @brief Constructor.
+  apply_force(force_hypergraph<C, EdgeId>& graph, unsigned int iterations, bool reverse)
+    : apply_force(graph, iterations, reverse, sort_identifiers_type())
   {}
 
   /// @brief Effectively apply the FORCE ordering strategy.
   order_builder<C>
-  operator()(unsigned int iterations, bool reverse)
+  operator()()
   {
+    auto iterations = iterations_;
+
     std::vector<std::reference_wrapper<vertex_type>>
       sorted_vertices(vertices_.begin(), vertices_.end());
 
@@ -54,6 +76,30 @@ public:
 
     while (iterations-- != 0)
     {
+      if (sort_identifiers_)
+      {
+        for (auto& edge : hyperedges_)
+        {
+          std::stable_sort( edge.vertices().begin(), edge.vertices().end()
+                          , [](const vertex_type* lhs, const vertex_type* rhs)
+                              {return lhs->location() < rhs->location();});
+
+          std::vector<double> locations;
+          locations.reserve(edge.vertices().size());
+          std::transform( edge.vertices().cbegin(), edge.vertices().cend()
+                        , std::back_inserter(locations)
+                        , [](const vertex_type* v){return v->location();});
+
+          std::stable_sort( edge.vertices().begin(), edge.vertices().end()
+                          , [&, this](const vertex_type* lhs, const vertex_type* rhs)
+                            {return sort_identifiers_(edge.id(), lhs->id(), rhs->id());});
+
+          auto location_cit = locations.begin();
+          std::for_each( edge.vertices().begin(), edge.vertices().end()
+                       , [&](vertex_type* v){v->location() = *location_cit++;});
+        }
+      }
+
       // Compute the new center of gravity for every hyperedge.
       for (auto& edge : hyperedges_)
       {
@@ -94,7 +140,7 @@ public:
     }
 
     order_builder<C> ob;
-    if (reverse)
+    if (reverse_)
     {
       for (auto rcit = best_order.rbegin(); rcit != best_order.rend(); ++rcit)
       {

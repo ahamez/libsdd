@@ -15,7 +15,7 @@ namespace sdd {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Represent the connections between the identifiers.
-template <typename C>
+template <typename C, typename EdgeId>
 class force_hypergraph
 {
 public:
@@ -26,10 +26,10 @@ public:
 private:
 
   /// @brief An hypergraph's vertex.
-  using vertex_type = force::vertex<identifier_type>;
+  using vertex_type = force::vertex<identifier_type, EdgeId>;
 
   /// @brief An hypergraph's hyperedge.
-  using hyperedge_type = force::hyperedge<identifier_type>;
+  using hyperedge_type = force::hyperedge<identifier_type, EdgeId>;
 
   /// @brief All the vertices of this hypergraph.
   ///
@@ -74,7 +74,7 @@ public:
   /// @brief Add a new hyperedge with a set of identifiers.
   template <typename InputIterator>
   void
-  add_hyperedge(InputIterator it, InputIterator end)
+  add_hyperedge(EdgeId edge_id, InputIterator it, InputIterator end)
   {
     if (it == end)
     {
@@ -93,7 +93,7 @@ public:
     assert(vertices.size() != 0);
 
     // Create the new hyperedge.
-    hyperedges_ptr_->emplace_back(std::move(vertices));
+    hyperedges_ptr_->emplace_back(edge_id, std::move(vertices));
 
     // Update connected vertices.
     assert(hyperedges_ptr_->back().vertices().size() != 0);

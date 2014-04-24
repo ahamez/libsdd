@@ -5,7 +5,7 @@ namespace sdd { namespace force {
 
 /*------------------------------------------------------------------------------------------------*/
 
-template <typename Identifier>
+template <typename Identifier, typename EdgeId>
 class hyperedge;
 
 /*------------------------------------------------------------------------------------------------*/

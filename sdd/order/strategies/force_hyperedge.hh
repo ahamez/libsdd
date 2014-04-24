@@ -13,7 +13,7 @@ namespace sdd { namespace force {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-template <typename Identifier>
+template <typename Identifier, typename EdgeId>
 class hyperedge
 {
 public:
@@ -25,14 +25,19 @@ private:
   /// @brief The center of gravity.
   double cog_;
 
+  /// @brief The user identifier associated to this hyperdge.
+  const EdgeId id_;
+
+  using vertex_type = vertex<identifier_type, EdgeId>;
+
   /// @brief Vertices connected to this hyperedge.
-  std::vector<vertex<identifier_type>*> vertices_;
+  std::vector<vertex_type*> vertices_;
 
 public:
 
   /// @brief Constructor with an already existing container of vertices.
-  hyperedge(std::vector<vertex<identifier_type>*>&& v)
-    : cog_(0), vertices_(std::move(v))
+  hyperedge(const EdgeId& id, std::vector<vertex_type*>&& v)
+    : id_(id), cog_(0), vertices_(std::move(v))
   {}
 
   /// @brief Return the computed center of gravity.
@@ -43,14 +48,22 @@ public:
     return cog_;
   }
 
-  std::vector<vertex<identifier_type>*>&
+  /// @brief Return the user identifier associated to this hyperdge.
+  const EdgeId&
+  id()
+  const noexcept
+  {
+    return id_;
+  }
+
+  std::vector<vertex_type*>&
   vertices()
   noexcept
   {
     return vertices_;
   }
 
-  const std::vector<vertex<identifier_type>*>&
+  const std::vector<vertex_type*>&
   vertices()
   const noexcept
   {
@@ -64,7 +77,7 @@ public:
   {
     assert(not vertices_.empty());
     cog_ = std::accumulate( vertices_.cbegin(), vertices_.cend(), 0
-                          , [](double acc, const vertex<identifier_type>* v)
+                          , [](double acc, const vertex_type* v)
                               {return acc + v->location();}
                           ) / vertices_.size();
   }
@@ -77,8 +90,8 @@ public:
     assert(not vertices_.empty());
     const auto minmax
       = std::minmax_element( vertices_.cbegin(), vertices_.cend()
-                           , []( const vertex<identifier_type>* lhs
-                               , const vertex<identifier_type>* rhs)
+                           , []( const vertex_type* lhs
+                               , const vertex_type* rhs)
                                {return lhs->location() < rhs->location();});
     return (*minmax.second)->location() - (*minmax.first)->location();
   }

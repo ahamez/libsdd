@@ -10,7 +10,7 @@ namespace sdd { namespace force {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-template <typename Identifier>
+template <typename Identifier, typename EdgeId>
 class vertex
 {
 public:
@@ -20,6 +20,8 @@ public:
 
 private:
 
+  using hyperdege_type = hyperedge<identifier_type, EdgeId>;
+
   /// @brief The corresponding identifier.
   const identifier_type id_;
 
@@ -27,7 +29,7 @@ private:
   double location_;
 
   /// @brief The hyperedges this vertex is connected to.
-  std::vector<hyperedge<identifier_type>*> hyperedges_;
+  std::vector<hyperdege_type*> hyperedges_;
 
 public:
 
@@ -61,7 +63,7 @@ public:
   }
 
   /// @brief Get the hyperedges this vertex is connected to.
-  std::vector<hyperedge<identifier_type>*>&
+  std::vector<hyperdege_type*>&
   hyperedges()
   noexcept
   {
@@ -69,7 +71,7 @@ public:
   }
 
   /// @brief Get the hyperedges this vertex is connected to.
-  const std::vector<hyperedge<identifier_type>*>&
+  const std::vector<hyperdege_type*>&
   hyperedges()
   const noexcept
   {
