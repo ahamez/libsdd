@@ -39,6 +39,11 @@ public:
   bool
   selector() const noexcept = 0;
 
+  /// @brief Tell if the user's function is a shifter.
+  virtual
+  bool
+  shifter() const noexcept = 0;
+
   /// @brief Apply the user function.
   virtual
   values_type
@@ -96,6 +101,14 @@ public:
     return selector_impl(fun_, 0);
   }
 
+  /// @brief Tell if the user's function is a shifter.
+  bool
+  shifter()
+  const noexcept override
+  {
+    return shifter_impl(fun_, 0);
+  }
+
   /// @brief Apply the user function.
   values_type
   operator()(const values_type& val)
@@ -150,6 +163,30 @@ private:
   template <typename T>
   static auto
   selector_impl(const T&, long)
+  noexcept
+  -> decltype(false)
+  {
+    return false;
+  }
+
+  /// @brief Called when the user's function has shifter().
+  ///
+  /// Compile-time dispatch.
+  template <typename T>
+  static auto
+  shifter_impl(const T& x, int)
+  noexcept
+  -> decltype(x.shifter())
+  {
+    return x.shifter();
+  }
+
+  /// @brief Called when the user's function doesn't have shifter().
+  ///
+  /// Compile-time dispatch.
+  template <typename T>
+  static auto
+  shifter_impl(const T&, long)
   noexcept
   -> decltype(false)
   {
@@ -214,7 +251,7 @@ private:
               , const function_base<C>& fun, context<C>& cxt, const order<C>& o)
     const
     {
-      if (fun.selector())
+      if (fun.selector() or fun.shifter())
       {
         dd::alpha_builder<C, values_type> alpha_builder;
         alpha_builder.reserve(node.size());
