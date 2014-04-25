@@ -19,7 +19,7 @@ namespace sdd { namespace mem {
 ///
 /// This type is meant to be used by ptr, which takes care of incrementing and decrementing
 /// the reference counter, as well as the deletion of the held data.
-template <typename T, typename Hash = std::hash<T>>
+template <typename T>
 class
 #ifdef __clang__
 LIBSDD_ATTRIBUTE_PACKED
@@ -122,7 +122,7 @@ private:
   template <typename, typename> friend class hash_table_iterator;
 
   // hash_table needs to access the hook.
-  template <typename, typename> friend class hash_table;
+  template <typename> friend class hash_table;
 
   /// @brief A ptr references that unified data.
   void
@@ -147,10 +147,10 @@ private:
 
 /// @internal
 /// @related ref_counted
-template <typename T, typename Hash>
+template <typename T>
 inline
 bool
-operator==(const ref_counted<T, Hash>& lhs, const ref_counted<T, Hash>& rhs)
+operator==(const ref_counted<T>& lhs, const ref_counted<T>& rhs)
 noexcept
 {
   return lhs.data() == rhs.data();
@@ -166,14 +166,14 @@ namespace std {
 
 /// @internal
 /// @brief Hash specialization for sdd::mem::ref_counted
-template <typename T, typename Hash>
-struct hash<sdd::mem::ref_counted<T,Hash>>
+template <typename T>
+struct hash<sdd::mem::ref_counted<T>>
 {
   std::size_t
-  operator()(const sdd::mem::ref_counted<T, Hash>& x)
-  const noexcept(noexcept(Hash()(x.data())))
+  operator()(const sdd::mem::ref_counted<T>& x)
+  const noexcept(noexcept(hash<T>()(x.data())))
   {
-    return Hash()(x.data());
+    return hash<T>()(x.data());
   }
 };
 

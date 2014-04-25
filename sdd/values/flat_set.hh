@@ -29,28 +29,11 @@ public:
   using value_type = Value;
 
   /// @internal
-  /// @brief How to hash a boost::container::flat_set.
-  struct hash_type
-  {
-    std::size_t
-    operator()(const boost::container::flat_set<value_type>& fs)
-    const noexcept
-    {
-      std::size_t seed = 0;
-      for (const auto& x : fs)
-      {
-        sdd::util::hash_combine(seed, x);
-      }
-      return seed;
-    }
-  };
-
-  /// @internal
   /// @brief The type of the real container.
   using data_type = boost::container::flat_set<value_type>;
 
   /// @internal
-  using unique_type = mem::ref_counted<data_type, hash_type>;
+  using unique_type = mem::ref_counted<data_type>;
 
   /// @internal
   using ptr_type = mem::ptr<unique_type>;
@@ -466,6 +449,25 @@ noexcept
 }} // namespace sdd::values
 
 namespace std {
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @brief Hash specialization for boost::container::flat_set
+template <typename Key, typename Compare, typename Allocator>
+struct hash<boost::container::flat_set<Key, Compare, Allocator>>
+{
+  std::size_t
+  operator()(const boost::container::flat_set<Key, Compare, Allocator>& c)
+  const noexcept
+  {
+    std::size_t seed = 0;
+    for (const auto& x : c)
+    {
+      sdd::util::hash_combine(seed, x);
+    }
+    return seed;
+  }
+};
 
 /*------------------------------------------------------------------------------------------------*/
 

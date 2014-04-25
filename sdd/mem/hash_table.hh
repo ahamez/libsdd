@@ -140,7 +140,7 @@ private:
 ///
 /// It's modeled after boost::intrusive. Only the interfaces needed by the libsdd are implemented.
 /// It uses chaining to handle collisions.
-template <typename Data, typename Hash = std::hash<Data>>
+template <typename Data>
 class hash_table
 {
 public:
@@ -152,16 +152,16 @@ public:
   };
 
   /// @brief The type of an iterator on this hash table.
-  using iterator = hash_table_iterator<Data, hash_table<Data, Hash>>;
+  using iterator = hash_table_iterator<Data, hash_table<Data>>;
 
   /// @brief The type of a const iterator on this hash table.
-  using const_iterator = hash_table_iterator<const Data, hash_table<Data, Hash>>;
+  using const_iterator = hash_table_iterator<const Data, hash_table<Data>>;
 
 private:
 
   // Iterators need to access buckets_.
-  friend class hash_table_iterator<Data, hash_table<Data, Hash>>;
-  friend class hash_table_iterator<const Data, hash_table<Data, Hash>>;
+  friend class hash_table_iterator<Data, hash_table<Data>>;
+  friend class hash_table_iterator<const Data, hash_table<Data>>;
 
   /// @brief 
   std::uint32_t nb_buckets_;
@@ -263,7 +263,7 @@ public:
   /// @brief Insert an element.
   std::pair<iterator, bool>
   insert(Data& x)
-  noexcept(noexcept(Hash()(x)))
+  noexcept(noexcept(std::hash<Data>()(x)))
   {
     auto res = insert_impl(&x, buckets_, nb_buckets_);
     rehash();
@@ -312,7 +312,7 @@ public:
   find(const Data& x)
   noexcept
   {
-    const std::uint32_t pos = Hash()(x) & (nb_buckets_ - 1);
+    const std::uint32_t pos = std::hash<Data>()(x) & (nb_buckets_ - 1);
     Data* current = buckets_[pos];
     bool found = false;
     while (current != nullptr)
@@ -354,12 +354,12 @@ public:
     --size_;
   }
 
-  /// @brief Erase an element given its value.
+  /// @brief Remove an element given its value.
   void
   erase(const Data& x)
   noexcept
   {
-    const std::uint32_t pos = Hash()(x) & (nb_buckets_ - 1);
+    const std::uint32_t pos = std::hash<Data>()(x) & (nb_buckets_ - 1);
     Data* previous = nullptr;
     Data* current = buckets_[pos];
     while (current != nullptr)
@@ -449,9 +449,9 @@ private:
   /// @brief Insert an element.
   std::pair<iterator, bool>
   insert_impl(Data* x, Data** buckets, std::uint32_t nb_buckets)
-  noexcept(noexcept(Hash()(*x)))
+  noexcept(noexcept(std::hash<Data>()(*x)))
   {
-    const std::uint32_t pos = Hash()(*x) & (nb_buckets - 1);
+    const std::uint32_t pos = std::hash<Data>()(*x) & (nb_buckets - 1);
 
     Data* current = buckets[pos];
 
