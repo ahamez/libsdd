@@ -29,6 +29,7 @@ save(Archive& archive, const unique_table_statistics& s)
          , cereal::make_nvp("# hits", s.hits)
          , cereal::make_nvp("# misses", s.misses)
          , cereal::make_nvp("# rehash", s.rehash)
+         , cereal::make_nvp("# collisions", s.collisions)
          , cereal::make_nvp("load factor", s.load_factor)
          );
 }
@@ -43,6 +44,7 @@ save(Archive& archive, const cache_statistics& s)
          , cereal::make_nvp("# misses", s.misses)
          , cereal::make_nvp("# filtered", s.filtered)
          , cereal::make_nvp("# discarded", s.discarded)
+         , cereal::make_nvp("# collisions", s.collisions)
          );
 }
 

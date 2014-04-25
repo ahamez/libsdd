@@ -178,6 +178,9 @@ private:
   /// @brief The number of times this hash table has been rehashed.
   std::size_t rehash_;
 
+  /// @brief The number of collisions that occured.
+  std::size_t collisions_;
+
   /// @brief
   const bool no_rehash_;
 
@@ -190,6 +193,7 @@ public:
     , buckets_(new Data*[nb_buckets_])
     , max_load_factor_(max_load_factor)
     , rehash_(0)
+    , collisions_(0)
     , no_rehash_(no_rehash)
   {
     std::fill(buckets_, buckets_ + nb_buckets_, nullptr);
@@ -213,7 +217,6 @@ public:
 
     Data* current = buckets_[pos];
     bool insertion = true;
-
     while (current != nullptr)
     {
       if (eq(x, *current))
@@ -249,6 +252,7 @@ public:
 
     if (previous != nullptr)
     {
+      ++collisions_;
       previous->hook.next = &x;
     }
     else
@@ -415,6 +419,14 @@ public:
     return rehash_;
   }
 
+  /// @brief The number of collisions that occured.
+  std::size_t
+  collisions()
+  const noexcept
+  {
+    return collisions_;
+  }
+
 private:
 
   void
@@ -465,6 +477,10 @@ private:
     }
 
     // Push in front of the list.
+    if (buckets[pos] != nullptr)
+    {
+      ++collisions_;
+    }
     x->hook.next = buckets[pos];
     buckets[pos] = x;
 

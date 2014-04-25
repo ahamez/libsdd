@@ -34,6 +34,9 @@ struct unique_table_statistics
 
   /// @brief The number of times the underlying hash table has been rehashed.
   std::size_t rehash;
+
+  /// @brief The number of collisions in the underlying hash table.
+  std::size_t collisions;
 };
 
 } // namespace anonymous
@@ -117,6 +120,7 @@ public:
     stats_.size = set_.size();
     stats_.load_factor = set_.load_factor();
     stats_.rehash = set_.nb_rehash();
+    stats_.collisions = set_.collisions();
     return stats_;
   }
 };
