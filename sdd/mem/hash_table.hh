@@ -2,7 +2,6 @@
 #define _SDD_MEM_HASH_TABLE_HH_
 
 #include <algorithm>  // fill
-#include <cstdint>    // uint32_t
 #include <functional> // hash
 #include <utility>    // make_pair, pair
 
@@ -44,7 +43,7 @@ private:
   const HashTable* container_;
 
   /// @brief The current position in the buckets.
-  std::uint32_t pos_;
+  std::size_t pos_;
 
   /// @brief The actual data this iterator points to.
   Data* data_;
@@ -60,7 +59,7 @@ public:
   {}
 
   /// @brief Constructor.
-  explicit hash_table_iterator(const HashTable* container, std::uint32_t p, Data* data)
+  explicit hash_table_iterator(const HashTable* container, std::size_t p, Data* data)
   noexcept
     : container_(container)
     , pos_(p)
@@ -164,10 +163,10 @@ private:
   friend class hash_table_iterator<const Data, hash_table<Data>>;
 
   /// @brief 
-  std::uint32_t nb_buckets_;
+  std::size_t nb_buckets_;
 
   /// @brief
-  std::uint32_t size_;
+  std::size_t size_;
 
   /// @brief
   Data** buckets_;
@@ -188,7 +187,7 @@ public:
 
   /// @brief Constructor
   hash_table(std::size_t size, double max_load_factor = 0.75, bool no_rehash = false)
-    : nb_buckets_(util::next_power_of_2(static_cast<std::uint32_t>(size)))
+    : nb_buckets_(util::next_power_of_2(size))
     , size_(0)
     , buckets_(new Data*[nb_buckets_])
     , max_load_factor_(max_load_factor)
@@ -213,7 +212,7 @@ public:
   {
     commit_data.hash = hash(x);
     // same as commit_data.h % nb_buckets_, but much more efficient (works only with powers of 2)
-    const std::uint32_t pos = commit_data.hash & (nb_buckets_ - 1);
+    const std::size_t pos = commit_data.hash & (nb_buckets_ - 1);
 
     Data* current = buckets_[pos];
     bool insertion = true;
@@ -235,7 +234,7 @@ public:
   insert_commit(Data& x, const insert_commit_data& commit_data)
   noexcept
   {
-    const std::uint32_t pos = commit_data.hash & (nb_buckets_ - 1);
+    const std::size_t pos = commit_data.hash & (nb_buckets_ - 1);
 
     Data* previous = nullptr;
     Data* current = buckets_[pos];
@@ -295,7 +294,7 @@ public:
   begin()
   noexcept
   {
-    std::uint32_t pos = 0;
+    std::size_t pos = 0;
     while (pos < nb_buckets_ and buckets_[pos] == nullptr)
     {
       ++pos;
@@ -316,7 +315,7 @@ public:
   find(const Data& x)
   noexcept
   {
-    const std::uint32_t pos = std::hash<Data>()(x) & (nb_buckets_ - 1);
+    const std::size_t pos = std::hash<Data>()(x) & (nb_buckets_ - 1);
     Data* current = buckets_[pos];
     bool found = false;
     while (current != nullptr)
@@ -363,7 +362,7 @@ public:
   erase(const Data& x)
   noexcept
   {
-    const std::uint32_t pos = std::hash<Data>()(x) & (nb_buckets_ - 1);
+    const std::size_t pos = std::hash<Data>()(x) & (nb_buckets_ - 1);
     Data* previous = nullptr;
     Data* current = buckets_[pos];
     while (current != nullptr)
@@ -460,10 +459,10 @@ private:
 
   /// @brief Insert an element.
   std::pair<iterator, bool>
-  insert_impl(Data* x, Data** buckets, std::uint32_t nb_buckets)
+  insert_impl(Data* x, Data** buckets, std::size_t nb_buckets)
   noexcept(noexcept(std::hash<Data>()(*x)))
   {
-    const std::uint32_t pos = std::hash<Data>()(*x) & (nb_buckets - 1);
+    const std::size_t pos = std::hash<Data>()(*x) & (nb_buckets - 1);
 
     Data* current = buckets[pos];
 
