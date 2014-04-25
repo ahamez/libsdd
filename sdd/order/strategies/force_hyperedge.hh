@@ -22,11 +22,11 @@ public:
 
 private:
 
-  /// @brief The center of gravity.
-  double cog_;
-
   /// @brief The user identifier associated to this hyperdge.
   const EdgeId id_;
+
+  /// @brief The center of gravity.
+  double cog_;
 
   using vertex_type = vertex<identifier_type, EdgeId>;
 
