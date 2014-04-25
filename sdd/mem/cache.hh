@@ -72,9 +72,12 @@ struct cache_statistics
   /// @brief The number of entries discarded by the LRU policy.
   std::size_t discarded;
 
+  /// @brief The number of collisions in the underlying hash table.
+  std::size_t collisions;
+
   /// @brief Default constructor.
   cache_statistics()
-    : hits(0), misses(0), filtered(0), discarded(0)
+    : hits(0), misses(0), filtered(0), discarded(0), collisions(0)
   {}
 };
 
@@ -130,7 +133,7 @@ private:
   std::size_t max_size_;
 
   /// @brief The statistics of this cache.
-  cache_statistics stats_;
+  mutable cache_statistics stats_;
 
 public:
 
@@ -253,6 +256,7 @@ public:
   statistics()
   const noexcept
   {
+    stats_.collisions = set_.collisions();
     return stats_;
   }
 
