@@ -75,9 +75,12 @@ struct cache_statistics
   /// @brief The number of collisions in the underlying hash table.
   std::size_t collisions;
 
+  /// @brief The number of buckets in the underlying hash table.
+  std::size_t buckets;
+
   /// @brief Default constructor.
   cache_statistics()
-    : hits(0), misses(0), filtered(0), discarded(0), collisions(0)
+    : hits(0), misses(0), filtered(0), discarded(0), collisions(0), buckets(0)
   {}
 };
 
@@ -257,6 +260,7 @@ public:
   const noexcept
   {
     stats_.collisions = set_.collisions();
+    stats_.buckets = set_.bucket_count();
     return stats_;
   }
 

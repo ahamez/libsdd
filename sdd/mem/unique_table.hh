@@ -37,6 +37,9 @@ struct unique_table_statistics
 
   /// @brief The number of collisions in the underlying hash table.
   std::size_t collisions;
+
+  /// @brief The number of buckets in the underlying hash table.
+  std::size_t buckets;
 };
 
 } // namespace anonymous
@@ -121,6 +124,7 @@ public:
     stats_.load_factor = set_.load_factor();
     stats_.rehash = set_.nb_rehash();
     stats_.collisions = set_.collisions();
+    stats_.buckets = set_.bucket_count();
     return stats_;
   }
 };
