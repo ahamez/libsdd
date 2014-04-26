@@ -55,18 +55,18 @@ namespace /* anonymous */ {
 
 /// @internal
 /// @brief The statistics of a cache.
-///
-/// A statistic is made of several rounds: each time a cache is cleaned up, a new round is
-/// created. Thus, one can have detailed statistics to see how well the cache performed.
 struct cache_statistics
 {
-  /// @brief The number of hits in a round.
+  /// @brief The number of entries.
+  std::size_t size;
+
+  /// @brief The number of hits.
   std::size_t hits;
 
-  /// @brief The number of misses in a round.
+  /// @brief The number of misses.
   std::size_t misses;
 
-  /// @brief The number of filtered entries in a round.
+  /// @brief The number of filtered entries.
   std::size_t filtered;
 
   /// @brief The number of entries discarded by the LRU policy.
@@ -75,10 +75,11 @@ struct cache_statistics
   /// @brief The number of collisions in the underlying hash table.
   std::size_t collisions;
 
-  /// @brief Default constructor.
-  cache_statistics()
-    : hits(0), misses(0), filtered(0), discarded(0), collisions(0)
-  {}
+  /// @brief The number of buckets in the underlying hash table.
+  std::size_t buckets;
+
+  /// @brief The load factor of the underlying hash table.
+  double load_factor;
 };
 
 } // namespace anonymous
@@ -256,7 +257,10 @@ public:
   statistics()
   const noexcept
   {
+    stats_.size = size();
     stats_.collisions = set_.collisions();
+    stats_.buckets = set_.bucket_count();
+    stats_.load_factor = set_.load_factor();
     return stats_;
   }
 
