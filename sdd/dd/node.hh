@@ -34,9 +34,6 @@ class LIBSDD_ATTRIBUTE_PACKED node final
 
 public:
 
-  /// @brief The type of the variable of this node.
-  using variable_type = typename C::variable_type;
-
   /// @brief The type of the valuation of this node.
   using valuation_type = Valuation;
 
@@ -51,9 +48,6 @@ public:
 
 private:
 
-  /// @brief The variable of this node.
-//  const variable_type variable_;
-
   /// @brief The number of arcs of this node.
   const alpha_size_type size_;
 
@@ -64,9 +58,9 @@ public:
   ///
   /// O(n) where n is the number of arcs in the builder.
   /// It can't throw as the memory for the alpha has already been allocated.
-  node(/*variable_type var,*/ dd::alpha_builder<C, Valuation>& builder)
+  node(dd::alpha_builder<C, Valuation>& builder)
   noexcept
-    : /*variable_(var),*/ size_(static_cast<alpha_size_type>(builder.size()))
+    : size_(static_cast<alpha_size_type>(builder.size()))
   {
     // Instruct the alpha builder to place it right after the node.
     builder.consolidate(alpha_addr());
@@ -83,16 +77,6 @@ public:
       a.~arc<C, Valuation>();
     }
   }
-
-//  /// @brief Get the variable of this node.
-//  ///
-//  /// O(1).
-//  variable_type
-//  variable()
-//  const noexcept
-//  {
-//    return variable_;
-//  }
 
   /// @brief Get the beginning of arcs.
   ///
@@ -173,8 +157,6 @@ template <typename C, typename Valuation>
 std::ostream&
 operator<<(std::ostream& os, const node<C, Valuation>& n)
 {
-  // +n.variable(): widen the type. It's useful to print the values of char and unsigned char types.
-//  os << +n.variable() << "[";
   std::for_each( n.begin(), n.end() - 1
                , [&](const arc<C, Valuation>& a)
                     {os << a.valuation() << " --> " << a.successor() << " || ";});
@@ -197,9 +179,6 @@ struct hash<sdd::node<C, Valuation>>
   operator()(const sdd::node<C, Valuation>& n)
   const
   {
-//    std::size_t seed = sdd::util::hash(n.variable());
-//    sdd::util::hash_combine(seed, n.begin(), n.end());
-//    return seed;
     return sdd::util::hash(n.begin(), n.end());
   }
 };

@@ -34,16 +34,12 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
   {
     using node_type      = NodeType;
     using valuation_type = typename node_type::valuation_type;
-    using variable_type  = typename node_type::variable_type;
 
     auto operands_cit = begin;
     const auto operands_end = end;
 
     // Result accumulator, initialized with the first operand.
     SDD<C> res = *operands_cit;
-
-//    const variable_type variable =
-//	    mem::variant_cast<node_type>(**operands_cit).variable();
 
     // We re-use the same square union to save some allocations.
     square_union<C, valuation_type> su;
@@ -87,7 +83,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
       }
 
       /// @todo avoid to create an intermediary SDD at each loop.
-      res = SDD<C>(/*variable,*/ su(cxt));
+      res = SDD<C>(su(cxt));
     }
 
     return res;

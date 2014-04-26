@@ -220,7 +220,7 @@ private:
     /// @brief |0| case, should never happen.
     SDD<C>
     operator()( const zero_terminal<C>&, const SDD<C>&
-              , const function_base<C>&, context<C>&, const order<C>&)
+              , const function_base<C>&, context<C>&)
     const noexcept
     {
       assert(false);
@@ -230,7 +230,7 @@ private:
     /// @brief |1| case.
     SDD<C>
     operator()( const one_terminal<C>&, const SDD<C>&
-              , const function_base<C>&, context<C>&, const order<C>&)
+              , const function_base<C>&, context<C>&)
     const
     {
       return one<C>();
@@ -239,7 +239,7 @@ private:
     /// @brief A function can't be applied on an hierarchical node.
     SDD<C>
     operator()( const hierarchical_node<C>&, const SDD<C>& s
-              , const function_base<C>&, context<C>&, const order<C>&)
+              , const function_base<C>&, context<C>&)
     const
     {
       throw evaluation_error<C>(s);
@@ -248,7 +248,7 @@ private:
     /// @brief Evaluation on a flat node.
     SDD<C>
     operator()( const flat_node<C>& node, const SDD<C>& s
-              , const function_base<C>& fun, context<C>& cxt, const order<C>& /*o*/)
+              , const function_base<C>& fun, context<C>& cxt)
     const
     {
       if (fun.selector() or fun.shifter())
@@ -265,11 +265,11 @@ private:
               alpha_builder.add(std::move(val), arc.successor());
             }
           }
-          return {/*o.variable(),*/ std::move(alpha_builder)};
+          return {std::move(alpha_builder)};
         }
         catch (interrupt<C>& i)
         {
-          i.result() = {/*o.variable(),*/ std::move(alpha_builder)};
+          i.result() = {std::move(alpha_builder)};
           throw;
         }
       }
@@ -283,7 +283,7 @@ private:
           {
             for (const auto& arc : node)
             {
-              sum_operands.add(SDD<C>(/*o.variable(),*/ fun(arc.valuation()), arc.successor()));
+              sum_operands.add(SDD<C>(fun(arc.valuation()), arc.successor()));
             }
             return dd::sum(cxt.sdd_context(), std::move(sum_operands));
           }
@@ -329,10 +329,10 @@ public:
 
   /// @brief Evaluation.
   SDD<C>
-  operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
+  operator()(context<C>& cxt, const order<C>&, const SDD<C>& x)
   const
   {
-    return visit_self(helper(), x, *fun_ptr_, cxt, o);
+    return visit_self(helper(), x, *fun_ptr_, cxt);
   }
 
   /// @brief Get the variable on which the user's function is applied.

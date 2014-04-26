@@ -70,7 +70,7 @@ struct simple
           const SDD<C> successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
           su.add(successor, arc.valuation());
         }
-        return SDD<C>(/*o.variable(),*/ su(cxt_.sdd_context()));
+        return SDD<C>(su(cxt_.sdd_context()));
       }
       else
       {
@@ -90,8 +90,7 @@ struct simple
                                           , cit, end);
 
             assert(not local_res->result.empty() && "Invalid empty successor result");
-            operands.add( SDD<C>( /*o.variable(),*/ nested
-                                , dd::sum<C>(sdd_cxt, std::move(local_res->result))));
+            operands.add( SDD<C>(nested, dd::sum<C>(sdd_cxt, std::move(local_res->result))));
           }
           return dd::sum<C>(sdd_cxt, std::move(operands));
         }
@@ -111,7 +110,7 @@ struct simple
       for (const auto& arc : node)
       {
         const auto nested = visit_self(*this, arc.valuation(), o.nested(), app, res, cit, end);
-        operands.add(SDD<C>(/*o.variable(),*/ nested, arc.successor()));
+        operands.add(SDD<C>(nested, arc.successor()));
       }
       try
       {
@@ -154,7 +153,7 @@ struct simple
         {
           eval_.update(o.identifier(), arc.valuation());
         }
-        operands.add(SDD<C>(/*o.variable(),*/ eval_.evaluate(), arc.successor()));
+        operands.add(SDD<C>(eval_.evaluate(), arc.successor()));
       }
       try
       {
@@ -182,7 +181,7 @@ struct simple
         const auto successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
         su.add(successor, arc.valuation());
       }
-      return SDD<C>(/*o.variable(),*/ su(sdd_cxt));
+      return SDD<C>(su(sdd_cxt));
     }
   }
 

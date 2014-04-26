@@ -41,7 +41,7 @@ public:
   operator()(context<C>& cxt, const order<C>&, const SDD<C>& x)
   const
   {
-    return {/*order_.variable(),*/ valuation_, next_(cxt, order_.next(), x)};
+    return {valuation_, next_(cxt, order_.next(), x)};
   }
 
   /// @brief Skip predicate.

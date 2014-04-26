@@ -197,7 +197,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       su.add(sum(cxt, std::move(arc.second)), arc.first);
     }
 
-    return SDD<C>(/*head.variable(),*/ su(cxt));
+    return SDD<C>(su(cxt));
   }
 
   /// @brief Linear union of flat SDDs whose valuation are "fast iterable".
@@ -208,8 +208,6 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
                          , SDD<C>>::type
   work(InputIterator begin, InputIterator end, context<C>& cxt)
   {
-//    const auto& variable = mem::variant_cast<flat_node<C>>(**begin).variable();
-
     using values_type      = typename C::Values;
     using values_builder   = typename values::values_traits<values_type>::builder;
     using value_type       = typename values_type::value_type;
@@ -266,7 +264,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       alpha.add(values_type(std::move(succ_values.second)), succ_values.first);
     }
 
-    return SDD<C>(/*variable,*/ std::move(alpha));
+    return SDD<C>(std::move(alpha));
   }
 };
 
