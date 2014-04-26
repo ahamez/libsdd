@@ -77,11 +77,11 @@ public:
             catch (interrupt<C>& i)
             {
               su.add(arc.successor(), i.result());
-              i.result() = {node.variable(), su(cxt_.sdd_context())};
+              i.result() = {/*node.variable(),*/ su(cxt_.sdd_context())};
               throw;
             }
           }
-          return {node.variable(), su(cxt_.sdd_context())};
+          return {/*node.variable(),*/ su(cxt_.sdd_context())};
         }
         else // partition will change
         {
@@ -92,11 +92,11 @@ public:
             try
             {
               const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
-              sum_operands.add(SDD<C>(node.variable(), new_valuation, arc.successor()));
+              sum_operands.add(SDD<C>(/*node.variable(),*/ new_valuation, arc.successor()));
             }
             catch (interrupt<C>& i)
             {
-              sum_operands.add(SDD<C>(node.variable(), i.result(), arc.successor()));
+              sum_operands.add(SDD<C>(/*node.variable(),*/ i.result(), arc.successor()));
               i.result() = dd::sum(cxt_.sdd_context(), std::move(sum_operands));
               throw;
             }

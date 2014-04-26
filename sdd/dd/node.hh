@@ -52,7 +52,7 @@ public:
 private:
 
   /// @brief The variable of this node.
-  const variable_type variable_;
+//  const variable_type variable_;
 
   /// @brief The number of arcs of this node.
   const alpha_size_type size_;
@@ -64,9 +64,9 @@ public:
   ///
   /// O(n) where n is the number of arcs in the builder.
   /// It can't throw as the memory for the alpha has already been allocated.
-  node(variable_type var, dd::alpha_builder<C, Valuation>& builder)
+  node(/*variable_type var,*/ dd::alpha_builder<C, Valuation>& builder)
   noexcept
-    : variable_(var), size_(static_cast<alpha_size_type>(builder.size()))
+    : /*variable_(var),*/ size_(static_cast<alpha_size_type>(builder.size()))
   {
     // Instruct the alpha builder to place it right after the node.
     builder.consolidate(alpha_addr());
@@ -84,15 +84,15 @@ public:
     }
   }
 
-  /// @brief Get the variable of this node.
-  ///
-  /// O(1).
-  variable_type
-  variable()
-  const noexcept
-  {
-    return variable_;
-  }
+//  /// @brief Get the variable of this node.
+//  ///
+//  /// O(1).
+//  variable_type
+//  variable()
+//  const noexcept
+//  {
+//    return variable_;
+//  }
 
   /// @brief Get the beginning of arcs.
   ///
@@ -163,7 +163,7 @@ bool
 operator==(const node<C, Valuation>& lhs, const node<C, Valuation>& rhs)
 noexcept
 {
-  return lhs.size() == rhs.size() and lhs.variable() == rhs.variable()
+  return lhs.size() == rhs.size() /*and lhs.variable() == rhs.variable()*/
      and std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
@@ -174,7 +174,7 @@ std::ostream&
 operator<<(std::ostream& os, const node<C, Valuation>& n)
 {
   // +n.variable(): widen the type. It's useful to print the values of char and unsigned char types.
-  os << +n.variable() << "[";
+//  os << +n.variable() << "[";
   std::for_each( n.begin(), n.end() - 1
                , [&](const arc<C, Valuation>& a)
                     {os << a.valuation() << " --> " << a.successor() << " || ";});
@@ -197,9 +197,10 @@ struct hash<sdd::node<C, Valuation>>
   operator()(const sdd::node<C, Valuation>& n)
   const
   {
-    std::size_t seed = sdd::util::hash(n.variable());
-    sdd::util::hash_combine(seed, n.begin(), n.end());
-    return seed;
+//    std::size_t seed = sdd::util::hash(n.variable());
+//    sdd::util::hash_combine(seed, n.begin(), n.end());
+//    return seed;
+    return sdd::util::hash(n.begin(), n.end());
   }
 };
 

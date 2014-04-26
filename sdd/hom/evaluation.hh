@@ -59,7 +59,7 @@ struct evaluation
   const
   {
     assert(not o.empty() && "Empty order.");
-    assert(o.variable() == node.variable() && "Different variables in order and SDD.");
+//    assert(o.variable() == node.variable() && "Different variables in order and SDD.");
 
     if (h.skip(o))
     {
@@ -83,11 +83,11 @@ struct evaluation
           {
             su.add(i.result(), arc.valuation());
           }
-          i.result() = {node.variable(), su(cxt.sdd_context())};
+          i.result() = {/*node.variable(),*/ su(cxt.sdd_context())};
           throw;
         }
       }
-      return {node.variable(), su(cxt.sdd_context())};
+      return {/*node.variable(),*/ su(cxt.sdd_context())};
     }
     else
     {

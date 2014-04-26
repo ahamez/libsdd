@@ -41,14 +41,14 @@ struct difference_visitor
   template <typename Valuation>
   SDD<C>
   operator()( const node<C, Valuation>& lhs, const node<C, Valuation>& rhs
-            , const SDD<C>& lhs_orig, const SDD<C>& rhs_orig)
+            , const SDD<C>& /*lhs_orig*/, const SDD<C>& /*rhs_orig*/)
   const
   {
     // Check if both operands are compatible.
-    if (not (lhs.variable() == rhs.variable()))
-    {
-      throw top<C>(lhs_orig, rhs_orig);
-    }
+//    if (not (lhs.variable() == rhs.variable()))
+//    {
+//      throw top<C>(lhs_orig, rhs_orig);
+//    }
 
     // Compute union of all rhs valuations.
     sum_builder<C, Valuation> sum_builder;
@@ -97,7 +97,7 @@ struct difference_visitor
 
     return su.empty()
          ? zero<C>() // avoid a useless allocation when calling square_union::operator()
-         : SDD<C>(lhs.variable(), su(cxt_));
+         : SDD<C>(/*lhs.variable(),*/ su(cxt_));
          ;
   }
 

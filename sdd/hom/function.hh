@@ -248,7 +248,7 @@ private:
     /// @brief Evaluation on a flat node.
     SDD<C>
     operator()( const flat_node<C>& node, const SDD<C>& s
-              , const function_base<C>& fun, context<C>& cxt, const order<C>& o)
+              , const function_base<C>& fun, context<C>& cxt, const order<C>& /*o*/)
     const
     {
       if (fun.selector() or fun.shifter())
@@ -265,11 +265,11 @@ private:
               alpha_builder.add(std::move(val), arc.successor());
             }
           }
-          return {o.variable(), std::move(alpha_builder)};
+          return {/*o.variable(),*/ std::move(alpha_builder)};
         }
         catch (interrupt<C>& i)
         {
-          i.result() = {o.variable(), std::move(alpha_builder)};
+          i.result() = {/*o.variable(),*/ std::move(alpha_builder)};
           throw;
         }
       }
@@ -283,7 +283,7 @@ private:
           {
             for (const auto& arc : node)
             {
-              sum_operands.add(SDD<C>(o.variable(), fun(arc.valuation()), arc.successor()));
+              sum_operands.add(SDD<C>(/*o.variable(),*/ fun(arc.valuation()), arc.successor()));
             }
             return dd::sum(cxt.sdd_context(), std::move(sum_operands));
           }

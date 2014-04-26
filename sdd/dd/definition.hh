@@ -113,8 +113,8 @@ public:
   /// @param succ The SDD's successor.
   ///
   /// O(1).
-  SDD(variable_type var, values_type&& val, const SDD& succ)
-    : ptr_(create_node(var, std::move(val), succ))
+  SDD(/*variable_type var,*/ values_type&& val, const SDD& succ)
+    : ptr_(create_node(/*var,*/ std::move(val), succ))
   {}
 
   /// @internal
@@ -124,8 +124,8 @@ public:
   /// @param succ The SDD's successor.
   ///
   /// O(1).
-  SDD(variable_type var, const values_type& val, const SDD& succ)
-    : ptr_(create_node(var, val, succ))
+  SDD(/*variable_type var,*/ const values_type& val, const SDD& succ)
+    : ptr_(create_node(/*var,*/ val, succ))
   {}
 
   /// @internal
@@ -135,8 +135,8 @@ public:
   /// @param succ The SDD's successor.
   ///
   /// O(1).
-  SDD(variable_type var, const SDD& val, const SDD& succ)
-    : ptr_(create_node(var, val, succ))
+  SDD(/*variable_type var,*/ const SDD& val, const SDD& succ)
+    : ptr_(create_node(/*var,*/ val, succ))
   {}
 
   /// @brief Construct an SDD with an order.
@@ -153,11 +153,11 @@ public:
       // We can safely pass the order_identifier as a user one because only hierarchical levels
       // can be artificial.
       assert(not o.identifier().artificial());
-      ptr_ = create_node(o.variable(), init(o.identifier().user()), SDD(o.next(), init));
+      ptr_ = create_node(/*o.variable(),*/ init(o.identifier().user()), SDD(o.next(), init));
     }
     else // hierarchical
     {
-      ptr_ = create_node(o.variable(), SDD(o.nested(), init), SDD(o.next(), init));
+      ptr_ = create_node(/*o.variable(),*/ SDD(o.nested(), init), SDD(o.next(), init));
     }
   }
 
@@ -210,8 +210,8 @@ public:
   ///
   /// O(n) where n is the number of arcs in the builder.
   template <typename Valuation>
-  SDD(variable_type var, dd::alpha_builder<C, Valuation>&& builder)
-    : ptr_(create_node(var, std::move(builder)))
+  SDD(/*variable_type var,*/ dd::alpha_builder<C, Valuation>&& builder)
+    : ptr_(create_node(/*var,*/ std::move(builder)))
   {}
 
   /// @internal
@@ -296,7 +296,7 @@ private:
   template <typename Valuation>
   static
   ptr_type
-  create_node(variable_type var, Valuation&& val, const SDD& succ)
+  create_node(/*variable_type var,*/ Valuation&& val, const SDD& succ)
   {
     if (succ.empty() or values::empty_values(val))
     {
@@ -306,7 +306,7 @@ private:
     {
       dd::alpha_builder<C, Valuation> builder;
       builder.add(std::move(val), succ);
-      return ptr_type(unify_node<Valuation>(var, std::move(builder)));
+      return ptr_type(unify_node<Valuation>(/*var,*/ std::move(builder)));
     }
   }
 
@@ -317,7 +317,7 @@ private:
   template <typename Valuation>
   static
   ptr_type
-  create_node(variable_type var, const Valuation& val, const SDD& succ)
+  create_node(/*variable_type var,*/ const Valuation& val, const SDD& succ)
   {
     if (succ.empty() or values::empty_values(val))
     {
@@ -327,7 +327,7 @@ private:
     {
       dd::alpha_builder<C, Valuation> builder;
       builder.add(val, succ);
-      return ptr_type(unify_node<Valuation>(var, std::move(builder)));
+      return ptr_type(unify_node<Valuation>(/*var,*/ std::move(builder)));
     }
   }
 
@@ -338,7 +338,7 @@ private:
   template <typename Valuation>
   static
   ptr_type
-  create_node(variable_type var, dd::alpha_builder<C, Valuation>&& builder)
+  create_node(/*variable_type var,*/ dd::alpha_builder<C, Valuation>&& builder)
   {
     if (builder.empty())
     {
@@ -346,7 +346,7 @@ private:
     }
     else
     {
-      return ptr_type(unify_node<Valuation>(var, std::move(builder)));
+      return ptr_type(unify_node<Valuation>(/*var,*/ std::move(builder)));
     }
   }
 
@@ -357,7 +357,7 @@ private:
   template <typename Valuation>
   static
   unique_type&
-  unify_node(variable_type var, dd::alpha_builder<C, Valuation>&& builder)
+  unify_node(/*variable_type var,*/ dd::alpha_builder<C, Valuation>&& builder)
   {
     // Will be erased by the unicity table, either it's an already existing node or a deletion
     // is requested by ptr.
@@ -367,7 +367,7 @@ private:
     auto& ut = global<C>().sdd_unique_table;
     char* addr = ut.allocate(builder.size_to_allocate());
     unique_type* u =
-      new (addr) unique_type(mem::construct<node<C, Valuation>>(), var, builder);
+      new (addr) unique_type(mem::construct<node<C, Valuation>>(), /*var,*/ builder);
     return ut(u);
   }
 };
@@ -469,25 +469,25 @@ check_compatibility(const SDD<C>& lhs, const SDD<C>& rhs)
     throw top<C>(lhs, rhs);
   }
 
-  typename SDD<C>::variable_type lhs_variable;
-  typename SDD<C>::variable_type rhs_variable;
-
-  // we must convert to the right type before comparing variables
-  if (lhs_index == SDD<C>::flat_node_index)
-  {
-    lhs_variable = mem::variant_cast<flat_node<C>>(*lhs).variable();
-    rhs_variable = mem::variant_cast<flat_node<C>>(*rhs).variable();
-  }
-  else
-  {
-    lhs_variable = mem::variant_cast<hierarchical_node<C>>(*lhs).variable();
-    rhs_variable = mem::variant_cast<hierarchical_node<C>>(*rhs).variable();
-  }
-
-  if (lhs_variable != rhs_variable)
-  {
-    throw top<C>(lhs, rhs);
-  }
+//  typename SDD<C>::variable_type lhs_variable;
+//  typename SDD<C>::variable_type rhs_variable;
+//
+//  // we must convert to the right type before comparing variables
+//  if (lhs_index == SDD<C>::flat_node_index)
+//  {
+//    lhs_variable = mem::variant_cast<flat_node<C>>(*lhs).variable();
+//    rhs_variable = mem::variant_cast<flat_node<C>>(*rhs).variable();
+//  }
+//  else
+//  {
+//    lhs_variable = mem::variant_cast<hierarchical_node<C>>(*lhs).variable();
+//    rhs_variable = mem::variant_cast<hierarchical_node<C>>(*rhs).variable();
+//  }
+//
+//  if (lhs_variable != rhs_variable)
+//  {
+//    throw top<C>(lhs, rhs);
+//  }
 
   return lhs_index;
 }

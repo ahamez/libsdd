@@ -98,7 +98,7 @@ struct expression_post_visitor
                  , bcoro::attributes(coro_fpu<C::expression_preserve_fpu_registers>::value));
       while (gen)
       {
-        yield(SDD<C>(o.variable(), gen.get(), local_res->sdd));
+        yield(SDD<C>(/*o.variable(),*/ gen.get(), local_res->sdd));
         gen();
       }
     }
@@ -130,7 +130,7 @@ struct expression_post_visitor
           eval.update(o.identifier(), arc.valuation());
         }
         valuation = eval.evaluate();
-        yield(SDD<C>(o.variable(), arc.valuation(), arc.successor()));
+        yield(SDD<C>(/*o.variable(),*/ arc.valuation(), arc.successor()));
       }
     }
     else // cit != end
@@ -150,11 +150,11 @@ struct expression_post_visitor
           if (target_level)
           {
             valuation = eval.evaluate();
-            yield(SDD<C>(o.variable(), valuation, gen.get()));
+            yield(SDD<C>(/*o.variable(),*/ valuation, gen.get()));
           }
           else
           {
-            yield(SDD<C>(o.variable(), arc.valuation(), gen.get()));
+            yield(SDD<C>(/*o.variable(),*/ arc.valuation(), gen.get()));
           }
           gen();
         }
@@ -270,7 +270,7 @@ struct expression_pre
           const SDD<C> successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
           su.add(successor, arc.valuation());
         }
-        return SDD<C>(o.variable(), su(sdd_cxt));
+        return SDD<C>(/*o.variable(),*/ su(sdd_cxt));
       }
       else
       {
@@ -288,7 +288,7 @@ struct expression_pre
             assert(not local_res->result.empty() && "Invalid empty successor result");
             su.add(dd::sum<C>(sdd_cxt, std::move(local_res->result)), arc.valuation());
           }
-          return SDD<C>(o.variable(), su(sdd_cxt));
+          return SDD<C>(/*o.variable(),*/ su(sdd_cxt));
         }
         catch (top<C>& t)
         {
@@ -315,7 +315,7 @@ struct expression_pre
         while(gen)
         {
           assert(not local_res->sdd.empty() && "Invalid |0| successor result");
-          operands.add(SDD<C>(o.variable(), /*nested*/ gen.get(), /*successor*/ local_res->sdd));
+          operands.add(SDD<C>(/*o.variable(),*/ /*nested*/ gen.get(), /*successor*/ local_res->sdd));
           gen();
         }
       }
@@ -370,7 +370,7 @@ struct expression_pre
         while (gen)
         {
           // valuation_ has been modified in the meantime
-          operands.add(SDD<C>(o.variable(), valuation_, gen.get()));
+          operands.add(SDD<C>(/*o.variable(),*/ valuation_, gen.get()));
           gen();
         }
       }
@@ -399,7 +399,7 @@ struct expression_pre
         const SDD<C> successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
         su.add(successor, arc.valuation());
       }
-      return SDD<C>(o.variable(), su(cxt_.sdd_context()));
+      return SDD<C>(/*o.variable(),*/ su(cxt_.sdd_context()));
     }
   }
 
