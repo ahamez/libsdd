@@ -74,7 +74,7 @@ public:
   /// @brief Add a new hyperedge with a set of identifiers.
   template <typename InputIterator>
   void
-  add_hyperedge(InputIterator it, InputIterator end)
+  add_hyperedge(InputIterator it, InputIterator end, double weight = 1)
   {
     if (it == end)
     {
@@ -93,7 +93,7 @@ public:
     assert(vertices.size() != 0);
 
     // Create the new hyperedge.
-    hyperedges_ptr_->emplace_back(std::move(vertices));
+    hyperedges_ptr_->emplace_back(weight, std::move(vertices));
 
     // Update connected vertices.
     assert(hyperedges_ptr_->back().vertices().size() != 0);

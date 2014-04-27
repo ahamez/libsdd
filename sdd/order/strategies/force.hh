@@ -74,7 +74,7 @@ public:
                                            , vertex.hyperedges().cend()
                                            , 0
                                            , [](double acc, const hyperedge_type* e)
-                                               {return acc + e->center_of_gravity();}
+                                               {return acc + e->center_of_gravity() * e->weight();}
                                            ) / vertex.hyperedges().size();
       }
 

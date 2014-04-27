@@ -22,6 +22,9 @@ public:
 
 private:
 
+  /// @brief
+  const double weight_;
+
   /// @brief The center of gravity.
   double cog_;
 
@@ -31,8 +34,8 @@ private:
 public:
 
   /// @brief Constructor with an already existing container of vertices.
-  hyperedge(std::vector<vertex<identifier_type>*>&& v)
-    : cog_(0), vertices_(std::move(v))
+  hyperedge(double weight, std::vector<vertex<identifier_type>*>&& v)
+    : weight_(weight), cog_(0), vertices_(std::move(v))
   {}
 
   /// @brief Return the computed center of gravity.
@@ -41,6 +44,13 @@ public:
   const noexcept
   {
     return cog_;
+  }
+
+  double
+  weight()
+  const noexcept
+  {
+    return weight_;
   }
 
   std::vector<vertex<identifier_type>*>&
