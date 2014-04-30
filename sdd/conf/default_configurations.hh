@@ -38,6 +38,9 @@ struct default_configuration
   /// @brief The size of the cache of SDD sum (union) operations.
   std::size_t sdd_sum_cache_size;
 
+  /// @brief The size, in bytes, of the buffer for temporary containers allocation.
+  std::size_t sdd_arena_size;
+
   /// @brief The initial size of the hash table that stores homomorphisms.
   std::size_t hom_unique_table_size;
 
@@ -61,6 +64,7 @@ struct default_configuration
     , sdd_difference_cache_size(500000)
     , sdd_intersection_cache_size(500000)
     , sdd_sum_cache_size(1000000)
+    , sdd_arena_size(1024*1024*16)
     , hom_unique_table_size(1000000)
     , hom_cache_size(1000000)
     , final_cleanup(true)

@@ -10,6 +10,7 @@
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/top.hh"
+#include "sdd/mem/linear_alloc.hh"
 
 namespace sdd { namespace dd {
 
@@ -145,27 +146,28 @@ operator<<(std::ostream& os, const nary_op<C, Operation>& x)
 /// (to improve cache hits); and to know the exact number of operands in order to allocate the
 /// smallest possible memory to store all of them (this allocation is performed in the
 /// construction of operations in nary_op).
-template <typename Valuation, typename Builder>
+template <typename C, typename Valuation, typename Builder>
 struct LIBSDD_ATTRIBUTE_PACKED nary_builder
   : public Builder
 {
   using builder_type = Builder;
-  using set_type = boost::container::flat_set<Valuation>;
+  using set_type = boost::container::flat_set< Valuation, std::less<Valuation>
+                                             , mem::linear_alloc<Valuation>>;
   using const_iterator = typename set_type::const_iterator;
 
   /// @brief Sorted container of operands.
   set_type set_;
 
   /// @brief Default constructor.
-  nary_builder()
+  nary_builder(context<C>& cxt)
     : builder_type()
-    , set_()
+    , set_(std::less<Valuation>(), mem::linear_alloc<Valuation>(cxt.arena()))
   {}
 
   /// @brief Construction from a list of operands.
-  nary_builder(std::initializer_list<Valuation> operands)
+  nary_builder(context<C>& cxt, std::initializer_list<Valuation> operands)
     : builder_type()
-    , set_()
+    , set_(std::less<Valuation>(), mem::linear_alloc<Valuation>(cxt.arena()))
   {
     set_.reserve(operands.size());
     for (const auto& op : operands)

@@ -253,7 +253,7 @@ private:
     {
       if (fun.selector() or fun.shifter())
       {
-        dd::alpha_builder<C, values_type> alpha_builder;
+        dd::alpha_builder<C, values_type> alpha_builder(cxt.sdd_context());
         alpha_builder.reserve(node.size());
         try
         {
@@ -265,33 +265,30 @@ private:
               alpha_builder.add(std::move(val), arc.successor());
             }
           }
-          return {o.variable(), std::move(alpha_builder)};
         }
         catch (interrupt<C>& i)
         {
           i.result() = {o.variable(), std::move(alpha_builder)};
           throw;
         }
+        return {o.variable(), std::move(alpha_builder)};
       }
       else
       {
-        dd::sum_builder<C, SDD<C>> sum_operands;
+        dd::sum_builder<C, SDD<C>> sum_operands(cxt.sdd_context());
         sum_operands.reserve(node.size());
         try
         {
-          try
+          for (const auto& arc : node)
           {
-            for (const auto& arc : node)
-            {
-              sum_operands.add(SDD<C>(o.variable(), fun(arc.valuation()), arc.successor()));
-            }
-            return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+            sum_operands.add(SDD<C>(o.variable(), fun(arc.valuation()), arc.successor()));
           }
-          catch (interrupt<C>& i)
-          {
-            i.result() = dd::sum(cxt.sdd_context(), std::move(sum_operands));
-            throw;
-          }
+          return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+        }
+        catch (interrupt<C>& i)
+        {
+          i.result() = dd::sum(cxt.sdd_context(), std::move(sum_operands));
+          throw;
         }
         catch (top<C>& t)
         {
