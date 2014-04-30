@@ -148,7 +148,7 @@ TYPED_TEST(difference_test, flat_x_minus_y)
     values_type valref1;
     valref1.insert(1);
 
-    sdd::dd::sum_builder<conf, SDD> sum_ops;
+    sdd::dd::sum_builder<conf, SDD> sum_ops(cxt);
     sum_ops.add(SDD(0, valref0, SDD(1, valref0, one)));
     sum_ops.add(SDD(0, valref0, SDD(1, valref1, one)));
     sum_ops.add(SDD(0, valref1, SDD(1, valref0, one)));
@@ -166,7 +166,7 @@ TYPED_TEST(difference_test, flat_x_minus_y)
     valy.insert(1);
     const SDD y(0, valy, one);
 
-    sdd::dd::sum_builder<conf, SDD> sum_ops;
+    sdd::dd::sum_builder<conf, SDD> sum_ops(cxt);
     sum_ops.add(x);
     sum_ops.add(y);
     const SDD x_plus_y = sum(cxt, std::move(sum_ops));
@@ -234,7 +234,7 @@ TYPED_TEST(difference_test, hierarchical_x_minus_y)
     valref0.insert(0);
     values_type valref1;
     valref1.insert(1);
-    sdd::dd::sum_builder<conf, SDD> nested_sum_ops;
+    sdd::dd::sum_builder<conf, SDD> nested_sum_ops(cxt);
     nested_sum_ops.add(SDD(0, valref0, SDD(1, valref0, one)));
     nested_sum_ops.add(SDD(0, valref0, SDD(1, valref1, one)));
     nested_sum_ops.add(SDD(0, valref1, SDD(1, valref0, one)));
@@ -266,7 +266,7 @@ TYPED_TEST(difference_test, hierarchical_x_minus_y)
     const SDD nested10(0, valref1, SDD(1, valref0, one));
     const SDD nested11(0, valref1, SDD(1, valref1, one));
 
-    sdd::dd::sum_builder<conf, SDD> sum_ops;
+    sdd::dd::sum_builder<conf, SDD> sum_ops(cxt);
     sum_ops.add(SDD(10, nested00, SDD(11, nested00, one)));
     sum_ops.add(SDD(10, nested00, SDD(11, nested01, one)));
     sum_ops.add(SDD(10, nested00, SDD(11, nested10, one)));

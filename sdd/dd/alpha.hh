@@ -1,7 +1,9 @@
 #ifndef _SDD_DD_ALPHA_HH_
 #define _SDD_DD_ALPHA_HH_
 
+#include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition_fwd.hh"
+#include "sdd/mem/linear_alloc.hh"
 #include "sdd/util/boost_flat_map_no_warnings.hh"
 #include "sdd/util/hash.hh"
 
@@ -84,12 +86,15 @@ private:
   /// Arcs are inverted because we are guaranted that the comparison of SDD is O(1), which is
   /// not the case for Valuation (though, it's likely so). Arcs are put in the correct
   /// direction in consolidate().
-  boost::container::flat_map<SDD<C>, Valuation> map_;
+  boost::container::flat_map< SDD<C>, Valuation, std::less<SDD<C>>
+                            , mem::linear_alloc<std::pair<SDD<C>, Valuation>>> map_;
 
 public:
 
   /// @brief Default constructor.
-  alpha_builder() = default;
+  alpha_builder(context<C>& cxt)
+    : map_(std::less<SDD<C>>(), mem::linear_alloc<std::pair<SDD<C>, Valuation>>(cxt.arena()))
+  {}
 
   /// @brief Default move constructor.
   alpha_builder(alpha_builder&&) = default;

@@ -1,13 +1,16 @@
-#ifndef _SDD_TOOLS_LOAD_ORDER_HH_
-#define _SDD_TOOLS_LOAD_ORDER_HH_
+#ifndef _SDD_TOOLS_ORDER_HH_
+#define _SDD_TOOLS_ORDER_HH_
 
 #include <cassert>
 #include <iosfwd>
 #include <string>
 #include <stdexcept>
 #include <type_traits>
+#include <vector>
 
 #include <cereal/external/rapidjson/document.h>
+#include <cereal/external/rapidjson/filestream.h>
+#include <cereal/external/rapidjson/prettywriter.h>
 
 #include "sdd/order/order.hh"
 #include "sdd/order/order_builder.hh"
@@ -117,6 +120,80 @@ load_order(std::istream& in)
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
+template <bool IsIntegral>
+struct print_identifier;
+
+/// @internal
+template <>
+struct print_identifier<true>
+{
+  template <typename T>
+  void
+  operator()(std::ostream& os, T x)
+  const
+  {
+    os << x;
+  }
+};
+
+/// @internal
+template <>
+struct print_identifier<false>
+{
+  template <typename T>
+  void
+  operator()(std::ostream& os, const T& x)
+  const
+  {
+    os << "\"" << x << "\"";
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @brief Dump an order to JSON
+template <typename C>
+void
+dump_order(order<C> o, std::ostream& out)
+{
+  constexpr auto id_integral = std::is_integral<typename C::Identifier>::value;
+  out << "[";
+  if (not o.empty())
+  {
+    if (not o.nested().empty())
+    {
+      dump_order(o.nested(), out);
+      out << std::endl;
+    }
+    else
+    {
+      print_identifier<id_integral>()(out, o.identifier().user());
+      out << std::endl;
+    }
+    o = o.next();
+    while (not o.empty())
+    {
+      if (not o.nested().empty())
+      {
+        out << ",";
+        dump_order(o.nested(), out);
+        out << std::endl;
+      }
+      else
+      {
+        out << ",";
+        print_identifier<id_integral>()(out, o.identifier().user());
+        out << std::endl;
+      }
+      o = o.next();
+    }
+  }
+  out << "]";
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
 }} // namespace sdd::tools
 
-#endif // _SDD_TOOLS_LOAD_ORDER_HH_
+#endif // _SDD_TOOLS_ORDER_HH_

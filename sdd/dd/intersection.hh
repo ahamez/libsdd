@@ -9,6 +9,7 @@
 #include "sdd/dd/nary.hh"
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
+#include "sdd/mem/linear_alloc.hh"
 #include "sdd/util/hash.hh"
 #include "sdd/values/empty.hh"
 
@@ -35,6 +36,8 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
     using node_type      = NodeType;
     using valuation_type = typename node_type::valuation_type;
 
+    mem::rewinder _(cxt.arena());
+
     auto operands_cit = begin;
     const auto operands_end = end;
 
@@ -42,7 +45,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
     SDD<C> res = *operands_cit;
 
     // We re-use the same square union to save some allocations.
-    square_union<C, valuation_type> su;
+    square_union<C, valuation_type> su(cxt);
 
     for (++operands_cit; operands_cit != operands_end; ++operands_cit)
     {
@@ -59,14 +62,16 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
       {
         for (auto& rhs_arc : rhs)
         {
-          intersection_builder<C, valuation_type> valuation_builder;
+          intersection_builder<C, valuation_type> valuation_builder(cxt);
           valuation_builder.add(lhs_arc.valuation());
           valuation_builder.add(rhs_arc.valuation());
           valuation_type inter_val = intersection(cxt, std::move(valuation_builder));
 
           if (not values::empty_values(inter_val))
           {
-            SDD<C> inter_succ = intersection(cxt, {lhs_arc.successor(), rhs_arc.successor()});
+            SDD<C> inter_succ
+              = intersection(cxt, intersection_builder<C, SDD<C>>(cxt, { lhs_arc.successor()
+                                                                       , rhs_arc.successor()}));
 
             if (not values::empty_values(inter_succ))
             {
@@ -83,7 +88,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
       }
 
       /// @todo avoid to create an intermediary SDD at each loop.
-      res = SDD<C>(su(cxt));
+      res = SDD<C>(su());
     }
 
     return res;
@@ -208,7 +213,9 @@ inline
 SDD<C>
 operator&(const SDD<C>& lhs, const SDD<C>& rhs)
 {
-  return dd::intersection(global<C>().sdd_context, {lhs, rhs});
+  auto& sdd_context = global<C>().sdd_context;
+  return dd::intersection( sdd_context
+                         , dd::intersection_builder<C, SDD<C>>(sdd_context,{lhs, rhs}));
 }
 
 /// @brief Perform the intersection of two SDD.
@@ -218,7 +225,9 @@ inline
 SDD<C>&
 operator&=(SDD<C>& lhs, const SDD<C>& rhs)
 {
-  SDD<C> tmp = dd::intersection(global<C>().sdd_context, {lhs, rhs});
+  auto& sdd_context = global<C>().sdd_context;
+  SDD<C> tmp = dd::intersection( sdd_context
+                               , dd::intersection_builder<C, SDD<C>>(sdd_context,{lhs, rhs}));
   using std::swap;
   swap(tmp, lhs);
   return lhs;
@@ -231,7 +240,7 @@ SDD<C>
 inline
 intersection(InputIterator begin, InputIterator end)
 {
-  dd::intersection_builder<C, SDD<C>> builder;
+  dd::intersection_builder<C, SDD<C>> builder(global<C>().sdd_context);
   for (; begin != end; ++begin)
   {
     builder.add(*begin);

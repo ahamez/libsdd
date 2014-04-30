@@ -58,7 +58,7 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    dd::sum_builder<C, SDD<C>> operands;
+    dd::sum_builder<C, SDD<C>> operands(cxt.sdd_context());
     operands.reserve(G_.size() + 2);
 
     try

@@ -133,6 +133,7 @@ public:
 
 /// @internal
 /// @related ptr
+/// @brief Compare pointers.
 ///
 /// O(1).
 template <typename Unique>
@@ -146,6 +147,7 @@ noexcept
 
 /// @internal
 /// @related ptr
+/// @brief Compare pointers.
 ///
 /// O(1).
 template <typename Unique>

@@ -40,7 +40,7 @@ TYPED_TEST_CASE(intersection_test, configurations);
 
 TYPED_TEST(intersection_test, empty_operand)
 {
-  ASSERT_EQ(zero, intersection(cxt, {SDD('a', values_type(), one)}));
+  ASSERT_EQ(zero, intersection(cxt, {cxt, {SDD('a', values_type(), one)}}));
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -48,7 +48,7 @@ TYPED_TEST(intersection_test, empty_operand)
 TYPED_TEST(intersection_test, empty_intersection)
 {
   values_type val {0};
-  sdd::dd::intersection_builder<conf, SDD> ops;
+  sdd::dd::intersection_builder<conf, SDD> ops(cxt);
   ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
 }
 
@@ -58,14 +58,14 @@ TYPED_TEST(intersection_test, flat_x_inter_zero)
 {
   {
     values_type val {0};
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
     ops.add(SDD(0, val, one));
     ops.add(zero);
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
     values_type val {0,1,2,3};
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
     ops.add(zero);
     ops.add(SDD(0, val, one));
     ops.add(SDD(0, val, one));
@@ -75,14 +75,14 @@ TYPED_TEST(intersection_test, flat_x_inter_zero)
   }
   {
     values_type val {0};
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
     ops.add(SDD(0, val, SDD(0, val, one)));
     ops.add(zero);
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
     values_type val {0,1,2,3};
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
     ops.add(SDD(0, val, SDD(0, val, one)));
     ops.add(SDD(0, val, SDD(0, val, one)));
     ops.add(SDD(0, val, SDD(0, val, one)));
@@ -92,7 +92,7 @@ TYPED_TEST(intersection_test, flat_x_inter_zero)
   }
   {
     values_type val {0};    
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
     ops.add(zero);
     ops.add(zero);
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
@@ -107,20 +107,20 @@ TYPED_TEST(intersection_test, flat_x_inter_y)
     SDD x(0, {0,1}, one);
     SDD y(0, {1,2}, one);
     SDD ref(0, {1}, one);
-    ASSERT_EQ(ref, intersection(cxt, {x,y}));
+    ASSERT_EQ(ref, intersection(cxt, {cxt, {x,y}}));
 
-    sdd::dd::sum_builder<conf, SDD> sum_ops_x;
+    sdd::dd::sum_builder<conf, SDD> sum_ops_x(cxt);
     sum_ops_x.add(ref);
     sum_ops_x.add(x);
     ASSERT_EQ(x, sum(cxt, std::move(sum_ops_x)));
 
-    sdd::dd::sum_builder<conf, SDD> sum_ops_y;
+    sdd::dd::sum_builder<conf, SDD> sum_ops_y(cxt);
     sum_ops_y.add(ref);
     sum_ops_y.add(y);
     ASSERT_EQ(y, sum(cxt, std::move(sum_ops_y)));
   }
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
 
     values_type valx {0,1};
     ops.add(SDD(0, valx, one));
@@ -131,7 +131,7 @@ TYPED_TEST(intersection_test, flat_x_inter_y)
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
 
     values_type valx {0,1};
     ops.add(SDD(0, valx, SDD(1, valx, one)));
@@ -144,7 +144,7 @@ TYPED_TEST(intersection_test, flat_x_inter_y)
     ASSERT_EQ(SDD(0, valref, SDD(1, valref, one)), intersection(cxt, std::move(ops)));
   }
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
 
     values_type valx {0,1};
     ops.add(SDD(0, valx, SDD(1, valx, one)));
@@ -155,7 +155,7 @@ TYPED_TEST(intersection_test, flat_x_inter_y)
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
 
     values_type val0x {0,1};
     values_type val1x {2,3};
@@ -171,7 +171,7 @@ TYPED_TEST(intersection_test, flat_x_inter_y)
     ASSERT_EQ(SDD(0, val0ref, SDD(1, val1ref, one)), intersection(cxt, std::move(ops)));
   }
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
 
     values_type val0x {0,1};
     values_type val1x {2,3};
@@ -185,7 +185,7 @@ TYPED_TEST(intersection_test, flat_x_inter_y)
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
 
     values_type val0x {0,1};
     values_type val1x {2,3};
@@ -204,7 +204,7 @@ TYPED_TEST(intersection_test, flat_x_inter_y)
 TYPED_TEST(intersection_test, flat_nary)
 {
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
 
     values_type valx {0,1,2};
     ops.add(SDD(0, valx, one));
@@ -220,7 +220,7 @@ TYPED_TEST(intersection_test, flat_nary)
     ASSERT_EQ(SDD(0, valref, one), intersection(cxt, std::move(ops)));
   }
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
     
     values_type valx {0,1,2};
     ops.add(SDD(0, valx, SDD(1, valx, one)));
@@ -243,7 +243,7 @@ TYPED_TEST(intersection_test, flat_nary)
 TYPED_TEST(intersection_test, hierarchical_nary)
 {
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
     ops.add(SDD('a', SDD('b', {0,1,2}, one), one));
     ops.add(SDD('a', SDD('b', {1,2,3}, one), one));
     ops.add(SDD('a', SDD('b', {2,3,4}, one), one));
@@ -251,7 +251,7 @@ TYPED_TEST(intersection_test, hierarchical_nary)
     ASSERT_EQ(SDD('a', SDD('b', {2}, one), one), intersection(cxt, std::move(ops)));
   }
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
     ops.add(SDD('a', SDD('b', {0,1,2}, one), SDD('a', SDD('b', {0,1,2}, one), one)));
     ops.add(SDD('a', SDD('b', {1,2,3}, one), SDD('a', SDD('b', {1,2,3}, one), one)));
     ops.add(SDD('a', SDD('b', {2,3,4}, one), SDD('a', SDD('b', {2,3,4}, one), one)));
@@ -265,7 +265,7 @@ TYPED_TEST(intersection_test, hierarchical_nary)
 TYPED_TEST(intersection_test, hierarchical_x_inter_y)
 {
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
 
     values_type valx {0,1};
     ops.add(SDD(10, SDD(0, valx, one), one));
@@ -279,7 +279,7 @@ TYPED_TEST(intersection_test, hierarchical_x_inter_y)
              , intersection(cxt, std::move(ops)));
   }
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
 
     values_type valx {0,1};
     ops.add(SDD(10, SDD(0, valx, one), one));
@@ -290,7 +290,7 @@ TYPED_TEST(intersection_test, hierarchical_x_inter_y)
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
 
     values_type valx {0,1};
     SDD x(0, valx, one);
@@ -307,7 +307,7 @@ TYPED_TEST(intersection_test, hierarchical_x_inter_y)
              , intersection(cxt, std::move(ops)));
   }
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
 
     values_type valx {0,1};
     SDD x(0, valx, one);
@@ -320,7 +320,7 @@ TYPED_TEST(intersection_test, hierarchical_x_inter_y)
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
 
     values_type val10x {0,1};
     values_type val11x {2,3};
@@ -343,7 +343,7 @@ TYPED_TEST(intersection_test, hierarchical_x_inter_y)
              , intersection(cxt, std::move(ops)));
   }
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
     
     values_type val10x {0,1};
     values_type val11x {2,3};
@@ -360,7 +360,7 @@ TYPED_TEST(intersection_test, hierarchical_x_inter_y)
     ASSERT_EQ(zero, intersection(cxt, std::move(ops)));
   }
   {
-    sdd::dd::intersection_builder<conf, SDD> ops;
+    sdd::dd::intersection_builder<conf, SDD> ops(cxt);
     
     values_type val10x;
     val10x.insert(0);
@@ -387,7 +387,7 @@ TYPED_TEST(intersection_test, hierarchical_x_inter_y)
 TYPED_TEST(intersection_test, values)
 {
   {
-    sdd::dd::intersection_builder<conf, values_type> ops;
+    sdd::dd::intersection_builder<conf, values_type> ops(cxt);
     ASSERT_EQ(values_type(), intersection(cxt, std::move(ops)));
   }
   {
@@ -395,7 +395,7 @@ TYPED_TEST(intersection_test, values)
     values_type val1 {1,2};
     values_type val2 {2};
     values_type ref {2};
-    sdd::dd::intersection_builder<conf, values_type> ops {val0, val1, val2};
+    sdd::dd::intersection_builder<conf, values_type> ops(cxt, {val0, val1, val2});
     ASSERT_EQ(ref, intersection(cxt, std::move(ops)));
   }
 }

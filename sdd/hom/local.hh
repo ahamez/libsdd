@@ -33,8 +33,7 @@ public:
 
   /// @brief Constructor.
   _local(order_position_type target, const homomorphism<C>& h)
-    : target_(target)
-    , h_(h)
+    : target_(target), h_(h)
   {}
 
   /// @internal
@@ -62,7 +61,7 @@ public:
       {
         if (h_.selector()) // partition won't change
         {
-          dd::square_union<C, SDD<C>> su;
+          dd::square_union<C, SDD<C>> su(cxt_.sdd_context());
           su.reserve(node.size());
           for (const auto& arc : node)
           {
@@ -77,15 +76,15 @@ public:
             catch (interrupt<C>& i)
             {
               su.add(arc.successor(), i.result());
-              i.result() = {su(cxt_.sdd_context())};
+              i.result() = {su()};
               throw;
             }
           }
-          return {su(cxt_.sdd_context())};
+          return {su()};
         }
         else // partition will change
         {
-          dd::sum_builder<C, SDD<C>> sum_operands;
+          dd::sum_builder<C, SDD<C>> sum_operands(cxt_.sdd_context());
           sum_operands.reserve(node.size());
           for (const auto& arc : node)
           {

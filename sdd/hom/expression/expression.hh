@@ -263,32 +263,32 @@ struct expression_pre
       if (not nested_variables)
       {
         // We have no interest in this level, thus the visitor is propagated to the next level.
-        dd::square_union<C, SDD<C>> su;
+        dd::square_union<C, SDD<C>> su(sdd_cxt);
         su.reserve(node.size());
         for (const auto& arc : node)
         {
           const SDD<C> successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
           su.add(successor, arc.valuation());
         }
-        return SDD<C>(su(sdd_cxt));
+        return SDD<C>(su());
       }
       else
       {
         // We are interested in this level, but the target is not nested into it. Thus, we won't
         // modiffy the current level: a square union is sufficient.
-        dd::square_union<C, SDD<C>> su;
+        dd::square_union<C, SDD<C>> su(sdd_cxt);
         su.reserve(node.size());
         try
         {
           for (const auto& arc : node)
           {
             const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), app);
-            const auto local_res = std::make_shared<res_stack<C>>(res);
+            const auto local_res = std::make_shared<res_stack<C>>(sdd_cxt, res);
             visit_self(*this, arc.valuation(), o.nested(), local_app, local_res, cit, end);
             assert(not local_res->result.empty() && "Invalid empty successor result");
             su.add(dd::sum<C>(sdd_cxt, std::move(local_res->result)), arc.valuation());
           }
-          return SDD<C>(su(sdd_cxt));
+          return SDD<C>(su());
         }
         catch (top<C>& t)
         {
@@ -301,7 +301,7 @@ struct expression_pre
     else // target is contained in this hierarchy
     {
       namespace ph = std::placeholders;
-      dd::sum_builder<C, SDD<C>> operands;
+      dd::sum_builder<C, SDD<C>> operands(sdd_cxt);
       operands.reserve(node.size());
 
       for (const auto& arc : node)
@@ -352,7 +352,7 @@ struct expression_pre
     if (o.position() == target_)
     {
       namespace ph = std::placeholders;
-      dd::sum_builder<C, SDD<C>> operands;
+      dd::sum_builder<C, SDD<C>> operands(sdd_cxt);
       operands.reserve(node.size());
 
       for (const auto& arc : node)
@@ -388,7 +388,7 @@ struct expression_pre
     else // target is still below
     {
       // We don't modify the current level, a square union is sufficient
-      dd::square_union<C, values_type> su;
+      dd::square_union<C, values_type> su(sdd_cxt);
       su.reserve(node.size());
       for (const auto& arc : node)
       {
@@ -399,7 +399,7 @@ struct expression_pre
         const SDD<C> successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
         su.add(successor, arc.valuation());
       }
-      return SDD<C>(su(cxt_.sdd_context()));
+      return SDD<C>(su());
     }
   }
 

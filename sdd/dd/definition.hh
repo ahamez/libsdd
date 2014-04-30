@@ -5,6 +5,7 @@
 
 #include "sdd/internal_manager_fwd.hh"
 #include "sdd/dd/alpha.hh"
+#include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/count_combinations_fwd.hh"
 #include "sdd/dd/definition_fwd.hh"
 #include "sdd/dd/node.hh"
@@ -107,6 +108,18 @@ public:
   operator=(const SDD&) noexcept = default;
 
   /// @internal
+  /// @brief Construct a flat SDD in a given context.
+  /// @param cxt  The construction context.
+  /// @param var  The SDD's variable.
+  /// @param val  The SDD's valuation, a set of values.
+  /// @param succ The SDD's successor.
+  ///
+  /// O(1).
+  SDD(dd::context<C>& cxt, values_type&& val, const SDD& succ)
+    : ptr_(create_node(cxt, std::move(val), succ))
+  {}
+
+  /// @internal
   /// @brief Construct a flat SDD.
   /// @param var  The SDD's variable.
   /// @param val  The SDD's valuation, a set of values.
@@ -114,7 +127,19 @@ public:
   ///
   /// O(1).
   SDD(values_type&& val, const SDD& succ)
-    : ptr_(create_node(std::move(val), succ))
+    : SDD(global<C>().sdd_context, std::move(val), succ)
+  {}
+
+  /// @internal
+  /// @brief Construct a flat SDD in a given context.
+  /// @param cxt  The construction context.
+  /// @param var  The SDD's variable.
+  /// @param val  The SDD's valuation, a set of values.
+  /// @param succ The SDD's successor.
+  ///
+  /// O(1).
+  SDD(dd::context<C>& cxt, const values_type& val, const SDD& succ)
+    : ptr_(create_node(cxt, val, succ))
   {}
 
   /// @internal
@@ -125,7 +150,19 @@ public:
   ///
   /// O(1).
   SDD(const values_type& val, const SDD& succ)
-    : ptr_(create_node(val, succ))
+    : SDD(global<C>().sdd_context, val, succ)
+  {}
+
+  /// @internal
+  /// @brief Construct a hierarchical SDD in a given context.
+  /// @param cxt  The construction context.
+  /// @param var  The SDD's variable.
+  /// @param val  The SDD's valuation, an SDD in this case.
+  /// @param succ The SDD's successor.
+  ///
+  /// O(1).
+  SDD(dd::context<C>& cxt, const SDD& val, const SDD& succ)
+    : ptr_(create_node(cxt, val, succ))
   {}
 
   /// @internal
@@ -136,12 +173,13 @@ public:
   ///
   /// O(1).
   SDD(const SDD& val, const SDD& succ)
-    : ptr_(create_node(val, succ))
+    : SDD(global<C>().sdd_context, val, succ)
   {}
 
-  /// @brief Construct an SDD with an order.
+  /// @internal
+  /// @brief Construct an SDD with an order in a given context.
   template <typename Initializer>
-  SDD(const order<C>& o, const Initializer& init)
+  SDD(dd::context<C>& cxt, const order<C>& o, const Initializer& init)
     : ptr_(one_ptr())
   {
     if (o.empty()) // base case of the recursion, ptr_ is defaulted to |1|
@@ -153,13 +191,19 @@ public:
       // We can safely pass the order_identifier as a user one because only hierarchical levels
       // can be artificial.
       assert(not o.identifier().artificial());
-      ptr_ = create_node(init(o.identifier().user()), SDD(o.next(), init));
+      ptr_ = create_node(cxt, init(o.identifier().user()), SDD(cxt, o.next(), init));
     }
     else // hierarchical
     {
-      ptr_ = create_node(SDD(o.nested(), init), SDD(o.next(), init));
+      ptr_ = create_node(cxt, SDD(cxt, o.nested(), init), SDD(cxt, o.next(), init));
     }
   }
+
+  /// @brief Construct an SDD with an order.
+  template <typename Initializer>
+  SDD(const order<C>& o, const Initializer& init)
+    : SDD(global<C>().sdd_context, o, init)
+  {}
 
 #if !defined(HAS_NO_BOOST_COROUTINE)
   /// @brief Return an iterable object which generates all paths of this SDD.
@@ -296,7 +340,7 @@ private:
   template <typename Valuation>
   static
   ptr_type
-  create_node(Valuation&& val, const SDD& succ)
+  create_node(dd::context<C>& cxt, Valuation&& val, const SDD& succ)
   {
     if (succ.empty() or values::empty_values(val))
     {
@@ -304,7 +348,7 @@ private:
     }
     else
     {
-      dd::alpha_builder<C, Valuation> builder;
+      dd::alpha_builder<C, Valuation> builder(cxt);
       builder.add(std::move(val), succ);
       return ptr_type(unify_node<Valuation>(std::move(builder)));
     }
@@ -317,7 +361,7 @@ private:
   template <typename Valuation>
   static
   ptr_type
-  create_node(const Valuation& val, const SDD& succ)
+  create_node(dd::context<C>& cxt, const Valuation& val, const SDD& succ)
   {
     if (succ.empty() or values::empty_values(val))
     {
@@ -325,7 +369,7 @@ private:
     }
     else
     {
-      dd::alpha_builder<C, Valuation> builder;
+      dd::alpha_builder<C, Valuation> builder(cxt);
       builder.add(val, succ);
       return ptr_type(unify_node<Valuation>(std::move(builder)));
     }

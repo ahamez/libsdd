@@ -89,7 +89,8 @@ struct internal_manager
     , sdd_unique_table(configuration.sdd_unique_table_size)
     , sdd_context( configuration.sdd_difference_cache_size
                  , configuration.sdd_intersection_cache_size
-                 , configuration.sdd_sum_cache_size)
+                 , configuration.sdd_sum_cache_size
+                 , configuration.sdd_arena_size)
     , hom_unique_table(configuration.hom_unique_table_size)
     , hom_context(configuration.hom_cache_size, sdd_context)
     , zero(mk_terminal<zero_terminal<C>>())
