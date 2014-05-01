@@ -40,9 +40,9 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @exception order_error_impl
+/// @exception identifier_not_found_error
 template <typename C>
-class order_error_impl final
+class identifier_not_found_error final
   : public order_error
 {
 public:
@@ -61,23 +61,70 @@ private:
 public:
 
   /// @internal
-  order_error_impl(const identifier_type& id)
+  identifier_not_found_error(const identifier_type& id)
     : identifier_(id)
   {}
 
-  ~order_error_impl()
+  ~identifier_not_found_error()
   {}
 
   /// @internal
   /// @brief Return a textual description.
   std::string&
   description()
-  const noexcept override
+  const override
   {
     if (description_.empty())
     {
       std::ostringstream ss;
-      ss << "Identifier " << identifier_ << " not found in order.";
+      ss << "Identifier \"" << identifier_ << "\" not found in order.";
+      description_ = ss.str();
+    }
+    return description_;
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+/// @exception duplicate_identifier_error
+template <typename C>
+class duplicate_identifier_error final
+  : public order_error
+{
+public:
+
+  /// @brief The type of a user identifier.
+  using identifier_type = typename C::Identifier;
+
+private:
+
+  /// @brief The duplicate identifier.
+  const identifier_type identifier_;
+
+  /// @brief Textual description of the error.
+  mutable std::string description_;
+
+public:
+
+  /// @internal
+  duplicate_identifier_error(const identifier_type& id)
+    : identifier_(id)
+  {}
+
+  ~duplicate_identifier_error()
+  {}
+
+  /// @internal
+  /// @brief Return a textual description.
+  std::string&
+  description()
+  const override
+  {
+    if (description_.empty())
+    {
+      std::ostringstream ss;
+      ss << "Duplicate identifier \"" << identifier_ << "\".";
       description_ = ss.str();
     }
     return description_;

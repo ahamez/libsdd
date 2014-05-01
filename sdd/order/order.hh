@@ -170,7 +170,7 @@ public:
     }
     catch (std::out_of_range&)
     {
-      throw order_error_impl<C>(id);
+      throw identifier_not_found_error<C>(id);
     }
   }
 
@@ -280,10 +280,7 @@ private:
       const auto variable = next.second;
       if (not ob.identifier().artificial() and not unicity.insert(ob.identifier().user()).second)
       {
-        // Must stream user identifier to call its operator<<().
-        std::stringstream ss;
-        ss << "Duplicate order identifier " << ob.identifier().user();
-        throw std::runtime_error(ss.str());
+        throw duplicate_identifier_error<C>(ob.identifier().user());
       }
       nodes[current_position] =
         order_node<C>(ob.identifier(), variable, current_position, next.first, nested.first, path);
