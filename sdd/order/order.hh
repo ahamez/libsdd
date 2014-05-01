@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "sdd/order/order_builder.hh"
+#include "sdd/order/order_error.hh"
 #include "sdd/order/order_identifier.hh"
 #include "sdd/order/order_node.hh"
 #include "sdd/util/hash.hh"
@@ -163,7 +164,14 @@ public:
   node(const identifier_type& id)
   const
   {
-    return *id_to_node_ptr_->at(order_identifier<C>(id));
+    try
+    {
+      return *id_to_node_ptr_->at(order_identifier<C>(id));
+    }
+    catch (std::out_of_range&)
+    {
+      throw order_error_impl<C>(id);
+    }
   }
 
   /// @internal
