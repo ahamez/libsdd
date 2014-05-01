@@ -72,7 +72,12 @@ public:
   allocate(std::size_t n)
   {
     assert(pointer_in_buffer(position_) && "linear_alloc has outlived arena");
-    if (buffer_.get() + size_ - position_ >= n)
+    // The following temporary variable avoid a warning about comparison of signed and unsigned
+    // values: pointer arithmetic gives a std::ptrdiff_t (signed), but allocate() takes a
+    // std::size_t (unsigned). By construction, we are sure that position_ is always between
+    // buffer_.get() and buffer_.get() + size_, so the difference is always > 0.
+    const std::size_t diff = buffer_.get() + size_ - position_;
+    if (diff >= n)
     {
 #ifndef NDEBUG
       if (active_ == 0)
