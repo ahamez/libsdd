@@ -46,20 +46,12 @@ public:
   {
     SDD<C> x1 = x;
     SDD<C> x2 = x1;
-    try
+    do
     {
-      do
-      {
-        x2 = x1;
-        x1 = h_(cxt, o, x1);
-      } while (x1 != x2);
-      return x1;
-    }
-    catch (interrupt<C>& i)
-    {
-      i.result() = x1;
-      throw;
-    }
+      x2 = x1;
+      x1 = h_(cxt, o, x1);
+    } while (x1 != x2);
+    return x1;
   }
 
   /// @brief Skip predicate.

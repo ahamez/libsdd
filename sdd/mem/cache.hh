@@ -211,11 +211,6 @@ public:
       e.add_step(std::move(op));
       throw;
     }
-    catch (interrupt<result_type>&)
-    {
-      --stats_.misses;
-      throw;
-    }
 
     // Clean up the cache, if necessary.
     while (set_.size() > max_size_)

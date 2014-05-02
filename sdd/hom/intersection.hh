@@ -61,16 +61,7 @@ public:
     {
       for (const auto& op : operands_)
       {
-        try
-        {
-          intersection_operands.add(op(cxt, o, x));
-        }
-        catch (interrupt<C>& i)
-        {
-          intersection_operands.add(i.result());
-          i.result() = dd::intersection(cxt.sdd_context(), std::move(intersection_operands));
-          throw;
-        }
+        intersection_operands.add(op(cxt, o, x));
       }
       return dd::intersection(cxt.sdd_context(), std::move(intersection_operands));
     }

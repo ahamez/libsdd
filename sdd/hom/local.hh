@@ -65,19 +65,10 @@ public:
           su.reserve(node.size());
           for (const auto& arc : node)
           {
-            try
+            const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
+            if (not new_valuation.empty())
             {
-              const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
-              if (not new_valuation.empty())
-              {
-                su.add(arc.successor(), new_valuation);
-              }
-            }
-            catch (interrupt<C>& i)
-            {
-              su.add(arc.successor(), i.result());
-              i.result() = {node.variable(), su()};
-              throw;
+              su.add(arc.successor(), new_valuation);
             }
           }
           return {node.variable(), su()};
@@ -88,17 +79,8 @@ public:
           sum_operands.reserve(node.size());
           for (const auto& arc : node)
           {
-            try
-            {
-              const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
-              sum_operands.add(SDD<C>(node.variable(), new_valuation, arc.successor()));
-            }
-            catch (interrupt<C>& i)
-            {
-              sum_operands.add(SDD<C>(node.variable(), i.result(), arc.successor()));
-              i.result() = dd::sum(cxt_.sdd_context(), std::move(sum_operands));
-              throw;
-            }
+            const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
+            sum_operands.add(SDD<C>(node.variable(), new_valuation, arc.successor()));
           }
           return dd::sum(cxt_.sdd_context(), std::move(sum_operands));
         }

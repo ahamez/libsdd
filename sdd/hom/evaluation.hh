@@ -70,22 +70,10 @@ struct evaluation
       su.reserve(node.size());
       for (const auto& arc : node)
       {
-        try
+        SDD<C> new_successor = hom(cxt, o.next(), arc.successor());
+        if (not new_successor.empty())
         {
-          SDD<C> new_successor = hom(cxt, o.next(), arc.successor());
-          if (not new_successor.empty())
-          {
-            su.add(new_successor, arc.valuation());
-          }
-        }
-        catch (interrupt<C>& i)
-        {
-          if (not i.result().empty())
-          {
-            su.add(i.result(), arc.valuation());
-          }
-          i.result() = {node.variable(), su()};
-          throw;
+          su.add(new_successor, arc.valuation());
         }
       }
       return {node.variable(), su()};

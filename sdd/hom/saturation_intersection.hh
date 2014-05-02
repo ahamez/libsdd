@@ -63,28 +63,19 @@ public:
 
     try
     {
-      try
+      if (F_)
       {
-        if (F_)
-        {
-          operands.add((*F_)(cxt, o, s));
-        }
-
-        for (const auto& g : G_)
-        {
-          operands.add(g(cxt, o, s));
-        }
-
-        if (L_)
-        {
-          operands.add((*L_)(cxt, o, s));
-        }
+        operands.add((*F_)(cxt, o, s));
       }
-      catch (interrupt<C>& i)
+
+      for (const auto& g : G_)
       {
-        operands.add(i.result());
-        i.result() = dd::intersection(cxt.sdd_context(), std::move(operands));
-        throw;
+        operands.add(g(cxt, o, s));
+      }
+
+      if (L_)
+      {
+        operands.add((*L_)(cxt, o, s));
       }
       return dd::intersection(cxt.sdd_context(), std::move(operands));
     }

@@ -74,16 +74,7 @@ public:
     {
       for (const auto& op : *this)
       {
-        try
-        {
-          sum_operands.add(op(cxt, o, x));
-        }
-        catch (interrupt<C>& i)
-        {
-          sum_operands.add(i.result());
-          i.result() = dd::sum(cxt.sdd_context(), std::move(sum_operands));
-          throw;
-        }
+        sum_operands.add(op(cxt, o, x));
       }
       return dd::sum(cxt.sdd_context(), std::move(sum_operands));
     }

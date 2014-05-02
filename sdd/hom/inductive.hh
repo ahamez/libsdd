@@ -296,16 +296,8 @@ private:
       {
         for (const auto& arc : node)
         {
-          try
-          {
-            const homomorphism<C> next_hom = inductive(order_, arc.valuation());
-            sum_operands.add(next_hom(cxt_, order_.next(), arc.successor()));
-          }
-          catch (interrupt<C>& i)
-          {
-            i.result() = dd::sum(cxt_.sdd_context(), std::move(sum_operands));
-            throw;
-          }
+          const homomorphism<C> next_hom = inductive(order_, arc.valuation());
+          sum_operands.add(next_hom(cxt_, order_.next(), arc.successor()));
         }
         return dd::sum(cxt_.sdd_context(), std::move(sum_operands));
       }
