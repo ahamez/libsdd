@@ -95,18 +95,19 @@ public:
 
         if (F_ != id<C>())
         {
-          s2 = F_(cxt, o, s2); // apply (F + Id)*
+          swap(s2, F_(cxt, o, s2)); // apply (F + Id)*
         }
         if (L_ != id<C>())
         {
-          s2 = L_(cxt, o, s2); // apply (L + Id)*
+          swap(s2, L_(cxt, o, s2)); // apply (L + Id)*
         }
 
         for (auto cit = G_begin(); cit != G_end(); ++cit)
         {
           const auto& g = *cit;
           // chain applications of G
-          s2 = dd::sum(sdd_context, dd::sum_builder<C, SDD<C>>(sdd_context, {s2, g(cxt, o, s2)}));
+          swap( s2
+              , dd::sum(sdd_context, dd::sum_builder<C, SDD<C>>(sdd_context, {s2, g(cxt, o, s2)})));
         }
       } while (s1 != s2);
     }

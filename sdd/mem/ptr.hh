@@ -125,7 +125,26 @@ public:
   swap(ptr& lhs, ptr& rhs)
   noexcept
   {
-    std::swap(lhs.x_, rhs.x_);
+    using std::swap;
+    swap(lhs.x_, rhs.x_);
+  }
+
+  /// @brief Swap.
+  friend void
+  swap(ptr&& lhs, ptr& rhs)
+  noexcept
+  {
+    using std::swap;
+    swap(lhs.x_, rhs.x_);
+  }
+
+  /// @brief Swap.
+  friend void
+  swap(ptr& lhs, ptr&& rhs)
+  noexcept
+  {
+    using std::swap;
+    swap(lhs.x_, rhs.x_);
   }
 };
 

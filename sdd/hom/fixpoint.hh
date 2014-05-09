@@ -49,7 +49,7 @@ public:
     do
     {
       x2 = x1;
-      x1 = h_(cxt, o, x1);
+      swap(x1, h_(cxt, o, x1));
     } while (x1 != x2);
     return x1;
   }

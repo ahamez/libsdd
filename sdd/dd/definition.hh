@@ -238,6 +238,26 @@ public:
     swap(lhs.ptr_, rhs.ptr_);
   }
 
+  /// @brief Swap two SDD.
+  ///
+  /// O(1).
+  friend void
+  swap(SDD&& lhs, SDD& rhs)
+  noexcept
+  {
+    swap(std::move(lhs.ptr_), rhs.ptr_);
+  }
+
+  /// @brief Swap two SDD.
+  ///
+  /// O(1).
+  friend void
+  swap(SDD& lhs, SDD&& rhs)
+  noexcept
+  {
+    swap(lhs.ptr_, std::move(rhs.ptr_));
+  }
+
   /// @internal
   /// @brief Construct an SDD from a ptr.
   ///
