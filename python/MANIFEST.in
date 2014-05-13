@@ -1,3 +1,0 @@
-recursive-include sdd *.hh
-include sdd.cc
-include py_types.hh
