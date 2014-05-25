@@ -13,20 +13,10 @@ find_package(Doxygen QUIET)
 
 ################################################################################
 
-option (TEST "Build and run tests." OFF) 
-option (TCMALLOC "Use TCMalloc" OFF)
+option (TEST "Build and run tests." OFF)
 option (PACKED "Pack structures" OFF)
 option (COVERAGE "Code coverage" OFF)
 option (INTERNAL_DOC "Generate internal documentation" OFF)
-
-if (TCMALLOC)
-  find_library(TCMALLOC_LIBRARY tcmalloc)
-  if (NOT TCMALLOC_LIBRARY)
-    message(STATUS "TCMalloc not found.")
-  else ()
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ltcmalloc")
-  endif ()
-endif ()
 
 if (PACKED)
   add_definitions("-DLIBSDD_PACKED")
