@@ -64,14 +64,16 @@ endif ()
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   add_definitions("-stdlib=libc++")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -std=c++11 -stdlib=libc++")
-  set(CMAKE_CXX_FLAGS_RELEASE "-O4 -DNDEBUG")
+  if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
+  endif ()
   if (COVERAGE)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
   endif ()
 endif ()
 
 set( CMAKE_CXX_FLAGS_RELEASE
-     "${CMAKE_CXX_FLAGS_RELEASE} -fvisibility=hidden -fstrict-aliasing -DNDEBUG")
+     "${CMAKE_CXX_FLAGS_RELEASE} -O3 -fvisibility=hidden -fstrict-aliasing -DNDEBUG")
 
 set( CMAKE_CXX_FLAGS_DEBUG
      "${CMAKE_CXX_FLAGS_DEBUG} -O0")
