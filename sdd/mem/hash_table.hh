@@ -86,7 +86,6 @@ public:
 
   /// @brief
   template <typename T, typename HashT, typename EqT>
-//  std::pair<iterator, bool>
   std::pair<Data*, bool>
   insert_check(const T& x, HashT hash, EqT eq, insert_commit_data& commit_data)
   const noexcept(noexcept(hash(x)))

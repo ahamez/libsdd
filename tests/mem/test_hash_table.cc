@@ -185,75 +185,6 @@ TEST(hash_table, insert_collision)
 
 /*------------------------------------------------------------------------------------------------*/
 
-TEST(hash_table, empty_iteration)
-{
-  foo_hash_table ht{10};
-  const auto begin = ht.begin();
-  const auto end = ht.end();
-  ASSERT_EQ(0u, std::distance(begin, end));
-  ASSERT_EQ(begin, end);
-  std::vector<foo> vec {ht.begin(), ht.end()};
-  ASSERT_EQ(0u, vec.size());
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
-TEST(hash_table, iteration)
-{
-  {
-    foo_hash_table ht{10};
-    foo f1{42};
-    foo f3{43};
-    ht.insert(f1);
-    ht.insert(f3);
-
-    ASSERT_EQ(2u, std::distance(ht.begin(), ht.end()));
-
-    std::vector<foo> vec(ht.begin(), ht.end());
-    ASSERT_EQ(2u, vec.size());
-
-    std::sort(vec.begin(), vec.end());
-    ASSERT_EQ(f1, vec[0]);
-    ASSERT_EQ(f3, vec[1]);
-  }
-  {
-    std::vector<bar> vec;
-    vec.reserve(100);
-    for (unsigned int i = 0; i < 100; ++i)
-    {
-      vec.push_back(bar(i, i % 16));
-    }
-
-    bar_hash_table  ht{16};
-    for (auto& b : vec)
-    {
-      ht.insert(b);
-    }
-
-    ASSERT_EQ(100u, std::distance(ht.begin(), ht.end()));
-    ASSERT_NE(ht.begin(), ht.end());
-
-    std::vector<bar*> ht_content;
-    ht_content.reserve(100);
-    for (auto& b : ht)
-    {
-      ht_content.push_back(&b);
-    }
-
-    std::sort( ht_content.begin(), ht_content.end()
-             , [](const bar* lhs, const bar* rhs){return *lhs < *rhs;}
-             );
-
-    const bool cmp = std::equal( vec.begin(), vec.end(), ht_content.begin()
-                               , [](const bar& lhs, const bar* rhs){return lhs == *rhs;}
-                               );
-
-    ASSERT_TRUE(cmp);
-  }
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
 TEST(hash_table, insert_check_miss)
 {
   foo_hash_table ht{10};
@@ -275,13 +206,6 @@ TEST(hash_table, insert_check_miss)
   ht.insert_commit(f2, commit_data);
 
   ASSERT_EQ(2u, ht.size());
-
-  std::vector<foo> vec(ht.begin(), ht.end());
-  ASSERT_EQ(2u, vec.size());
-
-  std::sort(vec.begin(), vec.end());
-  ASSERT_EQ(f1, vec[0]);
-  ASSERT_EQ(f2, vec[1]);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -303,43 +227,6 @@ TEST(hash_table, insert_check_hit)
   ASSERT_FALSE(insertion.second);
 }
 
-
-/*------------------------------------------------------------------------------------------------*/
-
-TEST(hash_table, find)
-{
-  {
-    foo_hash_table ht{10};
-    foo f1{42};
-
-    ASSERT_EQ(ht.end(), ht.find(f1));
-
-    ht.insert(f1);
-    const auto it = ht.find(f1);
-    ASSERT_NE(ht.end(), it);
-    ASSERT_EQ(f1, *it);
-  }
-  {
-    bar_hash_table ht{10};
-    bar b1{42, 10};
-    bar b2{43, 10};
-
-    ht.insert(b1);
-    ht.insert(b2);
-
-    const auto it1 = ht.find(b1);
-    const auto it2 = ht.find(b2);
-
-    ASSERT_NE(ht.end(), it1);
-    ASSERT_EQ(b1, *it1);
-
-    ASSERT_NE(ht.end(), it2);
-    ASSERT_EQ(b2, *it2);
-
-    ASSERT_NE(it1, it2);
-  }
-}
-
 /*------------------------------------------------------------------------------------------------*/
 
 TEST(hash_table, erase)
@@ -349,16 +236,8 @@ TEST(hash_table, erase)
     foo f1{42};
     ht.insert(f1);
     ASSERT_EQ(1u, ht.size());
-
-    const auto it1 = ht.find(f1);
-    ASSERT_NE(ht.end(), it1);
-    ht.erase(it1);
+    ht.erase(f1);
     ASSERT_EQ(0u, ht.size());
-    
-    const auto it2 = ht.find(f1);
-    ASSERT_EQ(ht.end(), it2);
-
-    ASSERT_EQ(ht.end(), ht.begin());
   }
   {
     bar_hash_table ht{2};
@@ -369,17 +248,12 @@ TEST(hash_table, erase)
     ht.insert(b2);
     ASSERT_EQ(2u, ht.size());
 
-    const auto it1 = ht.find(b1);
-    ht.erase(it1);
-    ASSERT_EQ(ht.end(), ht.find(b1));
+    ht.erase(b1);
     ASSERT_EQ(1u, ht.size());
 
-    const auto it2 = ht.find(b2);
-    ht.erase(it2);
-    ASSERT_EQ(ht.end(), ht.find(b2));
+    ht.erase(b2);
     ASSERT_EQ(0u, ht.size());
 
-    ASSERT_EQ(ht.begin(), ht.end());
   }
   {
     bar_hash_table ht{2};
@@ -390,17 +264,11 @@ TEST(hash_table, erase)
     ht.insert(b2);
     ASSERT_EQ(2u, ht.size());
 
-    const auto it2 = ht.find(b2);
-    ht.erase(it2);
-    ASSERT_EQ(ht.end(), ht.find(b2));
+    ht.erase(b2);
     ASSERT_EQ(1u, ht.size());
 
-    const auto it1 = ht.find(b1);
-    ht.erase(it1);
-    ASSERT_EQ(ht.end(), ht.find(b1));
+    ht.erase(b1);
     ASSERT_EQ(0u, ht.size());
-
-    ASSERT_EQ(ht.begin(), ht.end());
   }
 }
 
@@ -426,13 +294,6 @@ TEST(hash_table, clear_and_dispose)
 
   ASSERT_EQ(0u, ht.size());
   ASSERT_EQ(16u, cpt);
-
-  for (auto& f : vec)
-  {
-    ASSERT_EQ(ht.end(), ht.find(f));
-  }
-
-  ASSERT_EQ(ht.end(), ht.begin());
 }
 
 /*------------------------------------------------------------------------------------------------*/
