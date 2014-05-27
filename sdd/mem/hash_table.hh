@@ -107,7 +107,6 @@ public:
       current = current->hook.next;
     }
 
-//    return std::make_pair(iterator(this, pos, current), insertion);
     return std::make_pair(current, insertion);
   }
 
@@ -145,7 +144,6 @@ public:
   }
 
   /// @brief Insert an element.
-//  std::pair<iterator, bool>
   std::pair<Data*, bool>
   insert(Data& x)
   noexcept(noexcept(std::hash<Data>()(x)))
@@ -206,7 +204,6 @@ public:
   {
     for (std::size_t i = 0; i < nb_buckets_; ++i)
     {
-//      Data* previous = nullptr;
       Data* current = buckets_[i];
       while (current != nullptr)
       {
@@ -299,7 +296,6 @@ private:
     {
       if (*x == *current)
       {
-//        return std::make_pair(iterator(this, pos, current), false /* no insertion */);
         return std::make_pair(current, false /* no insertion */);
       }
       current = current->hook.next;
@@ -311,7 +307,6 @@ private:
 
     current = x;
     ++size_;
-//    return std::make_pair(iterator(this, pos, current), true /* insertion */);
     return std::make_pair(current, true /* insertion */);
   }
 };
