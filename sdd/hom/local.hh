@@ -46,7 +46,7 @@ public:
     context<C>& cxt_;
     const order<C>& order_;
     const homomorphism<C> h_;
-    const SDD<C> sdd_; // needed if an evaluation_error is throwed
+    const SDD<C> sdd_; // needed if an evaluation_error is thrown
 
     evaluation(context<C>& cxt, const order<C>& o, const homomorphism<C>& h, const SDD<C>& s)
       : cxt_(cxt), order_(o), h_(h), sdd_(s)
