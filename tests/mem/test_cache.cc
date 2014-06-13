@@ -91,7 +91,7 @@ struct hash<operation>
 
 TEST(cache, creation)
 {
-  cache<context, operation, error> c(cxt, "c", 100);
+  cache<context, operation, error> c(cxt, 100);
   const auto& stats = c.statistics();
 
   ASSERT_EQ(0u, stats.hits);
@@ -104,7 +104,7 @@ TEST(cache, creation)
 
 TEST(cache, insertion)
 {
-  cache<context, operation, error> c(cxt, "c", 100);
+  cache<context, operation, error> c(cxt, 100);
   const auto& stats = c.statistics();
 
   ASSERT_EQ(2u, c(operation(1)));
@@ -275,7 +275,7 @@ TEST(cache, filters)
     ASSERT_FALSE((true_filter_2::used));
   }
   {
-    cache<context, operation, error, filter_0> c(cxt, "c", 100);
+    cache<context, operation, error, filter_0> c(cxt, 100);
     const auto& stats = c.statistics();
 
     ASSERT_EQ(2u, c(operation(1)));
@@ -294,7 +294,7 @@ TEST(cache, filters)
     ASSERT_EQ(2u, stats.filtered);
   }
   {
-    cache<context, operation, error, filter_0, filter_1> c(cxt, "c", 100);
+    cache<context, operation, error, filter_0, filter_1> c(cxt, 100);
     const auto& stats = c.statistics();
 
     ASSERT_EQ(2u, c(operation(1)));
@@ -329,11 +329,11 @@ TEST(cache, filters)
 TEST(cache, exception)
 {
   {
-    cache<context, operation, error> c(cxt, "c", 100);
+    cache<context, operation, error> c(cxt, 100);
     ASSERT_THROW(c(operation(6666)), error);
   }
   {
-    cache<context, operation, error, filter_6666> c(cxt, "c", 100);
+    cache<context, operation, error, filter_6666> c(cxt, 100);
     ASSERT_THROW(c(operation(6666)), error);
   }
 }

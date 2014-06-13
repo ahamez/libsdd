@@ -55,11 +55,9 @@ public:
   /// @brief Create a new empty context.
   context( std::size_t difference_size, std::size_t intersection_size, std::size_t sum_size
          , std::size_t arena_size)
-	 	: difference_cache_(std::make_shared<difference_cache_type>( *this, "sdd_difference_cache"
-                                                               , difference_size))
-    , intersection_cache_(std::make_shared<intersection_cache_type>( *this, "sdd_intersection_cache"
-                                                                   , intersection_size))
-    , sum_cache_(std::make_shared<sum_cache_type>(*this, "sdd_sum_cache", sum_size))
+	 	: difference_cache_(std::make_shared<difference_cache_type>(*this, difference_size))
+    , intersection_cache_(std::make_shared<intersection_cache_type>( *this, intersection_size))
+    , sum_cache_(std::make_shared<sum_cache_type>(*this, sum_size))
     , arena_(std::make_shared<mem::arena>(arena_size))
   {}
 
