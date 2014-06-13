@@ -137,7 +137,6 @@ public:
 
   /// @brief Construct a cache.
   /// @param context This cache's context.
-  /// @param name Give a name to this cache.
   /// @param size tells how many cache entries are keeped in the cache.
   ///
   /// When the maximal size is reached, a cleanup is launched: half of the cache is removed,
