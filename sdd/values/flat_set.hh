@@ -487,4 +487,4 @@ struct hash<sdd::values::flat_set<Value>>
 
 } // namespace std
 
-#endif // _SDD_VALUES_flat_set_HH_
+#endif // _SDD_VALUES_FLAT_SET_HH_
