@@ -140,7 +140,7 @@ public:
   print(std::ostream& os)
   const override
   {
-    os << fun_;
+    print_impl(os, fun_, 0);
   }
 
 private:
@@ -191,6 +191,28 @@ private:
   -> decltype(false)
   {
     return false;
+  }
+
+  /// @brief Called when the user's function has operator<<(ostream&).
+  ///
+  /// Compile-time dispatch.
+  template <typename T>
+  static auto
+  print_impl(std::ostream& os, const T& x, int)
+  -> decltype(operator<<(os, x))
+  {
+    return os << x;
+  }
+
+  /// @brief Called when the user's function doesn't have operator<<(ostream&).
+  ///
+  /// Compile-time dispatch.
+  template <typename T>
+  static auto
+  print_impl(std::ostream& os, const T& x, long)
+  -> decltype(void())
+  {
+    os << "function(" << &x << ")";
   }
 };
 
