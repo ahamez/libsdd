@@ -21,10 +21,8 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief Used to wrap user's inductive homomorphisms.
 template <typename C>
-class inductive_base
+struct inductive_base
 {
-public:
-
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 
@@ -79,27 +77,23 @@ public:
 /// @internal
 /// @brief Used to wrap user's inductive homomorphisms.
 template <typename C, typename User>
-class inductive_derived
+struct inductive_derived
   : public inductive_base<C>
 {
-private:
-
   /// @brief The user's inductive homomorphism.
-  const User h_;
-
-public:
+  const User h;
 
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 
   /// @brief Constructor.
-  inductive_derived(const User& h)
-    : h_(h)
+  inductive_derived(const User& u)
+    : h(u)
   {}
 
   /// @brief Constructor.
-  inductive_derived(User&& h)
-    : h_(std::move(h))
+  inductive_derived(User&& u)
+    : h(std::move(u))
   {}
 
   /// @brief Tell if the user's inductive skip the current variable.
@@ -107,7 +101,7 @@ public:
   skip(const order<C>& o)
   const noexcept override
   {
-    return skip_impl(h_, o, 0);
+    return skip_impl(h, o, 0);
   }
 
   /// @brief Tell if the user's inductive is a selector.
@@ -115,7 +109,7 @@ public:
   selector()
   const noexcept override
   {
-    return selector_impl(h_, 0);
+    return selector_impl(h, 0);
   }
 
   /// @brief Get the next homomorphism to apply from the user.
@@ -123,7 +117,7 @@ public:
   operator()(const order<C>& o, const SDD<C>& x)
   const override
   {
-    return h_(o, x);
+    return h(o, x);
   }
 
   /// @brief Get the next homomorphism to apply from the user.
@@ -131,7 +125,7 @@ public:
   operator()(const order<C>& o, const values_type& val)
   const override
   {
-    return h_(o, val);
+    return h(o, val);
   }
 
   /// @brief Get the base case from the user.
@@ -139,7 +133,7 @@ public:
   operator()(const one_terminal<C>&)
   const override
   {
-    return h_();
+    return h();
   }
 
   /// @brief Compare inductive_derived.
@@ -148,16 +142,16 @@ public:
   const noexcept override
   {
     return typeid(*this) == typeid(other)
-         ? h_ == reinterpret_cast<const inductive_derived&>(other).h_
+         ? h == reinterpret_cast<const inductive_derived&>(other).h
          : false;
   }
 
   /// @brief Get the user's inductive hash value.
   std::size_t
   hash()
-  const noexcept(noexcept(std::hash<User>()(h_))) override
+  const noexcept(noexcept(std::hash<User>()(h))) override
   {
-    return std::hash<User>()(h_);
+    return std::hash<User>()(h);
   }
 
   /// @brief Get the user's inductive textual representation.
@@ -165,7 +159,7 @@ public:
   print(std::ostream& os)
   const override
   {
-    print_impl(os, h_, 0);
+    print_impl(os, h, 0);
   }
 
 private:
@@ -249,12 +243,10 @@ private:
 /// @internal
 /// @brief inductive homomorphism.
 template <typename C>
-class _inductive
+struct _inductive
 {
-private:
-
   /// @brief Ownership of the user's inductive homomorphism.
-  const std::unique_ptr<const inductive_base<C>> hom_ptr_;
+  const std::unique_ptr<const inductive_base<C>> hom_ptr;
 
   /// @brief Dispatch the inductive homomorphism evaluation.
   struct evaluation
@@ -310,11 +302,9 @@ private:
     }
   };
 
-public:
-
   /// @brief Constructor.
-  _inductive(const inductive_base<C>* i_ptr)
-    : hom_ptr_(i_ptr)
+  _inductive(const inductive_base<C>* ptr)
+    : hom_ptr(ptr)
   {}
 
   /// @brief Evaluation.
@@ -322,7 +312,7 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    return visit(evaluation{cxt, o, s}, s, *hom_ptr_);
+    return visit(evaluation{cxt, o, s}, s, *hom_ptr);
   }
 
   /// @brief Skip predicate.
@@ -330,7 +320,7 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return hom_ptr_->skip(o);
+    return hom_ptr->skip(o);
   }
 
   /// @brief Selector predicate
@@ -338,40 +328,27 @@ public:
   selector()
   const noexcept
   {
-    return hom_ptr_->selector();
+    return hom_ptr->selector();
   }
 
-  /// @brief Return the user's inductive homomorphism
-  const inductive_base<C>&
-  hom()
-  const noexcept
+  friend
+  bool
+  operator==(const _inductive& lhs, const _inductive& rhs)
+  noexcept
   {
-    return *hom_ptr_;
+    return *lhs.hom_ptr == *rhs.hom_ptr;
+  }
+
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const _inductive& i)
+  {
+    i.hom_ptr->print(os);
+    return os;
   }
 };
 
 /*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related _inductive
-template <typename C>
-inline
-bool
-operator==(const _inductive<C>& lhs, const _inductive<C>& rhs)
-noexcept
-{
-  return lhs.hom() == rhs.hom();
-}
-
-/// @internal
-/// @related _inductive
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const _inductive<C>& i)
-{
-  i.hom().print(os);
-  return os;
-}
 
 } // namespace hom
 
@@ -414,7 +391,7 @@ struct hash<sdd::hom::_inductive<C>>
   operator()(const sdd::hom::_inductive<C>& i)
   const
   {
-    return i.hom().hash();
+    return i.hom_ptr->hash();
   }
 };
 

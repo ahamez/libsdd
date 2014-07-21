@@ -19,21 +19,17 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief local homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED _local
+struct LIBSDD_ATTRIBUTE_PACKED _local
 {
-private:
-
   /// @brief The target of this homomorphism.
-  const order_position_type target_;
+  const order_position_type target;
 
   /// @brief The nested homomorphism to apply in a nested level.
-  const homomorphism<C> h_;
-
-public:
+  const homomorphism<C> h;
 
   /// @brief Constructor.
-  _local(order_position_type target, const homomorphism<C>& h)
-    : target_(target), h_(h)
+  _local(order_position_type t, const homomorphism<C>& hm)
+    : target(t), h(hm)
   {}
 
   /// @internal
@@ -108,7 +104,7 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    return visit(evaluation{cxt, o, h_, s}, s);
+    return visit(evaluation{cxt, o, h, s}, s);
   }
 
   /// @brief Skip predicate.
@@ -116,7 +112,7 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return o.position() != target_;
+    return o.position() != target;
   }
 
   /// @brief Selector predicate
@@ -124,47 +120,26 @@ public:
   selector()
   const noexcept
   {
-    return h_.selector();
+    return h.selector();
   }
 
-  /// @brief Return the target.
-  order_position_type
-  target()
-  const noexcept
+  friend
+  bool
+  operator==(const _local& lhs, const _local& rhs)
+  noexcept
   {
-    return target_;
+    return lhs.target == rhs.target and lhs.h == rhs.h;
   }
 
-  /// @brief Return the carried homomorphism.
-  homomorphism<C>
-  hom()
-  const noexcept
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const _local& l)
   {
-    return h_;
+    return os << "@(" << l.target << ", " << l.h << ")";
   }
 };
 
 /*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related _local
-template <typename C>
-inline
-bool
-operator==(const _local<C>& lhs, const _local<C>& rhs)
-noexcept
-{
-  return lhs.target() == rhs.target() and lhs.hom() == rhs.hom();
-}
-
-/// @internal
-/// @related _local
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const _local<C>& l)
-{
-  return os << "@(" << l.target() << ", " << l.hom() << ")";
-}
 
 } // namespace hom
 
@@ -212,8 +187,8 @@ struct hash<sdd::hom::_local<C>>
   operator()(const sdd::hom::_local<C>& l)
   const
   {
-    std::size_t seed = sdd::util::hash(l.target());
-    sdd::util::hash_combine(seed, l.hom());
+    std::size_t seed = sdd::util::hash(l.target);
+    sdd::util::hash_combine(seed, l.h);
     return seed;
   }
 };

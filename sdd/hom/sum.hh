@@ -29,26 +29,20 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief sum homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED _sum
+struct LIBSDD_ATTRIBUTE_PACKED _sum
 {
-public:
-
   /// @brief The type of a const iterator on this sum's operands.
   using const_iterator = const homomorphism<C>*;
-
-private:
 
   /// @brief The type deduced from configuration of the number of operands.
   using operands_size_type = typename C::operands_size_type;
 
   /// @brief The homomorphism's number of operands.
-  const operands_size_type size_;
-
-public:
+  const operands_size_type size;
 
   /// @brief Constructor.
   _sum(boost::container::flat_set<homomorphism<C>>& operands)
-      : size_(static_cast<operands_size_type>(operands.size()))
+      : size(static_cast<operands_size_type>(operands.size()))
   {
     // Put all homomorphisms operands right after this sum instance.
     hom::consolidate(operands_addr(), operands.begin(), operands.end());
@@ -69,7 +63,7 @@ public:
   const
   {
     dd::sum_builder<C, SDD<C>> sum_operands(cxt.sdd_context());
-    sum_operands.reserve(size_);
+    sum_operands.reserve(size);
     try
     {
       for (const auto& op : *this)
@@ -120,17 +114,7 @@ public:
   end()
   const noexcept
   {
-    return reinterpret_cast<const homomorphism<C>*>(operands_addr()) + size_;
-  }
-  
-  /// @brief Get the number of operands.
-  ///
-  /// O(1).
-  std::size_t
-  size()
-  const noexcept
-  {
-    return size_;
+    return reinterpret_cast<const homomorphism<C>*>(operands_addr()) + size;
   }
 
   /// @brief Get the number of extra bytes.
@@ -140,7 +124,24 @@ public:
   extra_bytes()
   const noexcept
   {
-    return size_ * sizeof(homomorphism<C>);
+    return size * sizeof(homomorphism<C>);
+  }
+
+  friend
+  bool
+  operator==(const _sum& lhs, const _sum& rhs)
+  noexcept
+  {
+    return lhs.size == rhs.size and std::equal(lhs.begin(), lhs.end(), rhs.begin());
+  }
+
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const _sum& s)
+  {
+    os << "(";
+    std::copy(s.begin(), std::prev(s.end()), std::ostream_iterator<homomorphism<C>>(os, " + "));
+    return os << *std::prev(s.end()) << ")";
   }
 
 private:
@@ -153,30 +154,6 @@ private:
     return reinterpret_cast<char*>(const_cast<_sum*>(this)) + sizeof(_sum);
   }
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related _sum
-template <typename C>
-inline
-bool
-operator==(const _sum<C>& lhs, const _sum<C>& rhs)
-noexcept
-{
-  return lhs.size() == rhs.size() and std::equal(lhs.begin(), lhs.end(), rhs.begin());
-}
-
-/// @internal
-/// @related _sum
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const _sum<C>& s)
-{
-  os << "(";
-  std::copy(s.begin(), std::prev(s.end()), std::ostream_iterator<homomorphism<C>>(os, " + "));
-  return os << *std::prev(s.end()) << ")";
-}
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -224,8 +201,8 @@ struct sum_builder_helper
   operator()(const _local<C>& l, const homomorphism<C>&)
   const
   {
-    auto insertion = locals_.emplace(l.target(), hom_list_type());
-    insertion.first->second.emplace_back(l.hom());
+    auto insertion = locals_.emplace(l.target, hom_list_type());
+    insertion.first->second.emplace_back(l.h);
   }
 
   /// @brief Insert normally all other operands.

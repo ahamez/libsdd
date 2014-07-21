@@ -19,25 +19,21 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief if then else homomorphism.
 template <typename C>
-class _if_then_else
+struct _if_then_else
 {
-private:
-
   /// @brief The predicate (acts as filter).
-  const homomorphism<C> h_if_;
+  const homomorphism<C> h_if;
 
   /// @brief The true branch (works on the accepted part).
-  const homomorphism<C> h_then_;
+  const homomorphism<C> h_then;
 
   /// @brief The false branch (works on the rejected part).
-  const homomorphism<C> h_else_;
-
-public:
+  const homomorphism<C> h_else;
 
   /// @brief Constructor.
-  _if_then_else( const homomorphism<C>& h_if, const homomorphism<C>& h_then
-               , const homomorphism<C>& h_else)
-    : h_if_(h_if), h_then_(h_then), h_else_(h_else)
+  _if_then_else( const homomorphism<C>& if_op, const homomorphism<C>& then_op
+               , const homomorphism<C>& else_op)
+    : h_if(if_op), h_then(then_op), h_else(else_op)
   {}
 
   /// @brief Evaluation.
@@ -46,7 +42,7 @@ public:
   const
   {
     // Apply predicate.
-    const auto tmp = h_if_(cxt, o, s);
+    const auto tmp = h_if(cxt, o, s);
 
     dd::sum_builder<C, SDD<C>> sum_operands(cxt.sdd_context());
     sum_operands.reserve(2);
@@ -54,10 +50,10 @@ public:
     try
     {
       // Apply "then" on the part accepted by the predicate.
-      sum_operands.add(h_then_(cxt, o, tmp));
+      sum_operands.add(h_then(cxt, o, tmp));
 
       // Apply "else" on the part rejected by the predicate.
-      sum_operands.add(h_else_(cxt, o, dd::difference(cxt.sdd_context(), s, tmp)));
+      sum_operands.add(h_else(cxt, o, dd::difference(cxt.sdd_context(), s, tmp)));
 
       return dd::sum(cxt.sdd_context(), std::move(sum_operands));
     }
@@ -74,7 +70,7 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return h_if_.skip(o) and h_else_.skip(o) and h_then_.skip(o);
+    return h_if.skip(o) and h_else.skip(o) and h_then.skip(o);
   }
 
   /// @brief Selector predicate
@@ -82,7 +78,8 @@ public:
   selector()
   const noexcept
   {
-    return h_if_.selector() and h_else_.selector() and h_then_.selector();
+    // h_if is always a selector.
+    return h_else.selector() and h_then.selector();
   }
 
   /// @brief Equality.
@@ -91,7 +88,7 @@ public:
   operator==(const _if_then_else& lhs, const _if_then_else& rhs)
   noexcept
   {
-    return lhs.h_if_ == rhs.h_if_ and lhs.h_then_ == rhs.h_then_ and lhs.h_else_ == rhs.h_else_;
+    return lhs.h_if == rhs.h_if and lhs.h_then == rhs.h_then and lhs.h_else == rhs.h_else;
   }
 
   /// @brief Textual output.
@@ -99,17 +96,7 @@ public:
   std::ostream&
   operator<<(std::ostream& os, const _if_then_else<C>& ite)
   {
-    return os << "ite(" << ite.h_if_ << ", " << ite.h_then_ << "," << ite.h_else_ << ")";
-  }
-
-  std::size_t
-  hash()
-  const noexcept
-  {
-    std::size_t seed = sdd::util::hash(h_if_);
-    sdd::util::hash_combine(seed, h_then_);
-    sdd::util::hash_combine(seed, h_else_);
-    return seed;
+    return os << "ite(" << ite.h_if << ", " << ite.h_then << "," << ite.h_else << ")";
   }
 };
 
@@ -155,7 +142,11 @@ struct hash<sdd::hom::_if_then_else<C>>
   operator()(const sdd::hom::_if_then_else<C>& ite)
   const
   {
-    return ite.hash();
+    std::size_t seed = sdd::util::hash(ite.h_if);
+    sdd::util::hash_combine(seed, ite.h_then);
+    sdd::util::hash_combine(seed, ite.h_else);
+    return seed;
+
   }
 };
 

@@ -20,12 +20,9 @@ namespace sdd { namespace hom {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Used to wrap user's values function.
 template <typename C>
-class function_base
+struct function_base
 {
-public:
-
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 
@@ -68,29 +65,24 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Used to wrap user's values function.
 template <typename C, typename User>
-class function_derived
+struct function_derived
   : public function_base<C>
 {
-private:
-
   /// @brief The user's values function.
-  const User fun_;
-
-public:
+  const User fun;
 
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 
   /// @brief Constructor.
   function_derived(const User& f)
-    : fun_(f)
+    : fun(f)
   {}
 
   /// @brief Constructor.
   function_derived(User&& f)
-    : fun_(std::move(f))
+    : fun(std::move(f))
   {}
 
   /// @brief Tell if the user's function is a selector.
@@ -98,7 +90,7 @@ public:
   selector()
   const noexcept override
   {
-    return selector_impl(fun_, 0);
+    return selector_impl(fun, 0);
   }
 
   /// @brief Tell if the user's function is a shifter.
@@ -106,7 +98,7 @@ public:
   shifter()
   const noexcept override
   {
-    return shifter_impl(fun_, 0);
+    return shifter_impl(fun, 0);
   }
 
   /// @brief Apply the user function.
@@ -114,7 +106,7 @@ public:
   operator()(const values_type& val)
   const override
   {
-    return fun_(val);
+    return fun(val);
   }
 
   /// @brief Compare values_derived.
@@ -123,7 +115,7 @@ public:
   const noexcept override
   {
     return typeid(*this) == typeid(other)
-         ? fun_ == reinterpret_cast<const function_derived&>(other).fun_
+         ? fun == reinterpret_cast<const function_derived&>(other).fun
          : false;
   }
 
@@ -132,7 +124,7 @@ public:
   hash()
   const noexcept override
   {
-    return std::hash<User>()(fun_);
+    return std::hash<User>()(fun);
   }
 
   /// @brief Get the user's values function textual representation.
@@ -140,7 +132,7 @@ public:
   print(std::ostream& os)
   const override
   {
-    print_impl(os, fun_, 0);
+    print_impl(os, fun, 0);
   }
 
 private:
@@ -219,20 +211,17 @@ private:
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Values homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED _function
+struct LIBSDD_ATTRIBUTE_PACKED _function
 {
-private:
-
   /// @brief The type of a valuation on a flat node.
   using values_type = typename C::Values;
 
   /// @brief The identifier on which the user function is applied.
-  const order_position_type target_;
+  const order_position_type target;
 
   /// @brief Ownership of the user's values function.
-  const std::unique_ptr<const function_base<C>> fun_ptr_;
+  const std::unique_ptr<const function_base<C>> fun_ptr;
 
   /// @brief Dispatch the Values homomorphism evaluation.
   struct helper
@@ -309,12 +298,9 @@ private:
     }
   };
 
-public:
-
   /// @brief Constructor.
-  _function(order_position_type pos, const function_base<C>* f_ptr)
-    : target_(pos)
-    , fun_ptr_(f_ptr)
+  _function(order_position_type pos, const function_base<C>* f)
+    : target(pos), fun_ptr(f)
   {}
 
   /// @brief Skip variable predicate.
@@ -322,7 +308,7 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return target_ != o.position();
+    return target != o.position();
   }
 
   /// @brief Selector predicate
@@ -330,7 +316,7 @@ public:
   selector()
   const noexcept
   {
-    return fun_ptr_->selector();
+    return fun_ptr->selector();
   }
 
   /// @brief Evaluation.
@@ -338,56 +324,35 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
-    return visit_self(helper(), x, *fun_ptr_, cxt, o);
+    return visit_self(helper(), x, *fun_ptr, cxt, o);
   }
 
-  /// @brief Get the variable on which the user's function is applied.
-  order_position_type
-  target()
-  const noexcept
+  friend
+  bool
+  operator==(const _function& lhs, const _function& rhs)
+  noexcept
   {
-    return target_;
+    return lhs.target == rhs.target and *lhs.fun_ptr == *rhs.fun_ptr;
   }
 
-  /// @brief Return the user's values function.
-  const function_base<C>&
-  fun()
-  const noexcept
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const _function& x)
   {
-    return *fun_ptr_;
+    os << "fun(" << x.target << ", ";
+    x.fun_ptr->print(os);
+    return os << ")";
   }
 };
 
 /*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related _function
-template <typename C>
-inline
-bool
-operator==(const _function<C>& lhs, const _function<C>& rhs)
-noexcept
-{
-  return lhs.target() == rhs.target() and lhs.fun() == rhs.fun();
-}
-
-/// @internal
-/// @related _function
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const _function<C>& x)
-{
-  os << "fun(" << x.target() << ", ";
-  x.fun().print(os);
-  return os << ")";
-}
 
 } // namespace hom
 
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Create the Values Function homomorphism.
+/// @brief Create the Function homomorphism.
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
@@ -398,7 +363,7 @@ function(order_position_type pos, const User& u)
 }
 
 /// @internal
-/// @brief Create the Values Function homomorphism.
+/// @brief Create the Function homomorphism.
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
@@ -408,7 +373,7 @@ function(order_position_type pos, User&& u)
                                 , pos, new hom::function_derived<C, User>(std::move(u)));
 }
 
-/// @brief Create the Values Function homomorphism.
+/// @brief Create the Function homomorphism.
 /// @param i The target identifier, must belong to o.
 /// @related homomorphism
 template <typename C, typename User>
@@ -418,7 +383,7 @@ function(const order<C>& o, const typename C::Identifier& i, const User& u)
   return function<C>(o.node(i).position(), u);
 }
 
-/// @brief Create the Values Function homomorphism.
+/// @brief Create the Function homomorphism.
 /// @param i The target identifier, must belong to o.
 /// @related homomorphism
 template <typename C, typename User>
@@ -445,8 +410,8 @@ struct hash<sdd::hom::_function<C>>
   operator()(const sdd::hom::_function<C>& x)
   const noexcept
   {
-    std::size_t seed = x.fun().hash();
-    sdd::util::hash_combine(seed, x.target());
+    std::size_t seed = x.fun_ptr->hash();
+    sdd::util::hash_combine(seed, x.target);
     return seed;
   }
 };

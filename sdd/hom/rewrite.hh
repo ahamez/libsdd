@@ -110,7 +110,7 @@ struct rewriter
       else if (visit(is_local{}, *begin))
       {
         const _local<C>& l = mem::variant_cast<const _local<C>>(**begin);
-        L.push_back(l.hom());
+        L.push_back(l.h);
       }
       else
       {
@@ -192,12 +192,12 @@ struct rewriter
   operator()(const _fixpoint<C>& f, const homomorphism<C>& h, const order<C>& o)
   const
   {
-    if (not visit(is_sum{}, f.hom()))
+    if (not visit(is_sum{}, f.h))
     {
       return h;
     }
 
-    const _sum<C>& s = mem::variant_cast<const _sum<C>>(*f.hom());
+    const _sum<C>& s = mem::variant_cast<const _sum<C>>(*f.h);
 
     auto&& p = partition(o, s.begin(), s.end());
     auto& F = std::get<0>(p);
@@ -209,7 +209,6 @@ struct rewriter
     {
       return h;
     }
-
 
     auto rewritten_F = id<C>();
     if (not F.empty())
@@ -256,9 +255,7 @@ template <typename C>
 homomorphism<C>
 rewrite(const order<C>& o, const homomorphism<C>& h)
 {
-  return o.empty()
-       ? h
-       : visit_self(hom::rewriter<C>(), h, o);
+  return o.empty() ? h : visit_self(hom::rewriter<C>(), h, o);
 }
 
 /*------------------------------------------------------------------------------------------------*/

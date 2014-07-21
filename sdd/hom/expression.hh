@@ -27,30 +27,24 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief expression homomorphism.
 template <typename C>
-class _expression
+struct _expression
 {
-public:
-
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 
-private:
-
   /// @brief Pointer to the evaluator provided by the user.
-  const std::unique_ptr<expr::evaluator_base<C>> eval_ptr_;
+  const std::unique_ptr<expr::evaluator_base<C>> eval_ptr;
 
   /// @brief The set of the expression's variables.
-  const order_positions_type positions_;
+  const order_positions_type positions;
 
   /// @brief The target of the assignment.
-  const order_position_type target_;
-
-public:
+  const order_position_type target;
 
   /// @brief Constructor.
   _expression( std::unique_ptr<expr::evaluator_base<C>>&& e_ptr, order_positions_type&& positions
              , order_position_type target)
-    : eval_ptr_(std::move(e_ptr)), positions_(std::move(positions)), target_(target)
+    : eval_ptr(std::move(e_ptr)), positions(std::move(positions)), target(target)
   {}
 
   /// @brief Skip variable predicate.
@@ -58,9 +52,9 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return o.position() != target_ and o.position() != positions_.front()
-       and not o.contains(o.position(), positions_.front())
-       and not o.contains(o.position(), target_);
+    return o.position() != target and o.position() != positions.front()
+       and not o.contains(o.position(), positions.front())
+       and not o.contains(o.position(), target);
   }
 
   /// @brief Selector predicate.
@@ -78,8 +72,8 @@ public:
   {
     std::shared_ptr<expr::app_stack<C>> app = nullptr;
     std::shared_ptr<expr::res_stack<C>> res = nullptr;
-    expr::expression_pre<C> eval {cxt, target_, *eval_ptr_};
-    return visit_self(eval, sdd, o, app, res, positions_.cbegin(), positions_.cend());
+    expr::expression_pre<C> eval {cxt, target, *eval_ptr};
+    return visit_self(eval, sdd, o, app, res, positions.cbegin(), positions.cend());
   }
 
   /// @brief Get the user's evaluator.
@@ -87,50 +81,28 @@ public:
   evaluator()
   const noexcept
   {
-    return *eval_ptr_;
+    return *eval_ptr;
   }
 
-  /// @brief Get the set of variables.
-  const order_positions_type&
-  operands()
-  const noexcept
+  friend
+  bool
+  operator==(const _expression& lhs, const _expression& rhs)
+  noexcept
   {
-    return positions_;
+    return lhs.target == rhs.target and *lhs.eval_ptr == *rhs.eval_ptr
+       and lhs.positions == rhs.positions;
   }
 
-  /// @brief Get the target.
-  order_position_type
-  target()
-  const noexcept
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const _expression& e)
   {
-    return target_;
+    os << "expression(" << e.target << " = ";
+    e.evaluator().print(os);
+    return os << ")";
   }
+
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related _expression
-template <typename C>
-inline
-bool
-operator==(const _expression<C>& lhs, const _expression<C>& rhs)
-noexcept
-{
-  return lhs.target() == rhs.target() and lhs.operands() == rhs.operands()
-     and lhs.evaluator() == rhs.evaluator();
-}
-
-/// @internal
-/// @related _expression
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const _expression<C>& e)
-{
-  os << "expression(" << e.target() << " = ";
-  e.evaluator().print(os);
-  return os << ")";
-}
 #endif // !defined(HAS_NO_BOOST_COROUTINE)
 
 /*------------------------------------------------------------------------------------------------*/
@@ -138,30 +110,24 @@ operator<<(std::ostream& os, const _expression<C>& e)
 /// @internal
 /// @brief Simple expression homomorphism.
 template <typename C>
-class _simple_expression
+struct _simple_expression
 {
-public:
-
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 
-private:
-
   /// @brief Pointer to the evaluator provided by the user.
-  const std::unique_ptr<expr::evaluator_base<C>> eval_ptr_;
+  const std::unique_ptr<expr::evaluator_base<C>> eval_ptr;
 
   /// @brief The set of the expression's variables.
-  const order_positions_type positions_;
+  const order_positions_type positions;
 
   /// @brief The target of the assignment.
-  const order_position_type target_;
-
-public:
+  const order_position_type target;
 
   /// @brief Constructor.
   _simple_expression( std::unique_ptr<expr::evaluator_base<C>>&& e_ptr
                     , order_positions_type&& positions, order_position_type target)
-    : eval_ptr_(std::move(e_ptr)), positions_(std::move(positions)), target_(target)
+    : eval_ptr(std::move(e_ptr)), positions(std::move(positions)), target(target)
   {}
 
   /// @brief Skip variable predicate.
@@ -169,9 +135,9 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return o.position() != target_ and o.position() != positions_.front()
-       and not o.contains(o.position(), positions_.front())
-       and not o.contains(o.position(), target_);
+    return o.position() != target and o.position() != positions.front()
+       and not o.contains(o.position(), positions.front())
+       and not o.contains(o.position(), target);
   }
 
   /// @brief Selector predicate.
@@ -189,8 +155,8 @@ public:
   {
     std::shared_ptr<expr::app_stack<C>> app = nullptr;
     std::shared_ptr<expr::res_stack<C>> res = nullptr;
-    expr::simple<C> eval {cxt, target_, *eval_ptr_};
-    return visit_self(eval, sdd, o, app, res, positions_.cbegin(), positions_.cend());
+    expr::simple<C> eval {cxt, target, *eval_ptr};
+    return visit_self(eval, sdd, o, app, res, positions.cbegin(), positions.cend());
   }
 
   /// @brief Get the user's evaluator.
@@ -198,50 +164,30 @@ public:
   evaluator()
   const noexcept
   {
-    return *eval_ptr_;
+    return *eval_ptr;
   }
 
-  /// @brief Get the set of variables.
-  const order_positions_type&
-  operands()
-  const noexcept
+  friend
+  bool
+  operator==(const _simple_expression& lhs, const _simple_expression& rhs)
+  noexcept
   {
-    return positions_;
+    return lhs.target == rhs.target and *lhs.eval_ptr == *rhs.eval_ptr
+       and lhs.positions == rhs.positions;
   }
 
-  /// @brief Get the target.
-  order_position_type
-  target()
-  const noexcept
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const _simple_expression& e)
   {
-    return target_;
+    os << "SimpleExpr(" << e.target << " = ";
+    e.evaluator().print(os);
+    return os << ")";
   }
+
 };
 
 /*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related _simple_expression
-template <typename C>
-inline
-bool
-operator==(const _simple_expression<C>& lhs, const _simple_expression<C>& rhs)
-noexcept
-{
-  return lhs.target() == rhs.target() and lhs.operands() == rhs.operands()
-     and lhs.evaluator() == rhs.evaluator();
-}
-
-/// @internal
-/// @related expression
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const _simple_expression<C>& e)
-{
-  os << "SimpleExpr(" << e.target() << " = ";
-  e.evaluator().print(os);
-  return os << ")";
-}
 
 } // namespace hom
 
@@ -327,8 +273,8 @@ struct hash<sdd::hom::_expression<C>>
   const
   {
     std::size_t seed = e.evaluator().hash();
-    sdd::util::hash_combine(seed, e.operands().begin(), e.operands().end());
-    sdd::util::hash_combine(seed, e.target());
+    sdd::util::hash_combine(seed, e.positions.begin(), e.positions.end());
+    sdd::util::hash_combine(seed, e.target);
     return seed;
   }
 };
@@ -344,8 +290,8 @@ struct hash<sdd::hom::_simple_expression<C>>
   const noexcept
   {
     std::size_t seed = e.evaluator().hash();
-    sdd::util::hash_combine(seed, e.operands().begin(), e.operands().end());
-    sdd::util::hash_combine(seed, e.target());
+    sdd::util::hash_combine(seed, e.positions.begin(), e.positions.end());
+    sdd::util::hash_combine(seed, e.target);
     return seed;
   }
 };

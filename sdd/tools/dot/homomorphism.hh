@@ -36,9 +36,9 @@ struct hom_to_dot_visitor
     if (not visited(h))
     {
       os_ << node("h", &h) << "[label=\"o\"];" << std::endl;
-      const auto left = visit(*this, h.left());
+      const auto left = visit(*this, h.left);
       os_ << node("h", &h) << " -> " << left << "[label=\"l\"];" << std::endl;
-      const auto right = visit(*this, h.right());
+      const auto right = visit(*this, h.right);
       os_ << node("h", &h) << " -> " << right << "[label=\"r\"];" << std::endl;
     }
     return node("h", &h);
@@ -51,7 +51,7 @@ struct hom_to_dot_visitor
     if (not visited(h))
     {
       os_ << node("h", &h) << "[label=\"*\"];" << std::endl;
-      const auto n = visit(*this, h.hom());
+      const auto n = visit(*this, h.h);
       os_ << node("h", &h) << " -> " << n << std::endl;
     }
     return node("h", &h);
@@ -84,8 +84,8 @@ struct hom_to_dot_visitor
     if (not visited(h))
     {
       os_ << node("h", &h) << " [label=\"@\"];" << std::endl;
-      const auto n = visit(*this, h.hom());
-      os_ << node("h", &h) << " -> " << n << " [label=\"" << h.target() << "\"];" << std::endl;
+      const auto n = visit(*this, h.h);
+      os_ << node("h", &h) << " -> " << n << " [label=\"" << h.target << "\"];" << std::endl;
     }
     return node("h", &h);
   }
@@ -97,9 +97,9 @@ struct hom_to_dot_visitor
     if (not visited(h))
     {
       os_ << node("h", &h) << " [label=\"$*\"];" << std::endl;
-      if (h.F() != id<C>())
+      if (h.F != id<C>())
       {
-        const auto f = visit(*this, h.F());
+        const auto f = visit(*this, h.F);
         os_ << node("h", &h) << " -> " << f << " [label=\"F\"];" << std::endl;
       }
       unsigned int i = 0;
@@ -108,9 +108,9 @@ struct hom_to_dot_visitor
         const auto g = visit(*this, *g_it);
         os_ << node("h", &h) << " -> " << g << " [label=\"g" << i << "\"];" << std::endl;
       }
-      if (h.L() != id<C>())
+      if (h.L != id<C>())
       {
-        const auto l = visit(*this, h.L());
+        const auto l = visit(*this, h.L);
         os_ << node("h", &h) << " -> " << l << " [label=\"L\"];"<< std::endl;
       }
     }

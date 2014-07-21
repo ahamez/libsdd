@@ -16,24 +16,20 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief cons homomorphism.
 template <typename C, typename Valuation>
-class _cons
+struct _cons
 {
-private:
-
   /// @brief
-  const order<C> order_;
+  const order<C> o;
 
   /// @brief The valuation of the SDD to create.
-  const Valuation valuation_;
+  const Valuation valuation;
 
   /// @brief The homomorphism to apply on successors.
-  const homomorphism<C> next_;
-
-public:
+  const homomorphism<C> next;
 
   /// @brief Constructor.
-  _cons(const order<C>& o, const Valuation& val, const homomorphism<C>& h)
-    : order_(o), valuation_(val), next_(h)
+  _cons(const order<C>& ord, const Valuation& val, const homomorphism<C>& h)
+    : o(ord), valuation(val), next(h)
   {}
 
   /// @brief Evaluation.
@@ -41,7 +37,7 @@ public:
   operator()(context<C>& cxt, const order<C>&, const SDD<C>& x)
   const
   {
-    return {order_.variable(), valuation_, next_(cxt, order_.next(), x)};
+    return {o.variable(), valuation, next(cxt, o.next(), x)};
   }
 
   /// @brief Skip predicate.
@@ -60,28 +56,20 @@ public:
     return false;
   }
 
-  /// @brief Return the order of this cons.
-  const order<C>&
-  get_order()
-  const noexcept
+  friend
+  bool
+  operator==(const _cons& lhs, const _cons& rhs)
+  noexcept
   {
-    return order_;
+    return lhs.valuation == rhs.valuation and lhs.next == rhs.next and lhs.o == rhs.o;
   }
 
-  /// @brief Return the valuation of the SDD to create.
-  const Valuation&
-  valuation()
-  const noexcept
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const _cons& c)
   {
-    return valuation_;
-  }
-
-  /// @brief Return the homomorphism to apply on successors.
-  homomorphism<C>
-  next()
-  const noexcept
-  {
-    return next_;
+    return os << "cons(" << c.o.identifier() << ", " << c.valuation << ", " << c.next
+    << ")";
   }
 };
 
@@ -96,29 +84,6 @@ struct homomorphism_traits<_cons<C, Valuation>>
 };
 
 /*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Equality of two _cons homomorphisms.
-/// @related _cons
-template <typename C, typename Valuation>
-inline
-bool
-operator==(const _cons<C, Valuation>& lhs, const _cons<C, Valuation>& rhs)
-noexcept
-{
-  return lhs.valuation() == rhs.valuation() and lhs.next() == rhs.next()
-     and lhs.get_order() == rhs.get_order();
-}
-
-/// @internal
-/// @related _cons
-template <typename C, typename Valuation>
-std::ostream&
-operator<<(std::ostream& os, const _cons<C, Valuation>& c)
-{
-  return os << "cons(" << c.get_order().identifier() << ", " << c.valuation() << ", " << c.next()
-            << ")";
-}
 
 } // namespace hom
 
@@ -150,9 +115,9 @@ struct hash<sdd::hom::_cons<C, Valuation>>
   operator()(const sdd::hom::_cons<C, Valuation>& h)
   const
   {
-    std::size_t seed = sdd::util::hash(h.get_order());
-    sdd::util::hash_combine(seed, h.valuation());
-    sdd::util::hash_combine(seed, h.next());
+    std::size_t seed = sdd::util::hash(h.o);
+    sdd::util::hash_combine(seed, h.valuation);
+    sdd::util::hash_combine(seed, h.next);
     return seed;
   }
 };

@@ -18,16 +18,12 @@ namespace sdd { namespace hom {
 template <typename C>
 struct _constant
 {
-private:
-
   /// @brief The SDD to return.
-  const SDD<C> sdd_;
-
-public:
+  const SDD<C> operand;
 
   /// @brief Constructor.
   _constant(const SDD<C>& s)
-    : sdd_(s)
+    : operand(s)
   {}
 
   /// @brief Evaluation.
@@ -35,7 +31,7 @@ public:
   operator()(context<C>&, const order<C>&, const SDD<C>&)
   const noexcept
   {
-    return sdd_;
+    return operand;
   }
 
   /// @brief Skip variable predicate.
@@ -54,12 +50,21 @@ public:
     return false;
   }
 
-  SDD<C>
-  sdd()
-  const noexcept
+  friend
+  bool
+  operator==(const _constant& lhs, const _constant& rhs)
+  noexcept
   {
-    return sdd_;
+    return lhs.operand == rhs.operand;
   }
+
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const _constant& c)
+  {
+    return os << "const(" << c.operand << ")";
+  }
+
 };
 
 /*------------------------------------------------------------------------------------------------*/
@@ -73,26 +78,6 @@ struct homomorphism_traits<_constant<C>>
 };
 
 /*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related _constant
-template <typename C>
-inline
-bool
-operator==(const _constant<C>& lhs, const _constant<C>& rhs)
-noexcept
-{
-  return lhs.sdd() == rhs.sdd();
-}
-
-/// @internal
-/// @related _constant
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const _constant<C>& c)
-{
-  return os << "const(" << c.sdd() << ")";
-}
 
 } // namespace hom
 
@@ -125,7 +110,7 @@ struct hash<sdd::hom::_constant<C>>
   operator()(const sdd::hom::_constant<C>& c)
   const
   {
-    return sdd::util::hash(c.sdd());
+    return sdd::util::hash(c.operand);
   }
 };
 
