@@ -15,6 +15,7 @@
 #include "sdd/hom/fixpoint.hh"
 #include "sdd/hom/function.hh"
 #include "sdd/hom/identity.hh"
+#include "sdd/hom/if_then_else.hh"
 #include "sdd/hom/inductive.hh"
 #include "sdd/hom/intersection.hh"
 #include "sdd/hom/local.hh"
@@ -47,6 +48,7 @@ private:
                       , hom::_fixpoint<C>
                       , hom::_function<C>
                       , hom::_identity<C>
+                      , hom::_if_then_else<C>
                       , hom::_inductive<C>
                       , hom::_intersection<C>
                       , hom::_local<C>
