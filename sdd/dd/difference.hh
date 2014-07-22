@@ -161,31 +161,23 @@ struct difference_op
   {
     return binary_visit_self(difference_visitor<C>(cxt), lhs, rhs);
   }
+
+  friend
+  bool
+  operator==(const difference_op& lhs, const difference_op& rhs)
+  noexcept
+  {
+    return lhs.lhs == rhs.lhs and lhs.rhs == rhs.rhs;
+  }
+
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const difference_op& x)
+  {
+    return os << "- (" << x.lhs << "," << x.rhs << ")";
+  }
+
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related difference_op
-template <typename C>
-inline
-bool
-operator==(const difference_op<C>& lhs, const difference_op<C>& rhs)
-noexcept
-{
-  return lhs.lhs == rhs.lhs and lhs.rhs == rhs.rhs;
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related difference_op
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const difference_op<C>& x)
-{
-  return os << "- (" << x.lhs << "," << x.rhs << ")";
-}
 
 /*------------------------------------------------------------------------------------------------*/
 

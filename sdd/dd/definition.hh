@@ -351,6 +351,49 @@ public:
     return dd::count_combinations(*this);
   }
 
+  /// @brief Equality of two SDD.
+  ///
+  /// O(1).
+  friend
+  bool
+  operator==(const SDD& lhs, const SDD& rhs)
+  noexcept
+  {
+    return lhs.ptr_ == rhs.ptr_;
+  }
+
+  /// @brief Inequality of two SDD.
+  ///
+  /// O(1).
+  friend
+  bool
+  operator!=(const SDD& lhs, const SDD& rhs)
+  noexcept
+  {
+    return not (lhs.ptr_ == rhs.ptr_);
+  }
+
+  /// @brief Comparison of two SDD.
+  ///
+  /// O(1). The order of SDD is arbitrary and can change at each run.
+  friend
+  bool
+  operator<(const SDD& lhs, const SDD& rhs)
+  noexcept
+  {
+    return lhs.ptr_ < rhs.ptr_;
+  }
+
+  /// @brief Export the textual representation of an SDD to a stream.
+  ///
+  /// Use only with small SDD, output can be huge.
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const SDD& x)
+  {
+    return os << *x;
+  }
+
 private:
 
   /// @internal
@@ -438,58 +481,6 @@ private:
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief   Equality of two SDD.
-/// @related SDD
-///
-/// O(1).
-template <typename C>
-inline
-bool
-operator==(const SDD<C>& lhs, const SDD<C>& rhs)
-noexcept
-{
-  return lhs.ptr() == rhs.ptr();
-}
-
-/// @brief   Inequality of two SDD.
-/// @related SDD
-///
-/// O(1).
-template <typename C>
-inline
-bool
-operator!=(const SDD<C>& lhs, const SDD<C>& rhs)
-noexcept
-{
-  return not (lhs.ptr() == rhs.ptr());
-}
-
-/// @brief   Comparison of two SDD.
-/// @related SDD
-///
-/// O(1). The order of SDD is arbitrary and can change at each run.
-template <typename C>
-inline
-bool
-operator<(const SDD<C>& lhs, const SDD<C>& rhs)
-noexcept
-{
-  return lhs.ptr() < rhs.ptr();
-}
-
-/// @brief   Export the textual representation of an SDD to a stream.
-/// @related SDD
-///
-/// Use only with small SDD, output can be huge.
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const SDD<C>& x)
-{
-  return os << *x;
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
 /// @brief Return the |0| terminal.
 /// @related SDD
 ///
@@ -565,6 +556,8 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Hash specialization for sdd::dd::SDD.
+///
+/// O(1).
 template <typename C>
 struct hash<sdd::SDD<C>>
 {
@@ -572,6 +565,7 @@ struct hash<sdd::SDD<C>>
   operator()(const sdd::SDD<C>& x)
   const noexcept
   {
+    // Hash pointer.
     return sdd::util::hash(x.ptr());
   }
 };

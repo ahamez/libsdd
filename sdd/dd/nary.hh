@@ -110,32 +110,24 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_op
       return Operation::template work<const_iterator, hierarchical_node<C>>(begin(), end(), cxt);
     }
   }
+
+  friend
+  bool
+  operator==(const nary_op& lhs, const nary_op& rhs)
+  noexcept
+  {
+    return lhs.size == rhs.size and std::equal(lhs.begin(), lhs.end(), rhs.begin());
+  }
+
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const nary_op& x)
+  {
+    os << Operation::symbol << " (";
+    std::copy(x.begin(), std::prev(x.end()), std::ostream_iterator<SDD<C>>(os, ", "));
+    return os << *std::prev(x.end()) << ")";
+  }
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Equality of two operations based on nary_op.
-/// @related nary_op
-template <typename C, typename Operation>
-inline
-bool
-operator==(const nary_op<C, Operation>& lhs, const nary_op<C, Operation>& rhs)
-noexcept
-{
-  return lhs.size == rhs.size and std::equal(lhs.begin(), lhs.end(), rhs.begin());
-}
-
-/// @internal
-/// @related nary_op
-template <typename C, typename Operation>
-std::ostream&
-operator<<(std::ostream& os, const nary_op<C, Operation>& x)
-{
-  os << Operation::symbol << " (";
-  std::copy(x.begin(), std::prev(x.end()), std::ostream_iterator<SDD<C>>(os, ", "));
-  return os << *std::prev(x.end()) << ")";
-}
 
 /*------------------------------------------------------------------------------------------------*/
 

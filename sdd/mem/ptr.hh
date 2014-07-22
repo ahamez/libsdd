@@ -146,37 +146,23 @@ public:
     using std::swap;
     swap(lhs.x_, rhs.x_);
   }
+
+  friend
+  bool
+  operator==(const ptr& lhs, const ptr& rhs)
+  noexcept
+  {
+    return lhs.x_ == rhs.x_;
+  }
+
+  friend
+  bool
+  operator<(const ptr& lhs, const ptr& rhs)
+  noexcept
+  {
+    return lhs.x_ < rhs.x_;
+  }
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related ptr
-/// @brief Compare pointers.
-///
-/// O(1).
-template <typename Unique>
-inline
-bool
-operator==(const ptr<Unique>& lhs, const ptr<Unique>& rhs)
-noexcept
-{
-  return lhs.operator->() == rhs.operator->();
-}
-
-/// @internal
-/// @related ptr
-/// @brief Compare pointers.
-///
-/// O(1).
-template <typename Unique>
-inline
-bool
-operator<(const ptr<Unique>& lhs, const ptr<Unique>& rhs)
-noexcept
-{
-  return lhs.operator->() < rhs.operator->();
-}
 
 /*------------------------------------------------------------------------------------------------*/
 

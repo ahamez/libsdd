@@ -61,9 +61,7 @@ public:
   template <typename... Args>
   ref_counted(Args&&... args)
   noexcept(std::is_nothrow_constructible<T, Args...>::value)
-    : hook()
-    , ref_count_(0)
-    , data_(std::forward<Args>(args)...)
+    : hook(), ref_count_(0), data_(std::forward<Args>(args)...)
   {}
 
   /// @brief Get a reference of the unified data.
@@ -85,6 +83,43 @@ public:
     return extra_bytes_impl(data_, 0);
   }
 
+  /// @brief Tell if the unified data is no longer referenced.
+  bool
+  is_not_referenced()
+  const noexcept
+  {
+    return ref_count_ == 0;
+  }
+
+  /// @brief Equality.
+  friend
+  bool
+  operator==(const ref_counted& lhs, const ref_counted& rhs)
+  noexcept
+  {
+    return lhs.data_ == rhs.data_;
+  }
+
+  /// @brief A ptr references that unified data.
+  void
+  increment_reference_counter()
+  noexcept
+  {
+    assert(ref_count_ < std::numeric_limits<uint32_t>::max());
+    ++ref_count_;
+  }
+
+  /// @brief A ptr no longer references that unified data.
+  void
+  decrement_reference_counter()
+  noexcept
+  {
+    assert(ref_count_ > 0);
+    --ref_count_;
+  }
+
+private:
+
   /// @brief Called when the contained type defines extra_bytes.
   template <typename U>
   static auto
@@ -105,56 +140,12 @@ public:
     return 0;
   }
 
-  /// @brief Tell if the unified data is no longer referenced.
-  bool
-  is_not_referenced()
-  const noexcept
-  {
-    return ref_count_ == 0;
-  }
-
-private:
-
-  // A ptr should be able to access and modify the reference counter.
-  template <typename> friend class ptr;
-
   // hash_table_iterator needs to access the hook.
   template <typename, typename> friend class hash_table_iterator;
 
   // hash_table needs to access the hook.
   template <typename> friend class hash_table;
-
-  /// @brief A ptr references that unified data.
-  void
-  increment_reference_counter()
-  noexcept
-  {
-    assert(ref_count_ < std::numeric_limits<uint32_t>::max());
-    ++ref_count_;
-  }
-
-  /// @brief A ptr no longer references that unified data.
-  void
-  decrement_reference_counter()
-  noexcept
-  {
-    assert(ref_count_ > 0);
-    --ref_count_;
-  }
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related ref_counted
-template <typename T>
-inline
-bool
-operator==(const ref_counted<T>& lhs, const ref_counted<T>& rhs)
-noexcept
-{
-  return lhs.data() == rhs.data();
-}
 
 /*------------------------------------------------------------------------------------------------*/
 

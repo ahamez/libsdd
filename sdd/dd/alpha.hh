@@ -50,18 +50,16 @@ public:
   {
     return successor_;
   }
-};
 
-/// @brief Equality of two arc.
-/// @related arc
-template <typename C, typename Valuation>
-inline
-bool
-operator==(const arc<C, Valuation>& lhs, const arc<C, Valuation>& rhs)
-noexcept
-{
-  return lhs.successor() == rhs.successor() and lhs.valuation() == rhs.valuation();
-}
+  /// @brief Equality of two arc.
+  friend
+  bool
+  operator==(const arc& lhs, const arc& rhs)
+  noexcept
+  {
+    return lhs.successor_ == rhs.successor_ and lhs.valuation_ == rhs.valuation_;
+  }
+};
 
 /*------------------------------------------------------------------------------------------------*/
 
