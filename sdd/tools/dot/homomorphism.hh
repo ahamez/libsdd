@@ -133,6 +133,26 @@ struct hom_to_dot_visitor
     return node("h", &h);
   }
 
+  result_type
+  operator()(const hom::_if_then_else<C>& h)
+  const
+  {
+    if (not visited(h))
+    {
+      os_ << node("h", &h) << " [label=\"ITE\"];" << std::endl;
+
+      const auto pred = visit(*this, h.h_if);
+      os_ << node("h", &h) << " -> " << pred << " [label=\"if\"];" << std::endl;
+
+      const auto then_branch = visit(*this, h.h_then);
+      os_ << node("h", &h) << " -> " << then_branch << " [label=\"then\"];" << std::endl;
+
+      const auto else_branch = visit(*this, h.h_else);
+      os_ << node("h", &h) << " -> " << else_branch << " [label=\"else\"];" << std::endl;
+    }
+    return node("h", &h);
+  }
+
   template <typename T>
   result_type
   operator()(const T& x)
