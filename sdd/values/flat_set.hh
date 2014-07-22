@@ -194,6 +194,14 @@ public:
     return ptr_->data().lower_bound(x);
   }
 
+  /// @brief
+  const_iterator
+  upper_bound(const Value& x)
+  const
+  {
+    return ptr_->data().upper_bound(x);
+  }
+
   /// @internal
   /// @brief Get the pointer to the unified data.
   ptr_type
