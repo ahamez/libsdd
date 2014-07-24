@@ -1,12 +1,13 @@
 #ifndef _SDD_VALUES_FLAT_SET_HH_
 #define _SDD_VALUES_FLAT_SET_HH_
 
-#include <algorithm>  // copy, set_difference, set_intersection, set_union
-#include <functional> // hash
+#include <algorithm>   // copy, set_difference, set_intersection, set_union
+#include <functional>  // hash
 #include <initializer_list>
 #include <iosfwd>
-#include <iterator>   // inserter
-#include <utility>    // pair
+#include <iterator>    // inserter
+#include <type_traits> // enable_if, is_integral
+#include <utility>     // pair
 
 #include "sdd/values_manager_fwd.hh"
 #include "sdd/mem/ptr.hh"
@@ -395,7 +396,7 @@ noexcept
 /// @brief Textual output of a flat_set
 /// @related flat_set
 template <typename Value>
-std::ostream&
+typename std::enable_if<not std::is_integral<Value>::value, std::ostream&>::type
 operator<<(std::ostream& os, const flat_set<Value>& fs)
 {
   os << "{";
@@ -403,6 +404,43 @@ operator<<(std::ostream& os, const flat_set<Value>& fs)
   {
     std::copy(fs.cbegin(), std::prev(fs.cend()), std::ostream_iterator<Value>(os, ","));
     os << *std::prev(fs.cend());
+  }
+  return os << "}";
+}
+
+/// @brief Textual output of a flat_set
+///
+/// When Value is an integral type, consecutive values are displayed like 1..9.
+/// @related flat_set
+template <typename Value>
+typename std::enable_if<std::is_integral<Value>::value, std::ostream&>::type
+operator<<(std::ostream& os, const flat_set<Value>& fs)
+{
+  os << "{";
+  if (not fs.empty())
+  {
+    auto cit = fs.cbegin();
+    while (cit != fs.cend())
+    {
+      auto first = cit;
+      while ((*cit + 1) == (*std::next(cit))) // consecutive values
+      {
+        ++cit;
+      }
+      if (first == cit)
+      {
+        os << *cit;
+      }
+      else
+      {
+        os << *first << ".." << *cit;
+      }
+      if (std::next(cit) != fs.cend())
+      {
+        os << ",";
+      }
+      ++cit;
+    }
   }
   return os << "}";
 }
