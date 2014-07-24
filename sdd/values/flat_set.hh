@@ -393,6 +393,19 @@ noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
+template <typename Value>
+struct display_value
+{
+  void
+  operator()(std::ostream& os, const Value& v)
+  const
+  {
+    os << v;
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
 /// @brief Textual output of a flat_set
 /// @related flat_set
 template <typename Value>
@@ -429,11 +442,13 @@ operator<<(std::ostream& os, const flat_set<Value>& fs)
       }
       if (first == cit)
       {
-        os << *cit;
+        display_value<Value>()(os, *cit);
       }
       else
       {
-        os << *first << ".." << *cit;
+        display_value<Value>()(os, *first);
+        os << "..";
+        display_value<Value>()(os, *cit);
       }
       if (std::next(cit) != fs.cend())
       {
