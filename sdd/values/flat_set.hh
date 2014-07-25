@@ -42,6 +42,9 @@ public:
   /// @brief The type of an iterator on a flat set of values.
   using const_iterator = typename data_type::const_iterator;
 
+  /// @brief The type of an reverse iterator on a flat set of values.
+  using const_reverse_iterator = typename data_type::const_reverse_iterator;
+
 private:
 
   /// @brief A pointer to the unified set of values.
@@ -90,7 +93,7 @@ public:
     return insertion;
   }
 
-  /// @brief Get the beginning of this set of values.
+  /// @brief Returns an iterator pointing to the first element in the flat set.
   const_iterator
   begin()
   const noexcept
@@ -98,7 +101,7 @@ public:
     return ptr_->data().cbegin();
   }
 
-  /// @brief Get the end of this set of values.
+  /// @brief Returns an iterator pointing to the last element in the flat set.
   const_iterator
   end()
   const noexcept
@@ -106,7 +109,7 @@ public:
     return ptr_->data().cend();
   }
 
-  /// @brief Get the beginning of this set of values.
+  /// @brief Returns an iterator pointing to the first element in the flat set.
   const_iterator
   cbegin()
   const noexcept
@@ -114,12 +117,44 @@ public:
     return ptr_->data().cbegin();
   }
 
-  /// @brief Get the end of this set of values.
+  /// @brief Returns an iterator pointing to the last element in the flat set.
   const_iterator
   cend()
   const noexcept
   {
     return ptr_->data().cend();
+  }
+
+  /// @brief Returns a reverse iterator pointing to the last element in the flat set.
+  const_reverse_iterator
+  rbegin()
+  const noexcept
+  {
+    return ptr_->data().crbegin();
+  }
+
+  /// @brief Returns a reverse iterator pointing to the first element in the flat set.
+  const_reverse_iterator
+  rend()
+  const noexcept
+  {
+    return ptr_->data().crend();
+  }
+
+  /// @brief Returns a reverse iterator pointing to the first element in the flat set.
+  const_reverse_iterator
+  crbegin()
+  const noexcept
+  {
+    return ptr_->data().crbegin();
+  }
+
+  /// @brief Returns a reverse iterator pointing to the last element in the flat set.
+  const_reverse_iterator
+  crend()
+  const noexcept
+  {
+    return ptr_->data().crend();
   }
 
   /// @brief Tell if this set of values is empty.
