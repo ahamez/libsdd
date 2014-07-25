@@ -34,7 +34,7 @@ struct intersection_op_impl;
 /// @internal
 /// @brief Use to build intersection operands.
 template <typename C, typename Valuation>
-using intersection_builder = nary_builder<Valuation, intersection_builder_impl<C, Valuation>>;
+using intersection_builder = nary_builder<C, Valuation, intersection_builder_impl<C, Valuation>>;
 
 /// @internal
 /// @brief Used as a template parameter by nary_op to implement the SDD intersection operation.
@@ -64,7 +64,7 @@ struct sum_op_impl;
 /// @internal
 /// @brief Use to build sum operands.
 template <typename C, typename Valuation>
-using sum_builder = nary_builder<Valuation, sum_builder_impl<C, Valuation>>;
+using sum_builder = nary_builder<C, Valuation, sum_builder_impl<C, Valuation>>;
 
 /// @internal
 /// @brief Used as a template parameter by nary_op to implement the SDD sum operation.

@@ -125,37 +125,44 @@ public:
   swap(ptr& lhs, ptr& rhs)
   noexcept
   {
-    std::swap(lhs.x_, rhs.x_);
+    using std::swap;
+    swap(lhs.x_, rhs.x_);
+  }
+
+  /// @brief Swap.
+  friend void
+  swap(ptr&& lhs, ptr& rhs)
+  noexcept
+  {
+    using std::swap;
+    swap(lhs.x_, rhs.x_);
+  }
+
+  /// @brief Swap.
+  friend void
+  swap(ptr& lhs, ptr&& rhs)
+  noexcept
+  {
+    using std::swap;
+    swap(lhs.x_, rhs.x_);
+  }
+
+  friend
+  bool
+  operator==(const ptr& lhs, const ptr& rhs)
+  noexcept
+  {
+    return lhs.x_ == rhs.x_;
+  }
+
+  friend
+  bool
+  operator<(const ptr& lhs, const ptr& rhs)
+  noexcept
+  {
+    return lhs.x_ < rhs.x_;
   }
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related ptr
-///
-/// O(1).
-template <typename Unique>
-inline
-bool
-operator==(const ptr<Unique>& lhs, const ptr<Unique>& rhs)
-noexcept
-{
-  return lhs.operator->() == rhs.operator->();
-}
-
-/// @internal
-/// @related ptr
-///
-/// O(1).
-template <typename Unique>
-inline
-bool
-operator<(const ptr<Unique>& lhs, const ptr<Unique>& rhs)
-noexcept
-{
-  return lhs.operator->() < rhs.operator->();
-}
 
 /*------------------------------------------------------------------------------------------------*/
 

@@ -16,14 +16,13 @@ namespace sdd { namespace hom {
 
 /// @internal
 /// @brief The Identity homomorphism which returns its operand.
-///
-/// Its evaluation is done in homomorphism<C>::operator().
 template <typename C>
 struct _identity
 {
   /// @brief Evaluation.
   ///
-  /// This is an error to call this function, as the identity is computed before calling the cache.
+  /// This is an error to call this function, as the identity is computed before calling the cache
+  /// (in homomorphism<C>::operator()).
   SDD<C>
   operator()(context<C>&, const order<C>&, const SDD<C>&)
   const noexcept
@@ -47,30 +46,24 @@ struct _identity
   {
     return true;
   }
+
+  friend
+  constexpr bool
+  operator==(const _identity&, const _identity&)
+  noexcept
+  {
+    return true;
+  }
+
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const _identity&)
+  {
+    return os << "Id";
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Equality of two identity homomorphisms.
-/// @related identity
-template <typename C>
-inline
-constexpr bool
-operator==(const _identity<C>&, const _identity<C>&)
-noexcept
-{
-  return true;
-}
-
-/// @internal
-/// @related identity
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const _identity<C>&)
-{
-  return os << "Id";
-}
 
 } // namespace hom
 

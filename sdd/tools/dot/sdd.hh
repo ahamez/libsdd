@@ -4,6 +4,7 @@
 #include <unordered_set>
 
 #include "sdd/dd/definition.hh"
+#include "sdd/order/order.hh"
 
 namespace sdd { namespace tools {
 
@@ -31,7 +32,7 @@ struct to_dot_visitor
 
   /// @brief |0|.
   result_type
-  operator()(const zero_terminal<C>& n)
+  operator()(const zero_terminal<C>& n, const order<C>&)
   const
   {
     const auto addr = reinterpret_cast<const void*>(&n);
@@ -46,7 +47,7 @@ struct to_dot_visitor
 
   /// @brief |1|.
   result_type
-  operator()(const one_terminal<C>& n)
+  operator()(const one_terminal<C>& n, const order<C>&)
   const
   {
     const auto addr = reinterpret_cast<const void*>(&n);
@@ -61,17 +62,17 @@ struct to_dot_visitor
 
   /// @brief Flat SDD.
   result_type
-  operator()(const flat_node<C>& n)
+  operator()(const flat_node<C>& n, const order<C>& o)
   const
   {
     const auto addr = reinterpret_cast<const void*>(&n);
     const auto search = visited_.find(addr);
     if (search == visited_.end())
     {
-      os_ << "node_" << addr << " [label=\"" << +n.variable() << "\"];" << std::endl;
+      os_ << "node_" << addr << " [label=\"" << o.identifier() << "\"];" << std::endl;
       for (const auto& arc : n)
       {
-        const auto succ = visit(*this, arc.successor());
+        const auto succ = visit(*this, arc.successor(), o.next());
         os_ << "node_" << addr << " -> " << "node_" << succ
             << " [label=\"" << arc.valuation() << "\"];"
             << std::endl;
@@ -83,7 +84,7 @@ struct to_dot_visitor
 
   /// @brief Hierarchical SDD.
   result_type
-  operator()(const hierarchical_node<C>&)
+  operator()(const hierarchical_node<C>&, const order<C>&)
   const
   {
     std::cerr << "DOT export of hierarchical SDD not supported" << std::endl;
@@ -98,9 +99,10 @@ template <typename C>
 struct to_dot
 {
   const SDD<C> x_;
+  const order<C>& o_;
 
-  to_dot(const SDD<C>& x)
-    : x_(x)
+  to_dot(const SDD<C>& x, const order<C>& o)
+    : x_(x), o_(o)
   {}
 
   friend
@@ -108,7 +110,7 @@ struct to_dot
   operator<<(std::ostream& out, const to_dot& manip)
   {
     out << "digraph sdd {" << std::endl;
-    visit(to_dot_visitor<C>(out), manip.x_);
+    visit(to_dot_visitor<C>(out), manip.x_, manip.o_);
     return out << "}" << std::endl;
   }
 };
@@ -120,9 +122,9 @@ struct to_dot
 /// Hierarchical SDD are not supported yet.
 template <typename C>
 to_dot<C>
-dot(const SDD<C>& x)
+dot(const SDD<C>& x, const order<C>& o)
 {
-  return to_dot<C>(x);
+  return to_dot<C>(x, o);
 }
 
 /*------------------------------------------------------------------------------------------------*/

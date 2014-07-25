@@ -17,22 +17,17 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief composition homomorphism.
 template <typename C>
-class _composition
+struct _composition
 {
-private:
-
   /// @brief The left homomorphism to apply.
-  const homomorphism<C> left_;
+  const homomorphism<C> left;
 
   /// @brief The right homomorphism to apply.
-  const homomorphism<C> right_;
-
-public:
+  const homomorphism<C> right;
 
   /// @brief Constructor.
-  _composition(const homomorphism<C>& left, const homomorphism<C>& right)
-    : left_(left)
-    , right_(right)
+  _composition(const homomorphism<C>& l, const homomorphism<C>& r)
+    : left(l), right(r)
   {}
 
   /// @brief Evaluation.
@@ -40,7 +35,7 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
-    return left_(cxt, o, right_(cxt, o, x));
+    return left(cxt, o, right(cxt, o, x));
   }
 
   /// @brief Skip predicate.
@@ -48,7 +43,7 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return left_.skip(o) and right_.skip(o);
+    return left.skip(o) and right.skip(o);
   }
 
   /// @brief Selector predicate
@@ -56,50 +51,24 @@ public:
   selector()
   const noexcept
   {
-    return left_.selector() and right_.selector();
+    return left.selector() and right.selector();
   }
 
-  /// @brief Return the left homomorphism to apply.
-  homomorphism<C>
-  left()
-  const noexcept
+  friend
+  bool
+  operator==(const _composition& lhs, const _composition& rhs)
+  noexcept
   {
-    return left_;
+    return lhs.left == rhs.left and lhs.right == rhs.right;
   }
 
-  /// @brief Return the right homomorphism to apply.
-  homomorphism<C>
-  right()
-  const noexcept
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const _composition& c)
   {
-    return right_;
+    return os << c.left << " o " << c.right;
   }
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Equality of two _composition homomorphisms.
-/// @related _composition
-template <typename C>
-inline
-bool
-operator==(const _composition<C>& lhs, const _composition<C>& rhs)
-noexcept
-{
-  return lhs.left() == rhs.left() and lhs.right() == rhs.right();
-}
-
-/// @internal
-/// @related _composition
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const _composition<C>& c)
-{
-  return os << c.left() << " o " << c.right();
-}
-
-} // namespace hom
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -117,9 +86,9 @@ struct composition_builder_helper
             , const homomorphism<C>& lorig, const homomorphism<C>& rorig)
   const
   {
-    if (l.target() == r.target())
+    if (l.target == r.target)
     {
-      return local(l.target(), composition(l.hom(), r.hom()));
+      return local(l.target, composition(l.h, r.h));
     }
     else
     {
@@ -149,13 +118,17 @@ struct composition_builder_helper
 
 /*------------------------------------------------------------------------------------------------*/
 
+} // namespace hom
+
+/*------------------------------------------------------------------------------------------------*/
+
 /// @brief Create the composition homomorphism.
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
 composition(const homomorphism<C>& left, const homomorphism<C>& right)
 {
-  return binary_visit_self(composition_builder_helper<C>(), left, right);
+  return binary_visit_self(hom::composition_builder_helper<C>(), left, right);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -175,8 +148,8 @@ struct hash<sdd::hom::_composition<C>>
   operator()(const sdd::hom::_composition<C>& c)
   const
   {
-    std::size_t seed = sdd::util::hash(c.left());
-    sdd::util::hash_combine(seed, c.right());
+    std::size_t seed = sdd::util::hash(c.left);
+    sdd::util::hash_combine(seed, c.right);
     return seed;
   }
 };

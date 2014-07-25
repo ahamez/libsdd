@@ -48,11 +48,12 @@ struct cache_entry
   {}
 
   /// @brief Cache entries are only compared using their operations.
+  friend
   bool
-  operator==(const cache_entry& other)
-  const noexcept
+  operator==(const cache_entry& lhs, const cache_entry& rhs)
+  noexcept
   {
-    return operation == other.operation;
+    return lhs.operation == rhs.operation;
   }
 };
 

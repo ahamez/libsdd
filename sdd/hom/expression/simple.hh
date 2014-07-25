@@ -63,20 +63,20 @@ struct simple
       if (not nested_variables)
       {
         // We are not interested in this level, thus the visitor is propagated to the next level.
-        dd::square_union<C, SDD<C>> su;
+        dd::square_union<C, SDD<C>> su(sdd_cxt);
         su.reserve(node.size());
         for (const auto& arc : node)
         {
           const SDD<C> successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
           su.add(successor, arc.valuation());
         }
-        return SDD<C>(o.variable(), su(cxt_.sdd_context()));
+        return SDD<C>(o.variable(), su());
       }
       else
       {
         // We are interested in this level, but the target is not nested into it. Thus, we must
         // propagate on both nesteds SDD and successors.
-        dd::sum_builder<C, SDD<C>> operands;
+        dd::sum_builder<C, SDD<C>> operands(sdd_cxt);
         operands.reserve(node.size());
         try
         {
@@ -84,7 +84,7 @@ struct simple
           {
             // push on stacks
             const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), app);
-            const auto local_res = std::make_shared<res_stack<C>>(res);
+            const auto local_res = std::make_shared<res_stack<C>>(sdd_cxt, res);
 
             const auto nested = visit_self( *this, arc.valuation(), o.nested(), local_app, local_res
                                           , cit, end);
@@ -106,7 +106,7 @@ struct simple
     else
     {
       // Final level, we just need to propagate in the nested SDD.
-      dd::sum_builder<C, SDD<C>> operands;
+      dd::sum_builder<C, SDD<C>> operands(sdd_cxt);
       operands.reserve(node.size());
       for (const auto& arc : node)
       {
@@ -146,7 +146,7 @@ struct simple
 
     if (last_level)
     {
-      dd::sum_builder<C, SDD<C>> operands;
+      dd::sum_builder<C, SDD<C>> operands(sdd_cxt);
       operands.reserve(node.size());
       for (const auto& arc : node)
       {
@@ -171,7 +171,7 @@ struct simple
     {
       // Not the last level, we just need to update values if necessary and to propagate on
       // successors.
-      dd::square_union<C, values_type> su;
+      dd::square_union<C, values_type> su(sdd_cxt);
       su.reserve(node.size());
       for (const auto& arc : node)
       {
@@ -182,7 +182,7 @@ struct simple
         const auto successor = visit_self(*this, arc.successor(), o.next(), app, res, cit, end);
         su.add(successor, arc.valuation());
       }
-      return SDD<C>(o.variable(), su(sdd_cxt));
+      return SDD<C>(o.variable(), su());
     }
   }
 

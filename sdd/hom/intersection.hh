@@ -28,26 +28,20 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief intersection homomorphism.
 template <typename C>
-class _intersection
+struct _intersection
 {
-public:
-
   /// @brief The type of the homomorphism operands' set.
   using operands_type = boost::container::flat_set<homomorphism<C>>;
 
   /// @brief The type of a const iterator on this intersection's operands.
   using const_iterator = typename operands_type::const_iterator;
 
-private:
-
   /// @brief The homomorphism operands' set.
-  const operands_type operands_;
-
-public:
+  const operands_type operands;
 
   /// @brief Constructor.
-  _intersection(operands_type&& operands)
-    : operands_(std::move(operands))
+  _intersection(operands_type&& ops)
+    : operands(std::move(ops))
   {}
 
   /// @brief Evaluation.
@@ -55,22 +49,13 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
-    dd::intersection_builder<C, SDD<C>> intersection_operands;
-    intersection_operands.reserve(operands_.size());
+    dd::intersection_builder<C, SDD<C>> intersection_operands(cxt.sdd_context());
+    intersection_operands.reserve(operands.size());
     try
     {
-      for (const auto& op : operands_)
+      for (const auto& op : operands)
       {
-        try
-        {
-          intersection_operands.add(op(cxt, o, x));
-        }
-        catch (interrupt<C>& i)
-        {
-          intersection_operands.add(i.result());
-          i.result() = dd::intersection(cxt.sdd_context(), std::move(intersection_operands));
-          throw;
-        }
+        intersection_operands.add(op(cxt, o, x));
       }
       return dd::intersection(cxt.sdd_context(), std::move(intersection_operands));
     }
@@ -87,7 +72,7 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return std::all_of( operands_.begin(), operands_.end()
+    return std::all_of( operands.begin(), operands.end()
                       , [&o](const homomorphism<C>& h){return h.skip(o);});
   }
 
@@ -97,7 +82,7 @@ public:
   selector()
   const noexcept
   {
-    return std::all_of( operands_.begin(), operands_.end()
+    return std::all_of( operands.begin(), operands.end()
                       , [](const homomorphism<C>& h){return h.selector();});
   }
 
@@ -108,7 +93,7 @@ public:
   begin()
   const noexcept
   {
-    return operands_.begin();
+    return operands.begin();
   }
 
   /// @brief Get an iterator to the end of operands.
@@ -118,41 +103,28 @@ public:
   end()
   const noexcept
   {
-    return operands_.end();
+    return operands.end();
   }
 
-  const operands_type&
-  operands()
-  const noexcept
+  friend
+  bool
+  operator==(const _intersection& lhs, const _intersection& rhs)
+  noexcept
   {
-    return operands_;
+    return lhs.operands == rhs.operands;
   }
+
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const _intersection& s)
+  {
+    os << "(";
+    std::copy( s.operands.begin(), std::prev(s.operands.end())
+              , std::ostream_iterator<homomorphism<C>>(os, " & "));
+    return os << *std::prev(s.operands.end()) << ")";
+  }
+
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related _intersection
-template <typename C>
-inline
-bool
-operator==(const _intersection<C>& lhs, const _intersection<C>& rhs)
-noexcept
-{
-  return lhs.operands() == rhs.operands();
-}
-
-/// @internal
-/// @related _intersection
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const _intersection<C>& s)
-{
-  os << "(";
-  std::copy( s.operands().begin(), std::prev(s.operands().end())
-           , std::ostream_iterator<homomorphism<C>>(os, " & "));
-  return os << *std::prev(s.operands().end()) << ")";
-}
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -180,7 +152,7 @@ struct intersection_builder_helper
   operator()(const _intersection<C>& s, const homomorphism<C>&)
   const
   {
-    for (const auto& op : s.operands())
+    for (const auto& op : s.operands)
     {
       visit_self(*this, op);
     }
@@ -191,8 +163,8 @@ struct intersection_builder_helper
   operator()(const _local<C>& l, const homomorphism<C>&)
   const
   {
-    auto insertion = locals_.emplace(l.target(), hom_list_type());
-    insertion.first->second.emplace_back(l.hom());
+    auto insertion = locals_.emplace(l.target, hom_list_type());
+    insertion.first->second.emplace_back(l.h);
   }
 
   /// @brief Insert normally all other operands.
@@ -203,7 +175,6 @@ struct intersection_builder_helper
   {
     operands_.insert(h);
   }
-
 };
 
 } // namespace hom
@@ -278,7 +249,7 @@ struct hash<sdd::hom::_intersection<C>>
   operator()(const sdd::hom::_intersection<C>& s)
   const
   {
-    return sdd::util::hash(s.operands().begin(), s.operands().end());
+    return sdd::util::hash(s.operands.begin(), s.operands.end());
   }
 };
 

@@ -65,29 +65,18 @@ struct evaluation
     {
       // The evaluated homomorphism skips the current level. We can thus forward its application
       // to the following levels.
-      dd::square_union<C, typename Node::valuation_type> su;
+      mem::rewinder _(cxt.sdd_context().arena());
+      dd::square_union<C, typename Node::valuation_type> su(cxt.sdd_context());
       su.reserve(node.size());
       for (const auto& arc : node)
       {
-        try
+        SDD<C> new_successor = hom(cxt, o.next(), arc.successor());
+        if (not new_successor.empty())
         {
-          SDD<C> new_successor = hom(cxt, o.next(), arc.successor());
-          if (not new_successor.empty())
-          {
-            su.add(new_successor, arc.valuation());
-          }
-        }
-        catch (interrupt<C>& i)
-        {
-          if (not i.result().empty())
-          {
-            su.add(i.result(), arc.valuation());
-          }
-          i.result() = {node.variable(), su(cxt.sdd_context())};
-          throw;
+          su.add(new_successor, arc.valuation());
         }
       }
-      return {node.variable(), su(cxt.sdd_context())};
+      return {node.variable(), su()};
     }
     else
     {

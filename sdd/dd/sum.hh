@@ -12,6 +12,7 @@
 #include "sdd/dd/nary.hh"
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
+#include "sdd/mem/linear_alloc.hh"
 #include "sdd/util/hash.hh"
 #include "sdd/util/boost_flat_map_no_warnings.hh"
 #include "sdd/util/boost_flat_set_no_warnings.hh"
@@ -44,6 +45,8 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     using node_type = NodeType;
     using valuation_type = typename node_type::valuation_type;
 
+    mem::rewinder _(cxt.arena());
+
     auto operands_cit = begin;
     const auto operands_end = end;
 
@@ -54,23 +57,32 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     // right before calling the square union.
     using sum_builder_type = sum_builder<C, SDD<C>>;
 
-    /// @todo Use Boost.Intrusive to save on memory allocations?
+    /// @todo Use intrusive hash map to save on memory allocations?
     // List all the successors for each valuation in the final alpha.
-    std::unordered_map<valuation_type, sum_builder_type> res(head.size());
+    std::unordered_map< valuation_type, sum_builder_type
+                      , std::hash<valuation_type>, std::equal_to<valuation_type>
+                      , mem::linear_alloc<std::pair<const valuation_type, sum_builder_type>>
+                      >
+      res( head.size(), std::hash<valuation_type>(), std::equal_to<valuation_type>()
+         , mem::linear_alloc<std::pair<const valuation_type, sum_builder_type>>(cxt.arena()));
+
+    using pair_type = std::pair<valuation_type, sum_builder_type>;
 
     // Needed to temporarily store arcs erased from res and arcs from the alpha visited in
     // the loop (B).
-    std::vector<std::pair<valuation_type, sum_builder_type>> save;
+    std::vector<pair_type, mem::linear_alloc<pair_type>>
+      save(mem::linear_alloc<pair_type>(cxt.arena()));
     save.reserve(head.size());
 
     // Used in test (F).
-    std::vector<std::pair<valuation_type, sum_builder_type>> remainder;
+    std::vector<pair_type, mem::linear_alloc<pair_type>>
+      remainder(mem::linear_alloc<pair_type>(cxt.arena()));
     remainder.reserve(head.size());
 
     // Initialize res with the alpha of the first operand.
     for (auto& arc : head)
     {
-      sum_builder_type succs;
+      sum_builder_type succs(cxt);
       succs.add(arc.successor());
       res.emplace(arc.valuation(), std::move(succs));
     }
@@ -114,7 +126,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
             goto equality;
           }
 
-          intersection_builder<C, valuation_type> inter_builder;
+          intersection_builder<C, valuation_type> inter_builder(cxt);
           inter_builder.add(current_val);
           inter_builder.add(res_val);
           const valuation_type inter = intersection(cxt, std::move(inter_builder));
@@ -163,7 +175,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
         // loop), we didn't find an intersection with any arc of res.
         if (not values::empty_values(current_val))
         {
-          sum_builder_type succs;
+          sum_builder_type succs(cxt);
           succs.add(current_succ);
           save.emplace_back(std::move(current_val), std::move(succs));
         }
@@ -189,7 +201,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       save.clear();
     } // End of iteration on operands.
 
-    square_union<C, valuation_type> su;
+    square_union<C, valuation_type> su(cxt);
     su.reserve(res.size());
     for (auto& arc : res)
     {
@@ -197,7 +209,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       su.add(sum(cxt, std::move(arc.second)), arc.first);
     }
 
-    return SDD<C>(head.variable(), su(cxt));
+    return SDD<C>(head.variable(), su());
   }
 
   /// @brief Linear union of flat SDDs whose valuation are "fast iterable".
@@ -210,11 +222,16 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
   {
     const auto& variable = mem::variant_cast<flat_node<C>>(**begin).variable();
 
+    mem::rewinder _(cxt.arena());
+
     using values_type      = typename C::Values;
     using values_builder   = typename values::values_traits<values_type>::builder;
     using value_type       = typename values_type::value_type;
     using sum_builder_type = sum_builder<C, SDD<C>>;
-    boost::container::flat_map<value_type, sum_builder_type> value_to_succ;
+    boost::container::flat_map< value_type, sum_builder_type, std::less<value_type>
+                              , mem::linear_alloc<std::pair<value_type, sum_builder_type>>>
+      value_to_succ( std::less<value_type>()
+                   , mem::linear_alloc<std::pair<value_type, sum_builder_type>>(cxt.arena()));
     value_to_succ.reserve(std::distance(begin, end) * 2);
 
     auto cit = begin;
@@ -231,7 +248,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
           const auto search = value_to_succ.find(value);
           if (search == value_to_succ.end())
           {
-            value_to_succ.emplace_hint(search, value, sum_builder_type({succ}));
+            value_to_succ.emplace_hint(search, value, sum_builder_type(cxt, {succ}));
           }
           else
           {
@@ -241,7 +258,10 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       }
     }
 
-    boost::container::flat_map<SDD<C>, values_builder> succ_to_value;
+    boost::container::flat_map< SDD<C>, values_builder, std::less<SDD<C>>
+                              , mem::linear_alloc<std::pair<SDD<C>, values_builder>>>
+      succ_to_value( std::less<SDD<C>>()
+                   , mem::linear_alloc<std::pair<SDD<C>, values_builder>>(cxt.arena()));
     succ_to_value.reserve(value_to_succ.size());
     for (auto& value_succs : value_to_succ)
     {
@@ -259,7 +279,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       }
     }
 
-    alpha_builder<C, values_type> alpha;
+    alpha_builder<C, values_type> alpha(cxt);
     alpha.reserve(succ_to_value.size());
     for (auto& succ_values : succ_to_value)
     {
@@ -366,7 +386,8 @@ inline
 SDD<C>
 operator+(const SDD<C>& lhs, const SDD<C>& rhs)
 {
-  return dd::sum(global<C>().sdd_context, {lhs, rhs});
+  return dd::sum( global<C>().sdd_context
+                , dd::sum_builder<C, SDD<C>>(global<C>().sdd_context, {lhs, rhs}));
 }
 
 /// @brief Perform the union of two SDD.
@@ -376,7 +397,8 @@ inline
 SDD<C>&
 operator+=(SDD<C>& lhs, const SDD<C>& rhs)
 {
-  SDD<C> tmp = dd::sum(global<C>().sdd_context, {lhs, rhs});
+  SDD<C> tmp = dd::sum( global<C>().sdd_context
+                      , dd::sum_builder<C, SDD<C>>(global<C>().sdd_context, {lhs, rhs}));
   using std::swap;
   swap(tmp, lhs);
   return lhs;
@@ -389,7 +411,7 @@ SDD<C>
 inline
 sum(InputIterator begin, InputIterator end)
 {
-  dd::sum_builder<C, SDD<C>> builder;
+  dd::sum_builder<C, SDD<C>> builder(global<C>().sdd_context);
   for (; begin != end; ++begin)
   {
     builder.add(*begin);

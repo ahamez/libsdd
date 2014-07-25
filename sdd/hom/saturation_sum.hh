@@ -24,33 +24,27 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief Saturation sum homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED _saturation_sum
+struct LIBSDD_ATTRIBUTE_PACKED _saturation_sum
 {
-public:
-
   /// @brief The variable type.
   using variable_type = typename C::variable_type;
 
-private:
-
   /// @brief The variable on which this sum works.
-  const variable_type variable_;
+  const variable_type variable;
 
   /// @brief The homomorphism's F part.
-  const optional_homomorphism<C> F_;
+  const optional_homomorphism<C> F;
 
   /// @brief The homomorphism's G part.
-  const homomorphism_set<C> G_;
+  const homomorphism_set<C> G;
 
   /// @brief The homomorphism's L part.
-  const optional_homomorphism<C> L_;
-
-public:
+  const optional_homomorphism<C> L;
 
   /// @brief Constructor.
   _saturation_sum( variable_type var, optional_homomorphism<C>&& f, homomorphism_set<C>&& g
                  , optional_homomorphism<C>&& l)
-    : variable_(var), F_(std::move(f)), G_(std::move(g)), L_(std::move(l))
+    : variable(var), F(std::move(f)), G(std::move(g)), L(std::move(l))
   {}
 
   /// @brief Evaluation.
@@ -58,33 +52,24 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    dd::sum_builder<C, SDD<C>> operands;
-    operands.reserve(G_.size() + 2);
+    dd::sum_builder<C, SDD<C>> operands(cxt.sdd_context());
+    operands.reserve(G.size() + 2);
 
     try
     {
-      try
+      if (F)
       {
-        if (F_)
-        {
-          operands.add((*F_)(cxt, o, s));
-        }
-
-        for (const auto& g : G_)
-        {
-          operands.add(g(cxt, o, s));
-        }
-
-        if (L_)
-        {
-          operands.add((*L_)(cxt, o, s));
-        }
+        operands.add((*F)(cxt, o, s));
       }
-      catch (interrupt<C>& i)
+
+      for (const auto& g : G)
       {
-        operands.add(i.result());
-        i.result() = dd::sum(cxt.sdd_context(), std::move(operands));
-        throw;
+        operands.add(g(cxt, o, s));
+      }
+
+      if (L)
+      {
+        operands.add((*L)(cxt, o, s));
       }
       return dd::sum(cxt.sdd_context(), std::move(operands));
     }
@@ -101,7 +86,7 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return variable_ != o.variable();
+    return variable != o.variable();
   }
 
   /// @brief Selector predicate.
@@ -109,86 +94,43 @@ public:
   selector()
   const noexcept
   {
-    return (F_ ? F_->selector() : true)
-       and (L_ ? L_->selector() : true)
-       and std::all_of( G_.begin(), G_.end()
+    return (F ? F->selector() : true) and (L ? L->selector() : true)
+       and std::all_of( G.begin(), G.end()
                       , [&](const homomorphism<C>& h){return h.selector();});
   }
 
-  /// @brief Get the targeted variable.
-  variable_type
-  variable()
-  const noexcept
+  friend
+  bool
+  operator==(const _saturation_sum& lhs, const _saturation_sum& rhs)
+  noexcept
   {
-    return variable_;
+    return lhs.variable == rhs.variable and lhs.F == rhs.F and lhs.L == rhs.L and lhs.G == rhs.G;
   }
 
-  /// @brief Get the forwardable part.
-  const optional_homomorphism<C>&
-  F()
-  const noexcept
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const _saturation_sum& s)
   {
-    return F_;
-  }
-
-  /// @brief Get the global part.
-  const homomorphism_set<C>&
-  G()
-  const noexcept
-  {
-    return G_;
-  }
-
-  /// @brief Get the local part.
-  const optional_homomorphism<C>&
-  L()
-  const noexcept
-  {
-    return L_;
+    os << "SatSum(@" << +s.variable << ", F=";
+    if (s.F)
+    {
+      os << *s.F;
+    }
+    os << ", G=";
+    if (not s.G.empty())
+    {
+      std::copy( s.G.begin(), std::prev(s.G.end())
+               , std::ostream_iterator<homomorphism<C>>(os, " + "));
+      os << *std::prev(s.G.end()) << ")";
+    }
+    os << ", L=";
+    if (s.L)
+    {
+      os << *s.L;
+    }
+    return os;
   }
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related _saturation_sum
-template <typename C>
-inline
-bool
-operator==(const _saturation_sum<C>& lhs, const _saturation_sum<C>& rhs)
-noexcept
-{
-  return lhs.variable() == rhs.variable()
-     and lhs.F() == rhs.F()
-     and lhs.L() == rhs.L()
-     and lhs.G() == rhs.G();
-}
-
-/// @internal
-/// @related _saturation_sum
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const _saturation_sum<C>& s)
-{
-  os << "SatSum(@" << +s.variable() << ", F=";
-  if (s.F())
-  {
-    os << *s.F();
-  }
-  os << ", G=";
-  if (not s.G().empty())
-  {
-    std::copy( s.G().begin(), std::prev(s.G().end())
-             , std::ostream_iterator<homomorphism<C>>(os, " + "));
-    os << *std::prev(s.G().end()) << ")";
-  }
-  os << ", L=";
-  if (s.L())
-  {
-    os << *s.L();
-  }
-  return os;
-}
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -200,10 +142,8 @@ operator<<(std::ostream& os, const _saturation_sum<C>& s)
 /// operands are already optimized (local merged, etc.).
 template <typename C, typename InputIterator>
 homomorphism<C>
-saturation_sum( typename C::variable_type var
-              , optional_homomorphism<C>&& f
-              , InputIterator gbegin, InputIterator gend
-              , optional_homomorphism<C>&& l)
+saturation_sum( typename C::variable_type var, optional_homomorphism<C>&& f
+              , InputIterator gbegin, InputIterator gend, optional_homomorphism<C>&& l)
 {
   const std::size_t g_size = std::distance(gbegin, gend);
 
@@ -243,16 +183,16 @@ struct hash<sdd::hom::_saturation_sum<C>>
   operator()(const sdd::hom::_saturation_sum<C>& s)
   const
   {
-    std::size_t seed = sdd::util::hash(s.variable());
-    if (s.F())
+    std::size_t seed = sdd::util::hash(s.variable);
+    if (s.F)
     {
-      sdd::util::hash_combine(seed, *s.F());
+      sdd::util::hash_combine(seed, *s.F);
     }
-    if (s.L())
+    if (s.L)
     {
-      sdd::util::hash_combine(seed, *s.L());
+      sdd::util::hash_combine(seed, *s.L);
     }
-    sdd::util::hash_combine(seed, s.G().begin(), s.G().end());
+    sdd::util::hash_combine(seed, s.G.begin(), s.G.end());
     return seed;
   }
 };

@@ -5,6 +5,7 @@
 
 #include "sdd/internal_manager_fwd.hh"
 #include "sdd/dd/alpha.hh"
+#include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/count_combinations_fwd.hh"
 #include "sdd/dd/definition_fwd.hh"
 #include "sdd/dd/node.hh"
@@ -107,6 +108,18 @@ public:
   operator=(const SDD&) noexcept = default;
 
   /// @internal
+  /// @brief Construct a flat SDD in a given context.
+  /// @param cxt  The construction context.
+  /// @param var  The SDD's variable.
+  /// @param val  The SDD's valuation, a set of values.
+  /// @param succ The SDD's successor.
+  ///
+  /// O(1).
+  SDD(dd::context<C>& cxt, const variable_type& var, values_type&& val, const SDD& succ)
+    : ptr_(create_node(cxt, var, std::move(val), succ))
+  {}
+
+  /// @internal
   /// @brief Construct a flat SDD.
   /// @param var  The SDD's variable.
   /// @param val  The SDD's valuation, a set of values.
@@ -114,7 +127,19 @@ public:
   ///
   /// O(1).
   SDD(variable_type var, values_type&& val, const SDD& succ)
-    : ptr_(create_node(var, std::move(val), succ))
+    : SDD(global<C>().sdd_context, var, std::move(val), succ)
+  {}
+
+  /// @internal
+  /// @brief Construct a flat SDD in a given context.
+  /// @param cxt  The construction context.
+  /// @param var  The SDD's variable.
+  /// @param val  The SDD's valuation, a set of values.
+  /// @param succ The SDD's successor.
+  ///
+  /// O(1).
+  SDD(dd::context<C>& cxt, variable_type var, const values_type& val, const SDD& succ)
+    : ptr_(create_node(cxt, var, val, succ))
   {}
 
   /// @internal
@@ -125,7 +150,19 @@ public:
   ///
   /// O(1).
   SDD(variable_type var, const values_type& val, const SDD& succ)
-    : ptr_(create_node(var, val, succ))
+    : SDD(global<C>().sdd_context, var, val, succ)
+  {}
+
+  /// @internal
+  /// @brief Construct a hierarchical SDD in a given context.
+  /// @param cxt  The construction context.
+  /// @param var  The SDD's variable.
+  /// @param val  The SDD's valuation, an SDD in this case.
+  /// @param succ The SDD's successor.
+  ///
+  /// O(1).
+  SDD(dd::context<C>& cxt, variable_type var, const SDD& val, const SDD& succ)
+    : ptr_(create_node(cxt, var, val, succ))
   {}
 
   /// @internal
@@ -136,12 +173,13 @@ public:
   ///
   /// O(1).
   SDD(variable_type var, const SDD& val, const SDD& succ)
-    : ptr_(create_node(var, val, succ))
+    : SDD(global<C>().sdd_context, var, val, succ)
   {}
 
-  /// @brief Construct an SDD with an order.
+  /// @internal
+  /// @brief Construct an SDD with an order in a given context.
   template <typename Initializer>
-  SDD(const order<C>& o, const Initializer& init)
+  SDD(dd::context<C>& cxt, const order<C>& o, const Initializer& init)
     : ptr_(one_ptr())
   {
     if (o.empty()) // base case of the recursion, ptr_ is defaulted to |1|
@@ -153,13 +191,19 @@ public:
       // We can safely pass the order_identifier as a user one because only hierarchical levels
       // can be artificial.
       assert(not o.identifier().artificial());
-      ptr_ = create_node(o.variable(), init(o.identifier().user()), SDD(o.next(), init));
+      ptr_ = create_node(cxt, o.variable(), init(o.identifier().user()), SDD(cxt, o.next(), init));
     }
     else // hierarchical
     {
-      ptr_ = create_node(o.variable(), SDD(o.nested(), init), SDD(o.next(), init));
+      ptr_ = create_node(cxt, o.variable(), SDD(cxt, o.nested(), init), SDD(cxt, o.next(), init));
     }
   }
+
+  /// @brief Construct an SDD with an order.
+  template <typename Initializer>
+  SDD(const order<C>& o, const Initializer& init)
+    : SDD(global<C>().sdd_context, o, init)
+  {}
 
 #if !defined(HAS_NO_BOOST_COROUTINE)
   /// @brief Return an iterable object which generates all paths of this SDD.
@@ -192,6 +236,26 @@ public:
   {
     using std::swap;
     swap(lhs.ptr_, rhs.ptr_);
+  }
+
+  /// @brief Swap two SDD.
+  ///
+  /// O(1).
+  friend void
+  swap(SDD&& lhs, SDD& rhs)
+  noexcept
+  {
+    swap(std::move(lhs.ptr_), rhs.ptr_);
+  }
+
+  /// @brief Swap two SDD.
+  ///
+  /// O(1).
+  friend void
+  swap(SDD& lhs, SDD&& rhs)
+  noexcept
+  {
+    swap(lhs.ptr_, std::move(rhs.ptr_));
   }
 
   /// @internal
@@ -287,6 +351,49 @@ public:
     return dd::count_combinations(*this);
   }
 
+  /// @brief Equality of two SDD.
+  ///
+  /// O(1).
+  friend
+  bool
+  operator==(const SDD& lhs, const SDD& rhs)
+  noexcept
+  {
+    return lhs.ptr_ == rhs.ptr_;
+  }
+
+  /// @brief Inequality of two SDD.
+  ///
+  /// O(1).
+  friend
+  bool
+  operator!=(const SDD& lhs, const SDD& rhs)
+  noexcept
+  {
+    return not (lhs.ptr_ == rhs.ptr_);
+  }
+
+  /// @brief Comparison of two SDD.
+  ///
+  /// O(1). The order of SDD is arbitrary and can change at each run.
+  friend
+  bool
+  operator<(const SDD& lhs, const SDD& rhs)
+  noexcept
+  {
+    return lhs.ptr_ < rhs.ptr_;
+  }
+
+  /// @brief Export the textual representation of an SDD to a stream.
+  ///
+  /// Use only with small SDD, output can be huge.
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const SDD& x)
+  {
+    return os << *x;
+  }
+
 private:
 
   /// @internal
@@ -296,7 +403,7 @@ private:
   template <typename Valuation>
   static
   ptr_type
-  create_node(variable_type var, Valuation&& val, const SDD& succ)
+  create_node(dd::context<C>& cxt, variable_type var, Valuation&& val, const SDD& succ)
   {
     if (succ.empty() or values::empty_values(val))
     {
@@ -304,7 +411,7 @@ private:
     }
     else
     {
-      dd::alpha_builder<C, Valuation> builder;
+      dd::alpha_builder<C, Valuation> builder(cxt);
       builder.add(std::move(val), succ);
       return ptr_type(unify_node<Valuation>(var, std::move(builder)));
     }
@@ -317,7 +424,7 @@ private:
   template <typename Valuation>
   static
   ptr_type
-  create_node(variable_type var, const Valuation& val, const SDD& succ)
+  create_node(dd::context<C>& cxt, variable_type var, const Valuation& val, const SDD& succ)
   {
     if (succ.empty() or values::empty_values(val))
     {
@@ -325,7 +432,7 @@ private:
     }
     else
     {
-      dd::alpha_builder<C, Valuation> builder;
+      dd::alpha_builder<C, Valuation> builder(cxt);
       builder.add(val, succ);
       return ptr_type(unify_node<Valuation>(var, std::move(builder)));
     }
@@ -371,58 +478,6 @@ private:
     return ut(u);
   }
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @brief   Equality of two SDD.
-/// @related SDD
-///
-/// O(1).
-template <typename C>
-inline
-bool
-operator==(const SDD<C>& lhs, const SDD<C>& rhs)
-noexcept
-{
-  return lhs.ptr() == rhs.ptr();
-}
-
-/// @brief   Inequality of two SDD.
-/// @related SDD
-///
-/// O(1).
-template <typename C>
-inline
-bool
-operator!=(const SDD<C>& lhs, const SDD<C>& rhs)
-noexcept
-{
-  return not (lhs.ptr() == rhs.ptr());
-}
-
-/// @brief   Comparison of two SDD.
-/// @related SDD
-///
-/// O(1). The order of SDD is arbitrary and can change at each run.
-template <typename C>
-inline
-bool
-operator<(const SDD<C>& lhs, const SDD<C>& rhs)
-noexcept
-{
-  return lhs.ptr() < rhs.ptr();
-}
-
-/// @brief   Export the textual representation of an SDD to a stream.
-/// @related SDD
-///
-/// Use only with small SDD, output can be huge.
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const SDD<C>& x)
-{
-  return os << *x;
-}
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -501,6 +556,8 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @brief Hash specialization for sdd::dd::SDD.
+///
+/// O(1).
 template <typename C>
 struct hash<sdd::SDD<C>>
 {
@@ -508,6 +565,7 @@ struct hash<sdd::SDD<C>>
   operator()(const sdd::SDD<C>& x)
   const noexcept
   {
+    // Hash pointer.
     return sdd::util::hash(x.ptr());
   }
 };

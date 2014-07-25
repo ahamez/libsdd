@@ -10,6 +10,7 @@
 #include "sdd/dd/sum.hh"
 #include "sdd/dd/top.hh"
 #include "sdd/mem/cache.hh"
+#include "sdd/mem/linear_alloc.hh"
 
 namespace sdd { namespace dd {
 
@@ -46,15 +47,18 @@ private:
   /// @brief Cache of union on SDD.
   std::shared_ptr<sum_cache_type> sum_cache_;
 
+  /// @brief Buffer for temporary containers allocation.
+  std::shared_ptr<mem::arena> arena_;
+
 public:
 
   /// @brief Create a new empty context.
-  context(std::size_t difference_size, std::size_t intersection_size, std::size_t sum_size)
-	 	: difference_cache_(std::make_shared<difference_cache_type>( *this, "sdd_difference_cache"
-                                                               , difference_size))
-    , intersection_cache_(std::make_shared<intersection_cache_type>( *this, "sdd_intersection_cache"
-                                                                   , intersection_size))
-    , sum_cache_(std::make_shared<sum_cache_type>(*this, "sdd_sum_cache", sum_size))
+  context( std::size_t difference_size, std::size_t intersection_size, std::size_t sum_size
+         , std::size_t arena_size)
+	 	: difference_cache_(std::make_shared<difference_cache_type>(*this, difference_size))
+    , intersection_cache_(std::make_shared<intersection_cache_type>( *this, intersection_size))
+    , sum_cache_(std::make_shared<sum_cache_type>(*this, sum_size))
+    , arena_(std::make_shared<mem::arena>(arena_size))
   {}
 
   /// @brief Copy constructor.
@@ -82,6 +86,14 @@ public:
   noexcept
   {
     return *sum_cache_;
+  }
+
+  /// @brief Get the memory buffer.
+  mem::arena&
+  arena()
+  noexcept
+  {
+    return *arena_;
   }
 
   /// @brief Remove all entries from all this context's caches.

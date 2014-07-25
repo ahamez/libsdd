@@ -5,8 +5,6 @@
 #include <functional> // hash
 #include <utility>    // make_pair, pair
 
-#include <boost/iterator/iterator_facade.hpp>
-
 #include "sdd/util/next_power.hh"
 #include "sdd/util/packed.hh"
 
@@ -31,110 +29,6 @@ struct intrusive_member_hook
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief A iterator on the hash_table.
-template <typename Data, typename HashTable>
-class LIBSDD_ATTRIBUTE_PACKED hash_table_iterator
-  : public boost::iterator_facade< hash_table_iterator<Data, HashTable>
-                                 , Data, boost::forward_traversal_tag>
-{
-private:
-
-  /// @brief A link to the hash table.
-  const HashTable* container_;
-
-  /// @brief The current position in the buckets.
-  std::size_t pos_;
-
-  /// @brief The actual data this iterator points to.
-  Data* data_;
-
-public:
-
-  /// @brief Default constructor.
-  hash_table_iterator()
-  noexcept
-    : container_(nullptr)
-    , pos_(0)
-    , data_(nullptr)
-  {}
-
-  /// @brief Constructor.
-  explicit hash_table_iterator(const HashTable* container, std::size_t p, Data* data)
-  noexcept
-    : container_(container)
-    , pos_(p)
-    , data_(data)
-  {}
-
-  /// @brief Copy constructor from an iterator or a const_iterator.
-  template <typename OtherValue>
-  hash_table_iterator(const hash_table_iterator<OtherValue, HashTable>& other)
-  noexcept
-    : hash_table_iterator(other.container_, other.pos_, other.data_)
-  {}
-
-private:
-
-  // Required by boost::iterator.
-  friend class boost::iterator_core_access;
-
-  // The hash table need to access internal elements of this iterator.
-  friend HashTable;
-
-  // Friend with const/non-const iterators.
-  template <typename, typename> friend class hash_table_iterator;
-
-  /// @brief For boost::iterator.
-  void
-  increment()
-  noexcept
-  {
-    if (pos_ != container_->nb_buckets_) // not at the end
-    {
-      if (data_->hook.next != nullptr)
-      {
-        data_ = data_->hook.next;
-      }
-      else
-      {
-        do // find, if any, next bucket with some data in it
-        {
-          ++pos_;
-        } while (pos_ < container_->nb_buckets_ and container_->buckets_[pos_] == nullptr);
-
-        if (pos_ == container_->nb_buckets_) // end
-        {
-          data_ = nullptr;
-        }
-        else // non-empty bucket found
-        {
-          data_ = container_->buckets_[pos_];
-        }
-      }
-    }
-  }
-
-  /// @brief For boost::iterator.
-  template <typename OtherData>
-  bool
-  equal(const hash_table_iterator<OtherData, HashTable>& other)
-  const noexcept
-  {
-    return pos_ == other.pos_ and data_ == other.data_;
-  }
-
-  /// @brief For boost::iterator.
-  Data&
-  dereference()
-  const noexcept
-  {
-    return *data_;
-  }
-};
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
 /// @brief An intrusive hash table.
 ///
 /// It's modeled after boost::intrusive. Only the interfaces needed by the libsdd are implemented.
@@ -150,17 +44,7 @@ public:
     std::size_t hash;
   };
 
-  /// @brief The type of an iterator on this hash table.
-  using iterator = hash_table_iterator<Data, hash_table<Data>>;
-
-  /// @brief The type of a const iterator on this hash table.
-  using const_iterator = hash_table_iterator<const Data, hash_table<Data>>;
-
 private:
-
-  // Iterators need to access buckets_.
-  friend class hash_table_iterator<Data, hash_table<Data>>;
-  friend class hash_table_iterator<const Data, hash_table<Data>>;
 
   /// @brief 
   std::size_t nb_buckets_;
@@ -202,7 +86,7 @@ public:
 
   /// @brief
   template <typename T, typename HashT, typename EqT>
-  std::pair<iterator, bool>
+  std::pair<Data*, bool>
   insert_check(const T& x, HashT hash, EqT eq, insert_commit_data& commit_data)
   const noexcept(noexcept(hash(x)))
   {
@@ -222,7 +106,7 @@ public:
       current = current->hook.next;
     }
 
-    return std::make_pair(iterator(this, pos, current), insertion);
+    return std::make_pair(current, insertion);
   }
 
   /// @brief
@@ -259,7 +143,7 @@ public:
   }
 
   /// @brief Insert an element.
-  std::pair<iterator, bool>
+  std::pair<Data*, bool>
   insert(Data& x)
   noexcept(noexcept(std::hash<Data>()(x)))
   {
@@ -282,74 +166,6 @@ public:
   const noexcept
   {
     return nb_buckets_;
-  }
-
-  /// @brief Get an iterator to the beginning of this hash table.
-  iterator
-  begin()
-  noexcept
-  {
-    std::size_t pos = 0;
-    while (pos < nb_buckets_ and buckets_[pos] == nullptr)
-    {
-      ++pos;
-    }
-    return pos == nb_buckets_ ? end() : iterator(this, pos, buckets_[pos]);
-  }
-
-  /// @brief Get an iterator to the end of this hash table.
-  iterator
-  end()
-  noexcept
-  {
-    return iterator(this, nb_buckets_, nullptr);
-  }
-
-  /// @brief Find an element.
-  iterator
-  find(const Data& x)
-  noexcept
-  {
-    const std::size_t pos = std::hash<Data>()(x) & (nb_buckets_ - 1);
-    Data* current = buckets_[pos];
-    bool found = false;
-    while (current != nullptr)
-    {
-      if (x == *current)
-      {
-        found = true;
-        break;
-      }
-      current = current->hook.next;
-    }
-
-    return found ? iterator(this, pos, current) : end();
-  }
-
-  /// @brief Erase an element given its iterator.
-  void
-  erase(const_iterator cit)
-  noexcept
-  {
-    Data* previous = nullptr;
-    Data* current = buckets_[cit.pos_];
-    const Data* data = cit.data_;
-
-    while (current != data)
-    {
-      previous = current;
-      current = current->hook.next;
-    }
-
-    if (previous == nullptr) // first element in bucket
-    {
-      buckets_[cit.pos_] = data->hook.next;
-    }
-    else
-    {
-      previous->hook.next = data->hook.next;
-    }
-    --size_;
   }
 
   /// @brief Remove an element given its value.
@@ -385,16 +201,18 @@ public:
   void
   clear_and_dispose(Disposer disposer)
   {
-    auto cit = begin();
-    const auto e = end();
-    while (cit != e)
+    for (std::size_t i = 0; i < nb_buckets_; ++i)
     {
-      Data* current = cit.data_;
-      const auto to_erase = cit;
-      ++cit;
-      erase(to_erase);
-      disposer(current);
+      Data* current = buckets_[i];
+      while (current != nullptr)
+      {
+        const auto to_erase = current;
+        current = current->hook.next;
+        disposer(to_erase);
+      }
+      buckets_[i] = nullptr;
     }
+    size_ = 0;
   }
 
   /// @brief Get the load factor of the internal hash table.
@@ -465,7 +283,7 @@ private:
   }
 
   /// @brief Insert an element.
-  std::pair<iterator, bool>
+  std::pair<Data*, bool>
   insert_impl(Data* x, Data** buckets, std::size_t nb_buckets)
   noexcept(noexcept(std::hash<Data>()(*x)))
   {
@@ -477,7 +295,7 @@ private:
     {
       if (*x == *current)
       {
-        return std::make_pair(iterator(this, pos, current), false /* no insertion */);
+        return std::make_pair(current, false /* no insertion */);
       }
       current = current->hook.next;
     }
@@ -488,7 +306,7 @@ private:
 
     current = x;
     ++size_;
-    return std::make_pair(iterator(this, pos, current), true /* insertion */);
+    return std::make_pair(current, true /* insertion */);
   }
 };
 

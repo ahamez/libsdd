@@ -25,18 +25,14 @@ namespace hom {
 /// @internal
 /// @brief Fixpoint homomorphism.
 template <typename C>
-class _fixpoint
+struct _fixpoint
 {
-private:
-
   /// @brief The homomorphism to apply until a fixpoint is reached.
-  const homomorphism<C> h_;
-
-public:
+  const homomorphism<C> h;
 
   /// @brief Constructor.
-  _fixpoint(const homomorphism<C>& h)
-    : h_(h)
+  _fixpoint(const homomorphism<C>& op)
+    : h(op)
   {}
 
   /// @brief Evaluation.
@@ -46,20 +42,12 @@ public:
   {
     SDD<C> x1 = x;
     SDD<C> x2 = x1;
-    try
+    do
     {
-      do
-      {
-        x2 = x1;
-        x1 = h_(cxt, o, x1);
-      } while (x1 != x2);
-      return x1;
-    }
-    catch (interrupt<C>& i)
-    {
-      i.result() = x1;
-      throw;
-    }
+      x2 = x1;
+      swap(x1, h(cxt, o, x1));
+    } while (x1 != x2);
+    return x1;
   }
 
   /// @brief Skip predicate.
@@ -67,7 +55,7 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return h_.skip(o);
+    return h.skip(o);
   }
 
   /// @brief Selector predicate
@@ -75,40 +63,24 @@ public:
   selector()
   const noexcept
   {
-    return h_.selector();
+    return h.selector();
   }
 
-  /// @brief Get the homomorphism to apply within the fixpoint.
-  homomorphism<C>
-  hom()
-  const noexcept
+  friend
+  bool
+  operator==(const _fixpoint& lhs, const _fixpoint& rhs)
+  noexcept
   {
-    return h_;
+    return lhs.h == rhs.h;
+  }
+
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const _fixpoint& f)
+  {
+    return os << "(" << f.h << ")*";
   }
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Equality of fixpoint.
-/// @related _fixpoint
-template <typename C>
-inline
-bool
-operator==(const _fixpoint<C>& lhs, const _fixpoint<C>& rhs)
-noexcept
-{
-  return lhs.hom() == rhs.hom();
-}
-
-/// @internal
-/// @related fixpoint
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const _fixpoint<C>& f)
-{
-  return os << "(" << f.hom() << ")*";
-}
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -173,7 +145,7 @@ struct hash<sdd::hom::_fixpoint<C>>
   const
   {
     std::size_t seed = 345789; // avoid to have the same hash as the contained homormorphism
-    sdd::util::hash_combine(seed, f.hom());
+    sdd::util::hash_combine(seed, f.h);
     return seed;
   }
 };

@@ -134,6 +134,32 @@ public:
     return size_ * sizeof(arc<C, Valuation>);
   }
 
+  /// @brief   Equality of two nodes.
+  ///
+  /// O(1) if nodes don't have the same number of arcs; otherwise O(n) where n is the number of
+  /// arcs.
+  friend
+  bool
+  operator==(const node& lhs, const node& rhs)
+  noexcept
+  {
+    return lhs.size_ == rhs.size_ and lhs.variable_ == rhs.variable_
+       and std::equal(lhs.begin(), lhs.end(), rhs.begin());
+  }
+
+  /// @brief   Export a node to a stream.
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const node& n)
+  {
+    // +n.variable(): widen the type, useful to print the values of char and unsigned char types.
+    os << +n.variable_ << "[";
+    std::for_each( n.begin(), n.end() - 1
+                 , [&](const arc<C, Valuation>& a)
+                      {os << a.valuation() << " --> " << a.successor() << " || ";});
+    return os << (n.end() - 1)->valuation() << " --> " << (n.end() - 1)->successor() << "]";
+  }
+
 private:
 
   /// @internal
@@ -149,37 +175,6 @@ private:
     return reinterpret_cast<char*>(const_cast<node*>(this)) + sizeof(node);
   }
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @brief   Equality of two nodes.
-/// @related node
-///
-/// O(1) if nodes don't have the same number of arcs; otherwise O(n) where n is the number of
-/// arcs.
-template <typename C, typename Valuation>
-inline
-bool
-operator==(const node<C, Valuation>& lhs, const node<C, Valuation>& rhs)
-noexcept
-{
-  return lhs.size() == rhs.size() and lhs.variable() == rhs.variable()
-     and std::equal(lhs.begin(), lhs.end(), rhs.begin());
-}
-
-/// @brief   Export a node to a stream.
-/// @related node
-template <typename C, typename Valuation>
-std::ostream&
-operator<<(std::ostream& os, const node<C, Valuation>& n)
-{
-  // +n.variable(): widen the type. It's useful to print the values of char and unsigned char types.
-  os << +n.variable() << "[";
-  std::for_each( n.begin(), n.end() - 1
-               , [&](const arc<C, Valuation>& a)
-                    {os << a.valuation() << " --> " << a.successor() << " || ";});
-  return os << (n.end() - 1)->valuation() << " --> " << (n.end() - 1)->successor() << "]";
-}
 
 /*------------------------------------------------------------------------------------------------*/
 

@@ -19,22 +19,17 @@ namespace sdd { namespace hom {
 /// @internal
 /// @brief local homomorphism.
 template <typename C>
-class LIBSDD_ATTRIBUTE_PACKED _local
+struct LIBSDD_ATTRIBUTE_PACKED _local
 {
-private:
-
   /// @brief The target of this homomorphism.
-  const order_position_type target_;
+  const order_position_type target;
 
   /// @brief The nested homomorphism to apply in a nested level.
-  const homomorphism<C> h_;
-
-public:
+  const homomorphism<C> h;
 
   /// @brief Constructor.
-  _local(order_position_type target, const homomorphism<C>& h)
-    : target_(target)
-    , h_(h)
+  _local(order_position_type t, const homomorphism<C>& hm)
+    : target(t), h(hm)
   {}
 
   /// @internal
@@ -47,7 +42,7 @@ public:
     context<C>& cxt_;
     const order<C>& order_;
     const homomorphism<C> h_;
-    const SDD<C> sdd_; // needed if an evaluation_error is throwed
+    const SDD<C> sdd_; // needed if an evaluation_error is thrown
 
     evaluation(context<C>& cxt, const order<C>& o, const homomorphism<C>& h, const SDD<C>& s)
       : cxt_(cxt), order_(o), h_(h), sdd_(s)
@@ -62,44 +57,26 @@ public:
       {
         if (h_.selector()) // partition won't change
         {
-          dd::square_union<C, SDD<C>> su;
+          dd::square_union<C, SDD<C>> su(cxt_.sdd_context());
           su.reserve(node.size());
           for (const auto& arc : node)
           {
-            try
+            const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
+            if (not new_valuation.empty())
             {
-              const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
-              if (not new_valuation.empty())
-              {
-                su.add(arc.successor(), new_valuation);
-              }
-            }
-            catch (interrupt<C>& i)
-            {
-              su.add(arc.successor(), i.result());
-              i.result() = {node.variable(), su(cxt_.sdd_context())};
-              throw;
+              su.add(arc.successor(), new_valuation);
             }
           }
-          return {node.variable(), su(cxt_.sdd_context())};
+          return {node.variable(), su()};
         }
         else // partition will change
         {
-          dd::sum_builder<C, SDD<C>> sum_operands;
+          dd::sum_builder<C, SDD<C>> sum_operands(cxt_.sdd_context());
           sum_operands.reserve(node.size());
           for (const auto& arc : node)
           {
-            try
-            {
-              const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
-              sum_operands.add(SDD<C>(node.variable(), new_valuation, arc.successor()));
-            }
-            catch (interrupt<C>& i)
-            {
-              sum_operands.add(SDD<C>(node.variable(), i.result(), arc.successor()));
-              i.result() = dd::sum(cxt_.sdd_context(), std::move(sum_operands));
-              throw;
-            }
+            const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
+            sum_operands.add(SDD<C>(node.variable(), new_valuation, arc.successor()));
           }
           return dd::sum(cxt_.sdd_context(), std::move(sum_operands));
         }
@@ -127,7 +104,7 @@ public:
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    return visit(evaluation{cxt, o, h_, s}, s);
+    return visit(evaluation{cxt, o, h, s}, s);
   }
 
   /// @brief Skip predicate.
@@ -135,7 +112,7 @@ public:
   skip(const order<C>& o)
   const noexcept
   {
-    return o.position() != target_;
+    return o.position() != target;
   }
 
   /// @brief Selector predicate
@@ -143,47 +120,26 @@ public:
   selector()
   const noexcept
   {
-    return h_.selector();
+    return h.selector();
   }
 
-  /// @brief Return the target.
-  order_position_type
-  target()
-  const noexcept
+  friend
+  bool
+  operator==(const _local& lhs, const _local& rhs)
+  noexcept
   {
-    return target_;
+    return lhs.target == rhs.target and lhs.h == rhs.h;
   }
 
-  /// @brief Return the carried homomorphism.
-  homomorphism<C>
-  hom()
-  const noexcept
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const _local& l)
   {
-    return h_;
+    return os << "@(" << l.target << ", " << l.h << ")";
   }
 };
 
 /*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related _local
-template <typename C>
-inline
-bool
-operator==(const _local<C>& lhs, const _local<C>& rhs)
-noexcept
-{
-  return lhs.target() == rhs.target() and lhs.hom() == rhs.hom();
-}
-
-/// @internal
-/// @related _local
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const _local<C>& l)
-{
-  return os << "@(" << l.target() << ", " << l.hom() << ")";
-}
 
 } // namespace hom
 
@@ -231,8 +187,8 @@ struct hash<sdd::hom::_local<C>>
   operator()(const sdd::hom::_local<C>& l)
   const
   {
-    std::size_t seed = sdd::util::hash(l.target());
-    sdd::util::hash_combine(seed, l.hom());
+    std::size_t seed = sdd::util::hash(l.target);
+    sdd::util::hash_combine(seed, l.h);
     return seed;
   }
 };

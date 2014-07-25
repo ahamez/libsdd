@@ -13,7 +13,7 @@ namespace sdd {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief The position of an order's node, unique to it.
+/// @brief The position of an order's node (from top to bottom), unique to it.
 using order_position_type = unsigned int;
 
 /*------------------------------------------------------------------------------------------------*/

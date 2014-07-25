@@ -118,9 +118,6 @@ private:
   /// @brief This cache's context.
   context_type& cxt_;
 
-  /// @brief The cache name.
-  const std::string name_;
-
   /// @brief The wanted load factor for the underlying hash table.
   static constexpr double max_load_factor = 0.85;
 
@@ -140,15 +137,13 @@ public:
 
   /// @brief Construct a cache.
   /// @param context This cache's context.
-  /// @param name Give a name to this cache.
   /// @param size tells how many cache entries are keeped in the cache.
   ///
   /// When the maximal size is reached, a cleanup is launched: half of the cache is removed,
   /// using a LRU strategy. This cache will never perform a rehash, therefore it allocates
   /// all the memory it needs at its construction.
-  cache(context_type& context, const std::string& name, std::size_t size)
+  cache(context_type& context, std::size_t size)
     : cxt_(context)
-    , name_(name)
     , set_(size, max_load_factor, true /* no rehash */)
     , lru_list_()
     , max_size_(set_.bucket_count() * max_load_factor)
@@ -211,11 +206,6 @@ public:
       e.add_step(std::move(op));
       throw;
     }
-    catch (interrupt<result_type>&)
-    {
-      --stats_.misses;
-      throw;
-    }
 
     // Clean up the cache, if necessary.
     while (set_.size() > max_size_)
@@ -262,14 +252,6 @@ public:
     stats_.buckets = set_.bucket_count();
     stats_.load_factor = set_.load_factor();
     return stats_;
-  }
-
-  /// @brief Get this cache's name
-  const std::string&
-  name()
-  const noexcept
-  {
-    return name_;
   }
 };
 

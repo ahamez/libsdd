@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "sdd/order/order_builder.hh"
+#include "sdd/order/order_error.hh"
 #include "sdd/order/order_identifier.hh"
 #include "sdd/order/order_node.hh"
 #include "sdd/util/hash.hh"
@@ -163,7 +164,14 @@ public:
   node(const identifier_type& id)
   const
   {
-    return *id_to_node_ptr_->at(order_identifier<C>(id));
+    try
+    {
+      return *id_to_node_ptr_->at(order_identifier<C>(id));
+    }
+    catch (std::out_of_range&)
+    {
+      throw identifier_not_found_error<C>(id);
+    }
   }
 
   /// @internal
@@ -272,10 +280,7 @@ private:
       const auto variable = next.second;
       if (not ob.identifier().artificial() and not unicity.insert(ob.identifier().user()).second)
       {
-        // Must stream user identifier to call its operator<<().
-        std::stringstream ss;
-        ss << "Duplicate order identifier " << ob.identifier().user();
-        throw std::runtime_error(ss.str());
+        throw duplicate_identifier_error<C>(ob.identifier().user());
       }
       nodes[current_position] =
         order_node<C>(ob.identifier(), variable, current_position, next.first, nested.first, path);

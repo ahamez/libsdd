@@ -1,12 +1,13 @@
 #ifndef _SDD_VALUES_FLAT_SET_HH_
 #define _SDD_VALUES_FLAT_SET_HH_
 
-#include <algorithm>  // copy, set_difference, set_intersection, set_union
-#include <functional> // hash
+#include <algorithm>   // copy, set_difference, set_intersection, set_union
+#include <functional>  // hash
 #include <initializer_list>
 #include <iosfwd>
-#include <iterator>   // inserter
-#include <utility>    // pair
+#include <iterator>    // inserter
+#include <type_traits> // enable_if, is_integral
+#include <utility>     // pair
 
 #include "sdd/values_manager_fwd.hh"
 #include "sdd/mem/ptr.hh"
@@ -40,6 +41,9 @@ public:
 
   /// @brief The type of an iterator on a flat set of values.
   using const_iterator = typename data_type::const_iterator;
+
+  /// @brief The type of an reverse iterator on a flat set of values.
+  using const_reverse_iterator = typename data_type::const_reverse_iterator;
 
 private:
 
@@ -89,7 +93,7 @@ public:
     return insertion;
   }
 
-  /// @brief Get the beginning of this set of values.
+  /// @brief Returns an iterator pointing to the first element in the flat set.
   const_iterator
   begin()
   const noexcept
@@ -97,7 +101,7 @@ public:
     return ptr_->data().cbegin();
   }
 
-  /// @brief Get the end of this set of values.
+  /// @brief Returns an iterator pointing to the last element in the flat set.
   const_iterator
   end()
   const noexcept
@@ -105,7 +109,7 @@ public:
     return ptr_->data().cend();
   }
 
-  /// @brief Get the beginning of this set of values.
+  /// @brief Returns an iterator pointing to the first element in the flat set.
   const_iterator
   cbegin()
   const noexcept
@@ -113,12 +117,44 @@ public:
     return ptr_->data().cbegin();
   }
 
-  /// @brief Get the end of this set of values.
+  /// @brief Returns an iterator pointing to the last element in the flat set.
   const_iterator
   cend()
   const noexcept
   {
     return ptr_->data().cend();
+  }
+
+  /// @brief Returns a reverse iterator pointing to the last element in the flat set.
+  const_reverse_iterator
+  rbegin()
+  const noexcept
+  {
+    return ptr_->data().crbegin();
+  }
+
+  /// @brief Returns a reverse iterator pointing to the first element in the flat set.
+  const_reverse_iterator
+  rend()
+  const noexcept
+  {
+    return ptr_->data().crend();
+  }
+
+  /// @brief Returns a reverse iterator pointing to the first element in the flat set.
+  const_reverse_iterator
+  crbegin()
+  const noexcept
+  {
+    return ptr_->data().crbegin();
+  }
+
+  /// @brief Returns a reverse iterator pointing to the last element in the flat set.
+  const_reverse_iterator
+  crend()
+  const noexcept
+  {
+    return ptr_->data().crend();
   }
 
   /// @brief Tell if this set of values is empty.
@@ -192,6 +228,14 @@ public:
   const
   {
     return ptr_->data().lower_bound(x);
+  }
+
+  /// @brief
+  const_iterator
+  upper_bound(const Value& x)
+  const
+  {
+    return ptr_->data().upper_bound(x);
   }
 
   /// @internal
@@ -384,10 +428,23 @@ noexcept
 
 /*------------------------------------------------------------------------------------------------*/
 
+template <typename Value>
+struct display_value
+{
+  void
+  operator()(std::ostream& os, const Value& v)
+  const
+  {
+    os << v;
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
 /// @brief Textual output of a flat_set
 /// @related flat_set
 template <typename Value>
-std::ostream&
+typename std::enable_if<not std::is_integral<Value>::value, std::ostream&>::type
 operator<<(std::ostream& os, const flat_set<Value>& fs)
 {
   os << "{";
@@ -395,6 +452,45 @@ operator<<(std::ostream& os, const flat_set<Value>& fs)
   {
     std::copy(fs.cbegin(), std::prev(fs.cend()), std::ostream_iterator<Value>(os, ","));
     os << *std::prev(fs.cend());
+  }
+  return os << "}";
+}
+
+/// @brief Textual output of a flat_set
+///
+/// When Value is an integral type, consecutive values are displayed like 1..9.
+/// @related flat_set
+template <typename Value>
+typename std::enable_if<std::is_integral<Value>::value, std::ostream&>::type
+operator<<(std::ostream& os, const flat_set<Value>& fs)
+{
+  os << "{";
+  if (not fs.empty())
+  {
+    auto cit = fs.cbegin();
+    while (cit != fs.cend())
+    {
+      auto first = cit;
+      while ((*cit + 1) == (*std::next(cit))) // consecutive values
+      {
+        ++cit;
+      }
+      if (first == cit)
+      {
+        display_value<Value>()(os, *cit);
+      }
+      else
+      {
+        display_value<Value>()(os, *first);
+        os << "..";
+        display_value<Value>()(os, *cit);
+      }
+      if (std::next(cit) != fs.cend())
+      {
+        os << ",";
+      }
+      ++cit;
+    }
   }
   return os << "}";
 }
@@ -487,4 +583,4 @@ struct hash<sdd::values::flat_set<Value>>
 
 } // namespace std
 
-#endif // _SDD_VALUES_flat_set_HH_
+#endif // _SDD_VALUES_FLAT_SET_HH_

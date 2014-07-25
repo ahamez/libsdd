@@ -12,25 +12,22 @@ namespace sdd {
 /// It represents the complement of paths leading to |1|.
 template <typename C>
 struct zero_terminal final
-{};
-
-/// @related zero_terminal
-template <typename C>
-inline
-constexpr bool
-operator==(const zero_terminal<C>&, const zero_terminal<C>&)
-noexcept
 {
-  return true;
-}
+  friend
+  constexpr bool
+  operator==(const zero_terminal&, const zero_terminal&)
+  noexcept
+  {
+    return true;
+  }
 
-/// @related zero_terminal
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const zero_terminal<C>&)
-{
-  return os << "|0|";
-}
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const zero_terminal&)
+  {
+    return os << "|0|";
+  }
+};
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -39,29 +36,26 @@ operator<<(std::ostream& os, const zero_terminal<C>&)
 /// It indicates the end of a path in an SDD.
 template <typename C>
 struct one_terminal final
-{};
-
-/// @related one_terminal
-template <typename C>
-inline
-constexpr bool
-operator==(const one_terminal<C>&, const one_terminal<C>&)
-noexcept
 {
-  return true;
-}
+  friend
+  constexpr bool
+  operator==(const one_terminal&, const one_terminal&)
+  noexcept
+  {
+    return true;
+  }
 
-/// @related one_terminal
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const one_terminal<C>&)
-{
-  return os << "|1|";
-}
-
-} // namespace sdd
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const one_terminal&)
+  {
+    return os << "|1|";
+  }
+};
 
 /*------------------------------------------------------------------------------------------------*/
+
+} // namespace sdd
 
 namespace std {
 

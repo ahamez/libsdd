@@ -1,0 +1,157 @@
+#ifndef _SDD_HOM_IF_THEN_ELSE_HH_
+#define _SDD_HOM_IF_THEN_ELSE_HH_
+
+#include <iosfwd>
+#include <stdexcept> // invalid_argument
+
+#include "sdd/dd/definition.hh"
+#include "sdd/hom/context_fwd.hh"
+#include "sdd/hom/definition_fwd.hh"
+#include "sdd/hom/evaluation_error.hh"
+#include "sdd/hom/identity.hh"
+#include "sdd/hom/interrupt.hh"
+#include "sdd/order/order.hh"
+
+namespace sdd { namespace hom {
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+/// @brief if then else homomorphism.
+template <typename C>
+struct _if_then_else
+{
+  /// @brief The predicate (acts as filter).
+  const homomorphism<C> h_if;
+
+  /// @brief The true branch (works on the accepted part).
+  const homomorphism<C> h_then;
+
+  /// @brief The false branch (works on the rejected part).
+  const homomorphism<C> h_else;
+
+  /// @brief Constructor.
+  _if_then_else( const homomorphism<C>& if_op, const homomorphism<C>& then_op
+               , const homomorphism<C>& else_op)
+    : h_if(if_op), h_then(then_op), h_else(else_op)
+  {}
+
+  /// @brief Evaluation.
+  SDD<C>
+  operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
+  const
+  {
+    // Apply predicate.
+    const auto tmp = h_if(cxt, o, s);
+
+    dd::sum_builder<C, SDD<C>> sum_operands(cxt.sdd_context());
+    sum_operands.reserve(2);
+
+    try
+    {
+      // Apply "then" on the part accepted by the predicate.
+      sum_operands.add(h_then(cxt, o, tmp));
+
+      // Apply "else" on the part rejected by the predicate.
+      sum_operands.add(h_else(cxt, o, dd::difference(cxt.sdd_context(), s, tmp)));
+
+      return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+    }
+    catch (top<C>& t)
+    {
+      evaluation_error<C> e(s);
+      e.add_top(t);
+      throw e;
+    }
+  }
+
+  /// @brief Skip predicate.
+  bool
+  skip(const order<C>& o)
+  const noexcept
+  {
+    return h_if.skip(o) and h_else.skip(o) and h_then.skip(o);
+  }
+
+  /// @brief Selector predicate
+  bool
+  selector()
+  const noexcept
+  {
+    // h_if is always a selector.
+    return h_else.selector() and h_then.selector();
+  }
+
+  /// @brief Equality.
+  friend
+  bool
+  operator==(const _if_then_else& lhs, const _if_then_else& rhs)
+  noexcept
+  {
+    return lhs.h_if == rhs.h_if and lhs.h_then == rhs.h_then and lhs.h_else == rhs.h_else;
+  }
+
+  /// @brief Textual output.
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const _if_then_else<C>& ite)
+  {
+    return os << "ite(" << ite.h_if << ", " << ite.h_then << "," << ite.h_else << ")";
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+} // namespace hom
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @brief Create the "if then else" homomorphism.
+/// @related homomorphism
+template <typename C>
+homomorphism<C>
+if_then_else( const homomorphism<C>& h_if, const homomorphism<C>& h_then
+            , const homomorphism<C>& h_else)
+{
+  if (not h_if.selector())
+  {
+    throw std::invalid_argument("Predicate for 'if then else' must be a selector.");
+  }
+  if (h_if == id<C>())
+  {
+    return h_then;
+  }
+  return homomorphism<C>::create( mem::construct<hom::_if_then_else<C>>()
+                                , h_if, h_then, h_else);
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+} // namespace sdd
+
+namespace std {
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+/// @brief Hash specialization for sdd::hom::_if_then_else.
+template <typename C>
+struct hash<sdd::hom::_if_then_else<C>>
+{
+  std::size_t
+  operator()(const sdd::hom::_if_then_else<C>& ite)
+  const
+  {
+    std::size_t seed = sdd::util::hash(ite.h_if);
+    sdd::util::hash_combine(seed, ite.h_then);
+    sdd::util::hash_combine(seed, ite.h_else);
+    return seed;
+
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+} // namespace std
+
+#endif // _SDD_HOM_IF_THEN_ELSE_HH_
