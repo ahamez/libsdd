@@ -13,6 +13,7 @@
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/interrupt.hh"
 #include "sdd/util/packed.hh"
+#include "sdd/order/carrier.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {
@@ -380,7 +381,7 @@ template <typename C, typename User>
 homomorphism<C>
 function(const order<C>& o, const typename C::Identifier& i, const User& u)
 {
-  return function<C>(o.node(i).position(), u);
+  return carrier(o, i, function<C>(o.node(i).position(), u));
 }
 
 /// @brief Create the Function homomorphism.
@@ -390,7 +391,7 @@ template <typename C, typename User>
 homomorphism<C>
 function(const order<C>& o, const typename C::Identifier& i, User&& u)
 {
-  return function<C>(o.node(i).position(), std::move(u));
+  return carrier(o, i, function<C>(o.node(i).position(), std::move(u)));
 }
 
 /*------------------------------------------------------------------------------------------------*/
