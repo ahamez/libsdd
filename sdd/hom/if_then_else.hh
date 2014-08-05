@@ -108,6 +108,8 @@ struct _if_then_else
 
 /// @brief Create the "if then else" homomorphism.
 /// @related homomorphism
+///
+/// ite(pred, then, else)(x) == then(pred(x)) + else(x - pred(x))
 template <typename C>
 homomorphism<C>
 if_then_else( const homomorphism<C>& h_if, const homomorphism<C>& h_then
@@ -117,10 +119,19 @@ if_then_else( const homomorphism<C>& h_if, const homomorphism<C>& h_then
   {
     throw std::invalid_argument("Predicate for 'if then else' must be a selector.");
   }
+
+  // The else branch can never be applied if no paths are removed by the predicate.
   if (h_if == id<C>())
   {
     return h_then;
   }
+
+  // If both branches apply the same operation, then the predicate is useless.
+  if (h_then == h_else)
+  {
+    return h_then;
+  }
+
   return homomorphism<C>::create( mem::construct<hom::_if_then_else<C>>()
                                 , h_if, h_then, h_else);
 }
