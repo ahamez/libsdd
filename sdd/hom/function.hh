@@ -361,6 +361,9 @@ function(order_position_type pos, const User& u)
 /// @brief Create the Function homomorphism.
 /// @param i The target identifier, must belong to o.
 /// @related homomorphism
+///
+/// If the target is in a nested hierarchy, the succession of Local to access it is automatically
+/// created.
 template <typename C, typename User>
 homomorphism<C>
 function(const order<C>& o, const typename C::Identifier& i, const User& u)

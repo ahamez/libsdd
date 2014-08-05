@@ -34,7 +34,7 @@ public:
 
 private:
 
-  /// @brief Cache of union homomorphisms.
+  /// @brief Cache homomorphisms evaluation.
   std::shared_ptr<cache_type> cache_;
 
   /// @brief Context of SDD operations.

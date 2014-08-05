@@ -38,13 +38,13 @@ public:
 
 private:
 
-  /// @brief Cache of difference on SDD.
+  /// @brief Cache of SDD difference.
   std::shared_ptr<difference_cache_type> difference_cache_;
 
-  /// @brief Cache of intersection on SDD.
+  /// @brief Cache of SDD intersection.
   std::shared_ptr<intersection_cache_type> intersection_cache_;
 
-  /// @brief Cache of union on SDD.
+  /// @brief Cache of SDD union.
   std::shared_ptr<sum_cache_type> sum_cache_;
 
   /// @brief Buffer for temporary containers allocation.
