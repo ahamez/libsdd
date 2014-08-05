@@ -81,11 +81,6 @@ struct function_derived
     : fun(f)
   {}
 
-  /// @brief Constructor.
-  function_derived(User&& f)
-    : fun(std::move(f))
-  {}
-
   /// @brief Tell if the user's function is a selector.
   bool
   selector()
@@ -363,17 +358,6 @@ function(order_position_type pos, const User& u)
                                 , pos, new hom::function_derived<C, User>(u));
 }
 
-/// @internal
-/// @brief Create the Function homomorphism.
-/// @related homomorphism
-template <typename C, typename User>
-homomorphism<C>
-function(order_position_type pos, User&& u)
-{
-  return homomorphism<C>::create( mem::construct<hom::_function<C>>()
-                                , pos, new hom::function_derived<C, User>(std::move(u)));
-}
-
 /// @brief Create the Function homomorphism.
 /// @param i The target identifier, must belong to o.
 /// @related homomorphism
@@ -382,16 +366,6 @@ homomorphism<C>
 function(const order<C>& o, const typename C::Identifier& i, const User& u)
 {
   return carrier(o, i, function<C>(o.node(i).position(), u));
-}
-
-/// @brief Create the Function homomorphism.
-/// @param i The target identifier, must belong to o.
-/// @related homomorphism
-template <typename C, typename User>
-homomorphism<C>
-function(const order<C>& o, const typename C::Identifier& i, User&& u)
-{
-  return carrier(o, i, function<C>(o.node(i).position(), std::move(u)));
 }
 
 /*------------------------------------------------------------------------------------------------*/

@@ -91,11 +91,6 @@ struct inductive_derived
     : h(u)
   {}
 
-  /// @brief Constructor.
-  inductive_derived(User&& u)
-    : h(std::move(u))
-  {}
-
   /// @brief Tell if the user's inductive skip the current variable.
   bool
   skip(const order<C>& o)
@@ -362,16 +357,6 @@ inductive(const User& u)
 {
   return homomorphism<C>::create( mem::construct<hom::_inductive<C>>()
                                 , new hom::inductive_derived<C, User>(u));
-}
-
-/// @brief Create the inductive homomorphism.
-/// @related homomorphism
-template <typename C, typename User>
-homomorphism<C>
-inductive(User&& u)
-{
-  return homomorphism<C>::create( mem::construct<hom::_inductive<C>>()
-                                , new hom::inductive_derived<C, User>(std::move(u)));
 }
 
 /*------------------------------------------------------------------------------------------------*/
