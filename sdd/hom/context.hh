@@ -7,7 +7,6 @@
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation.hh"
-#include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/rewrite.hh"
 #include "sdd/mem/cache.hh"
 
@@ -26,8 +25,7 @@ class context
 public:
 
   /// @brief Homomorphism evaluation cache type.
-  using cache_type = mem::cache< context, cached_homomorphism<C>, evaluation_error<C>
-                               , should_cache<C>>;
+  using cache_type = mem::cache< context, cached_homomorphism<C>, should_cache<C>>;
 
   /// @brief SDD operation context type.
   using sdd_context_type = sdd::dd::context<C>;

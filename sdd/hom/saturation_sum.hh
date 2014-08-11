@@ -9,7 +9,6 @@
 #include "sdd/hom/common_types.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
-#include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/hom/sum.hh"
@@ -54,30 +53,21 @@ struct LIBSDD_ATTRIBUTE_PACKED _saturation_sum
     dd::sum_builder<C, SDD<C>> operands(cxt.sdd_context());
     operands.reserve(G.size() + 2);
 
-    try
+    if (F)
     {
-      if (F)
-      {
-        operands.add((*F)(cxt, o, s));
-      }
-
-      for (const auto& g : G)
-      {
-        operands.add(g(cxt, o, s));
-      }
-
-      if (L)
-      {
-        operands.add((*L)(cxt, o, s));
-      }
-      return dd::sum(cxt.sdd_context(), std::move(operands));
+      operands.add((*F)(cxt, o, s));
     }
-    catch (top<C>& t)
+
+    for (const auto& g : G)
     {
-      evaluation_error<C> e(s);
-      e.add_top(t);
-      throw e;
+      operands.add(g(cxt, o, s));
     }
+
+    if (L)
+    {
+      operands.add((*L)(cxt, o, s));
+    }
+    return dd::sum(cxt.sdd_context(), std::move(operands));
   }
 
   /// @brief Skip variable predicate.

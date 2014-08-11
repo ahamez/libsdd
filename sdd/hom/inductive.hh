@@ -9,7 +9,6 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
-#include "sdd/hom/evaluation_error.hh"
 #include "sdd/util/packed.hh"
 #include "sdd/order/order.hh"
 
@@ -278,21 +277,12 @@ struct _inductive
     {
       dd::sum_builder<C, SDD<C>> sum_operands(cxt_.sdd_context());
       sum_operands.reserve(node.size());
-      try
+      for (const auto& arc : node)
       {
-        for (const auto& arc : node)
-        {
-          const homomorphism<C> next_hom = inductive(order_, arc.valuation());
-          sum_operands.add(next_hom(cxt_, order_.next(), arc.successor()));
-        }
-        return dd::sum(cxt_.sdd_context(), std::move(sum_operands));
+        const homomorphism<C> next_hom = inductive(order_, arc.valuation());
+        sum_operands.add(next_hom(cxt_, order_.next(), arc.successor()));
       }
-      catch (top<C>& t)
-      {
-        evaluation_error<C> e(sdd_);
-        e.add_top(t);
-        throw e;
-      }
+      return dd::sum(cxt_.sdd_context(), std::move(sum_operands));
     }
   };
 

@@ -8,7 +8,6 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
-#include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/expression/evaluator.hh"
 #include "sdd/hom/expression/stacks.hh"
 #include "sdd/order/order.hh"
@@ -78,29 +77,20 @@ struct simple
         // propagate on both nesteds SDD and successors.
         dd::sum_builder<C, SDD<C>> operands(sdd_cxt);
         operands.reserve(node.size());
-        try
+        for (const auto& arc : node)
         {
-          for (const auto& arc : node)
-          {
-            // push on stacks
-            const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), app);
-            const auto local_res = std::make_shared<res_stack<C>>(sdd_cxt, res);
+          // push on stacks
+          const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), app);
+          const auto local_res = std::make_shared<res_stack<C>>(sdd_cxt, res);
 
-            const auto nested = visit_self( *this, arc.valuation(), o.nested(), local_app, local_res
-                                          , cit, end);
+          const auto nested = visit_self( *this, arc.valuation(), o.nested(), local_app, local_res
+                                        , cit, end);
 
-            assert(not local_res->result.empty() && "Invalid empty successor result");
-            operands.add( SDD<C>( o.variable(), nested
-                                , dd::sum<C>(sdd_cxt, std::move(local_res->result))));
-          }
-          return dd::sum<C>(sdd_cxt, std::move(operands));
+          assert(not local_res->result.empty() && "Invalid empty successor result");
+          operands.add( SDD<C>( o.variable(), nested
+                              , dd::sum<C>(sdd_cxt, std::move(local_res->result))));
         }
-        catch (top<C>& t)
-        {
-          evaluation_error<C> e(s);
-          e.add_top(t);
-          throw e;
-        }
+        return dd::sum<C>(sdd_cxt, std::move(operands));
       }
     }
     else
@@ -113,16 +103,7 @@ struct simple
         const auto nested = visit_self(*this, arc.valuation(), o.nested(), app, res, cit, end);
         operands.add(SDD<C>(o.variable(), nested, arc.successor()));
       }
-      try
-      {
-        return dd::sum<C>(sdd_cxt, std::move(operands));
-      }
-      catch (top<C>& t)
-      {
-        evaluation_error<C> e(s);
-        e.add_top(t);
-        throw e;
-      }
+      return dd::sum<C>(sdd_cxt, std::move(operands));
     }
   }
 
@@ -156,16 +137,7 @@ struct simple
         }
         operands.add(SDD<C>(o.variable(), eval_.evaluate(), arc.successor()));
       }
-      try
-      {
-        return dd::sum<C>(sdd_cxt, std::move(operands));
-      }
-      catch (top<C>& t)
-      {
-        evaluation_error<C> e(s);
-        e.add_top(t);
-        throw e;
-      }
+      return dd::sum<C>(sdd_cxt, std::move(operands));
     }
     else
     {

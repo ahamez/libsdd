@@ -11,10 +11,8 @@
 #include <boost/container/flat_set.hpp>
 
 #include "sdd/dd/definition.hh"
-#include "sdd/dd/top.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
-#include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
@@ -50,20 +48,11 @@ struct _intersection
   {
     dd::intersection_builder<C, SDD<C>> intersection_operands(cxt.sdd_context());
     intersection_operands.reserve(operands.size());
-    try
+    for (const auto& op : operands)
     {
-      for (const auto& op : operands)
-      {
-        intersection_operands.add(op(cxt, o, x));
-      }
-      return dd::intersection(cxt.sdd_context(), std::move(intersection_operands));
+      intersection_operands.add(op(cxt, o, x));
     }
-    catch (top<C>& t)
-    {
-      evaluation_error<C> e(x);
-      e.add_top(t);
-      throw e;
-    }
+    return dd::intersection(cxt.sdd_context(), std::move(intersection_operands));
   }
 
   /// @brief Skip variable predicate.

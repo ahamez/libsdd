@@ -12,7 +12,6 @@
 #include "sdd/hom/consolidate.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
-#include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/local.hh"
 #include "sdd/order/order.hh"
@@ -79,36 +78,27 @@ public:
     SDD<C> s1 = s;
     SDD<C> s2 = s;
 
-    try
+    do
     {
-      do
+      s1 = s2;
+
+      if (F != id<C>())
       {
-        s1 = s2;
+        swap(s2, F(cxt, o, s2)); // apply (F + Id)*
+      }
+      if (L != id<C>())
+      {
+        swap(s2, L(cxt, o, s2)); // apply (L + Id)*
+      }
 
-        if (F != id<C>())
-        {
-          swap(s2, F(cxt, o, s2)); // apply (F + Id)*
-        }
-        if (L != id<C>())
-        {
-          swap(s2, L(cxt, o, s2)); // apply (L + Id)*
-        }
-
-        for (auto cit = G_begin(); cit != G_end(); ++cit)
-        {
-          const auto& g = *cit;
-          // chain applications of G
-          swap( s2
-              , dd::sum(sdd_context, dd::sum_builder<C, SDD<C>>(sdd_context, {s2, g(cxt, o, s2)})));
-        }
-      } while (s1 != s2);
-    }
-    catch (top<C>& t)
-    {
-      evaluation_error<C> e(s);
-      e.add_top(t);
-      throw e;
-    }
+      for (auto cit = G_begin(); cit != G_end(); ++cit)
+      {
+        const auto& g = *cit;
+        // chain applications of G
+        swap( s2
+            , dd::sum(sdd_context, dd::sum_builder<C, SDD<C>>(sdd_context, {s2, g(cxt, o, s2)})));
+      }
+    } while (s1 != s2);
 
     return s1;
   }
