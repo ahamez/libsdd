@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_CONTEXT_FWD_HH_
-#define _SDD_HOM_CONTEXT_FWD_HH_
+#pragma once
 
 namespace sdd { namespace hom {
 
@@ -12,5 +11,3 @@ class context;
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::hom
-
-#endif // _SDD_HOM_CONTEXT_FWD_HH_

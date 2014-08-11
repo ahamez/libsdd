@@ -1,5 +1,4 @@
-#ifndef _SDD_ORDER_ERROR_HH_
-#define _SDD_ORDER_ERROR_HH_
+#pragma once
 
 #include <deque>
 #include <exception>
@@ -134,5 +133,3 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_ORDER_ERROR_HH_

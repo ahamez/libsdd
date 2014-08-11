@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_TOP_HH_
-#define _SDD_DD_TOP_HH_
+#pragma once
 
 #include <exception>
 #include <memory> // make_shared, shared_ptr
@@ -89,5 +88,3 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_DD_TOP_HH_

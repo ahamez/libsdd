@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_OPERATIONS_FWD_HH_
-#define _SDD_DD_OPERATIONS_FWD_HH_
+#pragma once
 
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition_fwd.hh"
@@ -84,5 +83,3 @@ sum(context<C>&, const sum_builder<C, Values>&);
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::dd
-
-#endif // _SDD_DD_OPERATIONS_FWD_HH_

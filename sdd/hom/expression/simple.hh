@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_EXPRESSION_SIMPLE_HH_
-#define _SDD_HOM_EXPRESSION_SIMPLE_HH_
+#pragma once
 
 #include <algorithm> // any_of, copy, find
 #include <cassert>
@@ -191,5 +190,3 @@ struct simple
 /*------------------------------------------------------------------------------------------------*/
 
 }}} // namespace sdd::hom::expr
-
-#endif // _SDD_HOM_EXPRESSION_SIMPLE_HH_

@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_FIXPOINT_HH_
-#define _SDD_HOM_FIXPOINT_HH_
+#pragma once
 
 #include <iosfwd>
 
@@ -152,5 +151,3 @@ struct hash<sdd::hom::_fixpoint<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_HOM_FIXPOINT_HH_

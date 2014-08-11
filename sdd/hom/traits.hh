@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_TRAITS_HH_
-#define _SDD_HOM_TRAITS_HH_
+#pragma once
 
 namespace sdd { namespace hom {
 
@@ -16,5 +15,3 @@ struct homomorphism_traits
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::hom
-
-#endif // _SDD_HOM_TRAITS_HH_

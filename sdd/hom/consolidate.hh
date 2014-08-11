@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_CONSOLIDATE_HH_
-#define _SDD_HOM_CONSOLIDATE_HH_
+#pragma once
 
 #include <iterator> // iterator_traits
 
@@ -26,5 +25,3 @@ noexcept
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::hom
-
-#endif // _SDD_HOM_CONSOLIDATE_HH_

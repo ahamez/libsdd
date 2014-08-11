@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_SQUARE_UNION_HH_
-#define _SDD_DD_SQUARE_UNION_HH_
+#pragma once
 
 #include <cassert>
 
@@ -108,5 +107,3 @@ public:
 /*------------------------------------------------------------------------------------------------*/
   
 }} // namespace sdd::dd
-
-#endif // _SDD_DD_SQUARE_UNION_HH_

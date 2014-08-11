@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_TERMINAL_HH_
-#define _SDD_DD_TERMINAL_HH_
+#pragma once
 
 #include <iosfwd>
 
@@ -90,5 +89,3 @@ struct hash<sdd::one_terminal<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_DD_TERMINAL_HH_

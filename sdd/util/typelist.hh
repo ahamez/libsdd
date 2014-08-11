@@ -1,5 +1,4 @@
-#ifndef _SDD_UTIL_TYPELIST_HH_
-#define _SDD_UTIL_TYPELIST_HH_
+#pragma once
 
 namespace sdd { namespace util {
 
@@ -59,5 +58,3 @@ struct nth<Index, Head, Tail...>
 /*------------------------------------------------------------------------------------------------*/  
 
 }} // namespace sdd::util
-
-#endif // _SDD_UTIL_TYPELIST_HH_

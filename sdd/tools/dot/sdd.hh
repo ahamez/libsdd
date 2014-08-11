@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_TOOLS_DOT_SDD_HH_
-#define _SDD_DD_TOOLS_DOT_SDD_HH_
+#pragma once
 
 #include <unordered_set>
 
@@ -130,5 +129,3 @@ dot(const SDD<C>& x, const order<C>& o)
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::tools
-
-#endif // _SDD_DD_TOOLS_DOT_SDD_HH_

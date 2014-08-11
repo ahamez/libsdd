@@ -1,5 +1,4 @@
-#ifndef _SDD_MEM_UNIQUE_TABLE_HH_
-#define _SDD_MEM_UNIQUE_TABLE_HH_
+#pragma once
 
 #include <cassert>
 
@@ -132,5 +131,3 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::mem
-
-#endif // _SDD_MEM_UNIQUE_TABLE_HH_

@@ -1,5 +1,4 @@
-#ifndef _SDD_TOOLS_SDD_STATISTICS_HH_
-#define _SDD_TOOLS_SDD_STATISTICS_HH_
+#pragma once
 
 #include <utility> // pair
 
@@ -30,5 +29,3 @@ struct sdd_statistics
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::tools
-
-#endif // _SDD_TOOLS_SDD_STATISTICS_HH_

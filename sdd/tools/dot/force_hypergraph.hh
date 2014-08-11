@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_TOOLS_DOT_FORCE_HYPERGRAPH_HH_
-#define _SDD_DD_TOOLS_DOT_FORCE_HYPERGRAPH_HH_
+#pragma once
 
 #include <iosfwd>
 
@@ -56,5 +55,3 @@ dot(const force::hypergraph<C>& g)
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::tools
-
-#endif // _SDD_DD_TOOLS_DOT_FORCE_HYPERGRAPH_HH_

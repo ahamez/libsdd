@@ -1,5 +1,4 @@
-#ifndef _SDD_MEM_CACHE_ENTRY_HH_
-#define _SDD_MEM_CACHE_ENTRY_HH_
+#pragma once
 
 #include <functional> // hash
 #include <list>
@@ -81,5 +80,3 @@ struct hash<sdd::mem::cache_entry<Operation, Result>>
 } // namespace std
 
 /*------------------------------------------------------------------------------------------------*/
-
-#endif // _SDD_MEM_CACHE_ENTRY_HH_

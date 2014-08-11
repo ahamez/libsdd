@@ -1,5 +1,4 @@
-#ifndef _SDD_VALUES_MANAGER_HH_
-#define _SDD_VALUES_MANAGER_HH_
+#pragma once
 
 #include <cassert>
 
@@ -121,5 +120,3 @@ noexcept
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_VALUES_MANAGER_HH_

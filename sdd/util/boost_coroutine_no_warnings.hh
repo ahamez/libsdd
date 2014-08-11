@@ -1,5 +1,4 @@
-#ifndef _SDD_UTIL_BOOST_COROUTINE_NO_WARNINGS_HH_
-#define _SDD_UTIL_BOOST_COROUTINE_NO_WARNINGS_HH_
+#pragma once
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -9,5 +8,3 @@
 #include <boost/coroutine/coroutine.hpp>
 
 /*------------------------------------------------------------------------------------------------*/
-
-#endif // _SDD_UTIL_BOOST_COROUTINE_NO_WARNINGS_HH_

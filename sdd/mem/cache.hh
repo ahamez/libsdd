@@ -1,5 +1,4 @@
-#ifndef _SDD_MEM_CACHE_HH_
-#define _SDD_MEM_CACHE_HH_
+#pragma once
 
 #include "sdd/mem/cache_entry.hh"
 #include "sdd/mem/hash_table.hh"
@@ -237,5 +236,3 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::mem
-
-#endif // _SDD_MEM_CACHE_HH_

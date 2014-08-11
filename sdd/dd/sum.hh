@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_SUM_HH_
-#define _SDD_DD_SUM_HH_
+#pragma once
 
 #include <initializer_list>
 #include <type_traits> // enable_if, is_same
@@ -432,5 +431,4 @@ sum(std::initializer_list<SDD<C>> operands)
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_DD_SUM_HH_
+#pragma once

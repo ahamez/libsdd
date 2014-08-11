@@ -1,5 +1,4 @@
-#ifndef _SDD_TOOLS_ARCS_HH_
-#define _SDD_TOOLS_ARCS_HH_
+#pragma once
 
 #include <unordered_map>
 #include <unordered_set>
@@ -112,5 +111,3 @@ noexcept
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::tools
-
-#endif // _SDD_TOOLS_ARCS_HH_

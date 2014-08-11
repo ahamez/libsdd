@@ -1,5 +1,4 @@
-#ifndef _SDD_ORDER_ORDER_BUILDER_HH_
-#define _SDD_ORDER_ORDER_BUILDER_HH_
+#pragma once
 
 #include <initializer_list>
 #include <memory>    // shared_ptr
@@ -288,5 +287,3 @@ private:
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_ORDER_ORDER_BUILDER_HH_

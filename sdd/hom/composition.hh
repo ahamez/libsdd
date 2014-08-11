@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_COMPOSITON_HH_
-#define _SDD_HOM_COMPOSITON_HH_
+#pragma once
 
 #include <iosfwd>
 
@@ -157,5 +156,3 @@ struct hash<sdd::hom::_composition<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_HOM_COMPOSITON_HH_

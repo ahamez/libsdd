@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_TOOLS_DOT_HOMOMORPHISM_HH_
-#define _SDD_DD_TOOLS_DOT_HOMOMORPHISM_HH_
+#pragma once
 
 #include <unordered_set>
 
@@ -217,5 +216,3 @@ dot(const homomorphism<C>& h)
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::tools
-
-#endif // _SDD_DD_TOOLS_DOT_HOMOMORPHISM_HH_

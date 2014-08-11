@@ -1,5 +1,4 @@
-#ifndef _SDD_TOOLS_SIZE_HH_
-#define _SDD_TOOLS_SIZE_HH_
+#pragma once
 
 #include <unordered_map>
 #include <unordered_set>
@@ -110,5 +109,3 @@ size(const SDD<C>& x)
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::tools
-
-#endif // _SDD_TOOLS_SIZE_HH_

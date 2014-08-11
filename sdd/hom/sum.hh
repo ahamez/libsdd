@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_SUM_HH_
-#define _SDD_HOM_SUM_HH_
+#pragma once
 
 #include <algorithm>  // all_of, copy, equal
 #include <deque>
@@ -282,5 +281,3 @@ struct hash<sdd::hom::_sum<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_HOM_SUM_HH_

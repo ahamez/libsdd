@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_CONS_HH_
-#define _SDD_HOM_CONS_HH_
+#pragma once
 
 #include <iosfwd>
 
@@ -125,5 +124,3 @@ struct hash<sdd::hom::_cons<C, Valuation>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_HOM_CONS_HH_

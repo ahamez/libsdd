@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_EXPRESSION_HH_
-#define _SDD_HOM_EXPRESSION_HH_
+#pragma once
 
 #include <algorithm> // any_of, copy, find
 #include <iterator>  // back_insert
@@ -298,5 +297,3 @@ struct hash<sdd::hom::_simple_expression<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_HOM_EXPRESSION_HH_

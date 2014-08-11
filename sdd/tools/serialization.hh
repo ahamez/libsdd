@@ -1,5 +1,4 @@
-#ifndef _SDD_TOOLS_SERIALIZATION_HH_
-#define _SDD_TOOLS_SERIALIZATION_HH_
+#pragma once
 
 #include <iosfwd>
 #include <tuple>
@@ -93,5 +92,3 @@ save(Archive& archive, const sdd_statistics<C>& stats)
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::tools
-
-#endif // _SDD_TOOLS_SERIALIZATION_HH_

@@ -1,5 +1,4 @@
-#ifndef _SDD_MANAGER_HH_
-#define _SDD_MANAGER_HH_
+#pragma once
 
 #include <stdexcept> // runtime_error
 
@@ -277,5 +276,3 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_MANAGER_HH_

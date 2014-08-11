@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_DEFINITION_FWD_HH_
-#define _SDD_HOM_DEFINITION_FWD_HH_
+#pragma once
 
 namespace sdd {
 
@@ -11,5 +10,3 @@ class homomorphism;
 /*------------------------------------------------------------------------------------------------*/
   
 } // namespace sdd
-
-#endif // _SDD_HOM_DEFINITION_FWD_HH_

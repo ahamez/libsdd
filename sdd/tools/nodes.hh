@@ -1,5 +1,4 @@
-#ifndef _SDD_TOOLS_NODES_HH_
-#define _SDD_TOOLS_NODES_HH_
+#pragma once
 
 #include <unordered_set>
 
@@ -105,5 +104,3 @@ nodes(const SDD<C>& x)
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::tools
-
-#endif // _SDD_TOOLS_NODES_HH_

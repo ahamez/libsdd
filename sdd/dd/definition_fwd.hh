@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_DEFINITION_FWD_HH_
-#define _SDD_DD_DEFINITION_FWD_HH_
+#pragma once
 
 namespace sdd {
 
@@ -12,5 +11,3 @@ class SDD;
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_DD_DEFINITION_FWD_HH_

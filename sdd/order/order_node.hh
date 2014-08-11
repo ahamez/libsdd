@@ -1,5 +1,4 @@
-#ifndef _SDD_ORDER_ORDER_NODE_HH_
-#define _SDD_ORDER_ORDER_NODE_HH_
+#pragma once
 
 #include <memory>    // shared_ptr
 #include <vector>
@@ -140,5 +139,3 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_ORDER_ORDER_NODE_HH_

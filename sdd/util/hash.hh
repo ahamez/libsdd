@@ -1,5 +1,4 @@
-#ifndef _SDD_UTIL_HASH_HH_
-#define _SDD_UTIL_HASH_HH_
+#pragma once
 
 #include <algorithm> // for_each
 #include <cassert>
@@ -64,5 +63,3 @@ noexcept(noexcept(std::hash<typename std::decay<decltype(*cit)>::type>()(*cit)))
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::util
-
-#endif // _SDD_UTIL_HASH_HH_

@@ -1,5 +1,4 @@
-#ifndef _SDD_ORDER_STRATEGIES_FORCE_HYPERGRAPH_HH_
-#define _SDD_ORDER_STRATEGIES_FORCE_HYPERGRAPH_HH_
+#pragma once
 
 #include <deque>
 #include <memory> // shared_ptr
@@ -141,5 +140,3 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::force
-
-#endif // _SDD_ORDER_STRATEGIES_FORCE_HYPERGRAPH_HH_

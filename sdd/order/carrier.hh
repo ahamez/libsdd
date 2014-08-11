@@ -1,5 +1,4 @@
-#ifndef _SDD_ORDER_CARRIER_HH_
-#define _SDD_ORDER_CARRIER_HH_
+#pragma once
 
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/local.hh"
@@ -28,5 +27,3 @@ carrier(const order<C>& o, const typename C::Identifier& target, homomorphism<C>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_ORDER_CARRIER_HH_

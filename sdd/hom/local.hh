@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_LOCAL_HH_
-#define _SDD_HOM_LOCAL_HH_
+#pragma once
 
 #include <iosfwd>
 
@@ -186,5 +185,3 @@ struct hash<sdd::hom::_local<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_HOM_LOCAL_HH_

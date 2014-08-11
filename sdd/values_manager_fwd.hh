@@ -1,5 +1,4 @@
-#ifndef _SDD_VALUES_MANAGER_FWD_HH_
-#define _SDD_VALUES_MANAGER_FWD_HH_
+#pragma once
 
 namespace sdd {
 
@@ -17,5 +16,3 @@ global_values() noexcept;
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_VALUES_MANAGER_FWD_HH_

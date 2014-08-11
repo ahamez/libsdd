@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_REWRITING_HH_
-#define _SDD_HOM_REWRITING_HH_
+#pragma once
 
 #include <algorithm> // partition
 #include <deque>
@@ -261,5 +260,3 @@ rewrite(const order<C>& o, const homomorphism<C>& h)
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_HOM_REWRITING_HH_

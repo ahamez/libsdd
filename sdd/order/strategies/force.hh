@@ -1,5 +1,4 @@
-#ifndef _SDD_ORDER_STRATEGIES_FORCE_HH_
-#define _SDD_ORDER_STRATEGIES_FORCE_HH_
+#pragma once
 
 #include <functional> // reference_wrapper
 #include <limits>
@@ -138,5 +137,3 @@ private:
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_ORDER_STRATEGIES_FORCE_HH_

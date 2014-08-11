@@ -1,6 +1,5 @@
 #if !defined(HAS_NO_BOOST_COROUTINE)
-#ifndef _SDD_DD_PATH_GENERATOR_HH_
-#define _SDD_DD_PATH_GENERATOR_HH_
+#pragma once
 
 #include <cassert>
 #include <memory>
@@ -89,5 +88,4 @@ paths(typename path_generator<C>::caller_type& yield, const SDD<C>& sdd)
 
 }} // namespace sdd::dd
 
-#endif // _SDD_DD_PATH_GENERATOR_HH_
 #endif // !defined(HAS_NO_BOOST_COROUTINE)

@@ -1,5 +1,4 @@
-#ifndef _SDD_MEM_HASH_TABLE_HH_
-#define _SDD_MEM_HASH_TABLE_HH_
+#pragma once
 
 #include <algorithm>  // fill
 #include <functional> // hash
@@ -313,5 +312,3 @@ private:
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::mem
-
-#endif // _SDD_MEM_HASH_TABLE_HH_

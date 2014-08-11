@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_SATURATION_INTERSECTION_HH_
-#define _SDD_HOM_SATURATION_INTERSECTION_HH_
+#pragma once
 
 #include <algorithm>  // all_of, copy
 #include <iosfwd>
@@ -191,5 +190,3 @@ struct hash<sdd::hom::_saturation_intersection<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_HOM_SATURATION_INTERSECTION_HH_

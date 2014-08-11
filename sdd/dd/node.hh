@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_NODE_HH_
-#define _SDD_DD_NODE_HH_
+#pragma once
 
 #include <algorithm>  // equal, for_each
 #include <functional> // hash
@@ -201,5 +200,3 @@ struct hash<sdd::node<C, Valuation>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_DD_NODE_HH_

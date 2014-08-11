@@ -1,5 +1,4 @@
-#ifndef _SDD_VALUES_SIZE_HH_
-#define _SDD_VALUES_SIZE_HH_
+#pragma once
 
 namespace sdd { namespace values {
 
@@ -21,5 +20,3 @@ noexcept(noexcept(x.size()))
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::values
-
-#endif // _SDD_VALUES_SIZE_HH_

@@ -1,5 +1,4 @@
-#ifndef _SDD_CONF_DEFAULT_CONFIGURATIONS_HH_
-#define _SDD_CONF_DEFAULT_CONFIGURATIONS_HH_
+#pragma once
 
 #include <cstdint> // uint16_t, uint32_t
 #include <string>
@@ -115,5 +114,3 @@ struct conf2
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_CONF_DEFAULT_CONFIGURATIONS_HH_

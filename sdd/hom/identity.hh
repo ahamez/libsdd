@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_ID_HH_
-#define _SDD_HOM_ID_HH_
+#pragma once
 
 #include <cassert>
 #include <iosfwd>
@@ -105,5 +104,3 @@ struct hash<sdd::hom::_identity<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_HOM_ID_HH_

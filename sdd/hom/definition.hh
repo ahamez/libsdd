@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_DEFINITION_HH_
-#define _SDD_HOM_DEFINITION_HH_
+#pragma once
 
 #include <iosfwd>
 
@@ -309,5 +308,3 @@ struct hash<sdd::homomorphism<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_HOM_DEFINITION_HH_

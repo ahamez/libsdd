@@ -1,5 +1,4 @@
-#ifndef _SDD_ORDER_STRATEGIES_FORCE_HYPEREDGE_HH_
-#define _SDD_ORDER_STRATEGIES_FORCE_HYPEREDGE_HH_
+#pragma once
 
 #include <algorithm>  // minmax_element
 #include <numeric>    // accumulate
@@ -87,5 +86,3 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::force
-
-#endif // _SDD_ORDER_STRATEGIES_FORCE_HYPEREDGE_HH_
