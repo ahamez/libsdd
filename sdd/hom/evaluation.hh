@@ -5,7 +5,6 @@
 #include <iosfwd>
 
 #include "sdd/hom/context_fwd.hh"
-#include "sdd/hom/interrupt.hh"
 #include "sdd/hom/traits.hh"
 #include "sdd/order/order.hh"
 

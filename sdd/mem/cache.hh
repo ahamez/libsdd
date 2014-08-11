@@ -3,7 +3,6 @@
 
 #include "sdd/mem/cache_entry.hh"
 #include "sdd/mem/hash_table.hh"
-#include "sdd/mem/interrupt.hh"
 #include "sdd/mem/lru_list.hh"
 #include "sdd/util/hash.hh"
 

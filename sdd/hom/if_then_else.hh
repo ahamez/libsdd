@@ -9,7 +9,6 @@
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
-#include "sdd/hom/interrupt.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom {

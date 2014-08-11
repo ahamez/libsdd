@@ -8,7 +8,6 @@
 #include "sdd/mem/cache_entry_fwd.hh"
 #include "sdd/mem/hash_table.hh"
 #include "sdd/mem/lru_list.hh"
-#include "sdd/mem/interrupt.hh"
 #include "sdd/util/hash.hh"
 
 namespace sdd { namespace mem {
