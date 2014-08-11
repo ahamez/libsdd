@@ -136,6 +136,7 @@ TYPED_TEST(hom_function_test, construction)
     const auto h1 = function<conf>(o, "b", threshold_fun<conf, true>(3));
     ASSERT_NE(h0, h1);
   }
+  /// @todo Test that construction with a hierarchical identifier fails.
 }
 
 /*------------------------------------------------------------------------------------------------*/

@@ -1,5 +1,7 @@
 #include "gtest/gtest.h"
 
+#include <stdexcept>
+
 #include "sdd/hom/context.hh"
 #include "sdd/hom/definition.hh"
 #include "sdd/hom/rewrite.hh"
@@ -45,7 +47,7 @@ struct interrupt_incr
   {
     if (val.find(2) != val.end())
     {
-      throw sdd::interrupt<C>();
+      throw std::runtime_error("");
     }
     else
     {
@@ -64,7 +66,7 @@ struct interrupt_incr
   {
     if (val.content().test(2))
     {
-      throw sdd::interrupt<C>();
+      throw std::runtime_error("");
     }
     else
     {
@@ -107,7 +109,7 @@ struct interrupt_incr_fun
   {
     if (val.find(2) != val.end())
     {
-      throw sdd::interrupt<C>();
+      throw std::runtime_error("");
     }
     else
     {
@@ -126,7 +128,7 @@ struct interrupt_incr_fun
   {
     if (val.content().test(2))
     {
-      throw sdd::interrupt<C>();
+      throw std::runtime_error("");
     }
     else
     {
@@ -212,7 +214,7 @@ TYPED_TEST(hom_interruption_test, function_fixpoint)
     order o(order_builder {"2", "1", "0"});
     SDD s0(o, [](const std::string&){return values_type{0};});
     homomorphism h0 = fixpoint(sum(o, {function(o, "0", interrupt_incr_fun<conf>(1)), id}));
-    ASSERT_THROW(h0(o, s0), sdd::interrupt<conf>);
+    ASSERT_THROW(h0(o, s0), std::runtime_error);
   }
   {
     order o(order_builder {"2", "1", "0"});
@@ -221,7 +223,7 @@ TYPED_TEST(hom_interruption_test, function_fixpoint)
                                       , function(o, "2", interrupt_incr_fun<conf>(1))
                                       , id
                                       }));
-    ASSERT_THROW(h0(o, s0), sdd::interrupt<conf>);
+    ASSERT_THROW(h0(o, s0), std::runtime_error);
   }
 }
 
@@ -233,7 +235,7 @@ TYPED_TEST(hom_interruption_test, inductive_fixpoint)
     order o(order_builder {"2", "1", "0"});
     SDD s0(o, [](const std::string&){return values_type{0};});
     homomorphism h0 = fixpoint(sum(o, {inductive<conf>(interrupt_incr<conf>("0", 1)), id}));
-    ASSERT_THROW(h0(o, s0), sdd::interrupt<conf>);
+    ASSERT_THROW(h0(o, s0), std::runtime_error);
   }
   {
     order o(order_builder {"2", "1", "0"});
@@ -242,7 +244,7 @@ TYPED_TEST(hom_interruption_test, inductive_fixpoint)
                                       , inductive<conf>(interrupt_incr<conf>("2", 1))
                                       , id
                                       }));
-    ASSERT_THROW(h0(o, s0), sdd::interrupt<conf>);
+    ASSERT_THROW(h0(o, s0), std::runtime_error);
   }
 }
 
@@ -255,7 +257,7 @@ TYPED_TEST(hom_interruption_test, saturation)
     SDD s0(o, [](const std::string&){return values_type{0};});
     homomorphism h0
       = sdd::rewrite(o, fixpoint(sum(o, {inductive<conf>(interrupt_incr<conf>("0", 1)), id})));
-    ASSERT_THROW(h0(o, s0), sdd::interrupt<conf>);
+    ASSERT_THROW(h0(o, s0), std::runtime_error);
   }
   {
     order o(order_builder {"2", "1", "0"});
@@ -265,7 +267,7 @@ TYPED_TEST(hom_interruption_test, saturation)
                                                     , inductive<conf>(interrupt_incr<conf>("2", 1))
                                                     , id
                                                     })));
-    ASSERT_THROW(h0(o, s0), sdd::interrupt<conf>);
+    ASSERT_THROW(h0(o, s0), std::runtime_error);
   }
 }
 

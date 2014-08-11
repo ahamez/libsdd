@@ -1,5 +1,7 @@
 #include "gtest/gtest.h"
 
+#include <stdexcept>
+
 #include "sdd/mem/cache.hh"
 
 using namespace sdd::mem;
@@ -11,24 +13,6 @@ struct context
 };
 
 context cxt;
-
-
-struct error
-  : public std::exception
-{
-  const char*
-  what()
-  const noexcept
-  {
-    return std::string().c_str();
-  }
-
-  template <typename Operation>
-  void
-  add_step(Operation&&)
-  {
-  }
-};
 
 
 struct operation
@@ -48,7 +32,7 @@ struct operation
   {
     if (i_ == 6666)
     {
-      throw error();
+      throw std::runtime_error("");
     }
     return i_ + 1;
   }
@@ -91,7 +75,7 @@ struct hash<operation>
 
 TEST(cache, creation)
 {
-  cache<context, operation, error> c(cxt, 100);
+  cache<context, operation> c(cxt, 100);
   const auto& stats = c.statistics();
 
   ASSERT_EQ(0u, stats.hits);
@@ -104,7 +88,7 @@ TEST(cache, creation)
 
 TEST(cache, insertion)
 {
-  cache<context, operation, error> c(cxt, 100);
+  cache<context, operation> c(cxt, 100);
   const auto& stats = c.statistics();
 
   ASSERT_EQ(2u, c(operation(1)));
@@ -275,7 +259,7 @@ TEST(cache, filters)
     ASSERT_FALSE((true_filter_2::used));
   }
   {
-    cache<context, operation, error, filter_0> c(cxt, 100);
+    cache<context, operation, filter_0> c(cxt, 100);
     const auto& stats = c.statistics();
 
     ASSERT_EQ(2u, c(operation(1)));
@@ -294,7 +278,7 @@ TEST(cache, filters)
     ASSERT_EQ(2u, stats.filtered);
   }
   {
-    cache<context, operation, error, filter_0, filter_1> c(cxt, 100);
+    cache<context, operation, filter_0, filter_1> c(cxt, 100);
     const auto& stats = c.statistics();
 
     ASSERT_EQ(2u, c(operation(1)));
@@ -329,12 +313,12 @@ TEST(cache, filters)
 TEST(cache, exception)
 {
   {
-    cache<context, operation, error> c(cxt, 100);
-    ASSERT_THROW(c(operation(6666)), error);
+    cache<context, operation> c(cxt, 100);
+    ASSERT_THROW(c(operation(6666)), std::runtime_error);
   }
   {
-    cache<context, operation, error, filter_6666> c(cxt, 100);
-    ASSERT_THROW(c(operation(6666)), error);
+    cache<context, operation, filter_6666> c(cxt, 100);
+    ASSERT_THROW(c(operation(6666)), std::runtime_error);
   }
 }
 

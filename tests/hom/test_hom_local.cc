@@ -55,6 +55,7 @@ TYPED_TEST(hom_local_test, construction)
     const homomorphism h2 = local("0", o, inductive<conf>(targeted_incr<conf>("0",2)));
     ASSERT_NE(h1, h2);
   }
+  /// @todo Test that construction with a flat identifier fails.
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -73,26 +74,6 @@ TYPED_TEST(hom_local_test, evaluation)
   const homomorphism h2 = local("y", o, inductive<conf>(targeted_incr<conf>("b",1)));
   ASSERT_EQ( SDD(1, SDD(0, {0}, one), SDD(0, SDD(0, {2}, one), one))
            , h2(o, s0));
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
-TYPED_TEST(hom_local_test, error)
-{
-  const order o(order_builder {"a", "b"});
-
-  const SDD s0 = SDD(1, {0}, SDD(0, {1}, one));
-  const homomorphism h1 = local("a", o, inductive<conf>(targeted_incr<conf>("x",1)));
-  ASSERT_THROW(h1(o, s0), sdd::evaluation_error<conf>);
-  try
-  {
-    h1(o, s0);
-  }
-  catch (sdd::evaluation_error<conf>& e)
-  {
-    ASSERT_EQ(s0, e.operand());
-    ASSERT_NE(nullptr, e.what());
-  }
 }
 
 /*------------------------------------------------------------------------------------------------*/
