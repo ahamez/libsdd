@@ -37,8 +37,10 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_op
 
   /// @brief The dynamically allocated array of operands.
   ///
-  /// The concrete type will always be an SDD<C>. But we need a raw memory storage as SDD<C> doesn't
-  /// have a default constructor. This storage will be filled by the constructor.
+  /// The concrete type will always be an SDD<C>. We use a raw memory storage as we don't want to
+  /// build useless default SDD (the |0| terminal). This storage will be filled by the constructor.
+  /// Also, as an operation is moved by the cache, we stick to a pointer (contrary to SDD nodes or
+  /// homomorphisms n-ary operations) to avoid to move all operands.
   char* operands;
 
   /// @brief The number of operands.
