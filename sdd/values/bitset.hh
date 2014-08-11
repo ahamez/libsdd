@@ -1,5 +1,4 @@
-#ifndef _SDD_VALUES_BISET_HH_
-#define _SDD_VALUES_BISET_HH_
+#pragma once
 
 #include <bitset>
 #include <functional> // hash
@@ -213,5 +212,3 @@ struct hash<sdd::values::bitset<Size>>
 /*------------------------------------------------------------------------------------------------*/
   
 } // namespace std
-
-#endif // _SDD_VALUES_BISET_HH_

@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_ALPHA_HH_
-#define _SDD_DD_ALPHA_HH_
+#pragma once
 
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition_fwd.hh"
@@ -189,5 +188,3 @@ struct hash<sdd::arc<C, Valuation>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_DD_ALPHA_HH_

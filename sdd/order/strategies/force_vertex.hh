@@ -1,5 +1,4 @@
-#ifndef _SDD_ORDER_STRATEGIES_FORCE_VERTEX_HH_
-#define _SDD_ORDER_STRATEGIES_FORCE_VERTEX_HH_
+#pragma once
 
 #include <vector>
 
@@ -80,5 +79,3 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::force
-
-#endif // _SDD_ORDER_STRATEGIES_FORCE_VERTEX_HH_

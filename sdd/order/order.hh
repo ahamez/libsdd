@@ -1,5 +1,4 @@
-#ifndef _SDD_ORDER_ORDER_HH_
-#define _SDD_ORDER_ORDER_HH_
+#pragma once
 
 #include <algorithm>  // find
 #include <initializer_list>
@@ -364,5 +363,3 @@ struct hash<sdd::order<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_ORDER_ORDER_HH_

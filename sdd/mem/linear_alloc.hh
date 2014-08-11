@@ -1,5 +1,4 @@
-#ifndef _SDD_MEM_LINEAR_ALLOC_HH_
-#define _SDD_MEM_LINEAR_ALLOC_HH_
+#pragma once
 
 #include <cassert>
 #include <cstddef>
@@ -304,5 +303,3 @@ noexcept
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::mem
-
-#endif // _SDD_MEM_LINEAR_ALLOC_HH_

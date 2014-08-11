@@ -1,5 +1,4 @@
-#ifndef _SDD_ORDER_STRATEGIES_FLATTEN_HH_
-#define _SDD_ORDER_STRATEGIES_FLATTEN_HH_
+#pragma once
 
 #include "sdd/order/order_builder.hh"
 
@@ -35,5 +34,3 @@ struct flatten
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_ORDER_STRATEGIES_FLATTEN_HH_

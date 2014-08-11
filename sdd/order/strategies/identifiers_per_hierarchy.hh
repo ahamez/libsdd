@@ -1,5 +1,4 @@
-#ifndef _SDD_ORDER_IDENTIFIERS_VARIABLES_PER_HIERARCHY_HH_
-#define _SDD_ORDER_IDENTIFIERS_VARIABLES_PER_HIERARCHY_HH_
+#pragma once
 
 #include <list>
 
@@ -87,5 +86,3 @@ private:
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_ORDER_IDENTIFIERS_VARIABLES_PER_HIERARCHY_HH_

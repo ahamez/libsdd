@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_EXPRESSION_STACKS_HH_
-#define _SDD_HOM_EXPRESSION_STACKS_HH_
+#pragma once
 
 #include <memory> // shared_ptr
 
@@ -53,5 +52,3 @@ struct sdd_stack
 /*------------------------------------------------------------------------------------------------*/
 
 }}} // namespace sdd::hom::expr
-
-#endif // _SDD_HOM_EXPRESSION_STACKS_HH_

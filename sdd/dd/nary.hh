@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_NARY_HH_
-#define _SDD_DD_NARY_HH_
+#pragma once
 
 #include <algorithm> // copy, equal
 #include <initializer_list>
@@ -272,5 +271,3 @@ struct hash<sdd::dd::nary_op<C, Operation>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_DD_NARY_HH_

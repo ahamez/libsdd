@@ -1,5 +1,4 @@
-#ifndef _SDD_VALUES_FLAT_SET_HH_
-#define _SDD_VALUES_FLAT_SET_HH_
+#pragma once
 
 #include <algorithm>   // copy, set_difference, set_intersection, set_union
 #include <functional>  // hash
@@ -582,5 +581,3 @@ struct hash<sdd::values::flat_set<Value>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_VALUES_FLAT_SET_HH_

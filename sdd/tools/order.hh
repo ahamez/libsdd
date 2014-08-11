@@ -1,5 +1,4 @@
-#ifndef _SDD_TOOLS_ORDER_HH_
-#define _SDD_TOOLS_ORDER_HH_
+#pragma once
 
 #include <cassert>
 #include <iosfwd>
@@ -195,5 +194,3 @@ dump_order(order<C> o, std::ostream& out)
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::tools
-
-#endif // _SDD_TOOLS_ORDER_HH_

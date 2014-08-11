@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_COMMON_TYPES_HH_
-#define _SDD_HOM_COMMON_TYPES_HH_
+#pragma once
 
 #include <boost/container/flat_set.hpp>
 #include <boost/optional.hpp>
@@ -27,5 +26,3 @@ using homomorphism_set = boost::container::flat_set<homomorphism<C>>;
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::hom
-
-#endif // _SDD_HOM_COMMON_TYPES_HH_

@@ -1,5 +1,4 @@
-#ifndef _SDD_VALUES_VALUES_TRAITS_HH_
-#define _SDD_VALUES_VALUES_TRAITS_HH_
+#pragma once
 
 namespace sdd { namespace values {
 
@@ -18,5 +17,3 @@ struct values_traits
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::values
-
-#endif // _SDD_VALUES_VALUES_TRAITS_HH_

@@ -1,5 +1,4 @@
-#ifndef _SDD_MEM_VARIANT_HH_
-#define _SDD_MEM_VARIANT_HH_
+#pragma once
 
 #ifndef LIBSDD_VARIANT_SIZE
 #define LIBSDD_VARIANT_SIZE 16
@@ -295,5 +294,3 @@ struct hash<sdd::mem::variant<Types...>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_INTERNAL_MEM_VARIANT_HH_

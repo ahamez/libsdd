@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_DIFFERENCE_HH_
-#define _SDD_DD_DIFFERENCE_HH_
+#pragma once
 
 #include <cassert>
 #include <iosfwd>
@@ -267,5 +266,3 @@ struct hash<sdd::dd::difference_op<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_DD_DIFFERENCE_HH_

@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_DEFINITION_HH_
-#define _SDD_DD_DEFINITION_HH_
+#pragma once
 
 #include <cassert>
 
@@ -576,5 +575,3 @@ struct hash<sdd::SDD<C>>
 
 #include "sdd/dd/count_combinations.hh"
 #include "sdd/dd/path_generator.hh"
-
-#endif // _SDD_DD_DEFINITION_HH_

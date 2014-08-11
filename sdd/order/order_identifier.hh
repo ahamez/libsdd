@@ -1,5 +1,4 @@
-#ifndef _SDD_ORDER_ORDER_IDENTIFIER_HH_
-#define _SDD_ORDER_ORDER_IDENTIFIER_HH_
+#pragma once
 
 #include "sdd/util/hash.hh"
 
@@ -135,7 +134,3 @@ struct hash<sdd::order_identifier<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_ORDER_ORDER_IDENTIFIER_HH_
-
-

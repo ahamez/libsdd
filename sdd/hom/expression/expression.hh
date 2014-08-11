@@ -1,7 +1,5 @@
-#ifndef _SDD_HOM_EXPRESSION_EXPRESSION_HH_
-#define _SDD_HOM_EXPRESSION_EXPRESSION_HH_
-
 #if !defined(HAS_NO_BOOST_COROUTINE)
+#pragma once
 
 #include <algorithm> // any_of, find
 #include <cassert>
@@ -409,5 +407,3 @@ struct expression_pre
 }}} // namespace sdd::hom::expr
 
 #endif // !defined(HAS_NO_BOOST_COROUTINE)
-
-#endif // _SDD_HOM_EXPRESSION_EXPRESSION_HH_

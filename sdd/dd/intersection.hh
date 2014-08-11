@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_INTERSECTION_HH_
-#define _SDD_DD_INTERSECTION_HH_
+#pragma once
 
 #include <boost/container/flat_set.hpp>
 
@@ -264,5 +263,3 @@ intersection(std::initializer_list<SDD<C>> operands)
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
-
-#endif // _SDD_DD_INTERSECTION_HH_

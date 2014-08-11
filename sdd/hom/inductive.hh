@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_INDUCTIVE_HH_
-#define _SDD_HOM_INDUCTIVE_HH_
+#pragma once
 
 #include <cassert>
 #include <iosfwd>
@@ -372,5 +371,3 @@ struct hash<sdd::hom::_inductive<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_HOM_INDUCTIVE_HH_

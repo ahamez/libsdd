@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_CONTEXT_HH_
-#define _SDD_HOM_CONTEXT_HH_
+#pragma once
 
 #include <memory> // make_shared, shared_ptr
 
@@ -79,5 +78,3 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::hom
-
-#endif // _SDD_HOM_CONTEXT_HH_

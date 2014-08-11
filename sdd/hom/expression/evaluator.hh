@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_EXPRESSION_EVALUATOR_HH_
-#define _SDD_HOM_EXPRESSION_EVALUATOR_HH_
+#pragma once
 
 #include <cassert>
 #include <iosfwd>
@@ -148,5 +147,3 @@ private:
 /*------------------------------------------------------------------------------------------------*/
 
 }}} // namespace sdd::hom::expr
-
-#endif // _SDD_HOM_EXPRESSION_EVALUATOR_HH_

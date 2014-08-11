@@ -1,5 +1,4 @@
-#ifndef _SDD_MEM_LRU_LIST_HH_
-#define _SDD_MEM_LRU_LIST_HH_
+#pragma once
 
 #include <list>
 
@@ -17,6 +16,3 @@ using lru_list = std::list<cache_entry<Operation, Result>*>;
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::mem
-
-
-#endif // _SDD_MEM_LRU_LIST_HH_

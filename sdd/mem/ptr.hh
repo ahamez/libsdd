@@ -1,5 +1,4 @@
-#ifndef _SDD_MEM_PTR_HH_
-#define _SDD_MEM_PTR_HH_
+#pragma once
 
 #include <cassert>
 #include <functional>  // hash, function
@@ -188,5 +187,3 @@ struct hash<sdd::mem::ptr<Unique>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_MEM_PTR_HH_

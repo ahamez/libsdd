@@ -1,5 +1,4 @@
-#ifndef _SDD_UTIL_NEXT_POWER_HH_
-#define _SDD_UTIL_NEXT_POWER_HH_
+#pragma once
 
 #include <limits>
 #include <type_traits> // enable_if
@@ -52,5 +51,3 @@ next_power_of_2(T x)
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::util
-
-#endif // _SDD_UTIL_NEXT_POWER_HH_

@@ -1,5 +1,4 @@
-#ifndef _SDD_SDD_HH_
-#define _SDD_SDD_HH_
+#pragma once
 
 #include "sdd/conf/default_configurations.hh"
 #include "sdd/dd/context.hh"
@@ -43,5 +42,3 @@ namespace values {}
 
 /// @brief Essentially hash specialization.
 namespace std {}
-
-#endif // _SDD_SDD_HH_

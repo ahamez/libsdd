@@ -1,5 +1,4 @@
-#ifndef _SDD_MEM_VARIANT_IMPL_HH_
-#define _SDD_MEM_VARIANT_IMPL_HH_
+#pragma once
 
 #include <cassert>
 #include <cstdint>     // uint8_t
@@ -359,5 +358,3 @@ binary_dispatch( const Visitor& v
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::mem
-
-#endif // _SDD_MEM_VARIANT_IMPL_HH_

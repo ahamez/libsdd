@@ -1,5 +1,4 @@
-#ifndef _SDD_MEM_REF_COUNTED_HH_
-#define _SDD_MEM_REF_COUNTED_HH_
+#pragma once
 
 #include <cassert>
 #include <cstdint>     // uint32_t
@@ -171,5 +170,3 @@ struct hash<sdd::mem::ref_counted<T>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_MEM_REF_COUNTED_HH_

@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_COUNT_COMBINATIONS_HH_
-#define _SDD_DD_COUNT_COMBINATIONS_HH_
+#pragma once
 
 #include <unordered_map>
 
@@ -94,5 +93,3 @@ count_combinations(const SDD<C>& x)
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::dd
-
-#endif // _SDD_DD_COUNT_COMBINATIONS_HH_

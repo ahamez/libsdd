@@ -1,5 +1,4 @@
-#ifndef _SDD_VALUES_EMPTY_HH_
-#define _SDD_VALUES_EMPTY_HH_
+#pragma once
 
 namespace sdd { namespace values {
 
@@ -41,5 +40,3 @@ noexcept(noexcept(empty_values_impl(x, 0)))
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::values
-
-#endif // _SDD_VALUES_EMPTY_HH_

@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_FUNCTION_HH_
-#define _SDD_HOM_FUNCTION_HH_
+#pragma once
 
 #include <algorithm> // find
 #include <iosfwd>
@@ -387,5 +386,3 @@ struct hash<sdd::hom::_function<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_HOM_FUNCTION_HH_

@@ -1,5 +1,4 @@
-#ifndef _SDD_DD_CONTEXT_HH_
-#define _SDD_DD_CONTEXT_HH_
+#pragma once
 
 #include <memory> // make_shared, shared_ptr
 
@@ -109,5 +108,3 @@ public:
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::dd
-
-#endif // _SDD_DD_CONTEXT_HH_

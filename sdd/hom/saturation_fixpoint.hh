@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_SATURATION_FIXPOINT_HH_
-#define _SDD_HOM_SATURATION_FIXPOINT_HH_
+#pragma once
 
 #include <algorithm>  // all_of, copy, equal
 #include <iosfwd>
@@ -244,5 +243,3 @@ struct hash<sdd::hom::_saturation_fixpoint<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_HOM_SATURATION_FIXPOINT_HH_

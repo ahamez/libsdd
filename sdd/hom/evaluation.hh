@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_EVALUATION_HH_
-#define _SDD_HOM_EVALUATION_HH_
+#pragma once
 
 #include <cassert>
 #include <iosfwd>
@@ -198,5 +197,3 @@ struct hash<sdd::hom::cached_homomorphism<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_HOM_EVALUATION_HH_

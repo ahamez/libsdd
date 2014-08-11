@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_IF_THEN_ELSE_HH_
-#define _SDD_HOM_IF_THEN_ELSE_HH_
+#pragma once
 
 #include <iosfwd>
 #include <stdexcept> // invalid_argument
@@ -153,5 +152,3 @@ struct hash<sdd::hom::_if_then_else<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_HOM_IF_THEN_ELSE_HH_
