@@ -7,10 +7,8 @@
 #include <typeinfo>  // typeid
 
 #include "sdd/dd/definition.hh"
-#include "sdd/dd/top.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
-#include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/interrupt.hh"
 #include "sdd/util/packed.hh"
 #include "sdd/order/carrier.hh"
@@ -249,7 +247,8 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
               , const function_base<C>&, context<C>&, const order<C>&)
     const
     {
-      throw evaluation_error<C>(s);
+      assert(false && "Apply function on an hierarchical node");
+      __builtin_unreachable();
     }
 
     /// @brief Evaluation on a flat node.
@@ -276,20 +275,11 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
       {
         dd::sum_builder<C, SDD<C>> sum_operands(cxt.sdd_context());
         sum_operands.reserve(node.size());
-        try
+        for (const auto& arc : node)
         {
-          for (const auto& arc : node)
-          {
-            sum_operands.add(SDD<C>(o.variable(), fun(arc.valuation()), arc.successor()));
-          }
-          return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+          sum_operands.add(SDD<C>(o.variable(), fun(arc.valuation()), arc.successor()));
         }
-        catch (top<C>& t)
-        {
-          evaluation_error<C> e(s);
-          e.add_top(t);
-          throw e;
-        }
+        return dd::sum(cxt.sdd_context(), std::move(sum_operands));
       }
     }
   };
@@ -366,9 +356,10 @@ function(order_position_type pos, const User& u)
 /// created.
 template <typename C, typename User>
 homomorphism<C>
-function(const order<C>& o, const typename C::Identifier& i, const User& u)
+function(const order<C>& o, const typename C::Identifier& id, const User& u)
 {
-  return carrier(o, i, function<C>(o.node(i).position(), u));
+  /// @todo Check that id is a flat identifier.
+  return carrier(o, id, function<C>(o.node(id).position(), u));
 }
 
 /*------------------------------------------------------------------------------------------------*/

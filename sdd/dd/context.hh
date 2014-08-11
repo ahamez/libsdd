@@ -8,7 +8,6 @@
 #include "sdd/dd/difference.hh"
 #include "sdd/dd/intersection.hh"
 #include "sdd/dd/sum.hh"
-#include "sdd/dd/top.hh"
 #include "sdd/mem/cache.hh"
 #include "sdd/mem/linear_alloc.hh"
 
@@ -27,14 +26,14 @@ class context
 {
 public:
 
-  /// @brief Cache parameterized by the difference operation and the top error.
-  using difference_cache_type = mem::cache<context, difference_op<C>, top<C>>;
+  /// @brief Cache parameterized by the difference operation.
+  using difference_cache_type = mem::cache<context, difference_op<C>>;
 
-  /// @brief Cache parameterized by the intersection operation and the top error.
-  using intersection_cache_type = mem::cache<context, intersection_op<C>, top<C>>;
+  /// @brief Cache parameterized by the intersection operation.
+  using intersection_cache_type = mem::cache<context, intersection_op<C>>;
 
-  /// @brief Cache parameterized by the sum operation and the top error.
-  using sum_cache_type = mem::cache<context, sum_op<C>, top<C>>;
+  /// @brief Cache parameterized by the sum operation.
+  using sum_cache_type = mem::cache<context, sum_op<C>>;
 
 private:
 

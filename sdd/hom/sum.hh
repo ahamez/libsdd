@@ -11,11 +11,9 @@
 #include <boost/container/flat_set.hpp>
 
 #include "sdd/dd/definition.hh"
-#include "sdd/dd/top.hh"
 #include "sdd/hom/consolidate.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
-#include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/interrupt.hh"
 #include "sdd/hom/local.hh"
@@ -64,20 +62,11 @@ struct LIBSDD_ATTRIBUTE_PACKED _sum
   {
     dd::sum_builder<C, SDD<C>> sum_operands(cxt.sdd_context());
     sum_operands.reserve(size);
-    try
+    for (const auto& op : *this)
     {
-      for (const auto& op : *this)
-      {
-        sum_operands.add(op(cxt, o, x));
-      }
-      return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+      sum_operands.add(op(cxt, o, x));
     }
-    catch (top<C>& t)
-    {
-      evaluation_error<C> e(x);
-      e.add_top(t);
-      throw e;
-    }
+    return dd::sum(cxt.sdd_context(), std::move(sum_operands));
   }
 
   /// @brief Skip variable predicate.

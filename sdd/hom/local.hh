@@ -6,7 +6,6 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
-#include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/interrupt.hh"
 #include "sdd/order/order.hh"
@@ -42,10 +41,9 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
     context<C>& cxt_;
     const order<C>& order_;
     const homomorphism<C> h_;
-    const SDD<C> sdd_; // needed if an evaluation_error is thrown
 
-    evaluation(context<C>& cxt, const order<C>& o, const homomorphism<C>& h, const SDD<C>& s)
-      : cxt_(cxt), order_(o), h_(h), sdd_(s)
+    evaluation(context<C>& cxt, const order<C>& o, const homomorphism<C>& h)
+      : cxt_(cxt), order_(o), h_(h)
     {}
 
     /// @brief Hierarchical nodes case.
@@ -53,39 +51,30 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
     operator()(const hierarchical_node<C>& node)
     const
     {
-      try
+      if (h_.selector()) // partition won't change
       {
-        if (h_.selector()) // partition won't change
+        dd::square_union<C, SDD<C>> su(cxt_.sdd_context());
+        su.reserve(node.size());
+        for (const auto& arc : node)
         {
-          dd::square_union<C, SDD<C>> su(cxt_.sdd_context());
-          su.reserve(node.size());
-          for (const auto& arc : node)
+          const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
+          if (not new_valuation.empty())
           {
-            const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
-            if (not new_valuation.empty())
-            {
-              su.add(arc.successor(), new_valuation);
-            }
+            su.add(arc.successor(), new_valuation);
           }
-          return {node.variable(), su()};
         }
-        else // partition will change
-        {
-          dd::sum_builder<C, SDD<C>> sum_operands(cxt_.sdd_context());
-          sum_operands.reserve(node.size());
-          for (const auto& arc : node)
-          {
-            const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
-            sum_operands.add(SDD<C>(node.variable(), new_valuation, arc.successor()));
-          }
-          return dd::sum(cxt_.sdd_context(), std::move(sum_operands));
-        }
+        return {node.variable(), su()};
       }
-      catch (top<C>& t)
+      else // partition will change
       {
-        evaluation_error<C> e(sdd_);
-        e.add_top(t);
-        throw e;
+        dd::sum_builder<C, SDD<C>> sum_operands(cxt_.sdd_context());
+        sum_operands.reserve(node.size());
+        for (const auto& arc : node)
+        {
+          const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
+          sum_operands.add(SDD<C>(node.variable(), new_valuation, arc.successor()));
+        }
+        return dd::sum(cxt_.sdd_context(), std::move(sum_operands));
       }
     }
 
@@ -95,7 +84,8 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
     operator()(const T&)
     const
     {
-      throw evaluation_error<C>(sdd_);
+      assert(false && "Local applied on a flat node");
+      __builtin_unreachable();
     }
   };
 
@@ -104,7 +94,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
   const
   {
-    return visit(evaluation{cxt, o, h, s}, s);
+    return visit(evaluation{cxt, o, h}, s);
   }
 
   /// @brief Skip predicate.
@@ -167,6 +157,7 @@ template <typename C>
 homomorphism<C>
 local(const typename C::Identifier& id, const order<C>& o, const homomorphism<C>& h)
 {
+  /// @todo Check that id is a hierarchical identifier.
   return local(o.node(id).position(), h);
 }
 

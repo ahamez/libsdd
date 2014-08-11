@@ -7,7 +7,6 @@
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
 #include "sdd/hom/definition_fwd.hh"
-#include "sdd/hom/evaluation_error.hh"
 #include "sdd/hom/identity.hh"
 #include "sdd/hom/interrupt.hh"
 #include "sdd/order/order.hh"
@@ -47,22 +46,13 @@ struct _if_then_else
     dd::sum_builder<C, SDD<C>> sum_operands(cxt.sdd_context());
     sum_operands.reserve(2);
 
-    try
-    {
-      // Apply "then" on the part accepted by the predicate.
-      sum_operands.add(h_then(cxt, o, tmp));
+    // Apply "then" on the part accepted by the predicate.
+    sum_operands.add(h_then(cxt, o, tmp));
 
-      // Apply "else" on the part rejected by the predicate.
-      sum_operands.add(h_else(cxt, o, dd::difference(cxt.sdd_context(), s, tmp)));
+    // Apply "else" on the part rejected by the predicate.
+    sum_operands.add(h_else(cxt, o, dd::difference(cxt.sdd_context(), s, tmp)));
 
-      return dd::sum(cxt.sdd_context(), std::move(sum_operands));
-    }
-    catch (top<C>& t)
-    {
-      evaluation_error<C> e(s);
-      e.add_top(t);
-      throw e;
-    }
+    return dd::sum(cxt.sdd_context(), std::move(sum_operands));
   }
 
   /// @brief Skip predicate.

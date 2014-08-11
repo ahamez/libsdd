@@ -89,12 +89,10 @@ struct cache_statistics
 /// @internal
 /// @brief  A generic cache.
 /// @tparam Operation is the operation type.
-/// @tparam EvaluationError is the exception that the evaluation of an Operation can throw.
 /// @tparam Filters is a list of filters that reject some operations.
 ///
 /// It uses the LRU strategy to cleanup old entries.
-template < typename Context, typename Operation, typename EvaluationError
-         , typename... Filters>
+template <typename Context, typename Operation, typename... Filters>
 class cache
 {
   // Can't copy a cache.
@@ -164,16 +162,7 @@ public:
     if (not apply_filters<Operation, Filters...>()(op))
     {
       ++stats_.filtered;
-      try
-      {
-        return op(cxt_);
-      }
-      catch (EvaluationError& e)
-      {
-        --stats_.filtered;
-        e.add_step(std::move(op));
-        throw;
-      }
+      return op(cxt_);
     }
 
     // Lookup for op.
@@ -196,16 +185,7 @@ public:
     ++stats_.misses;
 
     cache_entry_type* entry;
-    try
-    {
-      entry = new cache_entry_type(std::move(op), op(cxt_));
-    }
-    catch (EvaluationError& e)
-    {
-      --stats_.misses;
-      e.add_step(std::move(op));
-      throw;
-    }
+    entry = new cache_entry_type(std::move(op), op(cxt_)); // evaluation may throw
 
     // Clean up the cache, if necessary.
     while (set_.size() > max_size_)

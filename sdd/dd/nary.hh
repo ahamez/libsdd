@@ -9,7 +9,6 @@
 
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition.hh"
-#include "sdd/dd/top.hh"
 #include "sdd/mem/linear_alloc.hh"
 
 namespace sdd { namespace dd {
