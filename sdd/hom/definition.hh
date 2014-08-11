@@ -8,7 +8,6 @@
 #include "sdd/dd/sum.hh"
 #include "sdd/hom/composition.hh"
 #include "sdd/hom/cons.hh"
-#include "sdd/hom/constant.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation.hh"
 #include "sdd/hom/expression.hh"
@@ -41,7 +40,6 @@ private:
   typedef mem::variant< hom::_composition<C>
                       , hom::_cons<C, SDD<C>>
                       , hom::_cons<C, typename C::Values>
-                      , hom::_constant<C>
 #if !defined(HAS_NO_BOOST_COROUTINE)
                       , hom::_expression<C>
 #endif // !defined(HAS_NO_BOOST_COROUTINE)
