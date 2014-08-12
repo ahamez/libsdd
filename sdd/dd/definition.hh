@@ -350,7 +350,7 @@ public:
     return dd::count_combinations(*this);
   }
 
-  /// @brief Equality of two SDD.
+  /// @brief Equality.
   ///
   /// O(1).
   friend
@@ -361,7 +361,7 @@ public:
     return lhs.ptr_ == rhs.ptr_;
   }
 
-  /// @brief Inequality of two SDD.
+  /// @brief Inequality.
   ///
   /// O(1).
   friend
@@ -372,9 +372,9 @@ public:
     return not (lhs.ptr_ == rhs.ptr_);
   }
 
-  /// @brief Comparison of two SDD.
+  /// @brief Less than comparison.
   ///
-  /// O(1). The order of SDD is arbitrary and can change at each run.
+  /// O(1). The order is arbitrary and can change at each run.
   friend
   bool
   operator<(const SDD& lhs, const SDD& rhs)

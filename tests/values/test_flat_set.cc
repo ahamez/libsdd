@@ -81,12 +81,6 @@ TEST_F(flat_set_test, erase)
     ASSERT_EQ((flat_set {}), fs);
     ASSERT_TRUE(fs.empty());
   }
-  {
-    flat_set fs{0, 100, 42};
-    fs.erase_keys(0, 100);
-    ASSERT_EQ(1u, fs.size());
-    ASSERT_EQ((flat_set {42}), fs);
-  }
 }
 
 /*------------------------------------------------------------------------------------------------*/

@@ -190,37 +190,6 @@ public:
     return nb_erased;
   }
 
-private:
-
-  /// @brief Recursive implementation of erase_keys when only one value is left.
-  template <typename Head>
-  void
-  erase_keys_impl(data_type& d, Head&& val)
-  {
-    d.erase(val);
-  }
-
-  /// @brief Recursive implementation of erase_keys.
-  template <typename Head, typename... Tail>
-  void
-  erase_keys_impl(data_type& d, Head&& val, Tail&&... tail)
-  {
-    d.erase(val);
-    erase_keys_impl<Tail...>(d, std::forward<Tail>(tail)...);
-  }
-
-public:
-
-  /// @brief Erase several values.
-  template <typename... Values>
-  void
-  erase_keys(Values&&... values)
-  {
-    data_type d(ptr_->data());
-    erase_keys_impl(d, std::forward<Values>(values)...);
-    ptr_ = create(std::move(d));
-  }
-
   /// @brief
   const_iterator
   lower_bound(const Value& x)
@@ -252,6 +221,42 @@ public:
   empty_set()
   {
     return global_values<flat_set<Value>>().state.empty;
+  }
+
+  /// @brief Equality.
+  ///
+  /// O(1).
+  friend
+  bool
+  operator==(const flat_set<Value>& lhs, const flat_set<Value>& rhs)
+  noexcept
+  {
+    // Pointer equality.
+    return lhs.ptr() == rhs.ptr();
+  }
+
+  /// @brief Inequality.
+  ///
+  /// O(1).
+  friend
+  bool
+  operator!=(const flat_set<Value>& lhs, const flat_set<Value>& rhs)
+  noexcept
+  {
+    // Pointer inequality.
+    return not(lhs.ptr() == rhs.ptr());
+  }
+
+  /// @brief Less than comparison.
+  ///
+  /// O(1). The order on flat_set is arbitrary.
+  friend
+  bool
+  operator<(const flat_set<Value>& lhs, const flat_set<Value>& rhs)
+  noexcept
+  {
+    // Pointer comparison.
+    return lhs.ptr() < rhs.ptr();
   }
 
 private:
@@ -376,54 +381,6 @@ struct values_traits<flat_set<Value>>
   using state_type = flat_set_manager<Value>;
   using builder = boost::container::flat_set<Value>;
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @brief Equality of flat_set
-/// @related flat_set
-///
-/// O(1).
-template <typename Value>
-inline
-bool
-operator==(const flat_set<Value>& lhs, const flat_set<Value>& rhs)
-noexcept
-{
-  // Pointer equality.
-  return lhs.ptr() == rhs.ptr();
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @brief Inequality of flat_set
-/// @related flat_set
-///
-/// O(1).
-template <typename Value>
-inline
-bool
-operator!=(const flat_set<Value>& lhs, const flat_set<Value>& rhs)
-noexcept
-{
-  // Pointer inequality.
-  return not(lhs.ptr() == rhs.ptr());
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @brief Comparison of flat_set
-/// @related flat_set
-///
-/// O(1). The order on flat_set is arbitrary. 
-template <typename Value>
-inline
-bool
-operator<(const flat_set<Value>& lhs, const flat_set<Value>& rhs)
-noexcept
-{
-  // Pointer comparison.
-  return lhs.ptr() < rhs.ptr();
-}
 
 /*------------------------------------------------------------------------------------------------*/
 

@@ -51,25 +51,28 @@ public:
     }
   }
 
+  friend
   bool
-  operator==(const bitset& other)
-  const noexcept
+  operator==(const bitset& lhs, const bitset& rhs)
+  noexcept
   {
-    return content_ == other.content_;
+    return lhs.content_ == rhs.content_;
   }
 
+  friend
   bool
-  operator!=(const bitset& other)
-  const noexcept
+  operator!=(const bitset& lhs, const bitset& rhs)
+  noexcept
   {
-    return content_ != other.content_;
+    return not (lhs == rhs);
   }
 
+  friend
   bool
-  operator<(const bitset& other)
-  const noexcept
+  operator<(const bitset& lhs, const bitset& rhs)
+  noexcept
   {
-    return content_.to_ulong() < other.content_.to_ulong();
+    return lhs.content_.to_ulong() < rhs.content_.to_ulong();
   }
 
   bitset&

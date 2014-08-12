@@ -231,57 +231,48 @@ public:
       return h.selector();
     }
   };
+
+  /// @brief Equality.
+  ///
+  /// O(1)
+  friend
+  bool
+  operator==(const homomorphism& lhs, const homomorphism& rhs)
+  noexcept
+  {
+    return lhs.ptr_ == rhs.ptr_;
+  }
+
+  /// @brief Inequality.
+  ///
+  /// O(1)
+  friend
+  bool
+  operator!=(const homomorphism<C>& lhs, const homomorphism& rhs)
+  noexcept
+  {
+    return not (lhs.ptr_ == rhs.ptr_);
+  }
+
+  /// @brief Less than comparison.
+  ///
+  /// O(1). The order is arbitrary and can change at each run.
+  friend
+  bool
+  operator<(const homomorphism<C>& lhs, const homomorphism& rhs)
+  noexcept
+  {
+    return lhs.ptr_ < rhs.ptr_;
+  }
+
+  /// @brief homomorphism textual output.
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const homomorphism& h)
+  {
+    return os << *h;
+  }
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @brief homomorphism equality.
-/// @related homomorphism
-///
-/// O(1)
-template <typename C>
-inline
-bool
-operator==(const homomorphism<C>& lhs, const homomorphism<C>& rhs)
-noexcept
-{
-  return lhs.ptr() == rhs.ptr();
-}
-
-/// @brief homomorphism inequality.
-/// @related homomorphism
-///
-/// O(1)
-template <typename C>
-inline
-bool
-operator!=(const homomorphism<C>& lhs, const homomorphism<C>& rhs)
-noexcept
-{
-  return not (lhs.ptr() == rhs.ptr());
-}
-
-/// @brief homomorphism comparison.
-/// @related homomorphism
-///
-/// O(1)
-template <typename C>
-inline
-bool
-operator<(const homomorphism<C>& lhs, const homomorphism<C>& rhs)
-noexcept
-{
-  return lhs.ptr() < rhs.ptr();
-}
-
-/// @brief homomorphism textual output.
-/// @related homomorphism
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const homomorphism<C>& h)
-{
-  return os << *h;
-}
 
 /*------------------------------------------------------------------------------------------------*/
 
