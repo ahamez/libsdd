@@ -1,10 +1,7 @@
-#if !defined(HAS_NO_BOOST_COROUTINE)
 #pragma once
 
 #include <cassert>
 #include <memory>
-
-#include <boost/coroutine/coroutine.hpp>
 
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/path_generator_fwd.hh"
@@ -18,9 +15,9 @@ template <typename C>
 struct paths_visitor
 {
   using result_type = void;
-  typename path_generator<C>::caller_type& yield;
+  path_push_type<C>& yield;
 
-  paths_visitor(typename path_generator<C>::caller_type& y)
+  paths_visitor(path_push_type<C>& y)
     : yield(y)
   {}
 
@@ -78,7 +75,7 @@ struct paths_visitor
 /// @internal
 template <typename C>
 void
-paths(typename path_generator<C>::caller_type& yield, const SDD<C>& sdd)
+paths(path_push_type<C>& yield, const SDD<C>& sdd)
 {
   path<C> tmp;
   tmp.reserve(512);
@@ -87,5 +84,3 @@ paths(typename path_generator<C>::caller_type& yield, const SDD<C>& sdd)
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::dd
-
-#endif // !defined(HAS_NO_BOOST_COROUTINE)

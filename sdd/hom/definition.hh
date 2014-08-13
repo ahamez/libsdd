@@ -39,9 +39,7 @@ private:
   typedef mem::variant< hom::_composition<C>
                       , hom::_cons<C, SDD<C>>
                       , hom::_cons<C, typename C::Values>
-#if !defined(HAS_NO_BOOST_COROUTINE)
                       , hom::_expression<C>
-#endif // !defined(HAS_NO_BOOST_COROUTINE)
                       , hom::_fixpoint<C>
                       , hom::_function<C>
                       , hom::_identity<C>

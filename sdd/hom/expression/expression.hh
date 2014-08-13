@@ -1,9 +1,15 @@
-#if !defined(HAS_NO_BOOST_COROUTINE)
 #pragma once
 
 #include <algorithm> // any_of, find
 #include <cassert>
 #include <vector>
+
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 105600
+#include <boost/coroutine/asymmetric_coroutine.hpp>
+#else
+#include <boost/coroutine/all.hpp>
+#endif
 
 #include "sdd/dd/definition.hh"
 #include "sdd/hom/context_fwd.hh"
@@ -11,7 +17,6 @@
 #include "sdd/hom/expression/evaluator.hh"
 #include "sdd/hom/expression/stacks.hh"
 #include "sdd/order/order.hh"
-#include "sdd/util/boost_coroutine_no_warnings.hh"
 
 namespace sdd { namespace hom { namespace expr {
 
@@ -22,11 +27,19 @@ namespace bcoro = boost::coroutines;
 /// @internal
 /// @brief The signature of the coroutine used to implement the expression evaluation.
 template <typename C>
-using coro = bcoro::coroutine<SDD<C>()>;
+#if BOOST_VERSION >= 105600
+using coro = typename boost::coroutines::asymmetric_coroutine<SDD<C>>::pull_type;
+#else
+using coro = typename boost::coroutines::coroutine<SDD<C>>::pull_type;
+#endif
 
 /// @internal
 template <typename C>
-using yield_type = typename coro<C>::caller_type;
+#if BOOST_VERSION >= 105600
+using yield_type = typename boost::coroutines::asymmetric_coroutine<SDD<C>>::push_type;
+#else
+using yield_type = typename boost::coroutines::coroutine<SDD<C>>::push_type;
+#endif
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -405,5 +418,3 @@ struct expression_pre
 /*------------------------------------------------------------------------------------------------*/
 
 }}} // namespace sdd::hom::expr
-
-#endif // !defined(HAS_NO_BOOST_COROUTINE)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <functional> // bind
 
 #include "sdd/internal_manager_fwd.hh"
 #include "sdd/dd/alpha.hh"
@@ -204,7 +205,6 @@ public:
     : SDD(global<C>().sdd_context, o, init)
   {}
 
-#if !defined(HAS_NO_BOOST_COROUTINE)
   /// @brief Return an iterable object which generates all paths of this SDD.
   path_generator<C>
   paths()
@@ -213,7 +213,6 @@ public:
     boost::coroutines::attributes attrs(boost::coroutines::fpu_not_preserved);
     return path_generator<C>(std::bind(dd::paths<C>, std::placeholders::_1, *this), attrs);
   }
-#endif
 
   /// @brief Indicate if the SDD is |0|.
   /// @return true if the SDD is |0|, false otherwise.

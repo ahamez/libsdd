@@ -21,7 +21,6 @@ namespace sdd { namespace hom {
 
 /*------------------------------------------------------------------------------------------------*/
 
-#if !defined(HAS_NO_BOOST_COROUTINE)
 /// @internal
 /// @brief expression homomorphism.
 template <typename C>
@@ -101,7 +100,6 @@ struct _expression
   }
 
 };
-#endif // !defined(HAS_NO_BOOST_COROUTINE)
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -225,12 +223,8 @@ expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIte
   const auto last_position = positions.back();
   if (target_pos < last_position)
   {
-#if !defined(HAS_NO_BOOST_COROUTINE)
     return homomorphism<C>::create( mem::construct<hom::_expression<C>>()
                                   , std::move(evaluator_ptr), std::move(positions), target_pos);
-#else
-    throw std::runtime_error("Can't create full expressions without Boost.Coroutine.");
-#endif
   }
   else
   {
@@ -260,7 +254,6 @@ namespace std {
 
 /*------------------------------------------------------------------------------------------------*/
 
-#if !defined(HAS_NO_BOOST_COROUTINE)
 /// @internal
 /// @brief Hash specialization for sdd::hom::_expression.
 template <typename C>
@@ -276,7 +269,6 @@ struct hash<sdd::hom::_expression<C>>
     return seed;
   }
 };
-#endif // !defined(HAS_NO_BOOST_COROUTINE)
 
 /// @internal
 /// @brief Hash specialization for sdd::hom::s_imple_expression.
