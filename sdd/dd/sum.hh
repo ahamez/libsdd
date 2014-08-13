@@ -233,8 +233,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
                    , mem::linear_alloc<std::pair<value_type, sum_builder_type>>(cxt.arena()));
     value_to_succ.reserve(std::distance(begin, end) * 2);
 
-    auto cit = begin;
-    for (; cit != end; ++cit)
+    for (auto cit = begin; cit != end; ++cit)
     {
       check_compatibility(*begin, *cit);
 
