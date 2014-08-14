@@ -11,7 +11,6 @@ find_package(Doxygen QUIET)
 
 ################################################################################
 
-option (TEST "Build and run tests." OFF)
 option (PACKED "Pack structures" OFF)
 option (COVERAGE "Code coverage" OFF)
 option (INTERNAL_DOC "Generate internal documentation" OFF)
@@ -83,13 +82,7 @@ include_directories("${PROJECT_SOURCE_DIR}")
 
 ################################################################################
 
-add_subdirectory(examples)
-
-################################################################################
-
-if (TEST)
-  enable_testing()
-  add_subdirectory(tests)
-endif ()
+enable_testing()
+add_subdirectory(tests)
 
 ################################################################################
