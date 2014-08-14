@@ -292,13 +292,9 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
 
 /// @internal
 /// @brief Add an arc to the operands of the sum operation.
-///
-/// This implementation is meant to be used as a policy by nary_builder which doesn't know how
-/// to add an arc.
-template <typename C, typename Valuation>
-struct sum_builder_impl
+struct sum_builder_policy
 {
-  template <typename Container>
+  template <typename Container, typename Valuation>
   void
   add(Container& set, Valuation&& operand)
   {
@@ -308,7 +304,7 @@ struct sum_builder_impl
     }
   }
 
-  template <typename Container>
+  template <typename Container, typename Valuation>
   void
   add(Container& set, const Valuation& operand)
   {
@@ -322,7 +318,7 @@ struct sum_builder_impl
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief   The sum operation of a set of SDD.
+/// @brief The sum operation of a set of SDD.
 /// @related sdd::SDD
 template <typename C>
 inline
@@ -343,7 +339,7 @@ sum(context<C>& cxt, sum_builder<C, SDD<C>>&& builder)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief   The sum operation of a set of values.
+/// @brief The sum operation of a set of values.
 /// @details A wrapper around the implementation of sum provided by Values.
 template <typename C, typename Values>
 inline

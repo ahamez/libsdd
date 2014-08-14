@@ -101,22 +101,18 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
 
 /// @internal
 /// @brief Add an arc to the operands of the intersection operation.
-///
-/// This implementation is meant to be used as a policy by nary_builder which doesn't know how
-/// to add an arc.
-template <typename C, typename Valuation>
-struct intersection_builder_impl
+struct intersection_builder_policy
 {
   /// @brief Tell if a zero is contained in this set of operands.
   bool has_zero;
 
   /// @brief Constructor.
-  intersection_builder_impl()
+  intersection_builder_policy()
     : has_zero(false)
   {}
 
   /// @brief Add an rvalue operand.
-  template <typename Container>
+  template <typename Container, typename Valuation>
   void
   add(Container& set, Valuation&& operand)
   {
@@ -134,7 +130,7 @@ struct intersection_builder_impl
   }
 
   /// @brief Add an lvalue operand.
-  template <typename Container>
+  template <typename Container, typename Valuation>
   void
   add(Container& set, const Valuation& operand)
   {

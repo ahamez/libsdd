@@ -22,18 +22,16 @@ difference(context<C>&, const Values&, const Values&);
 
 /*------------------------------------------------------------------------------------------------*/
 
-// Forward declaration of the implementation of the intersection builder.
-template <typename C, typename Valuation>
-struct intersection_builder_impl;
+// Forward declaration of the intersection builder policy.
+struct intersection_builder_policy;
 
 // Forward declaration of the implementation of the SDD intersecton operation.
-template <typename C>
-struct intersection_op_impl;
+template <typename C> struct intersection_op_impl;
 
 /// @internal
 /// @brief Use to build intersection operands.
 template <typename C, typename Valuation>
-using intersection_builder = nary_builder<C, Valuation, intersection_builder_impl<C, Valuation>>;
+using intersection_builder = nary_builder<C, Valuation, intersection_builder_policy>;
 
 /// @internal
 /// @brief Used as a template parameter by nary_op to implement the SDD intersection operation.
@@ -52,18 +50,16 @@ intersection(context<C>&, const intersection_builder<C, Values>&);
 
 /*------------------------------------------------------------------------------------------------*/
 
-// Forward declaration of the sum of the intersection builder.
-template <typename C, typename Valuation>
-struct sum_builder_impl;
+// Forward declaration of the sum builder policy.
+struct sum_builder_policy;
 
 // Forward declaration of the implementation of the SDD sum operation.
-template <typename C>
-struct sum_op_impl;
+template <typename C> struct sum_op_impl;
 
 /// @internal
 /// @brief Use to build sum operands.
 template <typename C, typename Valuation>
-using sum_builder = nary_builder<C, Valuation, sum_builder_impl<C, Valuation>>;
+using sum_builder = nary_builder<C, Valuation, sum_builder_policy>;
 
 /// @internal
 /// @brief Used as a template parameter by nary_op to implement the SDD sum operation.

@@ -140,7 +140,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_op
 /// construction of operations in nary_op).
 template <typename C, typename Valuation, typename Builder>
 struct LIBSDD_ATTRIBUTE_PACKED nary_builder
-  : public Builder
+  : private Builder
 {
   using builder_type = Builder;
   using set_type = boost::container::flat_set< Valuation, std::less<Valuation>
