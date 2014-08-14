@@ -92,7 +92,7 @@ main(int argc, char** argv)
       std::cerr << "Can't write " << dot_file_path << std::endl;
       return 3;
     }
-    dot_file << sdd::tools::dot(dict);
+    dot_file << sdd::tools::dot(dict, order);
   }
 
   return 0;

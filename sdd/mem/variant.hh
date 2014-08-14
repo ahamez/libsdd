@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef LIBSDD_VARIANT_SIZE
-#define LIBSDD_VARIANT_SIZE 16
+#define LIBSDD_VARIANT_SIZE 17
 #endif
 
 #include <cstdint>     // uint8_t

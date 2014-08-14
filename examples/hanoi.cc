@@ -51,7 +51,8 @@ struct no_ring_above
   const
   {
     Values v(val);
-    v.erase_keys(i, j);
+    v.erase(i);
+    v.erase(j);
     return cons<conf>(o, std::move(v), inductive<conf>(*this));
   }
 
