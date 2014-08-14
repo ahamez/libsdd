@@ -1,5 +1,4 @@
-#ifndef _SDD_HOM_CONSTANT_HH_
-#define _SDD_HOM_CONSTANT_HH_
+#pragma once
 
 #include <iosfwd>
 
@@ -117,5 +116,3 @@ struct hash<sdd::hom::_constant<C>>
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace std
-
-#endif // _SDD_HOM_CONSTANT_HH_
