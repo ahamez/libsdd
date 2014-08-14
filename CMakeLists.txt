@@ -1,5 +1,3 @@
-################################################################################
-
 cmake_minimum_required (VERSION 2.8.10)
 
 ################################################################################
@@ -52,6 +50,8 @@ if(NOT COMPILER_SUPPORTS_CXX11)
   message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support.")
 endif ()
 
+################################################################################
+
 add_definitions("-Wall")
 add_definitions("-std=c++11")
 
@@ -72,11 +72,9 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   endif ()
 endif ()
 
-set( CMAKE_CXX_FLAGS_RELEASE
-     "${CMAKE_CXX_FLAGS_RELEASE} -O3 -fvisibility=hidden -fstrict-aliasing -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG")
 
-set( CMAKE_CXX_FLAGS_DEBUG
-     "${CMAKE_CXX_FLAGS_DEBUG} -O0")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 
 ################################################################################
 
