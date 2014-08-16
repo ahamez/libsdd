@@ -1,9 +1,10 @@
 #pragma once
 
+#include <boost/container/flat_map.hpp>
+
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition_fwd.hh"
 #include "sdd/mem/linear_alloc.hh"
-#include "sdd/util/boost_flat_map_no_warnings.hh"
 #include "sdd/util/hash.hh"
 
 namespace sdd {

@@ -7,7 +7,13 @@
 #include <type_traits> // enable_if, forward, is_same, aligned_storage, alignment_of
 #include <utility>     // forward
 
-#include "sdd/util/boost_preprocessor_no_warnings.hh"
+#include <boost/preprocessor/arithmetic/inc.hpp>
+#include <boost/preprocessor/iteration/local.hpp>
+#include <boost/preprocessor/repetition.hpp>
+#include <boost/preprocessor/repetition/repeat.hpp>
+#include <boost/preprocessor/repetition/enum_params.hpp>
+#include <boost/preprocessor/cat.hpp>
+
 #include "sdd/util/typelist.hh"
 
 namespace sdd { namespace mem {

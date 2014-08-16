@@ -1,7 +1,12 @@
 #pragma once
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wshadow"
+#include <boost/multiprecision/cpp_int.hpp>
+#pragma GCC diagnostic pop
+
 #include "sdd/dd/definition.hh"
-#include "sdd/util/boost_multiprecision_no_warnings.hh"
 
 namespace sdd { namespace dd {
 

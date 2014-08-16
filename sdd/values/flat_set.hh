@@ -8,10 +8,11 @@
 #include <type_traits> // enable_if, is_integral
 #include <utility>     // pair
 
+#include <boost/container/flat_set.hpp>
+
 #include "sdd/values_manager_fwd.hh"
 #include "sdd/mem/ptr.hh"
 #include "sdd/mem/ref_counted.hh"
-#include "sdd/util/boost_flat_set_no_warnings.hh"
 #include "sdd/util/hash.hh"
 #include "sdd/values/values_traits.hh"
 
