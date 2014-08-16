@@ -222,8 +222,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
 
     /// @brief |0| case, should never happen.
     SDD<C>
-    operator()( const zero_terminal<C>&, const SDD<C>&
-              , const function_base<C>&, context<C>&, const order<C>&)
+    operator()(const zero_terminal<C>&, const function_base<C>&, context<C>&, const order<C>&)
     const noexcept
     {
       assert(false);
@@ -232,8 +231,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
 
     /// @brief |1| case.
     SDD<C>
-    operator()( const one_terminal<C>&, const SDD<C>&
-              , const function_base<C>&, context<C>&, const order<C>&)
+    operator()(const one_terminal<C>&, const function_base<C>&, context<C>&, const order<C>&)
     const
     {
       return one<C>();
@@ -241,8 +239,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
 
     /// @brief A function can't be applied on an hierarchical node.
     SDD<C>
-    operator()( const hierarchical_node<C>&, const SDD<C>& s
-              , const function_base<C>&, context<C>&, const order<C>&)
+    operator()(const hierarchical_node<C>&, const function_base<C>&, context<C>&, const order<C>&)
     const
     {
       assert(false && "Apply function on an hierarchical node");
@@ -251,8 +248,8 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
 
     /// @brief Evaluation on a flat node.
     SDD<C>
-    operator()( const flat_node<C>& node, const SDD<C>& s
-              , const function_base<C>& fun, context<C>& cxt, const order<C>& o)
+    operator()( const flat_node<C>& node, const function_base<C>& fun, context<C>& cxt
+              , const order<C>& o)
     const
     {
       if (fun.selector() or fun.shifter())
@@ -308,7 +305,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
-    return visit_self(helper(), x, *fun_ptr, cxt, o);
+    return visit(helper(), x, *fun_ptr, cxt, o);
   }
 
   friend

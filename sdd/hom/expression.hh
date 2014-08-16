@@ -39,9 +39,9 @@ struct _expression
   const order_position_type target;
 
   /// @brief Constructor.
-  _expression( std::unique_ptr<expr::evaluator_base<C>>&& e_ptr, order_positions_type&& positions
-             , order_position_type target)
-    : eval_ptr(std::move(e_ptr)), positions(std::move(positions)), target(target)
+  _expression( std::unique_ptr<expr::evaluator_base<C>>&& e, order_positions_type&& pos
+             , order_position_type t)
+    : eval_ptr(std::move(e)), positions(std::move(pos)), target(t)
   {}
 
   /// @brief Skip variable predicate.
@@ -70,7 +70,7 @@ struct _expression
     std::shared_ptr<expr::app_stack<C>> app = nullptr;
     std::shared_ptr<expr::res_stack<C>> res = nullptr;
     expr::expression_pre<C> eval {cxt, target, *eval_ptr};
-    return visit_self(eval, sdd, o, app, res, positions.cbegin(), positions.cend());
+    return visit(eval, sdd, o, app, res, positions.cbegin(), positions.cend());
   }
 
   /// @brief Get the user's evaluator.
@@ -121,9 +121,9 @@ struct _simple_expression
   const order_position_type target;
 
   /// @brief Constructor.
-  _simple_expression( std::unique_ptr<expr::evaluator_base<C>>&& e_ptr
-                    , order_positions_type&& positions, order_position_type target)
-    : eval_ptr(std::move(e_ptr)), positions(std::move(positions)), target(target)
+  _simple_expression( std::unique_ptr<expr::evaluator_base<C>>&& e
+                    , order_positions_type&& pos, order_position_type t)
+    : eval_ptr(std::move(e)), positions(std::move(pos)), target(t)
   {}
 
   /// @brief Skip variable predicate.
@@ -152,7 +152,7 @@ struct _simple_expression
     std::shared_ptr<expr::app_stack<C>> app = nullptr;
     std::shared_ptr<expr::res_stack<C>> res = nullptr;
     expr::simple<C> eval {cxt, target, *eval_ptr};
-    return visit_self(eval, sdd, o, app, res, positions.cbegin(), positions.cend());
+    return visit(eval, sdd, o, app, res, positions.cbegin(), positions.cend());
   }
 
   /// @brief Get the user's evaluator.
