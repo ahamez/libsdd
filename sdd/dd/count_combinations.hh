@@ -83,7 +83,6 @@ struct count_combinations_visitor
 ///
 /// O(N) where N is the number of nodes in x.
 template <typename C>
-inline
 boost::multiprecision::cpp_int
 count_combinations(const SDD<C>& x)
 {
