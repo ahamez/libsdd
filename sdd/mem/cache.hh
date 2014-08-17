@@ -49,8 +49,6 @@ struct apply_filters<T, Filter, Filters...>
 
 /*------------------------------------------------------------------------------------------------*/
 
-namespace /* anonymous */ {
-
 /// @internal
 /// @brief The statistics of a cache.
 struct cache_statistics
@@ -79,8 +77,6 @@ struct cache_statistics
   /// @brief The load factor of the underlying hash table.
   double load_factor;
 };
-
-} // namespace anonymous
 
 /*------------------------------------------------------------------------------------------------*/
 

@@ -8,8 +8,6 @@ namespace sdd { namespace mem {
 
 /*------------------------------------------------------------------------------------------------*/
 
-namespace /* anonymous */ {
-
 /// @brief A unique table statistics.
 struct unique_table_statistics
 {
@@ -40,8 +38,6 @@ struct unique_table_statistics
   /// @brief The number of buckets in the underlying hash table.
   std::size_t buckets;
 };
-
-} // namespace anonymous
 
 /*------------------------------------------------------------------------------------------------*/
 

@@ -14,7 +14,7 @@
 #include "sdd/tools/sdd_statistics.hh"
 #include "sdd/tools/size.hh"
 
-namespace sdd { namespace mem { namespace /* anonymous */ {
+namespace sdd { namespace mem {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -53,7 +53,7 @@ save(Archive& archive, const cache_statistics& s)
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace mem::anonymous
+} // namespace mem
 
 /*------------------------------------------------------------------------------------------------*/
 
