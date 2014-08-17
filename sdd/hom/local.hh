@@ -40,8 +40,8 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
     const order<C>& order_;
     const homomorphism<C> h_;
 
-    evaluation(context<C>& cxt, const order<C>& o, const homomorphism<C>& h)
-      : cxt_(cxt), order_(o), h_(h)
+    evaluation(context<C>& cxt, const order<C>& o, const homomorphism<C>& op)
+      : cxt_(cxt), order_(o), h_(op)
     {}
 
     /// @brief Hierarchical nodes case.
