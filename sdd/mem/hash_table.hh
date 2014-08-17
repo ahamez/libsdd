@@ -1,8 +1,9 @@
 #pragma once
 
-#include <algorithm>  // fill
-#include <functional> // hash
-#include <utility>    // make_pair, pair
+#include <algorithm>   // fill
+#include <functional>  // hash
+#include <type_traits> // enable_if
+#include <utility>     // make_pair, pair
 
 #include "sdd/util/next_power.hh"
 #include "sdd/util/packed.hh"
@@ -32,7 +33,7 @@ struct intrusive_member_hook
 ///
 /// It's modeled after boost::intrusive. Only the interfaces needed by the libsdd are implemented.
 /// It uses chaining to handle collisions.
-template <typename Data>
+template <typename Data, bool Rehash = true>
 class hash_table
 {
 public:
@@ -58,21 +59,17 @@ private:
   const double max_load_factor_;
 
   /// @brief The number of times this hash table has been rehashed.
-  std::size_t rehash_;
-
-  /// @brief
-  const bool no_rehash_;
+  std::size_t nb_rehash_;
 
 public:
 
   /// @brief Constructor
-  hash_table(std::size_t size, double max_load_factor = 0.75, bool no_rehash = false)
+  hash_table(std::size_t size, double max_load_factor = 0.75)
     : nb_buckets_(util::next_power_of_2(size))
     , size_(0)
     , buckets_(new Data*[nb_buckets_])
     , max_load_factor_(max_load_factor)
-    , rehash_(0)
-    , no_rehash_(no_rehash)
+    , nb_rehash_(0)
   {
     std::fill(buckets_, buckets_ + nb_buckets_, nullptr);
   }
@@ -138,7 +135,8 @@ public:
     }
 
     ++size_;
-    rehash();
+
+    rehash<Rehash>();
   }
 
   /// @brief Insert an element.
@@ -147,7 +145,7 @@ public:
   noexcept(noexcept(std::hash<Data>()(x)))
   {
     auto res = insert_impl(&x, buckets_, nb_buckets_);
-    rehash();
+    rehash<Rehash>();
     return res;
   }
 
@@ -227,7 +225,7 @@ public:
   nb_rehash()
   const noexcept
   {
-    return rehash_;
+    return nb_rehash_;
   }
 
   /// @brief The number of collisions.
@@ -252,14 +250,15 @@ public:
 
 private:
 
-  void
+  template<bool DoRehash>
+  typename std::enable_if<DoRehash, void>::type
   rehash()
   {
-    if (no_rehash_ or (load_factor() < max_load_factor_))
+    if ((load_factor() < max_load_factor_))
     {
       return;
     }
-    ++rehash_;
+    ++nb_rehash_;
     auto new_nb_buckets = nb_buckets_ * 2;
     auto new_buckets = new Data*[new_nb_buckets];
     std::fill(new_buckets, new_buckets + new_nb_buckets, nullptr);
@@ -280,6 +279,11 @@ private:
     std::swap(new_nb_buckets, nb_buckets_);
     delete[] new_buckets;
   }
+
+  template<bool DoRehash>
+  typename std::enable_if<not DoRehash, void>::type
+  rehash()
+  {}
 
   /// @brief Insert an element.
   std::pair<Data*, bool>
@@ -308,6 +312,8 @@ private:
     return std::make_pair(current, true /* insertion */);
   }
 };
+
+
 
 /*------------------------------------------------------------------------------------------------*/
 

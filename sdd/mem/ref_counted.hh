@@ -143,7 +143,7 @@ private:
   template <typename, typename> friend class hash_table_iterator;
 
   // hash_table needs to access the hook.
-  template <typename> friend class hash_table;
+  template <typename, bool> friend class hash_table;
 };
 
 /*------------------------------------------------------------------------------------------------*/

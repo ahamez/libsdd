@@ -105,7 +105,7 @@ private:
   using cache_entry_type = cache_entry<Operation, result_type>;
 
   /// @brief An intrusive hash table.
-  using set_type = mem::hash_table<cache_entry_type>;
+  using set_type = mem::hash_table<cache_entry_type, false /* no rehash */>;
 
   /// @brief This cache's context.
   context_type& cxt_;
@@ -136,7 +136,7 @@ public:
   /// all the memory it needs at its construction.
   cache(context_type& context, std::size_t size)
     : cxt_(context)
-    , set_(size, max_load_factor, true /* no rehash */)
+    , set_(size, max_load_factor)
     , lru_list_()
     , max_size_(set_.bucket_count() * max_load_factor)
     , stats_()
