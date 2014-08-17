@@ -127,7 +127,7 @@ template <typename C>
 homomorphism<C>
 composition(const homomorphism<C>& left, const homomorphism<C>& right)
 {
-  return binary_visit_self(hom::composition_builder_helper<C>(), left, right);
+  return binary_visit(hom::composition_builder_helper<C>(), left, right, left, right);
 }
 
 /*------------------------------------------------------------------------------------------------*/

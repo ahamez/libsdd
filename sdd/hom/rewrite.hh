@@ -254,7 +254,7 @@ template <typename C>
 homomorphism<C>
 rewrite(const order<C>& o, const homomorphism<C>& h)
 {
-  return o.empty() ? h : visit_self(hom::rewriter<C>(), h, o);
+  return o.empty() ? h : visit(hom::rewriter<C>(), h, h, o);
 }
 
 /*------------------------------------------------------------------------------------------------*/

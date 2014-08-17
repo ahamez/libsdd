@@ -141,7 +141,7 @@ struct intersection_builder_helper
   {
     for (const auto& op : s.operands)
     {
-      visit_self(*this, op);
+      visit(*this, op, op);
     }
   }
 
@@ -188,7 +188,7 @@ intersection(const order<C>& o, InputIterator begin, InputIterator end)
   hom::intersection_builder_helper<C> ib {operands, locals};
   for (; begin != end; ++begin)
   {
-    visit_self(ib, *begin);
+    visit(ib, *begin, *begin);
   }
 
   // insert remaining locals

@@ -179,7 +179,7 @@ struct sum_builder_helper
   {
     for (const auto& op : s)
     {
-      visit_self(*this, op);
+      visit(*this, op, op);
     }
   }
 
@@ -225,7 +225,7 @@ sum(const order<C>& o, InputIterator begin, InputIterator end)
   hom::sum_builder_helper<C> sbv{locals, operands};
   for (; begin != end; ++begin)
   {
-    visit_self(sbv, *begin);
+    visit(sbv, *begin, *begin);
   }
 
   // insert remaining locals

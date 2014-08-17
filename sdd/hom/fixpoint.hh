@@ -122,7 +122,7 @@ template <typename C>
 homomorphism<C>
 fixpoint(const homomorphism<C>& h)
 {
-  return visit_self(hom::fixpoint_builder_helper<C>(), h);
+  return visit(hom::fixpoint_builder_helper<C>(), h, h);
 }
 
 /*------------------------------------------------------------------------------------------------*/

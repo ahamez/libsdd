@@ -114,7 +114,7 @@ struct cached_homomorphism
   operator()(context<C>& cxt)
   const
   {
-    return binary_visit_self(evaluation<C>(), hom, sdd, cxt, ord);
+    return binary_visit(evaluation<C>(), hom, sdd, hom, sdd, cxt, ord);
   }
 };
 

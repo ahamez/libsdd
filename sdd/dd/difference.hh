@@ -141,14 +141,14 @@ struct difference_op
   using result_type = SDD<C>;
 
   /// @brief The left operand of this difference operation.
-  const SDD<C> lhs;
+  const SDD<C> left;
 
   /// @brief The right operand of this difference operation.
-  const SDD<C> rhs;
+  const SDD<C> right;
 
   /// @brief Constructor.
   difference_op(const SDD<C>& l, const SDD<C>& r)
-  	: lhs(l), rhs(r)
+  	: left(l), right(r)
   {}
 
   /// @brief Apply this operation.
@@ -158,7 +158,7 @@ struct difference_op
   operator()(context<C>& cxt)
   const
   {
-    return binary_visit_self(difference_visitor<C>(cxt), lhs, rhs);
+    return binary_visit(difference_visitor<C>(cxt), left, right, left, right);
   }
 
   friend
@@ -166,14 +166,14 @@ struct difference_op
   operator==(const difference_op& lhs, const difference_op& rhs)
   noexcept
   {
-    return lhs.lhs == rhs.lhs and lhs.rhs == rhs.rhs;
+    return lhs.left == rhs.left and lhs.right == rhs.right;
   }
 
   friend
   std::ostream&
   operator<<(std::ostream& os, const difference_op& x)
   {
-    return os << "- (" << x.lhs << "," << x.rhs << ")";
+    return os << "- (" << x.left << "," << x.right << ")";
   }
 
 };
@@ -257,8 +257,8 @@ struct hash<sdd::dd::difference_op<C>>
   operator()(const sdd::dd::difference_op<C>& op)
   const
   {
-    std::size_t seed = sdd::util::hash(op.lhs);
-    sdd::util::hash_combine(seed, op.rhs);
+    std::size_t seed = sdd::util::hash(op.left);
+    sdd::util::hash_combine(seed, op.right);
     return seed;
   }
 };
