@@ -119,7 +119,7 @@ public:
   }
 
   /// @internal
-  /// @brief Get the content of the homomorphism (an mem::ref_counted).
+  /// @brief Get the content (of type mem::ref_counted) of the homomorphism.
   ///
   /// O(1).
   const data_type&
@@ -130,7 +130,7 @@ public:
   }
 
   /// @internal
-  /// @brief Get a pointer to the content of the homomorphism (an mem::ref_counted).
+  /// @brief Get a pointer to the content (of type mem::ref_counted) of the homomorphism.
   ///
   /// O(1).
   const data_type*
@@ -202,36 +202,6 @@ public:
     return {ptr_type(ut(u))};
   }
 
-  /// @internal
-  /// @brief Dispatch the skip predicate call to concrete homomorphisms.
-  struct skip_helper
-  {
-    using result_type = bool;
-
-    template <typename H>
-    bool
-    operator()(const H& h, const order<C>& o)
-    const noexcept
-    {
-      return h.skip(o);
-    }
-  };
-
-  /// @internal
-  /// @brief Dispatch the selector predicate call to concrete homomorphisms.
-  struct selector_helper
-  {
-    using result_type = bool;
-
-    template <typename H>
-    bool
-    operator()(const H& h)
-    const noexcept
-    {
-      return h.selector();
-    }
-  };
-
   /// @brief Equality.
   ///
   /// O(1)
@@ -272,6 +242,38 @@ public:
   {
     return os << *h;
   }
+
+private:
+
+  /// @internal
+  /// @brief Dispatch the skip predicate call to concrete homomorphisms.
+  struct skip_helper
+  {
+    using result_type = bool;
+
+    template <typename H>
+    bool
+    operator()(const H& h, const order<C>& o)
+    const noexcept
+    {
+      return h.skip(o);
+    }
+  };
+
+  /// @internal
+  /// @brief Dispatch the selector predicate call to concrete homomorphisms.
+  struct selector_helper
+  {
+    using result_type = bool;
+
+    template <typename H>
+    bool
+    operator()(const H& h)
+    const noexcept
+    {
+      return h.selector();
+    }
+  };
 };
 
 /*------------------------------------------------------------------------------------------------*/

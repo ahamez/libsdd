@@ -38,7 +38,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _sum
 
   /// @brief Constructor.
   _sum(boost::container::flat_set<homomorphism<C>>& operands)
-      : size(static_cast<operands_size_type>(operands.size()))
+    : size(static_cast<operands_size_type>(operands.size()))
   {
     // Put all homomorphisms operands right after this sum instance.
     hom::consolidate(operands_addr(), operands.begin(), operands.end());
@@ -47,7 +47,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _sum
   /// @brief Destructor.
   ~_sum()
   {
-    for (auto& h : *this)
+    for (const auto& h : *this)
     {
       h.~homomorphism<C>();
     }
@@ -106,7 +106,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _sum
 
   /// @brief Get the number of extra bytes.
   ///
-  /// These extra extra bytes correspond to the operands allocated right after this homomorphism.
+  /// These extra bytes correspond to the operands allocated right after this homomorphism.
   std::size_t
   extra_bytes()
   const noexcept
