@@ -156,10 +156,9 @@ public:
   noexcept
   {
     arc<C, Valuation>* base = reinterpret_cast<arc<C, Valuation>*>(addr);
-    std::size_t i = 0;
     for (auto& a : map_)
     {
-      new (base + i++) arc<C, Valuation>(std::move(a.second), std::move(a.first));
+      new (base++) arc<C, Valuation>(std::move(a.second), std::move(a.first));
     }
   }
 };

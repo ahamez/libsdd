@@ -239,10 +239,9 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
   noexcept
   {
     Valuation* base = reinterpret_cast<Valuation*>(addr);
-    std::size_t i = 0;
-    for (auto it = set_.begin(); it != set_.end(); ++it, ++i)
+    for (auto it = set_.begin(); it != set_.end(); ++it)
     {
-      new (base + i) Valuation(std::move(*it));
+      new (base++) Valuation(std::move(*it));
     }
   }
 };

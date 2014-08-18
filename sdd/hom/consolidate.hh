@@ -15,10 +15,9 @@ noexcept
 {
   using value_type = typename std::iterator_traits<InputIterator>::value_type;
   value_type* base = reinterpret_cast<value_type*>(addr);
-  std::size_t i = 0;
-  for (; it != end; ++it)
+  while (it != end)
   {
-    new (base + i++) value_type(std::move(*it));
+    new(base++) value_type(std::move(*it++));
   }
 }
 
