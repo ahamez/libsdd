@@ -156,9 +156,9 @@ TEST_F(ptr_test, object_life)
     ASSERT_EQ(1u, u.ref_counter_);
     {
       ptr_type b(std::move(a));
-      ASSERT_EQ(2u, u.ref_counter_);
+      ASSERT_EQ(1u, u.ref_counter_);
     }
-    ASSERT_EQ(1u, u.ref_counter_);
+    ASSERT_EQ(0u, u.ref_counter_);
   }
   ASSERT_EQ(1u, table_.nb_deletions_);
   ASSERT_EQ(0u, u.ref_counter_);
@@ -176,7 +176,7 @@ TEST_F(ptr_test, object_life)
 
     a = std::move(b);
     ASSERT_EQ(0u, u.ref_counter_);
-    ASSERT_EQ(2, v.ref_counter_);
+    ASSERT_EQ(1u, v.ref_counter_);
   }
   ASSERT_EQ(2u, table_.nb_deletions_);
   ASSERT_EQ(0u, u.ref_counter_);

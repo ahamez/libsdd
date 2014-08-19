@@ -107,6 +107,17 @@ public:
   SDD&
   operator=(const SDD&) noexcept = default;
 
+  /// @brief Move constructor.
+  ///
+  /// O(1).
+  SDD(SDD&&) noexcept = default;
+
+  /// @brief Move operator.
+  ///
+  /// O(1).
+  SDD&
+  operator=(SDD&&) noexcept = default;
+
   /// @internal
   /// @brief Construct a flat SDD in a given context.
   /// @param cxt  The construction context.

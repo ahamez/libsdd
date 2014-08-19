@@ -90,6 +90,17 @@ public:
   homomorphism&
   operator=(const homomorphism&) noexcept = default;
 
+  /// @brief Move constructor.
+  ///
+  /// O(1).
+  homomorphism(homomorphism&&) noexcept = default;
+
+  /// @brief Move operator.
+  ///
+  /// O(1).
+  homomorphism&
+  operator=(homomorphism&&) noexcept = default;
+
   /// @brief Apply this homomorphism on an SDD.
   SDD<C>
   operator()(const order<C>& o, const SDD<C>& x)

@@ -86,20 +86,61 @@ public:
 
   /// @brief Copy operator.
   ptr&
-  operator=(ptr other)
+  operator=(const ptr& other)
   noexcept
   {
-    swap(*this, other);
+    if (x_ != nullptr)
+    {
+      x_->decrement_reference_counter();
+      if (x_->is_not_referenced())
+      {
+        deletion_handler<Unique>()(*x_);
+      }
+    }
+    x_ = other.x_;
+//    if (x_ != nullptr)
+    {
+      x_->increment_reference_counter();
+    }
+    return *this;
+  }
+
+  /// @brief Move constructor.
+  ptr(ptr&& other)
+  noexcept
+    : x_(other.x_)
+  {
+    other.x_ = nullptr;
+  }
+
+  /// @brief Move operator.
+  ptr&
+  operator=(ptr&& other)
+  noexcept
+  {
+    if (x_ != nullptr)
+    {
+      x_->decrement_reference_counter();
+      if (x_->is_not_referenced())
+      {
+        deletion_handler<Unique>()(*x_);
+      }
+    }
+    x_ = other.x_;
+    other.x_ = nullptr;
     return *this;
   }
 
   /// @brief Destructor.
   ~ptr()
   {
-    x_->decrement_reference_counter();
-    if (x_->is_not_referenced())
+    if (x_ != nullptr)
     {
-      deletion_handler<Unique>()(*x_);
+      x_->decrement_reference_counter();
+      if (x_->is_not_referenced())
+      {
+        deletion_handler<Unique>()(*x_);
+      }
     }
   }
 
