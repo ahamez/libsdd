@@ -87,11 +87,15 @@ private:
   boost::container::flat_map< SDD<C>, Valuation, std::less<SDD<C>>
                             , mem::linear_alloc<std::pair<SDD<C>, Valuation>>> map_;
 
+  /// @brief End of list, if any.
+  SDD<C> eol_;
+
 public:
 
   /// @brief Default constructor.
   alpha_builder(context<C>& cxt)
     : map_(std::less<SDD<C>>(), mem::linear_alloc<std::pair<SDD<C>, Valuation>>(cxt.arena()))
+    , eol_()
   {}
 
   /// @brief Default move constructor.
@@ -138,6 +142,20 @@ public:
     map_.emplace(succ, val);
   }
 
+  /// @brief Add an end-of-list arc to the alpha.
+  void
+  add_eol(const SDD<C>& succ)
+  {
+    eol_ = succ;
+  }
+
+  /// @brief Add an end-of-list arc to the alpha.
+  void
+  add_eol(SDD<C>&& succ)
+  {
+    eol_ = std::move(succ);
+  }
+
   /// @brief Compute the size needed to store all the arcs contained by this builder.
   std::size_t
   size_to_allocate()
@@ -160,6 +178,13 @@ public:
     {
       new (base++) arc<C, Valuation>(std::move(a.second), std::move(a.first));
     }
+  }
+
+  SDD<C>&&
+  eol()
+  noexcept
+  {
+    return std::move(eol_);
   }
 };
 

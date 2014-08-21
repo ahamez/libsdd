@@ -84,6 +84,8 @@ public:
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 
+  enum class eol {flat, hierarchical};
+
 private:
 
   /// @brief The real smart pointer around a unified SDD.
@@ -117,6 +119,15 @@ public:
   /// O(1).
   SDD&
   operator=(SDD&&) noexcept = default;
+
+  /// @internal
+  SDD(dd::context<C>& cxt, const variable_type& var, eol tag, const SDD& succ)
+    : ptr_(create_eol_node(cxt, var, tag, succ))
+  {}
+
+  SDD(const variable_type& var, eol tag, const SDD& succ)
+    : SDD(global<C>().sdd_context, var, tag, succ)
+  {}
 
   /// @internal
   /// @brief Construct a flat SDD in a given context.
@@ -416,6 +427,7 @@ private:
   {
     if (succ.empty() or values::empty_values(val))
     {
+      std::cout << "succ.empty() or values::empty_values(val)\n";
       return zero_ptr();
     }
     else
@@ -444,6 +456,33 @@ private:
       dd::alpha_builder<C, Valuation> builder(cxt);
       builder.add(val, succ);
       return ptr_type(unify_node<Valuation>(var, std::move(builder)));
+    }
+  }
+
+  static
+  ptr_type
+  create_eol_node(dd::context<C>& cxt, variable_type var, eol tag, const SDD& succ)
+  {
+    if (succ.empty())
+    {
+      return zero_ptr();
+    }
+
+    switch (tag)
+    {
+        case eol::flat:
+        {
+          dd::alpha_builder<C, values_type> builder(cxt);
+          builder.add_eol(succ);
+          return ptr_type(unify_node<values_type>(var, std::move(builder)));
+        }
+
+      case eol::hierarchical:
+      {
+        dd::alpha_builder<C, SDD> builder(cxt);
+        builder.add_eol(succ);
+        return ptr_type(unify_node<SDD>(var, std::move(builder)));
+      }
     }
   }
 
@@ -533,25 +572,25 @@ check_compatibility(const SDD<C>& lhs, const SDD<C>& rhs)
     throw top<C>(lhs, rhs);
   }
 
-  typename SDD<C>::variable_type lhs_variable;
-  typename SDD<C>::variable_type rhs_variable;
-
-  // we must convert to the right type before comparing variables
-  if (lhs_index == SDD<C>::flat_node_index)
-  {
-    lhs_variable = mem::variant_cast<flat_node<C>>(*lhs).variable();
-    rhs_variable = mem::variant_cast<flat_node<C>>(*rhs).variable();
-  }
-  else
-  {
-    lhs_variable = mem::variant_cast<hierarchical_node<C>>(*lhs).variable();
-    rhs_variable = mem::variant_cast<hierarchical_node<C>>(*rhs).variable();
-  }
-
-  if (lhs_variable != rhs_variable)
-  {
-    throw top<C>(lhs, rhs);
-  }
+//  typename SDD<C>::variable_type lhs_variable;
+//  typename SDD<C>::variable_type rhs_variable;
+//
+//  // we must convert to the right type before comparing variables
+//  if (lhs_index == SDD<C>::flat_node_index)
+//  {
+//    lhs_variable = mem::variant_cast<flat_node<C>>(*lhs).variable();
+//    rhs_variable = mem::variant_cast<flat_node<C>>(*rhs).variable();
+//  }
+//  else
+//  {
+//    lhs_variable = mem::variant_cast<hierarchical_node<C>>(*lhs).variable();
+//    rhs_variable = mem::variant_cast<hierarchical_node<C>>(*rhs).variable();
+//  }
+//
+//  if (lhs_variable != rhs_variable)
+//  {
+//    throw top<C>(lhs, rhs);
+//  }
 
   return lhs_index;
 }

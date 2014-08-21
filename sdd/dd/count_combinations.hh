@@ -55,6 +55,10 @@ struct count_combinations_visitor
       {
         insertion.first->second += size(arc.valuation()) * visit(*this, arc.successor());
       }
+      if (not n.eol().empty())
+      {
+        insertion.first->second += visit(*this, n.eol());
+      }
     }
     return insertion.first->second;
   }
@@ -70,6 +74,10 @@ struct count_combinations_visitor
       for (const auto& arc : n)
       {
         insertion.first->second += visit(*this, arc.valuation()) * visit(*this, arc.successor());
+      }
+      if (not n.eol().empty())
+      {
+        insertion.first->second += visit(*this, n.eol());
       }
     }
     return insertion.first->second;

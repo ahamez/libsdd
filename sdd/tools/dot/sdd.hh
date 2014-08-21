@@ -71,13 +71,18 @@ struct to_dot_visitor
     const auto node = node_string(addr);
     if (search == visited_.end())
     {
-      os_ << node << " [label=\"" << o.identifier() << "\"];" << std::endl;
+      os_ << node << " [label=\"" << /*o.identifier() <<*/ "\"];" << std::endl;
       for (const auto& arc : n)
       {
-        const auto succ = visit(*this, arc.successor(), o.next(), depth);
+        const auto succ = visit(*this, arc.successor(), o/*.next()*/, depth);
         os_ << node << " -> " << succ
             << " [label=\"" << arc.valuation() << "\"];"
             << std::endl;
+      }
+      if (not n.eol().empty())
+      {
+        const auto eol = visit(*this, n.eol(), o, depth);
+        os_ << node << " -> " << eol << " [label=\"eol\"];" << std::endl;
       }
       visited_.emplace_hint(search, addr);
     }
@@ -94,11 +99,11 @@ struct to_dot_visitor
     const auto node = node_string(addr);
     if (search == visited_.end())
     {
-      os_ << node << " [label=\"" << o.identifier() << "\"];" << std::endl;
+      os_ << node << " [label=\"" << /*o.identifier() <<*/ "\"];" << std::endl;
       for (const auto& arc : n)
       {
-        const auto succ = visit(*this, arc.successor(), o.next(), depth);
-        const auto hier = visit(*this, arc.valuation(), o.nested(), depth + 1);
+        const auto succ = visit(*this, arc.successor(), o/*.next()*/, depth);
+        const auto hier = visit(*this, arc.valuation(), o/*.nested()*/, depth + 1);
         const auto ghost = "g" + std::to_string(reinterpret_cast<std::size_t>(addr)) + succ;
 
         os_ << ghost << " [shape=point,label=\"\",height=0,width=0];" << std::endl;

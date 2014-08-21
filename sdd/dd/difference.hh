@@ -44,10 +44,10 @@ struct difference_visitor
   const
   {
     // Check if both operands are compatible.
-    if (not (lhs.variable() == rhs.variable()))
-    {
-      throw top<C>(lhs_orig, rhs_orig);
-    }
+//    if (not (lhs.variable() == rhs.variable()))
+//    {
+//      throw top<C>(lhs_orig, rhs_orig);
+//    }
 
     mem::rewinder _(cxt_.arena());
 
@@ -98,7 +98,8 @@ struct difference_visitor
 
     return su.empty()
          ? zero<C>() // avoid a useless allocation when calling square_union::operator()
-         : SDD<C>(lhs.variable(), su());
+//         : SDD<C>(lhs.variable(), su());
+         : SDD<C>(0, su());
   }
 
   /// @brief Always an error, difference with |0| as an operand is not cached.

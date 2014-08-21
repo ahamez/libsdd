@@ -209,7 +209,8 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       su.add(sum(cxt, std::move(arc.second)), arc.first);
     }
 
-    return SDD<C>(head.variable(), su());
+//    return SDD<C>(head.variable(), su());
+    return SDD<C>(0, su());
   }
 
   /// @brief Linear union of flat SDDs whose valuation are "fast iterable".
@@ -220,7 +221,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
                          , SDD<C>>::type
   work(InputIterator begin, InputIterator end, context<C>& cxt)
   {
-    const auto& variable = mem::variant_cast<flat_node<C>>(**begin).variable();
+//    const auto& variable = mem::variant_cast<flat_node<C>>(**begin).variable();
 
     mem::rewinder _(cxt.arena());
 
@@ -234,11 +235,19 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
                    , mem::linear_alloc<std::pair<value_type, sum_builder_type>>(cxt.arena()));
     value_to_succ.reserve(std::distance(begin, end) * 2);
 
+    sum_builder_type eols(cxt);
+
     for (auto cit = begin; cit != end; ++cit)
     {
       check_compatibility(*begin, *cit);
 
       const auto& node = mem::variant_cast<flat_node<C>>(**cit);
+
+      if (not node.eol().empty())
+      {
+        eols.add(node.eol());
+      }
+
       for (const auto& arc : node)
       {
         const SDD<C> succ = arc.successor();
@@ -285,7 +294,10 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       alpha.add(values_type(std::move(succ_values.second)), succ_values.first);
     }
 
-    return SDD<C>(variable, std::move(alpha));
+    alpha.add_eol(sum(cxt, std::move(eols)));
+
+//    return SDD<C>(variable, std::move(alpha));
+    return SDD<C>(0, std::move(alpha));
   }
 };
 

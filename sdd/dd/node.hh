@@ -51,7 +51,9 @@ public:
 private:
 
   /// @brief The variable of this node.
-  const variable_type variable_;
+//  const variable_type variable_;
+
+  std::unique_ptr<SDD<C>> eol_;
 
   /// @brief The number of arcs of this node.
   const alpha_size_type size_;
@@ -63,9 +65,11 @@ public:
   ///
   /// O(n) where n is the number of arcs in the builder.
   /// It can't throw as the memory for the alpha has already been allocated.
-  node(variable_type var, dd::alpha_builder<C, Valuation>& builder)
+  node(variable_type /*var*/, dd::alpha_builder<C, Valuation>& builder)
   noexcept
-    : variable_(var), size_(static_cast<alpha_size_type>(builder.size()))
+    : /*variable_(var)
+    , */eol_(new SDD<C>(builder.eol()))
+    , size_(static_cast<alpha_size_type>(builder.size()))
   {
     // Instruct the alpha builder to place it right after the node.
     builder.consolidate(alpha_addr());
@@ -86,12 +90,12 @@ public:
   /// @brief Get the variable of this node.
   ///
   /// O(1).
-  variable_type
-  variable()
-  const noexcept
-  {
-    return variable_;
-  }
+//  variable_type
+//  variable()
+//  const noexcept
+//  {
+//    return variable_;
+//  }
 
   /// @brief Get the beginning of arcs.
   ///
@@ -142,7 +146,8 @@ public:
   operator==(const node& lhs, const node& rhs)
   noexcept
   {
-    return lhs.size_ == rhs.size_ and lhs.variable_ == rhs.variable_
+    return /*lhs.size_ == rhs.size_ and lhs.variable_ == rhs.variable_
+       and */lhs.eol() == rhs.eol()
        and std::equal(lhs.begin(), lhs.end(), rhs.begin());
   }
 
@@ -152,11 +157,30 @@ public:
   operator<<(std::ostream& os, const node& n)
   {
     // +n.variable(): widen the type, useful to print the values of char and unsigned char types.
-    os << +n.variable_ << "[";
-    std::for_each( n.begin(), n.end() - 1
-                 , [&](const arc<C, Valuation>& a)
-                      {os << a.valuation() << " --> " << a.successor() << " || ";});
-    return os << (n.end() - 1)->valuation() << " --> " << (n.end() - 1)->successor() << "]";
+    os /*<< +n.variable_ */<< "[";
+    if (n.size() > 0)
+    {
+      std::for_each( n.begin(), n.end() - 1
+                   , [&](const arc<C, Valuation>& a)
+                        {os << a.valuation() << " --> " << a.successor() << " || ";});
+      os << (n.end() - 1)->valuation() << " --> " << (n.end() - 1)->successor();
+    }
+    if (not n.eol().empty())
+    {
+      if (n.size() > 1)
+      {
+        os << " || ";
+      }
+      os << "eol --> " << n.eol();
+    }
+    return os << "]";
+  }
+
+  const SDD<C>&
+  eol()
+  const noexcept
+  {
+    return *eol_;
   }
 
 private:
@@ -191,8 +215,9 @@ struct hash<sdd::node<C, Valuation>>
   operator()(const sdd::node<C, Valuation>& n)
   const
   {
-    std::size_t seed = sdd::util::hash(n.variable());
+    std::size_t seed = 399019947;//sdd::util::hash(n.variable());
     sdd::util::hash_combine(seed, n.begin(), n.end());
+    sdd::util::hash_combine(seed, n.eol());
     return seed;
   }
 };
