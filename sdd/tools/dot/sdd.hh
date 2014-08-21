@@ -14,12 +14,12 @@ template <typename C>
 struct to_dot_visitor
 {
   /// @brief Required by mem::variant visitor mechanism.
-  using result_type = const void*;
+  using result_type = std::string;
 
   /// @brief A cache is necessary to to know if a node has already been encountered.
   ///
   /// We use the addresses of nodes as key. It's legit because nodes are unified and immutable.
-  mutable std::unordered_set<const void*> visited_;
+  mutable std::unordered_set<std::size_t> visited_;
 
   /// @brief The stream to export to.
   std::ostream& os_;
@@ -31,63 +31,96 @@ struct to_dot_visitor
 
   /// @brief |0|.
   result_type
-  operator()(const zero_terminal<C>& n, const order<C>&)
+  operator()(const zero_terminal<C>& n, const order<C>&, unsigned int)
   const
   {
-    const auto addr = reinterpret_cast<const void*>(&n);
+    const auto addr = reinterpret_cast<std::size_t>(&n);
     const auto search = visited_.find(addr);
+    const auto node = node_string(addr);
     if (search == visited_.end())
     {
-      os_ << "node_" << addr << " [shape=square,label=\"0\"];" << std::endl;
+      os_ << node << " [shape=square,label=\"0\"];" << std::endl;
       visited_.emplace_hint(search, addr);
     }
-    return addr;
+    return node;
   }
 
   /// @brief |1|.
   result_type
-  operator()(const one_terminal<C>& n, const order<C>&)
+  operator()(const one_terminal<C>& n, const order<C>&, unsigned int)
   const
   {
-    const auto addr = reinterpret_cast<const void*>(&n);
+    const auto addr = reinterpret_cast<std::size_t>(&n);
     const auto search = visited_.find(addr);
+    const auto node = node_string(addr);
     if (search == visited_.end())
     {
-      os_ << "node_" << addr << " [shape=square,label=\"1\"];" << std::endl;
+      os_ << node << " [shape=square,label=\"1\"];" << std::endl;
       visited_.emplace_hint(search, addr);
     }
-    return addr;
+    return node;
   }
 
   /// @brief Flat SDD.
   result_type
-  operator()(const flat_node<C>& n, const order<C>& o)
+  operator()(const flat_node<C>& n, const order<C>& o, unsigned int depth)
   const
   {
-    const auto addr = reinterpret_cast<const void*>(&n);
+    const auto addr = reinterpret_cast<std::size_t>(&n);
     const auto search = visited_.find(addr);
+    const auto node = node_string(addr);
     if (search == visited_.end())
     {
-      os_ << "node_" << addr << " [label=\"" << o.identifier() << "\"];" << std::endl;
+      os_ << node << " [label=\"" << o.identifier() << "\"];" << std::endl;
       for (const auto& arc : n)
       {
-        const auto succ = visit(*this, arc.successor(), o.next());
-        os_ << "node_" << addr << " -> " << "node_" << succ
+        const auto succ = visit(*this, arc.successor(), o.next(), depth);
+        os_ << node << " -> " << succ
             << " [label=\"" << arc.valuation() << "\"];"
             << std::endl;
       }
       visited_.emplace_hint(search, addr);
     }
-    return addr;
+    return node;
   }
 
   /// @brief Hierarchical SDD.
   result_type
-  operator()(const hierarchical_node<C>&, const order<C>&)
+  operator()(const hierarchical_node<C>& n, const order<C>& o, unsigned int depth)
   const
   {
-    std::cerr << "DOT export of hierarchical SDD not supported" << std::endl;
-    return nullptr;
+    const auto addr = reinterpret_cast<std::size_t>(&n);
+    const auto search = visited_.find(addr);
+    const auto node = node_string(addr);
+    if (search == visited_.end())
+    {
+      os_ << node << " [label=\"" << o.identifier() << "\"];" << std::endl;
+      for (const auto& arc : n)
+      {
+        const auto succ = visit(*this, arc.successor(), o.next(), depth);
+        const auto hier = visit(*this, arc.valuation(), o.nested(), depth + 1);
+        const auto ghost = "g" + std::to_string(reinterpret_cast<std::size_t>(addr)) + succ;
+
+        os_ << ghost << " [shape=point,label=\"\",height=0,width=0];" << std::endl;
+
+        os_ << node << " -> " << ghost << " [arrowhead=none];" << std::endl
+            << ghost << " -> " << succ << ";" << std::endl
+            << ghost << " -> " << hier << " [style=dotted];" << std::endl;
+
+      }
+      visited_.emplace_hint(search, addr);
+    }
+
+    return node;
+  }
+
+private:
+
+  static
+  std::string
+  node_string(std::size_t x)
+  {
+    return "n" + std::to_string(x);
   }
 };
 
@@ -109,7 +142,7 @@ struct to_dot
   operator<<(std::ostream& out, const to_dot& manip)
   {
     out << "digraph sdd {" << std::endl;
-    visit(to_dot_visitor<C>(out), manip.x_, manip.o_);
+    visit(to_dot_visitor<C>(out), manip.x_, manip.o_, 0);
     return out << "}" << std::endl;
   }
 };
