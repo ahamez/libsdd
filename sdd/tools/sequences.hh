@@ -101,7 +101,7 @@ struct length_by_node_visitor
   operator()(const one_terminal<C>&)
   const noexcept
   {
-    return 0;
+    return 1;
   }
 
   /// @brief Flat SDD.
