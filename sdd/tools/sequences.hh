@@ -127,7 +127,19 @@ struct sequences_visitor
         depth = 0;
       }
 
-      if (n.size() == 1)
+      if (not n.eol().empty())
+      {
+        if (depth != 0)
+        {
+          map[depth] += 1;
+        }
+        visit(*this, n.eol(), 0);
+        for (auto&& arc : n)
+        {
+          visit(*this, arc.successor(), 0);
+        }
+      }
+      else if (n.size() == 1)
       {
         visit(*this, n.begin()->successor(), depth + 1);
       }
