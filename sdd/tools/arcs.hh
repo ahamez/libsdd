@@ -51,7 +51,15 @@ struct arcs_visitor
   {
     if (visited_.emplace(reinterpret_cast<const char*>(&n)).second)
     {
-      map_[n.size()].first += 1;
+      if (not n.eol().empty())
+      {
+        map_[n.size() + 1].first += 1;
+        visit(*this, n.eol());
+      }
+      else
+      {
+        map_[n.size()].first += 1;
+      }
       for (const auto& arc : n)
       {
         visit(*this, arc.successor());
@@ -66,7 +74,15 @@ struct arcs_visitor
   {
     if (visited_.emplace(reinterpret_cast<const char*>(&n)).second)
     {
-      map_[n.size()].second += 1;
+      if (not n.eol().empty())
+      {
+        map_[n.size() + 1].second += 1;
+        visit(*this, n.eol());
+      }
+      else
+      {
+        map_[n.size()].second += 1;
+      }
       for (const auto& arc : n)
       {
         visit(*this, arc.valuation());
