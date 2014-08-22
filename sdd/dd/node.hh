@@ -146,7 +146,7 @@ public:
   operator==(const node& lhs, const node& rhs)
   noexcept
   {
-    return /*lhs.size_ == rhs.size_ and lhs.variable_ == rhs.variable_
+    return lhs.size_ == rhs.size_ and /*lhs.variable_ == rhs.variable_
        and */lhs.eol() == rhs.eol()
        and std::equal(lhs.begin(), lhs.end(), rhs.begin());
   }
