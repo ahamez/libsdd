@@ -71,7 +71,7 @@ struct to_dot_visitor
     const auto node = node_string(addr);
     if (search == visited_.end())
     {
-      os_ << node << " [label=\"" << /*o.identifier() <<*/ "\"];" << std::endl;
+      os_ << node << " [label=\"" << /*o.identifier() <<*/reinterpret_cast<const void*>(&n) <<  "\"];" << std::endl;
       for (const auto& arc : n)
       {
         const auto succ = visit(*this, arc.successor(), o/*.next()*/, depth);
@@ -82,7 +82,7 @@ struct to_dot_visitor
       if (not n.eol().empty())
       {
         const auto eol = visit(*this, n.eol(), o, depth);
-        os_ << node << " -> " << eol << " [label=\"eol\"];" << std::endl;
+        os_ << node << " -> " << eol << " [label=\"#\"];" << std::endl;
       }
       visited_.emplace_hint(search, addr);
     }
@@ -99,7 +99,7 @@ struct to_dot_visitor
     const auto node = node_string(addr);
     if (search == visited_.end())
     {
-      os_ << node << " [label=\"" << /*o.identifier() <<*/ "\"];" << std::endl;
+      os_ << node << " [label=\"" << /*o.identifier() <<*/  "\"];" << std::endl;
       for (const auto& arc : n)
       {
         const auto succ = visit(*this, arc.successor(), o/*.next()*/, depth);
@@ -116,7 +116,7 @@ struct to_dot_visitor
       if (not n.eol().empty())
       {
         const auto eol = visit(*this, n.eol(), o, depth);
-        os_ << node << " -> " << eol << " [label=\"eol\"];" << std::endl;
+        os_ << node << " -> " << eol << " [label=\"#\"];" << std::endl;
       }
       visited_.emplace_hint(search, addr);
     }
@@ -151,7 +151,9 @@ struct to_dot
   std::ostream&
   operator<<(std::ostream& out, const to_dot& manip)
   {
-    out << "digraph sdd {" << std::endl;
+    out << "digraph sdd {" << std::endl
+        << "node [shape=point];" << std::endl
+        << "edge [arrowhead=none];" << std::endl;
     visit(to_dot_visitor<C>(out), manip.x_, manip.o_, 0);
     return out << "}" << std::endl;
   }
