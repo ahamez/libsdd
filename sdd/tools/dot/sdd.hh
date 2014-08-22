@@ -113,6 +113,11 @@ struct to_dot_visitor
             << ghost << " -> " << hier << " [style=dotted];" << std::endl;
 
       }
+      if (not n.eol().empty())
+      {
+        const auto eol = visit(*this, n.eol(), o, depth);
+        os_ << node << " -> " << eol << " [label=\"eol\"];" << std::endl;
+      }
       visited_.emplace_hint(search, addr);
     }
 
