@@ -103,10 +103,7 @@ struct sequences_visitor
   operator()(const one_terminal<C>&, unsigned int depth)
   const noexcept
   {
-    if (depth != 0)
-    {
-      map[depth] += 1;
-    }
+    map[depth] += 1;
   }
 
   /// @brief Flat SDD.
@@ -120,19 +117,13 @@ struct sequences_visitor
       assert(parents.find(addr) != parents.cend());
       if (parents.find(addr)->second > 1) // More than one parent
       {
-        if (depth != 0)
-        {
-          map[depth] += 1;
-        }
-        depth = 0;
+        map[depth] += 1;
+        depth = 0; // Reset sequence even if there is only one arc.
       }
 
       if (not n.eol().empty())
       {
-        if (depth != 0)
-        {
-          map[depth] += 1;
-        }
+        map[depth] += 1;
         visit(*this, n.eol(), 0);
         for (auto&& arc : n)
         {
@@ -145,6 +136,7 @@ struct sequences_visitor
       }
       else
       {
+        map[depth] += 1;
         for (auto&& arc : n)
         {
           visit(*this, arc.successor(), 0);
@@ -153,10 +145,7 @@ struct sequences_visitor
     }
     else
     {
-      if (depth != 0)
-      {
-        map[depth] += 1;
-      }
+      map[depth] += 1;
     }
   }
 
@@ -184,6 +173,7 @@ sequences(const SDD<C>& x)
   visit(v1, x);
   sequences_visitor<C> v(v1.parents);
   visit(v, x, 0);
+  v.map.erase(0);
   return v.map;
 }
 
