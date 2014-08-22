@@ -75,7 +75,7 @@ template <typename C>
 struct length_by_node_visitor
 {
   /// @brief Required by mem::variant visitor mechanism.
-  using result_type = unsigned int;
+  using result_type = std::pair<unsigned int, bool /* has_parent */>;
 
   /// @brief The length of the sequence starting at a node.
   mutable std::unordered_map<const char*, unsigned int> lengths;
@@ -93,7 +93,7 @@ struct length_by_node_visitor
   const noexcept
   {
     assert(false);
-    return 0;
+    return {0, false};
   }
 
   /// @brief |1|.
@@ -101,7 +101,7 @@ struct length_by_node_visitor
   operator()(const one_terminal<C>&)
   const noexcept
   {
-    return 1;
+    return {1, true};
   }
 
   /// @brief Flat SDD.
@@ -115,7 +115,14 @@ struct length_by_node_visitor
       if (n.size() == 1)
       {
         const auto rec = visit(*this, n.begin()->successor());
-        insertion.first->second = rec + 1;
+        if (rec.second) // successor has other parents
+        {
+          insertion.first->second = 1;
+        }
+        else
+        {
+          insertion.first->second = rec.first + 1;
+        }
       }
       else
       {
@@ -127,14 +134,25 @@ struct length_by_node_visitor
       }
     }
 
-    if (parents.find(reinterpret_cast<const char*>(&n))->second > 1) // more than one parent
-    {
-      return 0;
-    }
-    else
-    {
-      return insertion.first->second;
-    }
+//    std::cout << reinterpret_cast<const void*>(&n) << " ";
+//    const auto p =  std::make_pair( insertion.first->second
+//                                  , parents.find(reinterpret_cast<const char*>(&n))->second > 1);
+//    std::cout << p.first << " | " << p.second << std::endl;;
+//    return p;
+    return { insertion.first->second
+           , parents.find(reinterpret_cast<const char*>(&n))->second > 1};
+//
+//
+//    if (parents.find(reinterpret_cast<const char*>(&n))->second > 1) // more than one parent
+//    {
+//      std::cout << "=> 0\n";
+//      return 0;
+//    }
+//    else
+//    {
+//      std::cout << insertion.first->second << std::endl;
+//      return insertion.first->second;
+//    }
   }
 
   /// @brief Hierarchical SDD.
@@ -143,7 +161,7 @@ struct length_by_node_visitor
   const
   {
     assert(false);
-    return 0;
+    return {0, false};
   }
 };
 
@@ -165,8 +183,12 @@ struct sequences_visitor
   /// @brief Stores the length computed by length_by_node_visitor.
   const std::unordered_map<const char*, unsigned int>& lengths;
 
-  sequences_visitor(std::unordered_map<const char*, unsigned int>& cache)
-    : lengths(cache)
+  /// @brief The number of parents for a node.
+  const std::unordered_map<const char*, unsigned int>& parents;
+
+  sequences_visitor( const std::unordered_map<const char*, unsigned int>& cache
+                   , const std::unordered_map<const char*, unsigned int>& par)
+    : lengths(cache), parents(par)
   {}
 
   /// @brief |0|.
@@ -192,16 +214,24 @@ struct sequences_visitor
     {
       if (n.size() == 1)
       {
-        if (not in_sequence)
+        if (not in_sequence) // a new sequence starts here
         {
           const auto length = lengths.find(reinterpret_cast<const char*>(&n))->second;
           auto insertion = map.emplace(length, 0);
           insertion.first->second += 1;
+//          std::cout << reinterpret_cast<const void*>(&n) << " => " << insertion.first->second << std::endl;
           visit(*this, n.begin()->successor(), true);
         }
         else
         {
-          visit(*this, n.begin()->successor(), false);
+          if (parents.find(reinterpret_cast<const char*>(&n))->second > 1)
+          {
+            visit(*this, n.begin()->successor(), false);
+          }
+          else
+          {
+            visit(*this, n.begin()->successor(), true);
+          }
         }
       }
       else
@@ -238,7 +268,7 @@ sequences(const SDD<C>& x)
   visit(v1, x);
   length_by_node_visitor<C> v2(v1.parents);
   visit(v2, x);
-  sequences_visitor<C> v3(v2.lengths);
+  sequences_visitor<C> v3(v2.lengths, v1.parents);
   visit(v3, x, false);
   return v3.map;
 }
