@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unordered_map>
+#include <map>
 #include <unordered_set>
 #include <utility> // pair
 
@@ -11,9 +11,9 @@ namespace sdd { namespace tools {
 /*------------------------------------------------------------------------------------------------*/
 
 using arcs_frequency_type
-  = std::unordered_map< unsigned int /*number of arcs*/
-                      , std::pair< unsigned int /* flat arcs frequency */
-                                 , unsigned int /* hierarchical arcs frequency */>>;
+  = std::map< unsigned int /*number of arcs*/
+            , std::pair< unsigned int /* flat arcs frequency */
+                       , unsigned int /* hierarchical arcs frequency */>>;
 
 /*------------------------------------------------------------------------------------------------*/
 
