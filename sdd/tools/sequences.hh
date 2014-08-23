@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -36,7 +37,7 @@ struct parents_visitor
 
   /// @brief |1|.
   result_type
-  operator()(const one_terminal<C>& n)
+  operator()(const one_terminal<C>&)
   const
   {}
 

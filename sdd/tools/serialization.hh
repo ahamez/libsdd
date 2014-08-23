@@ -4,6 +4,7 @@
 #include <tuple>
 
 #include <cereal/types/forward_list.hpp>
+#include <cereal/types/map.hpp>
 #include <cereal/types/unordered_map.hpp>
 #include <cereal/types/utility.hpp>
 
@@ -85,7 +86,8 @@ save(Archive& archive, const sdd_statistics<C>& stats)
          , cereal::make_nvp("hierarchical nodes", stats.all_nodes.second)
          , cereal::make_nvp("flat arcs", stats.all_arcs.first)
          , cereal::make_nvp("hierarchical arcs", stats.all_arcs.second)
-         , cereal::make_nvp("arcs frequency", stats.frequency)
+         , cereal::make_nvp("arcs frequency", stats.arcs_frequency)
+         , cereal::make_nvp("sequences frequency", stats.sequences_frequency)
          );
 }
 
