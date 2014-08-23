@@ -89,6 +89,7 @@ public:
   operator=(const ptr& other)
   noexcept
   {
+    assert(other.x_ != nullptr); // Don't copy from an already moved ptr.
     if (x_ != nullptr)
     {
       x_->decrement_reference_counter();
@@ -98,10 +99,7 @@ public:
       }
     }
     x_ = other.x_;
-//    if (x_ != nullptr)
-    {
-      x_->increment_reference_counter();
-    }
+    x_->increment_reference_counter();
     return *this;
   }
 
