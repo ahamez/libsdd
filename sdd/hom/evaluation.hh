@@ -103,8 +103,9 @@ struct cached_homomorphism
   const SDD<C> sdd;
 
   /// @brief Constructor.
-  cached_homomorphism(const order<C>& o, const homomorphism<C>& h, const SDD<C>& s)
-    : ord(o), hom(h), sdd(s)
+  template <typename SDD_>
+  cached_homomorphism(const order<C>& o, const homomorphism<C>& h, SDD_&& s)
+    : ord(o), hom(h), sdd(std::forward<SDD_>(s))
   {}
 
   /// @brief Launch the evaluation.

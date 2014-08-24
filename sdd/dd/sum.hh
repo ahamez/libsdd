@@ -80,7 +80,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     remainder.reserve(head.size());
 
     // Initialize res with the alpha of the first operand.
-    for (auto& arc : head)
+    for (const auto& arc : head)
     {
       sum_builder_type succs(cxt);
       succs.add(arc.successor());
@@ -102,8 +102,8 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       for (auto alpha_cit = node.begin(); alpha_cit != alpha_end; ++alpha_cit)
       {
         // The current valuation may be modified, we need a copy.
-        valuation_type current_val = alpha_cit->valuation();
-        const SDD<C> current_succ = alpha_cit->successor();
+        auto current_val = alpha_cit->valuation();
+        auto current_succ = alpha_cit->successor();
 
         // Initialize the start of the next search.
         auto res_cit = res.begin();
@@ -118,7 +118,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
           if (current_val == res_val) // Same valuations.
           {
             save.emplace_back(res_val, std::move(res_succs));
-            save.back().second.add(current_succ);
+            save.back().second.add(std::move(current_succ));
             const auto to_erase = res_cit;
             ++res_cit;
             res.erase(to_erase);
@@ -176,7 +176,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
         if (not values::empty_values(current_val))
         {
           sum_builder_type succs(cxt);
-          succs.add(current_succ);
+          succs.add(std::move(current_succ));
           save.emplace_back(std::move(current_val), std::move(succs));
         }
 
@@ -206,7 +206,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     for (auto& arc : res)
     {
       // construct an operand for the square union: (successors union) --> valuation
-      su.add(sum(cxt, std::move(arc.second)), arc.first);
+      su.add(sum(cxt, std::move(arc.second)), std::move(arc.first));
     }
 
     return SDD<C>(head.variable(), su());
@@ -270,11 +270,11 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       {
         values_builder tmp;
         tmp.insert(value_succs.first);
-        succ_to_value.emplace_hint(search, succ, std::move(tmp));
+        succ_to_value.emplace_hint(search, std::move(succ), std::move(tmp));
       }
       else
       {
-        search->second.insert(value_succs.first);
+        search->second.insert(std::move(value_succs.first));
       }
     }
 
@@ -282,7 +282,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
     alpha.reserve(succ_to_value.size());
     for (auto& succ_values : succ_to_value)
     {
-      alpha.add(values_type(std::move(succ_values.second)), succ_values.first);
+      alpha.add(values_type(std::move(succ_values.second)), std::move(succ_values.first));
     }
 
     return SDD<C>(variable, std::move(alpha));
@@ -301,17 +301,7 @@ struct sum_builder_policy
   {
     if (not values::empty_values(operand))
     {
-      set.insert(std::move(operand));
-    }
-  }
-
-  template <typename Container, typename Valuation>
-  void
-  add(Container& set, const Valuation& operand)
-  {
-    if (not values::empty_values(operand))
-    {
-      set.insert(operand);
+      set.insert(std::forward<Valuation>(operand));
     }
   }
 };

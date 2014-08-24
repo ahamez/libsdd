@@ -43,21 +43,21 @@ public:
   /// @brief Add a new (reversed) arc to the operands.
   ///
   /// @pre not succ.empty() and not val.empty()
-  template <typename Val>
+  template <typename SDD_, typename Valuation_>
   void
-  add(const SDD<C>& succ, Val&& val)
+  add(SDD_&& succ, Valuation_&& val)
   {
     assert(not succ.empty() and not val.empty());
 
-    auto lb = map_.lower_bound(succ);
+    const auto lb = map_.lower_bound(succ);
     if (lb != map_.end() and not map_.key_comp()(succ, lb->first))
     {
-      lb->second.add(std::forward<Val>(val));
+      lb->second.add(std::forward<Valuation_>(val));
     }
     else
     {
-      auto ins = map_.emplace_hint(lb, succ, sum_builder_type(cxt_));
-      ins->second.add(std::forward<Val>(val));
+      auto ins = map_.emplace_hint(lb, std::forward<SDD_>(succ), sum_builder_type(cxt_));
+      ins->second.add(std::forward<Valuation_>(val));
     }
   }
 

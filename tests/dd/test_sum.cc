@@ -147,19 +147,19 @@ TYPED_TEST(sum_test, flat_no_successors)
 {
   {
     flat_alpha_builder builder(cxt);
-    builder.add({0,1}, one);
+    builder.add(values_type {0,1}, one);
     ASSERT_EQ( SDD(0, std::move(builder))
              , sum(cxt, {cxt, {SDD(0, {0}, one), SDD(0, {1}, one)}}));
   }
   {
     flat_alpha_builder builder(cxt);
-    builder.add({0,1}, one);
+    builder.add(values_type {0,1}, one);
     ASSERT_EQ( SDD(0, std::move(builder))
              , sum(cxt, {cxt, {SDD(0, {0,1}, one), SDD(0, {1}, one)}}));
   }
   {
     flat_alpha_builder builder(cxt);
-    builder.add({0,1}, one);
+    builder.add(values_type {0,1}, one);
     ASSERT_EQ( SDD(0, std::move(builder))
              , sum(cxt, {cxt, {SDD(0, {0,1}, one), SDD(0, {0,1}, one)}}));
   }
@@ -204,9 +204,9 @@ TYPED_TEST(sum_test, hierarchical_no_successors)
 TYPED_TEST(sum_test, flat_partition_changing)
 {
   flat_alpha_builder builder(cxt);
-  builder.add({1}, SDD(1, {4}, one));
-  builder.add({2}, SDD(1, {4,5}, one));
-  builder.add({3}, SDD(1, {5}, one));
+  builder.add(values_type {1}, SDD(1, {4}, one));
+  builder.add(values_type {2}, SDD(1, {4,5}, one));
+  builder.add(values_type {3}, SDD(1, {5}, one));
   ASSERT_EQ( SDD(0, std::move(builder))
            , sum(cxt, {cxt, { SDD(0, {1,2}, SDD(1, {4}, one))
                             , SDD(0, {2,3}, SDD(1, {5}, one))}}));

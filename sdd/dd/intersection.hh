@@ -77,7 +77,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
 
             if (not values::empty_values(inter_succ))
             {
-              su.add(inter_succ, std::move(inter_val));
+              su.add(std::move(inter_succ), std::move(inter_val));
             }
           }
         }
@@ -126,25 +126,7 @@ struct intersection_builder_policy
       set.clear();
       return;
     }
-    set.insert(std::move(operand));
-  }
-
-  /// @brief Add an lvalue operand.
-  template <typename Container, typename Valuation>
-  void
-  add(Container& set, const Valuation& operand)
-  {
-    if (has_zero)
-    {
-      return;
-    }
-    if (values::empty_values(operand))
-    {
-      has_zero = true,
-      set.clear();
-      return;
-    }
-    set.insert(operand);
+    set.insert(std::forward<Valuation>(operand));
   }
 };
 

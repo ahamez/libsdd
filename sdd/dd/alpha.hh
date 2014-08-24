@@ -123,19 +123,11 @@ public:
   /// @brief Add an arc to the alpha.
   /// @param val shall be a non-empty element of a partition, no verification will be made.
   /// @param succ
+  template <typename Valuation_, typename SDD_>
   void
-  add(Valuation&& val, const SDD<C>& succ)
+  add(Valuation_&& val, SDD_&& succ)
   {
-    map_.emplace(succ, std::move(val));
-  }
-
-  /// @brief Add an arc to the alpha.
-  /// @param val shall be a non-empty element of a partition, no verification will be made.
-  /// @param succ
-  void
-  add(const Valuation& val, const SDD<C>& succ)
-  {
-    map_.emplace(succ, val);
+    map_.emplace(std::forward<SDD_>(succ), std::forward<Valuation_>(val));
   }
 
   /// @brief Compute the size needed to store all the arcs contained by this builder.

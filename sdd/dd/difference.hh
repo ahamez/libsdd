@@ -90,7 +90,7 @@ struct difference_visitor
           SDD<C> tmp_succ = difference(cxt_, lhs_arc.successor(), rhs_arc.successor());
           if (not values::empty_values(tmp_succ))
           {
-            su.add(tmp_succ, std::move(tmp_val));
+            su.add(std::move(tmp_succ), std::move(tmp_val));
           }
         }
       }

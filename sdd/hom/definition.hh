@@ -109,6 +109,14 @@ public:
     return this->operator()(global<C>().hom_context, o, x);
   }
 
+  /// @brief Apply this homomorphism on an SDD.
+  SDD<C>
+  operator()(const order<C>& o, SDD<C>&& x)
+  const
+  {
+    return this->operator()(global<C>().hom_context, o, std::move(x));
+  }
+
   /// @internal
   /// @brief Tell if this homomorphism skips a given identifier.
   ///
@@ -173,8 +181,9 @@ public:
 
   /// @internal
   /// @brief Apply this homomorphism on an SDD, in a given context.
+  template <typename SDD_>
   SDD<C>
-  operator()(hom::context<C>& cxt, const order<C>& o, const SDD<C>& x)
+  operator()(hom::context<C>& cxt, const order<C>& o, SDD_&& x)
   const
   {
     // hard-wired cases:
@@ -184,7 +193,7 @@ public:
     {
       return x;
     }
-    return cxt.cache()(hom::cached_homomorphism<C>(o, *this, x));
+    return cxt.cache()(hom::cached_homomorphism<C>(o, *this, std::forward<SDD_>(x)));
   }
 
   /// @internal
