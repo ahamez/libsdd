@@ -13,7 +13,7 @@ namespace sdd { namespace dd {
 // Forward declaration of the SDD difference operation.
 template <typename C>
 SDD<C>
-difference(context<C>&, const SDD<C>&, const SDD<C>&);
+difference(context<C>&, SDD<C>, SDD<C>);
 
 // Forward declaration of the Values difference operation.
 template <typename C, typename Values>

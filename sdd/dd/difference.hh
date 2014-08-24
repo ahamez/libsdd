@@ -58,7 +58,7 @@ struct difference_visitor
     {
       sum_builder.add(rhs_arc.valuation());
     }
-    const Valuation rhs_union = sum(cxt_, std::move(sum_builder));
+    auto rhs_union = sum(cxt_, std::move(sum_builder));
 
     square_union<C, Valuation> su(cxt_);
 
@@ -69,7 +69,7 @@ struct difference_visitor
     // For each valuation of lhs, remove the quantity rhs_union.
     for (auto& lhs_arc : lhs)
     {
-      Valuation tmp = difference(cxt_, lhs_arc.valuation(), rhs_union);
+      auto tmp = difference(cxt_, lhs_arc.valuation(), std::move(rhs_union));
       if (not values::empty_values(tmp))
       {
         su.add(lhs_arc.successor(), std::move(tmp));
@@ -101,7 +101,7 @@ struct difference_visitor
          : SDD<C>(lhs.variable(), su());
   }
 
-  /// @brief Always an error, difference with |0| as an operand is not cached.
+  /// @brief Always an error, difference with |0| is not cached.
   SDD<C>
   operator()(const zero_terminal<C>&, const zero_terminal<C>&, const SDD<C>&, const SDD<C>&)
   const noexcept
@@ -110,7 +110,7 @@ struct difference_visitor
     __builtin_unreachable();
   }
 
-  /// @brief Always an error, difference with |1| as an operand is not cached.
+  /// @brief Always an error, difference with |1| is not cached.
   SDD<C>
   operator()(const one_terminal<C>&, const one_terminal<C>&, const SDD<C>&, const SDD<C>&)
   const noexcept
@@ -147,8 +147,8 @@ struct difference_op
   const SDD<C> right;
 
   /// @brief Constructor.
-  difference_op(const SDD<C>& l, const SDD<C>& r)
-  	: left(l), right(r)
+  difference_op(SDD<C>&& l, SDD<C>&& r)
+  	: left(std::move(l)), right(std::move(r))
   {}
 
   /// @brief Apply this operation.
@@ -181,6 +181,7 @@ struct difference_op
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+/// @related SDD
 /// @brief The difference operation.
 ///
 /// The computation is cached, except for the trivial cases (when the two operands are
@@ -188,7 +189,7 @@ struct difference_op
 template <typename C>
 inline
 SDD<C>
-difference(context<C>& cxt, const SDD<C>& lhs, const SDD<C>& rhs)
+difference(context<C>& cxt, SDD<C> lhs, SDD<C> rhs)
 {
   if (lhs == rhs or lhs == zero<C>())
   {
@@ -198,13 +199,12 @@ difference(context<C>& cxt, const SDD<C>& lhs, const SDD<C>& rhs)
   {
     return lhs;
   }
-  return cxt.difference_cache()(difference_op<C>(lhs, rhs));
+  return cxt.difference_cache()(difference_op<C>(std::move(lhs), std::move(rhs)));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @related sdd::SDD
 template <typename C, typename Values>
 inline
 Values
