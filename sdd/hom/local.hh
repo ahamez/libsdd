@@ -55,10 +55,10 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
         su.reserve(node.size());
         for (const auto& arc : node)
         {
-          const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
+          auto new_valuation = h_(cxt_, order_.nested(), arc.valuation());
           if (not new_valuation.empty())
           {
-            su.add(arc.successor(), new_valuation);
+            su.add(arc.successor(), std::move(new_valuation));
           }
         }
         return {node.variable(), su()};
@@ -69,8 +69,8 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
         sum_operands.reserve(node.size());
         for (const auto& arc : node)
         {
-          const SDD<C> new_valuation = h_(cxt_, order_.nested(), arc.valuation());
-          sum_operands.add(SDD<C>(node.variable(), new_valuation, arc.successor()));
+          auto new_valuation = h_(cxt_, order_.nested(), arc.valuation());
+          sum_operands.add(SDD<C>(node.variable(), std::move(new_valuation), arc.successor()));
         }
         return dd::sum(cxt_.sdd_context(), std::move(sum_operands));
       }

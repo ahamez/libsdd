@@ -48,7 +48,7 @@ struct _if_then_else
     sum_operands.add(h_then(cxt, o, tmp));
 
     // Apply "else" on the part rejected by the predicate.
-    sum_operands.add(h_else(cxt, o, dd::difference(cxt.sdd_context(), s, tmp)));
+    sum_operands.add(h_else(cxt, o, dd::difference(cxt.sdd_context(), s, std::move(tmp))));
 
     return dd::sum(cxt.sdd_context(), std::move(sum_operands));
   }
