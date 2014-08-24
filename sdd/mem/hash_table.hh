@@ -5,7 +5,7 @@
 #include <type_traits> // enable_if
 #include <utility>     // make_pair, pair
 
-#include "sdd/util/next_power.hh"
+#include "sdd/util/next_prime.hh"
 #include "sdd/util/packed.hh"
 
 namespace sdd { namespace mem {
@@ -65,7 +65,7 @@ public:
 
   /// @brief Constructor
   hash_table(std::size_t size, double max_load_factor = 0.75)
-    : nb_buckets_(util::next_power_of_2(size))
+    : nb_buckets_(util::next_prime(size))
     , size_(0)
     , buckets_(new Data*[nb_buckets_])
     , max_load_factor_(max_load_factor)
@@ -87,8 +87,7 @@ public:
   const noexcept(noexcept(hash(x)))
   {
     commit_data.hash = hash(x);
-    // same as commit_data.h % nb_buckets_, but much more efficient (works only with powers of 2)
-    const std::size_t pos = commit_data.hash & (nb_buckets_ - 1);
+    const std::size_t pos = commit_data.hash % nb_buckets_;
 
     Data* current = buckets_[pos];
     bool insertion = true;
@@ -110,7 +109,7 @@ public:
   insert_commit(Data& x, const insert_commit_data& commit_data)
   noexcept
   {
-    const std::size_t pos = commit_data.hash & (nb_buckets_ - 1);
+    const std::size_t pos = commit_data.hash % nb_buckets_;
 
     Data* previous = nullptr;
     Data* current = buckets_[pos];
@@ -170,7 +169,7 @@ public:
   erase(const Data& x)
   noexcept
   {
-    const std::size_t pos = std::hash<Data>()(x) & (nb_buckets_ - 1);
+    const std::size_t pos = std::hash<Data>()(x) % nb_buckets_;
     Data* previous = nullptr;
     Data* current = buckets_[pos];
     while (current != nullptr)
@@ -259,7 +258,7 @@ private:
       return;
     }
     ++nb_rehash_;
-    auto new_nb_buckets = nb_buckets_ * 2;
+    auto new_nb_buckets = util::next_prime(nb_buckets_ * 2);
     auto new_buckets = new Data*[new_nb_buckets];
     std::fill(new_buckets, new_buckets + new_nb_buckets, nullptr);
     size_ = 0;
@@ -290,7 +289,7 @@ private:
   insert_impl(Data* x, Data** buckets, std::size_t nb_buckets)
   noexcept(noexcept(std::hash<Data>()(*x)))
   {
-    const std::size_t pos = std::hash<Data>()(*x) & (nb_buckets - 1);
+    const std::size_t pos = std::hash<Data>()(*x) % nb_buckets;
 
     Data* current = buckets[pos];
 
