@@ -71,7 +71,7 @@ struct evaluation
         SDD<C> new_successor = hom(cxt, o.next(), arc.successor());
         if (not new_successor.empty())
         {
-          su.add(new_successor, arc.valuation());
+          su.add(std::move(new_successor), arc.valuation());
         }
       }
       return {node.variable(), su()};
