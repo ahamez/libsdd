@@ -49,7 +49,12 @@ struct _intersection
     intersection_operands.reserve(operands.size());
     for (const auto& op : operands)
     {
-      intersection_operands.add(op(cxt, o, x));
+      auto res = op(cxt, o, x);
+      if (res.empty())
+      {
+        return zero<C>();
+      }
+      intersection_operands.add(std::move(res));
     }
     return dd::intersection(cxt.sdd_context(), std::move(intersection_operands));
   }
