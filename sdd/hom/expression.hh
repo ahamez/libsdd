@@ -218,7 +218,7 @@ expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIte
   std::sort(positions.begin(), positions.end());
 
 
-  std::unique_ptr<derived_type> evaluator_ptr(new derived_type(u));
+  auto evaluator_ptr = std::make_unique<derived_type>(u);
 
   const auto last_position = positions.back();
   if (target_pos < last_position)

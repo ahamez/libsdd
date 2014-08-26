@@ -280,8 +280,8 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   };
 
   /// @brief Constructor.
-  _function(order_position_type pos, const function_base<C>* f)
-    : target(pos), fun_ptr(f)
+  _function(order_position_type pos, std::unique_ptr<const function_base<C>> f)
+    : target(pos), fun_ptr(std::move(f))
   {}
 
   /// @brief Skip variable predicate.
@@ -340,7 +340,7 @@ homomorphism<C>
 function(order_position_type pos, const User& u)
 {
   return homomorphism<C>::create( mem::construct<hom::_function<C>>()
-                                , pos, new hom::function_derived<C, User>(u));
+                                , pos, std::make_unique<hom::function_derived<C, User>>(u));
 }
 
 /// @brief Create the Function homomorphism.

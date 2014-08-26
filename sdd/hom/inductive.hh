@@ -286,8 +286,8 @@ struct _inductive
   };
 
   /// @brief Constructor.
-  _inductive(const inductive_base<C>* ptr)
-    : hom_ptr(ptr)
+  _inductive(std::unique_ptr<const inductive_base<C>> ptr)
+    : hom_ptr(std::move(ptr))
   {}
 
   /// @brief Evaluation.
@@ -344,7 +344,7 @@ homomorphism<C>
 inductive(const User& u)
 {
   return homomorphism<C>::create( mem::construct<hom::_inductive<C>>()
-                                , new hom::inductive_derived<C, User>(u));
+                                , std::make_unique<hom::inductive_derived<C, User>>(u));
 }
 
 /*------------------------------------------------------------------------------------------------*/
