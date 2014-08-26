@@ -23,7 +23,7 @@
 #include "sdd/hom/saturation_sum.hh"
 #include "sdd/hom/sum.hh"
 #include "sdd/mem/ptr.hh"
-#include "sdd/mem/ref_counted.hh"
+#include "sdd/mem/unique.hh"
 #include "sdd/mem/variant.hh"
 
 namespace sdd {
@@ -63,7 +63,7 @@ public:
   /// @brief A unified and canonized homomorphism, meant to be stored in a unique table.
   ///
   /// It is automatically erased when there is no more reference to it.
-  using unique_type = mem::ref_counted<data_type>;
+  using unique_type = mem::unique<data_type>;
 
   /// @internal
   /// @brief Define the smart pointer around a unified homomorphism.

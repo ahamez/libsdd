@@ -13,7 +13,7 @@
 #include "sdd/dd/terminal.hh"
 #include "sdd/dd/top.hh"
 #include "sdd/mem/ptr.hh"
-#include "sdd/mem/ref_counted.hh"
+#include "sdd/mem/unique.hh"
 #include "sdd/mem/variant.hh"
 #include "sdd/order/order.hh"
 #include "sdd/values/empty.hh"
@@ -69,7 +69,7 @@ public:
   /// @brief A unified and canonized SDD, meant to be stored in a unique table.
   ///
   /// It is automatically erased when there is no more reference to it.
-  using unique_type = mem::ref_counted<data_type>;
+  using unique_type = mem::unique<data_type>;
 
   /// @internal
   /// @brief The type of the smart pointer around a unified SDD.

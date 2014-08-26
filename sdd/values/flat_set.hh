@@ -12,7 +12,7 @@
 
 #include "sdd/values_manager_fwd.hh"
 #include "sdd/mem/ptr.hh"
-#include "sdd/mem/ref_counted.hh"
+#include "sdd/mem/unique.hh"
 #include "sdd/util/hash.hh"
 #include "sdd/values/values_traits.hh"
 
@@ -34,7 +34,7 @@ public:
   using data_type = boost::container::flat_set<value_type>;
 
   /// @internal
-  using unique_type = mem::ref_counted<data_type>;
+  using unique_type = mem::unique<data_type>;
 
   /// @internal
   using ptr_type = mem::ptr<unique_type>;
