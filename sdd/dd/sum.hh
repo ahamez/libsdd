@@ -11,6 +11,7 @@
 #include "sdd/internal_manager_fwd.hh"
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition.hh"
+#include "sdd/dd/fake_node.hh"
 #include "sdd/dd/nary.hh"
 #include "sdd/dd/operations_fwd.hh"
 #include "sdd/dd/square_union.hh"
@@ -20,6 +21,34 @@
 #include "sdd/values/values_traits.hh"
 
 namespace sdd { namespace dd {
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+template <typename NodeType>
+struct get_node
+{
+  template <typename T>
+  const NodeType&
+  operator()(const T& x)
+  noexcept
+  {
+    return mem::variant_cast<NodeType>(x);
+  }
+};
+
+/// @internal
+template <typename C>
+struct get_node<fake_flat_node<C>>
+{
+  template <typename T>
+  const fake_flat_node<C>&
+  operator()(const T& x)
+  noexcept
+  {
+    return x;
+  }
+};
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -215,12 +244,15 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
   /// @brief Linear union of flat SDDs whose valuation are "fast iterable".
   template <typename InputIterator, typename NodeType>
   static
-  typename std::enable_if< std::is_same<NodeType, flat_node<C>>::value
+  typename std::enable_if< (std::is_same<NodeType, flat_node<C>>::value
+                           or std::is_same<NodeType, fake_flat_node<C>>::value
+                           )
                          and values::values_traits<typename C::Values>::fast_iterable
                          , SDD<C>>::type
   work(InputIterator begin, InputIterator end, context<C>& cxt)
   {
-    const auto& variable = mem::variant_cast<flat_node<C>>(**begin).variable();
+//    const auto& variable = mem::variant_cast<flat_node<C>>(**begin).variable();
+    const auto& variable = get_node<NodeType>()(**begin).variable();
 
     mem::rewinder _(cxt.arena());
 
@@ -236,9 +268,11 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
 
     for (auto cit = begin; cit != end; ++cit)
     {
-      check_compatibility(*begin, *cit);
+//      check_compatibility(*begin, *cit);
 
-      const auto& node = mem::variant_cast<flat_node<C>>(**cit);
+//      const auto& node = mem::variant_cast<flat_node<C>>(**cit);
+      const auto& node = get_node<NodeType>()(**cit);
+
       for (const auto& arc : node)
       {
         const SDD<C> succ = arc.successor();
@@ -310,7 +344,7 @@ struct sum_builder_policy
 
 /// @internal
 /// @brief The sum operation of a set of SDD.
-/// @related sdd::SDD
+/// @related SDD
 template <typename C>
 inline
 SDD<C>
@@ -325,6 +359,27 @@ sum(context<C>& cxt, sum_builder<C, SDD<C>>&& builder)
     return *builder.begin();
   }
   return cxt.sum_cache()(sum_op<C>(builder));
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+template <typename C, typename InputIterator>
+inline
+SDD<C>
+fake_flat_sum(context<C>& cxt, InputIterator begin, InputIterator end)
+{
+  if (begin == end)
+  {
+    return zero<C>();
+  }
+  else if (std::distance(begin, end) == 1)
+  {
+    const auto& node = *begin;
+    return SDD<C>( node.variable()
+                 , std::move(node.begin()->valuation()), std::move(node.begin()->successor()));
+  }
+  return sum_op_impl<C>::template work<InputIterator, fake_flat_node<C>>(begin, end, cxt);
 }
 
 /*------------------------------------------------------------------------------------------------*/

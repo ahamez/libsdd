@@ -268,13 +268,17 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
       }
       else
       {
-        dd::sum_builder<C, SDD<C>> sum_operands(cxt.sdd_context());
+        std::vector<dd::fake_flat_node<C>> sum_operands;
         sum_operands.reserve(node.size());
         for (const auto& arc : node)
         {
-          sum_operands.add(SDD<C>(o.variable(), fun(arc.valuation()), arc.successor()));
+          auto valuation = fun(arc.valuation());
+          if (not values::empty_values(valuation))
+          {
+            sum_operands.emplace_back(o.variable(), std::move(valuation), arc.successor());
+          }
         }
-        return dd::sum(cxt.sdd_context(), std::move(sum_operands));
+        return dd::fake_flat_sum(cxt.sdd_context(), sum_operands.begin(), sum_operands.end());
       }
     }
   };
