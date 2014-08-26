@@ -82,7 +82,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
     operator()(const T&)
     const
     {
-      assert(false && "Local applied on a flat node");
+      assert(false && "Local applied on a non-hierarchical node");
       __builtin_unreachable();
     }
   };

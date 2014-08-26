@@ -175,17 +175,6 @@ public:
     }
   }
 
-//  /// @internal
-//  std::size_t
-//  hash()
-//  const noexcept
-//  {
-//    std::size_t seed = 0;
-//    util::hash_combine(seed, nodes_ptr_.get());
-//    util::hash_combine(seed, head_);
-//    return seed;
-//  }
-
   /// @brief Equality.
   friend
   bool
