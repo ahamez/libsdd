@@ -364,27 +364,6 @@ sum(context<C>& cxt, sum_builder<C, SDD<C>>&& builder)
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-template <typename C, typename InputIterator>
-inline
-SDD<C>
-fake_flat_sum(context<C>& cxt, InputIterator begin, InputIterator end)
-{
-  if (begin == end)
-  {
-    return zero<C>();
-  }
-  else if (std::distance(begin, end) == 1)
-  {
-    const auto& node = *begin;
-    return SDD<C>( node.variable()
-                 , std::move(node.begin()->valuation()), std::move(node.begin()->successor()));
-  }
-  return sum_op_impl<C>::template work<InputIterator, fake_flat_node<C>>(begin, end, cxt);
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
 /// @brief The sum operation of a set of values.
 /// @details A wrapper around the implementation of sum provided by Values.
 template <typename C, typename Values>
@@ -414,6 +393,61 @@ sum(context<C>&, sum_builder<C, Values>&& builder)
     return result;
   }
 }
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+template <typename C>
+struct fake_sum_op
+{
+  using result_type = SDD<C>;
+  using operands_type = std::vector<fake_flat_node<C>>;
+  const operands_type operands;
+
+  fake_sum_op(std::vector<fake_flat_node<C>>&& ops)
+    : operands(std::move(ops))
+  {}
+
+  SDD<C>
+  operator()(context<C>& cxt)
+  const
+  {
+    return sum_op_impl<C>::template work<typename operands_type::const_iterator, fake_flat_node<C>>
+      (operands.cbegin(), operands.cend(), cxt);
+  }
+
+  friend
+  bool
+  operator==(const fake_sum_op& lhs, const fake_sum_op& rhs)
+  noexcept
+  {
+    return lhs.operands.size() == rhs.operands.size()
+       and std::equal(lhs.operands.cbegin(), lhs.operands.cend(), rhs.operands.cbegin());
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+template <typename C>
+inline
+SDD<C>
+fake_flat_sum(context<C>& cxt, std::vector<fake_flat_node<C>>&& operands)
+{
+  if (operands.empty())
+  {
+    return zero<C>();
+  }
+  else if (operands.size() == 1)
+  {
+    const auto& node = operands.front();
+    return SDD<C>( node.variable()
+                 , std::move(node.begin()->valuation()), std::move(node.begin()->successor()));
+  }
+  return cxt.fake_sum_cache()(fake_sum_op<C>(std::move(operands)));
+}
+
+/*------------------------------------------------------------------------------------------------*/
 
 } // namespace dd
 
@@ -472,3 +506,24 @@ sum(std::initializer_list<SDD<C>> operands)
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace sdd
+
+namespace std {
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+/// @brief Hash specialization for sdd::dd::fake_sum_op
+template <typename C>
+struct hash<sdd::dd::fake_sum_op<C>>
+{
+  std::size_t
+  operator()(const sdd::dd::fake_sum_op<C>& op)
+  const
+  {
+    return sdd::util::hash(op.operands.cbegin(), op.operands.cend());
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+} // namespace std

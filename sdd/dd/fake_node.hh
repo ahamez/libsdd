@@ -8,7 +8,7 @@ namespace sdd { namespace dd {
 
 /// @internal
 template <typename C, typename Valuation>
-class fake_arc final
+class fake_arc
 {
 private:
 
@@ -40,13 +40,21 @@ public:
   {
     return successor_;
   }
+
+  friend
+  bool
+  operator==(const fake_arc& lhs, const fake_arc& rhs)
+  noexcept
+  {
+    return lhs.successor_ == rhs.successor_ and lhs.valuation_ == rhs.valuation_;
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
 template <typename C, typename Valuation>
-class fake_node final
+class fake_node
 {
   /// @brief The type of the variable of this node.
   using variable_type = typename C::variable_type;
@@ -128,6 +136,14 @@ public:
   {
     return *this;
   }
+
+  friend
+  bool
+  operator==(const fake_node& lhs, const fake_node& rhs)
+  noexcept
+  {
+    return lhs.variable_ == rhs.variable_ and lhs.arc_.front() == rhs.arc_.front();
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/
@@ -139,3 +155,43 @@ using fake_flat_node = fake_node<C, typename C::Values>;
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::dd
+
+namespace std {
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+/// @brief Hash specialization for sdd::dd::fake_node
+template <typename C, typename Valuation>
+struct hash<sdd::dd::fake_node<C, Valuation>>
+{
+  std::size_t
+  operator()(const sdd::dd::fake_node<C, Valuation>& n)
+  const
+  {
+    std::size_t seed = sdd::util::hash(n.variable());
+    sdd::util::hash_combine(seed, n.begin(), n.end());
+    return seed;
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+/// @brief Hash specialization for sdd::dd::fake_arc
+template <typename C, typename Valuation>
+struct hash<sdd::dd::fake_arc<C, Valuation>>
+{
+  std::size_t
+  operator()(const sdd::dd::fake_arc<C, Valuation>& a)
+  const
+  {
+    std::size_t seed = sdd::util::hash(a.valuation());
+    sdd::util::hash_combine(seed, a.successor());
+    return seed;
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+} // namespace std

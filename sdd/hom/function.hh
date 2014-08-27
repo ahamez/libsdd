@@ -278,7 +278,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
             sum_operands.emplace_back(o.variable(), std::move(valuation), arc.successor());
           }
         }
-        return dd::fake_flat_sum(cxt.sdd_context(), sum_operands.begin(), sum_operands.end());
+        return dd::fake_flat_sum(cxt.sdd_context(), std::move(sum_operands));
       }
     }
   };

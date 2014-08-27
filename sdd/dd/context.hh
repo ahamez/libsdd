@@ -34,6 +34,9 @@ public:
   /// @brief Cache parameterized by the sum operation.
   using sum_cache_type = mem::cache<context, sum_op<C>>;
 
+  /// @brief Cache parameterized by the sum operation.
+  using fake_sum_cache_type = mem::cache<context, fake_sum_op<C>>;
+
 private:
 
   /// @brief Cache of SDD difference.
@@ -44,6 +47,8 @@ private:
 
   /// @brief Cache of SDD union.
   std::shared_ptr<sum_cache_type> sum_cache_;
+
+  std::shared_ptr<fake_sum_cache_type> fake_sum_cache_;
 
   /// @brief Buffer for temporary containers allocation.
   std::shared_ptr<mem::arena> arena_;
@@ -56,6 +61,7 @@ public:
 	 	: difference_cache_(std::make_shared<difference_cache_type>(*this, difference_size))
     , intersection_cache_(std::make_shared<intersection_cache_type>( *this, intersection_size))
     , sum_cache_(std::make_shared<sum_cache_type>(*this, sum_size))
+    , fake_sum_cache_(std::make_shared<fake_sum_cache_type>(*this, 1'000'000))
     , arena_(std::make_shared<mem::arena>(arena_size))
   {}
 
@@ -86,6 +92,14 @@ public:
     return *sum_cache_;
   }
 
+  /// @brief Get the sum cache.
+  fake_sum_cache_type&
+  fake_sum_cache()
+  noexcept
+  {
+    return *fake_sum_cache_;
+  }
+
   /// @brief Get the memory buffer.
   mem::arena&
   arena()
@@ -102,6 +116,7 @@ public:
     difference_cache_->clear();
     intersection_cache_->clear();
     sum_cache_->clear();
+    fake_sum_cache_->clear();
   }
 };
 
