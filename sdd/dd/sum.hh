@@ -37,9 +37,9 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
   /// Also, a lot of tests permit to break loops as soon as possible.
   template <typename InputIterator, typename NodeType>
   static
-  typename std::enable_if< std::is_same<NodeType, hierarchical_node<C>>::value
-                         or not values::values_traits<typename C::Values>::fast_iterable
-                         , SDD<C>>::type
+  std::enable_if_t< std::is_same<NodeType, hierarchical_node<C>>::value
+                    or not values::values_traits<typename C::Values>::fast_iterable
+                  , SDD<C>>
   work(InputIterator begin, InputIterator end, context<C>& cxt)
   {
     using node_type = NodeType;
@@ -215,9 +215,9 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
   /// @brief Linear union of flat SDDs whose valuation are "fast iterable".
   template <typename InputIterator, typename NodeType>
   static
-  typename std::enable_if< std::is_same<NodeType, flat_node<C>>::value
-                         and values::values_traits<typename C::Values>::fast_iterable
-                         , SDD<C>>::type
+  std::enable_if_t< std::is_same<NodeType, flat_node<C>>::value
+                    and values::values_traits<typename C::Values>::fast_iterable
+                  , SDD<C>>
   work(InputIterator begin, InputIterator end, context<C>& cxt)
   {
     const auto& variable = mem::variant_cast<flat_node<C>>(**begin).variable();

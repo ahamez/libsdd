@@ -401,7 +401,7 @@ struct display_value
 /// @brief Textual output of a flat_set
 /// @related flat_set
 template <typename Value>
-typename std::enable_if<not std::is_integral<Value>::value, std::ostream&>::type
+std::enable_if_t<not std::is_integral<Value>::value, std::ostream&>
 operator<<(std::ostream& os, const flat_set<Value>& fs)
 {
   os << "{";
@@ -418,7 +418,7 @@ operator<<(std::ostream& os, const flat_set<Value>& fs)
 /// When Value is an integral type, consecutive values are displayed like 1..9.
 /// @related flat_set
 template <typename Value>
-typename std::enable_if<std::is_integral<Value>::value, std::ostream&>::type
+std::enable_if_t<std::is_integral<Value>::value, std::ostream&>
 operator<<(std::ostream& os, const flat_set<Value>& fs)
 {
   os << "{";

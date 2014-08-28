@@ -13,7 +13,7 @@ namespace sdd { namespace util {
 /// http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 template <typename T>
 inline
-typename std::enable_if<std::numeric_limits<T>::digits == 64, T>::type
+std::enable_if_t<std::numeric_limits<T>::digits == 64, T>
 next_power_of_2(T x)
 {
   x--;
@@ -35,7 +35,7 @@ next_power_of_2(T x)
 /// http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 template <typename T>
 inline
-typename std::enable_if<std::numeric_limits<T>::digits == 32, T>::type
+std::enable_if_t<std::numeric_limits<T>::digits == 32, T>
 next_power_of_2(T x)
 {
   x--;
