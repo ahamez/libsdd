@@ -35,8 +35,6 @@ hash_combine(std::size_t& seed, InputIterator cit, InputIterator cend)
 
 /*------------------------------------------------------------------------------------------------*/
 
-namespace /* anonymous */ {
-
 /// @internal
 struct seed
 {
@@ -62,8 +60,6 @@ struct seed
     return seed_;
   }
 };
-
-} // namespace anonymous
 
 /*------------------------------------------------------------------------------------------------*/
 
