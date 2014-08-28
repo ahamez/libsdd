@@ -142,7 +142,6 @@ public:
   /// @brief Insert an element.
   std::pair<Data*, bool>
   insert(Data& x)
-  noexcept(Rehash == false and noexcept(this->insert_impl(&x, buckets_, nb_buckets_)))
   {
     auto res = insert_impl(&x, buckets_, nb_buckets_);
     rehash<Rehash>();
