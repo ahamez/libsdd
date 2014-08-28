@@ -34,11 +34,11 @@ struct hom_to_dot_visitor
   {
     if (not visited(h))
     {
-      os_ << node("h", &h) << "[label=\"o\"];" << std::endl;
+      os_ << node("h", &h) << "[label=\"o\"];\n";
       const auto left = visit(*this, h.left);
-      os_ << node("h", &h) << " -> " << left << "[label=\"l\"];" << std::endl;
+      os_ << node("h", &h) << " -> " << left << "[label=\"l\"];\n";
       const auto right = visit(*this, h.right);
-      os_ << node("h", &h) << " -> " << right << "[label=\"r\"];" << std::endl;
+      os_ << node("h", &h) << " -> " << right << "[label=\"r\"];\n";
     }
     return node("h", &h);
   }
@@ -49,9 +49,9 @@ struct hom_to_dot_visitor
   {
     if (not visited(h))
     {
-      os_ << node("h", &h) << "[label=\"*\"];" << std::endl;
+      os_ << node("h", &h) << "[label=\"*\"];\n";
       const auto n = visit(*this, h.h);
-      os_ << node("h", &h) << " -> " << n << std::endl;
+      os_ << node("h", &h) << " -> " << n << '\n';
     }
     return node("h", &h);
   }
@@ -62,7 +62,7 @@ struct hom_to_dot_visitor
   {
     if (not visited(h))
     {
-      os_ << node("h", &h) << "[label=\"" << h << "\"];" << std::endl;
+      os_ << node("h", &h) << "[label=\"" << h << "\"];\n";
     }
     return node("h", &h);
   }
@@ -72,7 +72,7 @@ struct hom_to_dot_visitor
   const
   {
     static unsigned int i = 0;
-    os_ << "id" << i << " [label=\"id\"];" << std::endl;
+    os_ << "id" << i << " [label=\"id\"];\n";
     return "id" + std::to_string(i++);
   }
 
@@ -82,9 +82,9 @@ struct hom_to_dot_visitor
   {
     if (not visited(h))
     {
-      os_ << node("h", &h) << " [label=\"@\"];" << std::endl;
+      os_ << node("h", &h) << " [label=\"@\"];\n";
       const auto n = visit(*this, h.h);
-      os_ << node("h", &h) << " -> " << n << " [label=\"" << h.target << "\"];" << std::endl;
+;
     }
     return node("h", &h);
   }
@@ -95,22 +95,21 @@ struct hom_to_dot_visitor
   {
     if (not visited(h))
     {
-      os_ << node("h", &h) << " [label=\"$*\"];" << std::endl;
+      os_ << node("h", &h) << " [label=\"$*\"];\n";
       if (h.F != id<C>())
       {
         const auto f = visit(*this, h.F);
-        os_ << node("h", &h) << " -> " << f << " [label=\"F\"];" << std::endl;
+        os_ << node("h", &h) << " -> " << f << " [label=\"F\"];\n";
       }
       unsigned int i = 0;
-      for (auto g_it = h.G_begin(); g_it != h.G_end(); ++g_it, ++i)
+      for (auto&& g : h)
       {
-        const auto g = visit(*this, *g_it);
-        os_ << node("h", &h) << " -> " << g << " [label=\"g" << i << "\"];" << std::endl;
+        os_ << node("h", &h) << " -> " << visit(*this, g)<< " [label=\"g" << i << "\"];\n";
       }
       if (h.L != id<C>())
       {
         const auto l = visit(*this, h.L);
-        os_ << node("h", &h) << " -> " << l << " [label=\"L\"];"<< std::endl;
+        os_ << node("h", &h) << " -> " << l << " [label=\"L\"];\n";
       }
     }
     return node("h", &h);
@@ -122,11 +121,11 @@ struct hom_to_dot_visitor
   {
     if (not visited(h))
     {
-      os_ << node("h", &h) << " [label=\"+\"];" << std::endl;
+      os_ << node("h", &h) << " [label=\"+\"];\n";
       for (const auto& operand : h)
       {
         const auto n = visit(*this, operand);
-        os_ << node("h", &h) << " -> " << n << ";" << std::endl;
+        os_ << node("h", &h) << " -> " << n << ";\n";
       }
     }
     return node("h", &h);
@@ -138,16 +137,16 @@ struct hom_to_dot_visitor
   {
     if (not visited(h))
     {
-      os_ << node("h", &h) << " [label=\"ITE\"];" << std::endl;
+      os_ << node("h", &h) << " [label=\"ITE\"];\n";
 
       const auto pred = visit(*this, h.h_if);
-      os_ << node("h", &h) << " -> " << pred << " [label=\"if\"];" << std::endl;
+      os_ << node("h", &h) << " -> " << pred << " [label=\"if\"];\n";
 
       const auto then_branch = visit(*this, h.h_then);
-      os_ << node("h", &h) << " -> " << then_branch << " [label=\"then\"];" << std::endl;
+      os_ << node("h", &h) << " -> " << then_branch << " [label=\"then\"];\n";
 
       const auto else_branch = visit(*this, h.h_else);
-      os_ << node("h", &h) << " -> " << else_branch << " [label=\"else\"];" << std::endl;
+      os_ << node("h", &h) << " -> " << else_branch << " [label=\"else\"];\n";
     }
     return node("h", &h);
   }
@@ -197,9 +196,9 @@ struct hom_to_dot
   std::ostream&
   operator<<(std::ostream& out, const hom_to_dot& manip)
   {
-    out << "digraph homomorphism {" << std::endl;
+    out << "digraph homomorphism {\n";
     visit(hom_to_dot_visitor<C>(out), manip.h_);
-    return out << "}" << std::endl;
+    return out << "}\n";
   }
 };
 

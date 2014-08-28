@@ -154,8 +154,7 @@ public:
     // +n.variable(): widen the type, useful to print the values of char and unsigned char types.
     os << +n.variable_ << "[";
     std::for_each( n.begin(), n.end() - 1
-                 , [&](const arc<C, Valuation>& a)
-                      {os << a.valuation() << " --> " << a.successor() << " || ";});
+                 , [&](const auto& a){os << a.valuation() << " --> " << a.successor() << " || ";});
     return os << (n.end() - 1)->valuation() << " --> " << (n.end() - 1)->successor() << "]";
   }
 

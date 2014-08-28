@@ -83,8 +83,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _saturation_sum
   const noexcept
   {
     return (F ? F->selector() : true) and (L ? L->selector() : true)
-       and std::all_of( G.begin(), G.end()
-                      , [&](const homomorphism<C>& h){return h.selector();});
+       and std::all_of(G.begin(), G.end(), [&](const auto& h){return h.selector();});
   }
 
   friend
