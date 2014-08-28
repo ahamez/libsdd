@@ -68,7 +68,7 @@ struct hash<sdd::zero_terminal<C>>
   operator()(const sdd::zero_terminal<C>&)
   const noexcept
   {
-    return sdd::util::hash(0);
+    return 0;
   }
 };
 
@@ -82,7 +82,7 @@ struct hash<sdd::one_terminal<C>>
   operator()(const sdd::one_terminal<C>&)
   const noexcept
   {
-    return sdd::util::hash(1);
+    return 1;
   }
 };
 

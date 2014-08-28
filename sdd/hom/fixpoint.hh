@@ -142,9 +142,8 @@ struct hash<sdd::hom::_fixpoint<C>>
   operator()(const sdd::hom::_fixpoint<C>& f)
   const
   {
-    std::size_t seed = 345789; // avoid to have the same hash as the contained homormorphism
-    sdd::util::hash_combine(seed, f.h);
-    return seed;
+    using namespace sdd::hash;
+    return seed(345789) (val(f.h));
   }
 };
 

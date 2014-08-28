@@ -191,9 +191,8 @@ struct hash<sdd::node<C, Valuation>>
   operator()(const sdd::node<C, Valuation>& n)
   const
   {
-    std::size_t seed = sdd::util::hash(n.variable());
-    sdd::util::hash_combine(seed, n.begin(), n.end());
-    return seed;
+    using namespace sdd::hash;
+    return seed() (val(n.variable())) (range(n));
   }
 };
 

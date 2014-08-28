@@ -69,9 +69,9 @@ struct hash<sdd::mem::cache_entry<Operation, Result>>
 {
   std::size_t
   operator()(const sdd::mem::cache_entry<Operation, Result>& x)
-  const noexcept(noexcept(sdd::util::hash(x.operation)))
   {
-    return sdd::util::hash(x.operation);
+    using namespace sdd::hash;
+    return seed() (val(x.operation));
   }
 };
 

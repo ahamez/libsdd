@@ -263,7 +263,8 @@ struct hash<sdd::dd::nary_op<C, Operation>>
   operator()(const sdd::dd::nary_op<C, Operation>& op)
   const
   {
-    return sdd::util::hash(op.begin(), op.end());
+    using namespace sdd::hash;
+    return seed() (range(op));
   }
 };
 

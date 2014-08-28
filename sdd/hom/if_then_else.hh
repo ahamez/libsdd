@@ -141,11 +141,8 @@ struct hash<sdd::hom::_if_then_else<C>>
   operator()(const sdd::hom::_if_then_else<C>& ite)
   const
   {
-    std::size_t seed = sdd::util::hash(ite.h_if);
-    sdd::util::hash_combine(seed, ite.h_then);
-    sdd::util::hash_combine(seed, ite.h_else);
-    return seed;
-
+    using namespace sdd::hash;
+    return seed() (val(ite.h_if)) (val(ite.h_then)) (val(ite.h_else));
   }
 };
 

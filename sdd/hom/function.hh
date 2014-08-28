@@ -374,9 +374,8 @@ struct hash<sdd::hom::_function<C>>
   operator()(const sdd::hom::_function<C>& x)
   const noexcept
   {
-    std::size_t seed = x.fun_ptr->hash();
-    sdd::util::hash_combine(seed, x.target);
-    return seed;
+    using namespace sdd::hash;
+    return seed(x.fun_ptr->hash()) (val(x.target));
   }
 };
 

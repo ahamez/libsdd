@@ -263,10 +263,8 @@ struct hash<sdd::hom::_expression<C>>
   operator()(const sdd::hom::_expression<C>& e)
   const
   {
-    std::size_t seed = e.evaluator().hash();
-    sdd::util::hash_combine(seed, e.positions.begin(), e.positions.end());
-    sdd::util::hash_combine(seed, e.target);
-    return seed;
+    using namespace sdd::hash;
+    return seed (e.evaluator().hash()) (range(e.positions)) (val(e.target));
   }
 };
 
@@ -279,10 +277,8 @@ struct hash<sdd::hom::_simple_expression<C>>
   operator()(const sdd::hom::_simple_expression<C>& e)
   const noexcept
   {
-    std::size_t seed = e.evaluator().hash();
-    sdd::util::hash_combine(seed, e.positions.begin(), e.positions.end());
-    sdd::util::hash_combine(seed, e.target);
-    return seed;
+    using namespace sdd::hash;
+    return seed (e.evaluator().hash()) (range(e.positions)) (val(e.target));
   }
 };
 

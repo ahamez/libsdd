@@ -348,9 +348,8 @@ struct hash<sdd::order<C>>
   operator()(const sdd::order<C>& o)
   const noexcept
   {
-    std::size_t seed = sdd::util::hash(o.nodes_ptr_.get());
-    sdd::util::hash_combine(seed, o.head_);
-    return seed;
+    using namespace sdd::hash;
+    return seed() (val(o.nodes_ptr_.get())) (val(o.head_));
   }
 };
 

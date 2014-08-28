@@ -257,9 +257,8 @@ struct hash<sdd::dd::difference_op<C>>
   operator()(const sdd::dd::difference_op<C>& op)
   const
   {
-    std::size_t seed = sdd::util::hash(op.left);
-    sdd::util::hash_combine(seed, op.right);
-    return seed;
+    using namespace sdd::hash;
+    return seed() (val(op.left)) (val(op.right));
   }
 };
 

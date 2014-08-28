@@ -171,17 +171,8 @@ struct hash<sdd::hom::_saturation_sum<C>>
   operator()(const sdd::hom::_saturation_sum<C>& s)
   const
   {
-    std::size_t seed = sdd::util::hash(s.variable);
-    if (s.F)
-    {
-      sdd::util::hash_combine(seed, *s.F);
-    }
-    if (s.L)
-    {
-      sdd::util::hash_combine(seed, *s.L);
-    }
-    sdd::util::hash_combine(seed, s.G.begin(), s.G.end());
-    return seed;
+    using namespace sdd::hash;
+    return seed() (val(s.variable)) (val(s.F)) (val(s.L)) (range(s.G));
   }
 };
 

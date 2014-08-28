@@ -241,7 +241,8 @@ struct hash<sdd::hom::_intersection<C>>
   operator()(const sdd::hom::_intersection<C>& s)
   const
   {
-    return sdd::util::hash(s.operands.begin(), s.operands.end());
+    using namespace sdd::hash;
+    return seed() (range(s.operands));
   }
 };
 
