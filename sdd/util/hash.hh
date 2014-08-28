@@ -77,6 +77,7 @@ auto val(const T& x)
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <typename T>
 auto val(const boost::optional<T>& x)
 noexcept
@@ -92,7 +93,6 @@ auto
 range(InputIterator begin, InputIterator end)
 noexcept
 {
-  assert(begin != end);
   return [=](std::size_t s) { hash_combine(s, begin, end); return seed(s); };
 }
 
