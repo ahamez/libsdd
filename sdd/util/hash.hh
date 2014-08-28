@@ -49,7 +49,6 @@ struct seed
   auto
   operator()(const Cont& cont)
   const noexcept
-  -> decltype(auto)
   {
     return cont(seed_);
   }
@@ -74,6 +73,7 @@ auto val(const T& x)
 
 template <typename T>
 auto val(const boost::optional<T>& x)
+noexcept
 {
   return [&](std::size_t s) { if (x) hash_combine(s, *x); return seed(s); };
 }
@@ -84,6 +84,7 @@ auto val(const boost::optional<T>& x)
 template <typename InputIterator>
 auto
 range(InputIterator begin, InputIterator end)
+noexcept
 {
   return [=](std::size_t s) { hash_combine(s, begin, end); return seed(s); };
 }
@@ -94,6 +95,7 @@ range(InputIterator begin, InputIterator end)
 template <typename Container>
 auto
 range(const Container& c)
+noexcept
 {
   return range(c.begin(), c.end());
 }
