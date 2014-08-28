@@ -81,12 +81,12 @@ public:
   }
 
   /// @brief
-  template <typename T, typename HashT, typename EqT>
+  template <typename T, typename EqT>
   std::pair<Data*, bool>
-  insert_check(const T& x, HashT hash, EqT eq, insert_commit_data& commit_data)
-  const noexcept(noexcept(hash(x)))
+  insert_check(const T& x, EqT eq, insert_commit_data& commit_data)
+  const noexcept(noexcept(std::hash<T>()(x)))
   {
-    commit_data.hash = hash(x);
+    commit_data.hash = std::hash<T>()(x);
     // same as commit_data.h % nb_buckets_, but much more efficient (works only with powers of 2)
     const std::size_t pos = commit_data.hash & (nb_buckets_ - 1);
 
@@ -108,7 +108,7 @@ public:
   /// @brief
   void
   insert_commit(Data& x, const insert_commit_data& commit_data)
-  noexcept
+  noexcept(Rehash == false)
   {
     const std::size_t pos = commit_data.hash & (nb_buckets_ - 1);
 
@@ -142,7 +142,7 @@ public:
   /// @brief Insert an element.
   std::pair<Data*, bool>
   insert(Data& x)
-  noexcept(noexcept(std::hash<Data>()(x)))
+  noexcept(Rehash == false and noexcept(this->insert_impl(&x, buckets_, nb_buckets_)))
   {
     auto res = insert_impl(&x, buckets_, nb_buckets_);
     rehash<Rehash>();
@@ -251,7 +251,7 @@ public:
 private:
 
   template<bool DoRehash>
-  typename std::enable_if<DoRehash, void>::type
+  std::enable_if_t<DoRehash, void>
   rehash()
   {
     if ((load_factor() < max_load_factor_))
@@ -281,8 +281,9 @@ private:
   }
 
   template<bool DoRehash>
-  typename std::enable_if<not DoRehash, void>::type
+  std::enable_if_t<not DoRehash, void>
   rehash()
+  noexcept
   {}
 
   /// @brief Insert an element.

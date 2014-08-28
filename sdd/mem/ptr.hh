@@ -81,6 +81,7 @@ public:
   noexcept
     : x_(other.x_)
   {
+    assert(other.x_ != nullptr);
     x_->increment_reference_counter();
   }
 

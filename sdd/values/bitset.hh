@@ -209,7 +209,7 @@ struct hash<sdd::values::bitset<Size>>
   const noexcept
   {
     using namespace sdd::hash;
-    return seed() (val(b.content_.to_ulong())) ();
+    return seed() (val(b.content_.to_ulong()));
   }
 };
   

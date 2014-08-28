@@ -9,6 +9,7 @@
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/mem/linear_alloc.hh"
+#include "sdd/util/hash.hh"
 
 namespace sdd { namespace dd {
 

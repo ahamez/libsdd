@@ -45,6 +45,12 @@ struct seed
     : seed_(s)
   {}
 
+  template <typename T>
+  seed(const T& x)
+  noexcept(noexcept(std::hash<T>()(x)))
+    : seed_(std::hash<T>()(x))
+  {}
+
   template <typename Cont>
   auto
   operator()(const Cont& cont)
@@ -86,6 +92,7 @@ auto
 range(InputIterator begin, InputIterator end)
 noexcept
 {
+  assert(begin != end);
   return [=](std::size_t s) { hash_combine(s, begin, end); return seed(s); };
 }
 
