@@ -2,6 +2,7 @@
 
 #include <algorithm>   // fill
 #include <functional>  // hash
+#include <tuple>
 #include <type_traits> // enable_if
 #include <utility>     // make_pair, pair
 
@@ -262,12 +263,14 @@ public:
   }
 
   /// @brief The number of collisions.
-  std::size_t
+  std::tuple<std::size_t /* collisions */, std::size_t /* alone */, std::size_t /* empty */>
   collisions()
   const noexcept
   {
-    std::size_t c = 0;
-    for (std::size_t i = 0; i < nb_buckets_; ++i)
+    std::size_t col = 0;
+    std::size_t alone = 0;
+    std::size_t empty = 0;
+    for (auto i = 0ul; i < nb_buckets_; ++i)
     {
       std::size_t nb = 0;
       auto current = buckets_[i];
@@ -276,9 +279,11 @@ public:
         ++nb;
         current = current->hook.next;
       }
-      if (nb > 1) ++c;
+      if (nb == 0) ++empty;
+      else if (nb == 1) ++ alone;
+      else if (nb > 1) ++col;
     }
-    return c;
+    return std::make_tuple(col, alone, empty);
   }
 
 private:

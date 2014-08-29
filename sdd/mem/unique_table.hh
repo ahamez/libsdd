@@ -32,8 +32,14 @@ struct unique_table_statistics
   /// @brief The number of times the underlying hash table has been rehashed.
   std::size_t rehash;
 
-  /// @brief The number of collisions in the underlying hash table.
+  /// @brief The number of buckets with more than one element in the underlying hash table.
   std::size_t collisions;
+
+  /// @brief The number of buckets with only one element in the underlying hash table.
+  std::size_t alone;
+
+  /// @brief The number of empty buckets in the underlying hash table.
+  std::size_t empty;
 
   /// @brief The number of buckets in the underlying hash table.
   std::size_t buckets;
@@ -118,7 +124,7 @@ public:
     stats_.size = set_.size();
     stats_.load_factor = set_.load_factor();
     stats_.rehash = set_.nb_rehash();
-    stats_.collisions = set_.collisions();
+    std::tie(stats_.collisions, stats_.alone, stats_.empty) = set_.collisions();
     stats_.buckets = set_.bucket_count();
     return stats_;
   }
