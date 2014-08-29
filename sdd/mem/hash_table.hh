@@ -29,6 +29,48 @@ struct intrusive_member_hook
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+/// @brief Used by insert_check
+struct insert_commit_data
+{
+  std::size_t hash_or_pos;
+
+  template <bool DoRehash, typename T>
+  std::enable_if_t<DoRehash, void>
+  update(const T& x, std::size_t)
+  noexcept(noexcept(std::hash<T>()(x)))
+  {
+    hash_or_pos = std::hash<T>()(x);
+  }
+
+  template <bool DoRehash, typename T>
+  std::enable_if_t<not DoRehash, void>
+  update(const T& x, std::size_t nb_buckets)
+  noexcept(noexcept(std::hash<T>()(x)))
+  {
+    hash_or_pos = std::hash<T>()(x) % nb_buckets;
+  }
+
+  template <bool DoRehash>
+  std::enable_if_t<DoRehash, std::size_t>
+  pos(std::size_t nb_buckets)
+  const noexcept
+  {
+    return hash_or_pos % nb_buckets;
+  }
+
+  /// Avoid two call to
+  template <bool DoRehash>
+  std::enable_if_t<not DoRehash, std::size_t>
+  pos(std::size_t)
+  const noexcept
+  {
+    return hash_or_pos;
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
 /// @brief An intrusive hash table.
 ///
 /// It's modeled after boost::intrusive. Only the interfaces needed by the libsdd are implemented.
@@ -36,14 +78,6 @@ struct intrusive_member_hook
 template <typename Data, bool Rehash = true>
 class hash_table
 {
-public:
-
-  /// @brief Used by insert_check
-  struct insert_commit_data
-  {
-    std::size_t hash;
-  };
-
 private:
 
   /// @brief 
@@ -86,8 +120,8 @@ public:
   insert_check(const T& x, EqT eq, insert_commit_data& commit_data)
   const noexcept(noexcept(std::hash<T>()(x)))
   {
-    commit_data.hash = std::hash<T>()(x);
-    const std::size_t pos = commit_data.hash % nb_buckets_;
+    commit_data.update<Rehash>(x, nb_buckets_);
+    const auto pos = commit_data.pos<Rehash>(nb_buckets_);
 
     Data* current = buckets_[pos];
     bool insertion = true;
@@ -109,7 +143,7 @@ public:
   insert_commit(Data& x, const insert_commit_data& commit_data)
   noexcept(Rehash == false)
   {
-    const std::size_t pos = commit_data.hash % nb_buckets_;
+    const auto pos = commit_data.pos<Rehash>(nb_buckets_);
 
     Data* previous = nullptr;
     Data* current = buckets_[pos];
@@ -312,8 +346,6 @@ private:
     return std::make_pair(current, true /* insertion */);
   }
 };
-
-
 
 /*------------------------------------------------------------------------------------------------*/
 

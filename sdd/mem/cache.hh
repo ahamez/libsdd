@@ -160,7 +160,7 @@ public:
     }
 
     // Lookup for op.
-    typename set_type::insert_commit_data commit_data;
+    insert_commit_data commit_data;
     auto insertion = set_.insert_check( op
                                       , [](const Operation& lhs, const cache_entry_type& rhs)
                                           {return lhs == rhs.operation;}
