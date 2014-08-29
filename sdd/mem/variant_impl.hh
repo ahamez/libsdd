@@ -20,7 +20,6 @@ namespace sdd { namespace mem {
 
 /*------------------------------------------------------------------------------------------------*/
 
-using std::enable_if;
 using std::is_same;
 using util::nil;
 
@@ -216,7 +215,7 @@ struct extra_bytes_visitor
 /// necessary as the preprocessor will generate instantations of such invocations.
 template <typename Visitor, typename T, typename... Args>
 inline
-typename enable_if<is_same<T, nil>::value, typename Visitor::result_type>::type
+std::enable_if_t<is_same<T, nil>::value, typename Visitor::result_type>
 invoke(const Visitor&, const T&, Args&&...)
 noexcept
 {
@@ -228,7 +227,7 @@ noexcept
 /// @brief Invoke user's visitor for deduced type.
 template <typename Visitor, typename T, typename... Args>
 inline
-typename enable_if<not is_same<T, nil>::value, typename Visitor::result_type>::type
+std::enable_if_t<not is_same<T, nil>::value, typename Visitor::result_type>
 invoke(const Visitor& v, const T& x, Args&&... args)
 noexcept(noexcept(v(x, std::forward<Args>(args)...)))
 {
@@ -277,8 +276,7 @@ dispatch( const Visitor& v
 /// necessary as the preprocessor will generate instantations of such invocations.
 template <typename Visitor, typename T, typename U, typename... Args>
 inline
-typename enable_if< is_same<T, nil>::value or is_same<U, nil>::value
-                  , typename Visitor::result_type>::type
+std::enable_if_t< is_same<T, nil>::value or is_same<U, nil>::value, typename Visitor::result_type>
 binary_invoke(const Visitor&, const T&, const U&, Args&&...)
 noexcept
 {
@@ -290,8 +288,8 @@ noexcept
 /// @brief Invoke user's visitor for deduced type.
 template <typename Visitor, typename T, typename U, typename... Args>
 inline
-typename enable_if< not (is_same<T, nil>::value or is_same<U, nil>::value)
-                  , typename Visitor::result_type>::type
+std::enable_if_t< not (is_same<T, nil>::value or is_same<U, nil>::value)
+                , typename Visitor::result_type>
 binary_invoke(const Visitor& v, const T& x, const U& y, Args&&... args)
 noexcept(noexcept(v(x, y, std::forward<Args>(args)...)))
 {

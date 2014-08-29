@@ -208,7 +208,7 @@ struct hash<sdd::values::bitset<Size>>
   operator()(const sdd::values::bitset<Size>& b)
   const noexcept
   {
-    return sdd::util::hash(b.content_.to_ulong());
+    return sdd::hash::seed(b.content_.to_ulong());
   }
 };
   

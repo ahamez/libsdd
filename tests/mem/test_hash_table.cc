@@ -193,7 +193,6 @@ TEST(hash_table, insert_check_miss)
 
   foo_hash_table::insert_commit_data commit_data;
   const auto insertion = ht.insert_check( 42
-                                        , std::hash<unsigned int>()
                                         , [](unsigned int lhs, const foo& rhs)
                                             {
                                               return lhs == rhs.data;
@@ -218,7 +217,6 @@ TEST(hash_table, insert_check_hit)
 
   foo_hash_table::insert_commit_data commit_data;
   const auto insertion = ht.insert_check( 33
-                                        , std::hash<unsigned int>()
                                         , [](unsigned int lhs, const foo& rhs)
                                             {
                                               return lhs == rhs.data;

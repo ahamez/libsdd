@@ -61,7 +61,7 @@ public:
   /// @brief Destructor.
   ~_saturation_fixpoint()
   {
-    for (auto it = G_begin(); it != G_end(); ++it)
+    for (auto it = begin(); it != end(); ++it)
     {
       it->~homomorphism<C>();
     }
@@ -90,7 +90,7 @@ public:
         s2 = L(cxt, o, s2); // apply (L + Id)*
       }
 
-      for (auto cit = G_begin(); cit != G_end(); ++cit)
+      for (auto cit = begin(); cit != end(); ++cit)
       {
         const auto& g = *cit;
         // chain applications of G
@@ -114,16 +114,15 @@ public:
   selector()
   const noexcept
   {
-    return F.selector()
-       and L.selector()
-       and std::all_of( G_begin(), G_end(), [](const homomorphism<C>& h){return h.selector();});
+    return F.selector() and L.selector()
+       and std::all_of(begin(), end(), [](const auto& h){return h.selector();});
   }
 
   /// @brief Get an iterator to the first operand of G.
   ///
   /// O(1).
   const_iterator
-  G_begin()
+  begin()
   const noexcept
   {
     return reinterpret_cast<const homomorphism<C>*>(G_operands_addr());
@@ -133,7 +132,7 @@ public:
   ///
   /// O(1).
   const_iterator
-  G_end()
+  end()
   const noexcept
   {
     return reinterpret_cast<const homomorphism<C>*>(G_operands_addr()) + G_size;
@@ -146,7 +145,7 @@ public:
   {
     return lhs.variable == rhs.variable and lhs.F == rhs.F
        and lhs.L == rhs.L and lhs.G_size == rhs.G_size
-       and std::equal(lhs.G_begin(), lhs.G_end(), rhs.G_begin());
+       and std::equal(lhs.begin(), lhs.end(), rhs.begin());
   }
 
   friend
@@ -157,9 +156,9 @@ public:
     if (s.G_size != 0)
     {
       os << " + ";
-      std::copy( s.G_begin(), std::prev(s.G_end())
+      std::copy( s.begin(), std::prev(s.end())
                , std::ostream_iterator<homomorphism<C>>(os, " + "));
-      os << *std::prev(s.G_end()) << ")*";
+      os << *std::prev(s.end()) << ")*";
     }
     return os;
   }
@@ -231,11 +230,8 @@ struct hash<sdd::hom::_saturation_fixpoint<C>>
   operator()(const sdd::hom::_saturation_fixpoint<C>& s)
   const
   {
-    std::size_t seed = sdd::util::hash(s.variable);
-    sdd::util::hash_combine(seed, s.F);
-    sdd::util::hash_combine(seed, s.L);
-    sdd::util::hash_combine(seed, s.G_begin(), s.G_end());
-    return seed;
+    using namespace sdd::hash;
+    return seed(s.variable) (val(s.F)) (val(s.L)) (range(s));
   }
 };
 

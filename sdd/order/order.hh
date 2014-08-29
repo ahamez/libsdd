@@ -175,17 +175,6 @@ public:
     }
   }
 
-//  /// @internal
-//  std::size_t
-//  hash()
-//  const noexcept
-//  {
-//    std::size_t seed = 0;
-//    util::hash_combine(seed, nodes_ptr_.get());
-//    util::hash_combine(seed, head_);
-//    return seed;
-//  }
-
   /// @brief Equality.
   friend
   bool
@@ -359,9 +348,8 @@ struct hash<sdd::order<C>>
   operator()(const sdd::order<C>& o)
   const noexcept
   {
-    std::size_t seed = sdd::util::hash(o.nodes_ptr_.get());
-    sdd::util::hash_combine(seed, o.head_);
-    return seed;
+    using namespace sdd::hash;
+    return seed(o.nodes_ptr_.get()) (val(o.head_));
   }
 };
 

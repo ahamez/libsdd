@@ -9,6 +9,7 @@
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/mem/linear_alloc.hh"
+#include "sdd/util/hash.hh"
 
 namespace sdd { namespace dd {
 
@@ -263,7 +264,8 @@ struct hash<sdd::dd::nary_op<C, Operation>>
   operator()(const sdd::dd::nary_op<C, Operation>& op)
   const
   {
-    return sdd::util::hash(op.begin(), op.end());
+    using namespace sdd::hash;
+    return seed() (range(op));
   }
 };
 

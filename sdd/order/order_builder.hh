@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "sdd/order/order_identifier.hh"
-#include "sdd/util/gcc_version.hh"
 
 namespace sdd {
 
@@ -185,25 +184,10 @@ public:
   /// Returns a copy.
   order_builder
   operator<<(const order_builder& next)
-#if GCC_VERSION >= 409000 || defined(__clang__)
   const&
-#else
-  const
-#endif
   {
     return order_builder(concat(ptr_, next.ptr_));
   }
-
-#if GCC_VERSION >= 409000 || defined(__clang__)
-  /// @brief Concatenate this order with another one.
-  order_builder
-  operator<<(const order_builder& next)
-  &&
-  {
-    ptr_ = concat(ptr_, next.ptr_);
-    return *this;
-  }
-#endif
 
   /// @brief Get the number of identifiers.
   std::size_t

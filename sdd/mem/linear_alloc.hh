@@ -46,7 +46,7 @@ public:
   arena(std::size_t size)
   noexcept
     : size_(size)
-    , buffer_(new char[size_])
+    , buffer_(std::make_unique<char[]>(size_))
     , position_(buffer_.get())
 #ifndef NDEBUG
     , active_(0)

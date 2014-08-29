@@ -71,7 +71,7 @@ struct evaluation
         SDD<C> new_successor = hom(cxt, o.next(), arc.successor());
         if (not new_successor.empty())
         {
-          su.add(new_successor, arc.valuation());
+          su.add(std::move(new_successor), arc.valuation());
         }
       }
       return {node.variable(), su()};
@@ -189,9 +189,8 @@ struct hash<sdd::hom::cached_homomorphism<C>>
   operator()(const sdd::hom::cached_homomorphism<C>& ch)
   const
   {
-    std::size_t seed = sdd::util::hash(ch.hom);
-    sdd::util::hash_combine(seed, ch.sdd);
-    return seed;
+    using namespace sdd::hash;
+    return seed(ch.hom) (val(ch.sdd));
   }
 };
 

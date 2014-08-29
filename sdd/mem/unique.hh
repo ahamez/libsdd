@@ -23,15 +23,12 @@ class
 #ifdef __clang__
 LIBSDD_ATTRIBUTE_PACKED
 #endif
-ref_counted
+unique
 {
-  // Can't copy a ref_counted.
-  ref_counted(const ref_counted&) = delete;
-  ref_counted& operator=(const ref_counted&) = delete;
-  
-  // Can't move a ref_counted.
-  ref_counted(ref_counted&&) = delete;
-  ref_counted& operator=(ref_counted&&) = delete;
+  unique(const unique&) = delete;
+  unique& operator=(const unique&) = delete;
+  unique(unique&&) = delete;
+  unique& operator=(unique&&) = delete;
 
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // The order is important here: data_ MUST be the last of all fields. This is necessary
@@ -42,7 +39,7 @@ ref_counted
 private:
 
   /// @brief Used by mem::hash_table to store some informations.
-  mem::intrusive_member_hook<ref_counted> hook;
+  mem::intrusive_member_hook<unique> hook;
 
   /// @brief The number of time the encapsulated data is referenced
   ///
@@ -58,7 +55,7 @@ private:
 public:
   
   template <typename... Args>
-  ref_counted(Args&&... args)
+  unique(Args&&... args)
   noexcept(std::is_nothrow_constructible<T, Args...>::value)
     : hook(), ref_count_(0), data_(std::forward<Args>(args)...)
   {}
@@ -93,7 +90,7 @@ public:
   /// @brief Equality.
   friend
   bool
-  operator==(const ref_counted& lhs, const ref_counted& rhs)
+  operator==(const unique& lhs, const unique& rhs)
   noexcept
   {
     return lhs.data_ == rhs.data_;
@@ -155,12 +152,12 @@ namespace std {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Hash specialization for sdd::mem::ref_counted
+/// @brief Hash specialization for sdd::mem::unique
 template <typename T>
-struct hash<sdd::mem::ref_counted<T>>
+struct hash<sdd::mem::unique<T>>
 {
   std::size_t
-  operator()(const sdd::mem::ref_counted<T>& x)
+  operator()(const sdd::mem::unique<T>& x)
   const noexcept(noexcept(hash<T>()(x.data())))
   {
     return hash<T>()(x.data());

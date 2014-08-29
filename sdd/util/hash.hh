@@ -2,9 +2,10 @@
 
 #include <algorithm> // for_each
 #include <cassert>
-#include <iterator>
 
-namespace sdd { namespace util {
+#include <boost/optional.hpp>
+
+namespace sdd { namespace hash {
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -29,37 +30,83 @@ inline
 void
 hash_combine(std::size_t& seed, InputIterator cit, InputIterator cend)
 {
-  using value_type = typename std::iterator_traits<InputIterator>::value_type;
-  std::for_each(cit, cend, [&](const value_type& v){hash_combine(seed, v);});
+  std::for_each(cit, cend, [&](const auto& v){hash_combine(seed, v);});
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Call std::hash<>
+/// @internal
+struct seed
+{
+  std::size_t seed_;
+
+  seed(std::size_t s = 0)
+  noexcept
+    : seed_(s)
+  {}
+
+  template <typename T>
+  seed(const T& x)
+  noexcept(noexcept(std::hash<T>()(x)))
+    : seed_(std::hash<T>()(x))
+  {}
+
+  template <typename Cont>
+  auto
+  operator()(const Cont& cont)
+  const noexcept
+  {
+    return cont(seed_);
+  }
+
+  operator std::size_t()
+  const noexcept
+  {
+    return seed_;
+  }
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
 template <typename T>
-inline
-std::size_t
-hash(const T& x)
-noexcept(noexcept(std::hash<T>()(x)))
+auto val(const T& x)
 {
-  return std::hash<T>()(x);
+  return [&](std::size_t s) { hash_combine(s, x); return seed(s); };
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @brief Call std::hash<>
+/// @internal
+template <typename T>
+auto val(const boost::optional<T>& x)
+noexcept
+{
+  return [&](std::size_t s) { if (x) hash_combine(s, *x); return seed(s); };
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
 template <typename InputIterator>
-inline
-std::size_t
-hash(InputIterator cit, InputIterator cend)
-noexcept(noexcept(std::hash<typename std::decay<decltype(*cit)>::type>()(*cit)))
+auto
+range(InputIterator begin, InputIterator end)
+noexcept
 {
-  assert(cit != cend && "Empty range to hash.");
-  std::size_t seed = hash(*cit);
-  hash_combine(seed, cit + 1, cend);
-  return seed;
+  return [=](std::size_t s) { hash_combine(s, begin, end); return seed(s); };
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-}} // namespace sdd::util
+/// @internal
+template <typename Container>
+auto
+range(const Container& c)
+noexcept
+{
+  return range(c.begin(), c.end());
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+}} // namespace sdd::hash

@@ -81,6 +81,7 @@ public:
   noexcept
     : x_(other.x_)
   {
+    assert(other.x_ != nullptr);
     x_->increment_reference_counter();
   }
 
@@ -219,7 +220,7 @@ struct hash<sdd::mem::ptr<Unique>>
   operator()(const sdd::mem::ptr<Unique>& x)
   const noexcept
   {
-    return sdd::util::hash(x.operator->());
+    return sdd::hash::seed(x.operator->());
   }
 };
 

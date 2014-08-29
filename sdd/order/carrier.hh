@@ -8,6 +8,7 @@ namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 /// @brief Get the succession of local that apply h on target.
 /// @param o The actual order.
 /// @param target Must belong to o.

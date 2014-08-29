@@ -1,7 +1,6 @@
 #include "gtest/gtest.h"
 
 #include "sdd/mem/ptr.hh"
-#include "sdd/mem/ref_counted.hh"
 
 namespace sdd { namespace mem {
 

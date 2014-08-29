@@ -39,7 +39,7 @@ struct to_dot_visitor
     const auto node = node_string(addr);
     if (search == visited_.end())
     {
-      os_ << node << " [shape=square,label=\"0\"];" << std::endl;
+      os_ << node << " [shape=square,label=\"0\"];\n";
       visited_.emplace_hint(search, addr);
     }
     return node;
@@ -55,7 +55,7 @@ struct to_dot_visitor
     const auto node = node_string(addr);
     if (search == visited_.end())
     {
-      os_ << node << " [shape=square,label=\"1\"];" << std::endl;
+      os_ << node << " [shape=square,label=\"1\"];\n";
       visited_.emplace_hint(search, addr);
     }
     return node;
@@ -71,13 +71,11 @@ struct to_dot_visitor
     const auto node = node_string(addr);
     if (search == visited_.end())
     {
-      os_ << node << " [label=\"" << o.identifier() << "\"];" << std::endl;
+      os_ << node << " [label=\"" << o.identifier() << "\"];\n";
       for (const auto& arc : n)
       {
         const auto succ = visit(*this, arc.successor(), o.next(), depth);
-        os_ << node << " -> " << succ
-            << " [label=\"" << arc.valuation() << "\"];"
-            << std::endl;
+        os_ << node << " -> " << succ << " [label=\"" << arc.valuation() << "\"];\n";
       }
       visited_.emplace_hint(search, addr);
     }
@@ -94,18 +92,18 @@ struct to_dot_visitor
     const auto node = node_string(addr);
     if (search == visited_.end())
     {
-      os_ << node << " [label=\"" << o.identifier() << "\"];" << std::endl;
+      os_ << node << " [label=\"" << o.identifier() << "\"];\n";
       for (const auto& arc : n)
       {
         const auto succ = visit(*this, arc.successor(), o.next(), depth);
         const auto hier = visit(*this, arc.valuation(), o.nested(), depth + 1);
         const auto ghost = "g" + std::to_string(reinterpret_cast<std::size_t>(addr)) + succ;
 
-        os_ << ghost << " [shape=point,label=\"\",height=0,width=0];" << std::endl;
+        os_ << ghost << " [shape=point,label=\"\",height=0,width=0];\n";
 
-        os_ << node << " -> " << ghost << " [arrowhead=none];" << std::endl
+        os_ << node << " -> " << ghost << " [arrowhead=none];\n"
             << ghost << " -> " << succ << ";" << std::endl
-            << ghost << " -> " << hier << " [style=dotted];" << std::endl;
+            << ghost << " -> " << hier << " [style=dotted];\n";
 
       }
       visited_.emplace_hint(search, addr);
@@ -141,9 +139,9 @@ struct to_dot
   std::ostream&
   operator<<(std::ostream& out, const to_dot& manip)
   {
-    out << "digraph sdd {" << std::endl;
+    out << "digraph sdd {\n";
     visit(to_dot_visitor<C>(out), manip.x_, manip.o_, 0);
-    return out << "}" << std::endl;
+    return out << "}\n";
   }
 };
 

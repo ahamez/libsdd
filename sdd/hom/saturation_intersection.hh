@@ -83,8 +83,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _saturation_intersection
   const noexcept
   {
     return (F ? F->selector() : true) and (L ? L->selector() : true)
-       and std::all_of( G.begin(), G.end()
-                      , [&](const homomorphism<C>& h){return h.selector();});
+       and std::all_of(G.begin(), G.end(), [&](const auto& h){return h.selector();});
   }
 
   friend
@@ -92,8 +91,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _saturation_intersection
   operator==(const _saturation_intersection& lhs, const _saturation_intersection& rhs)
   noexcept
   {
-    return lhs.variable == rhs.variable and lhs.F == rhs.F and lhs.L == rhs.L
-       and lhs.G == rhs.G;
+    return lhs.variable == rhs.variable and lhs.F == rhs.F and lhs.L == rhs.L and lhs.G == rhs.G;
   }
 
   friend
@@ -173,17 +171,8 @@ struct hash<sdd::hom::_saturation_intersection<C>>
   operator()(const sdd::hom::_saturation_intersection<C>& s)
   const
   {
-    std::size_t seed = sdd::util::hash(s.variable);
-    if (s.F)
-    {
-      sdd::util::hash_combine(seed, *s.F);
-    }
-    if (s.L)
-    {
-      sdd::util::hash_combine(seed, *s.L);
-    }
-    sdd::util::hash_combine(seed, s.G.begin(), s.G.end());
-    return seed;
+    using namespace sdd::hash;
+    return seed(s.variable) (val(s.F)) (val(s.L)) (range(s.G));
   }
 };
 

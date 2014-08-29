@@ -171,9 +171,8 @@ struct hash<sdd::arc<C, Valuation>>
   operator()(const sdd::arc<C, Valuation>& arc)
   const
   {
-    std::size_t seed = sdd::util::hash(arc.valuation());
-    sdd::util::hash_combine(seed, arc.successor());
-    return seed;
+    using namespace sdd::hash;
+    return seed(arc.valuation()) (val(arc.successor()));
   }
 };
 

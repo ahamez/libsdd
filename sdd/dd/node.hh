@@ -154,8 +154,7 @@ public:
     // +n.variable(): widen the type, useful to print the values of char and unsigned char types.
     os << +n.variable_ << "[";
     std::for_each( n.begin(), n.end() - 1
-                 , [&](const arc<C, Valuation>& a)
-                      {os << a.valuation() << " --> " << a.successor() << " || ";});
+                 , [&](const auto& a){os << a.valuation() << " --> " << a.successor() << " || ";});
     return os << (n.end() - 1)->valuation() << " --> " << (n.end() - 1)->successor() << "]";
   }
 
@@ -191,9 +190,8 @@ struct hash<sdd::node<C, Valuation>>
   operator()(const sdd::node<C, Valuation>& n)
   const
   {
-    std::size_t seed = sdd::util::hash(n.variable());
-    sdd::util::hash_combine(seed, n.begin(), n.end());
-    return seed;
+    using namespace sdd::hash;
+    return seed(n.variable()) (range(n));
   }
 };
 

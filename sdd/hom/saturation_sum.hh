@@ -83,8 +83,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _saturation_sum
   const noexcept
   {
     return (F ? F->selector() : true) and (L ? L->selector() : true)
-       and std::all_of( G.begin(), G.end()
-                      , [&](const homomorphism<C>& h){return h.selector();});
+       and std::all_of(G.begin(), G.end(), [&](const auto& h){return h.selector();});
   }
 
   friend
@@ -171,17 +170,8 @@ struct hash<sdd::hom::_saturation_sum<C>>
   operator()(const sdd::hom::_saturation_sum<C>& s)
   const
   {
-    std::size_t seed = sdd::util::hash(s.variable);
-    if (s.F)
-    {
-      sdd::util::hash_combine(seed, *s.F);
-    }
-    if (s.L)
-    {
-      sdd::util::hash_combine(seed, *s.L);
-    }
-    sdd::util::hash_combine(seed, s.G.begin(), s.G.end());
-    return seed;
+    using namespace sdd::hash;
+    return seed(s.variable) (val(s.F)) (val(s.L)) (range(s.G));
   }
 };
 

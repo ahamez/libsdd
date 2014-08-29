@@ -343,10 +343,9 @@ struct hash<indexed_ast<C>>
     operator()(const binary_operation<C>& op)
     const noexcept
     {
-      std::size_t seed = hash_op(op.operation);
-      sdd::util::hash_combine(seed, apply_visitor(*this, *op.lhs));
-      sdd::util::hash_combine(seed, apply_visitor(*this, *op.rhs));
-      return seed;
+      using namespace sdd::hash;
+      return seed(op.operation) (val(apply_visitor(*this, *op.lhs)))
+                                (val(apply_visitor(*this, *op.rhs)));
     }
   };
 

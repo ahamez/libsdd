@@ -274,7 +274,8 @@ struct hash<sdd::hom::_sum<C>>
   operator()(const sdd::hom::_sum<C>& s)
   const
   {
-    return sdd::util::hash(s.begin(), s.end());
+    using namespace sdd::hash;
+    return seed() (range(s));
   }
 };
 
