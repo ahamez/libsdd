@@ -177,7 +177,7 @@ struct hash<sdd::hom::_local<C>>
   const
   {
     using namespace sdd::hash;
-    return seed() (val(l.target)) (val(l.h));
+    return seed(l.target) (val(l.h));
   }
 };
 

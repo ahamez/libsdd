@@ -115,7 +115,7 @@ struct hash<sdd::hom::_cons<C, Valuation>>
   const
   {
     using namespace sdd::hash;
-    return seed() (val(h.o)) (val(h.valuation)) (val(h.next));
+    return seed(h.o) (val(h.valuation)) (val(h.next));
   }
 };
 

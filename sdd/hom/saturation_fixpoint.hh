@@ -231,7 +231,7 @@ struct hash<sdd::hom::_saturation_fixpoint<C>>
   const
   {
     using namespace sdd::hash;
-    return seed() (val(s.variable)) (val(s.F)) (val(s.L)) (range(s));
+    return seed(s.variable) (val(s.F)) (val(s.L)) (range(s));
   }
 };
 

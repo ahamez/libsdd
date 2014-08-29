@@ -191,7 +191,7 @@ struct hash<sdd::node<C, Valuation>>
   const
   {
     using namespace sdd::hash;
-    return seed() (val(n.variable())) (range(n));
+    return seed(n.variable()) (range(n));
   }
 };
 

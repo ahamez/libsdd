@@ -126,7 +126,7 @@ struct hash<sdd::order_identifier<C>>
   const noexcept
   {
     using namespace sdd::hash;
-    return seed() (val(o.artificial())) (val(o.user()));
+    return seed(o.artificial()) (val(o.user()));
   }
 };
 

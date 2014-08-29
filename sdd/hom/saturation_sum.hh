@@ -171,7 +171,7 @@ struct hash<sdd::hom::_saturation_sum<C>>
   const
   {
     using namespace sdd::hash;
-    return seed() (val(s.variable)) (val(s.F)) (val(s.L)) (range(s.G));
+    return seed(s.variable) (val(s.F)) (val(s.L)) (range(s.G));
   }
 };
 

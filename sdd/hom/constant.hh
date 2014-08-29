@@ -109,8 +109,7 @@ struct hash<sdd::hom::_constant<C>>
   operator()(const sdd::hom::_constant<C>& c)
   const
   {
-    using namespace sdd::hash;
-    return seed() (val(c.operand));
+    return sdd::hash::seed(c.operand);
   }
 };
 

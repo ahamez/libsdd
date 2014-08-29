@@ -312,8 +312,7 @@ struct hash<sdd::homomorphism<C>>
   operator()(const sdd::homomorphism<C>& h)
   const noexcept
   {
-    using namespace sdd::hash;
-    return seed() (val(h.ptr()));
+    return sdd::hash::seed(h.ptr());
   }
 };
 

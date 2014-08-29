@@ -108,8 +108,7 @@ public:
   hash()
   const noexcept override
   {
-    using namespace sdd::hash;
-    return seed() (val(eval_));
+    return sdd::hash::seed(eval_);
   }
 
   /// @brief Get the user's evaluator textual representation.
