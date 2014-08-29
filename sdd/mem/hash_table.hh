@@ -190,6 +190,7 @@ public:
       previous = current;
       current = current->hook.next;
     }
+    assert(false && "Data to erase not found");
   }
 
   /// @brief Clear the whole table.
