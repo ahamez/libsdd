@@ -1,5 +1,7 @@
 #pragma once
 
+#include <tuple>
+
 #include "sdd/mem/cache_entry.hh"
 #include "sdd/mem/hash_table.hh"
 #include "sdd/mem/lru_list.hh"
@@ -68,8 +70,14 @@ struct cache_statistics
   /// @brief The number of entries discarded by the LRU policy.
   std::size_t discarded;
 
-  /// @brief The number of collisions in the underlying hash table.
+  /// @brief The number of buckets with more than one element in the underlying hash table.
   std::size_t collisions;
+
+  /// @brief The number of buckets with only one element in the underlying hash table.
+  std::size_t alone;
+
+  /// @brief The number of empty buckets in the underlying hash table.
+  std::size_t empty;
 
   /// @brief The number of buckets in the underlying hash table.
   std::size_t buckets;
@@ -221,7 +229,7 @@ public:
   const noexcept
   {
     stats_.size = size();
-    stats_.collisions = set_.collisions();
+    std::tie(stats_.collisions, stats_.alone, stats_.empty) = set_.collisions();
     stats_.buckets = set_.bucket_count();
     stats_.load_factor = set_.load_factor();
     return stats_;

@@ -30,26 +30,28 @@ save(Archive& archive, const unique_table_statistics& s)
          , cereal::make_nvp("# misses", s.misses)
          , cereal::make_nvp("# rehash", s.rehash)
          , cereal::make_nvp("# collisions", s.collisions)
+         , cereal::make_nvp("# alone", s.alone)
+         , cereal::make_nvp("# empty", s.empty)
          , cereal::make_nvp("# buckets", s.buckets)
-         , cereal::make_nvp("load factor", s.load_factor)
-         );
+         , cereal::make_nvp("load factor", s.load_factor));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
 template<class Archive>
 void
-save(Archive& archive, const cache_statistics& s)
+save(Archive& archive, const cache_statistics& c)
 {
-  archive( cereal::make_nvp("#", s.size)
-         , cereal::make_nvp("# hits", s.hits)
-         , cereal::make_nvp("# misses", s.misses)
-         , cereal::make_nvp("# filtered", s.filtered)
-         , cereal::make_nvp("# discarded", s.discarded)
-         , cereal::make_nvp("# collisions", s.collisions)
-         , cereal::make_nvp("# buckets", s.buckets)
-         , cereal::make_nvp("load factor", s.load_factor)
-         );
+  archive( cereal::make_nvp("#", c.size)
+         , cereal::make_nvp("# hits", c.hits)
+         , cereal::make_nvp("# misses", c.misses)
+         , cereal::make_nvp("# filtered", c.filtered)
+         , cereal::make_nvp("# discarded", c.discarded)
+         , cereal::make_nvp("# collisions", c.collisions)
+         , cereal::make_nvp("# alone", c.alone)
+         , cereal::make_nvp("# empty", c.empty)
+         , cereal::make_nvp("# buckets", c.buckets)
+         , cereal::make_nvp("load factor", c.load_factor));
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -68,8 +70,7 @@ save(Archive& archive, const manager<C>& m)
          , cereal::make_nvp("SDD sums cache", m.sdd_sum_cache_stats())
          , cereal::make_nvp("hom unique table", m.hom_stats())
          , cereal::make_nvp("hom cache", m.hom_cache_stats())
-         , cereal::make_nvp("values", m.values_stats())
-         );
+         , cereal::make_nvp("values", m.values_stats()));
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -87,8 +88,7 @@ save(Archive& archive, const sdd_statistics<C>& stats)
          , cereal::make_nvp("flat arcs", stats.all_arcs.first)
          , cereal::make_nvp("hierarchical arcs", stats.all_arcs.second)
          , cereal::make_nvp("arcs frequency", stats.arcs_frequency)
-         , cereal::make_nvp("sequences frequency", stats.sequences_frequency)
-         );
+         , cereal::make_nvp("sequences frequency", stats.sequences_frequency));
 }
 
 /*------------------------------------------------------------------------------------------------*/
