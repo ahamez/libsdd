@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>   // fill
+#include <cassert>
 #include <functional>  // hash
 #include <tuple>
 #include <type_traits> // enable_if
