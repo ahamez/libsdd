@@ -135,14 +135,6 @@ public:
     return storage_;
   }
 
-  /// @brief Get the number of extra bytes that can be used by the actual type.
-  std::size_t
-  extra_bytes()
-  const noexcept
-  {
-    return apply_visitor(extra_bytes_visitor(), *this);
-  }
-
   /// @brief Return the index for a type contained in Types
   template <typename T>
   static constexpr

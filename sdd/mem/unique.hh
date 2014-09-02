@@ -68,17 +68,6 @@ public:
     return data_;
   }
 
-  /// @brief Get the number of extra bytes that may be used by the contained type.
-  ///
-  /// This information is needed when a data of variable length is allocated.
-  std::size_t
-  extra_bytes()
-  const noexcept
-  {
-    // Static dispatch.
-    return extra_bytes_impl(data_, 0);
-  }
-
   /// @brief Tell if the unified data is no longer referenced.
   bool
   is_not_referenced()
@@ -112,28 +101,6 @@ public:
   {
     assert(ref_count_ > 0);
     --ref_count_;
-  }
-
-private:
-
-  /// @brief Called when the contained type defines extra_bytes.
-  template <typename U>
-  static auto
-  extra_bytes_impl(const U& x, int)
-  noexcept
-  -> decltype(x.extra_bytes())
-  {
-    return x.extra_bytes();
-  }
-
-  /// @brief Called when the contained type doesn't define extra_bytes.
-  template <typename U>
-  static constexpr auto
-  extra_bytes_impl(const U&, long)
-  noexcept
-  -> decltype(0)
-  {
-    return 0;
   }
 
   // hash_table_iterator needs to access the hook.

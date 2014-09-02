@@ -478,8 +478,7 @@ private:
     // Will be erased by the unicity table, either it's an already existing node or a deletion
     // is requested by ptr.
     // Note that the alpha function is allocated right behind the node, thus extra care must be
-    // taken. This is also why we use Boost.Intrusive in order to be able to manage memory
-    // exactly the way we want.
+    // taken.
     auto& ut = global<C>().sdd_unique_table;
     char* addr = ut.allocate(builder.size_to_allocate());
     unique_type* u =

@@ -166,47 +166,6 @@ struct eq_visitor
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Returns the number of extra bytes that the actual type contained by the variant
-/// may have.
-///
-/// It is used by the unicity table to help it manage memory.
-struct extra_bytes_visitor
-{
-  using result_type = std::size_t;
-
-  template <typename T>
-  std::size_t
-  operator()(const T& x)
-  const noexcept
-  {
-    // Static dispatch.
-    return impl(x, 0);
-  }
-
-  /// @brief Called when the actual type defines extra_bytes.
-  template <typename U>
-  static auto
-  impl(const U& x, int)
-  noexcept
-  -> decltype(x.extra_bytes())
-  {
-    return x.extra_bytes();
-  }
-
-  /// @brief Called when the actual type doesn't define extra_bytes.
-  template <typename U>
-  static constexpr auto
-  impl(const U&, long)
-  noexcept
-  -> decltype(0)
-  {
-    return 0;
-  }
-};
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
 /// @brief Out of bounds case.
 ///
 /// Used by dispatch* to narrow down the possible invocations of visitor only to the types
