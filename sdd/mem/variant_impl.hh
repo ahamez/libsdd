@@ -126,11 +126,11 @@ struct variant;
 template <typename Visitor, typename X, typename... Args>
 inline
 auto
-call(Visitor&& v, const char* x, Args&&... args)
-noexcept(noexcept(v(*reinterpret_cast<const X*>(x), std::forward<Args>(args)...)))
+call(Visitor&& v, const void* x, Args&&... args)
+noexcept(noexcept(v(*static_cast<const X*>(x), std::forward<Args>(args)...)))
 -> decltype(auto)
 {
-  return v(*reinterpret_cast<const X*>(x), std::forward<Args>(args)...);
+  return v(*static_cast<const X*>(x), std::forward<Args>(args)...);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -143,13 +143,11 @@ apply_visitor(Visitor&& v, const variant<Xs...>& x, Args&&... args)
   using first_type = util::nth<0, Xs...>;
   using result_type = std::result_of_t<Visitor(first_type, Args&&...)>;
 
-  using fun_ptr_type = result_type (*) (Visitor&&, const char*, Args&&...);
+  using fun_ptr_type = result_type (*) (Visitor&&, const void*, Args&&...);
 
   static constexpr fun_ptr_type table[] = {&call<Visitor, Xs, Args&&...>...};
 
-  return table[x.index]( std::forward<Visitor>(v)
-                       , reinterpret_cast<const char*>(x.storage())
-                       , std::forward<Args>(args)...);
+  return table[x.index](std::forward<Visitor>(v), x.storage(), std::forward<Args>(args)...);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -157,11 +155,11 @@ apply_visitor(Visitor&& v, const variant<Xs...>& x, Args&&... args)
 template <typename Visitor, typename X, typename Y, typename... Args>
 inline
 auto
-binary_call(Visitor&& v, const X& x, const char* y, Args&&... args)
-noexcept(noexcept(v(x, *reinterpret_cast<const Y*>(y), std::forward<Args>(args)...)))
+binary_call(Visitor&& v, const X& x, const void* y, Args&&... args)
+noexcept(noexcept(v(x, *static_cast<const Y*>(y), std::forward<Args>(args)...)))
 -> decltype(auto)
 {
-  return v(x, *reinterpret_cast<const Y*>(y), std::forward<Args>(args)...);
+  return v(x, *static_cast<const Y*>(y), std::forward<Args>(args)...);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -175,21 +173,20 @@ inner_visit_impl(Visitor&& v, const X& x, const variant<Ys...>& y, Args&&... arg
   using first_y_type = util::nth<0, Ys...>;
   using result_type = std::result_of_t<Visitor(X, first_y_type, Args&&...)>;
 
-  using fun_ptr_type = result_type (*) (Visitor&&, const X&, const char*, Args&&...);
+  using fun_ptr_type = result_type (*) (Visitor&&, const X&, const void*, Args&&...);
 
   static constexpr fun_ptr_type table[] = {&binary_call<Visitor, X, Ys, Args&&...>...};
 
-  return table[y.index]( std::forward<Visitor>(v), x, reinterpret_cast<const char*>(y.storage())
-                       , std::forward<Args>(args)...);
+  return table[y.index](std::forward<Visitor>(v), x, y.storage(), std::forward<Args>(args)...);
 }
 
 template <typename Visitor, typename X, typename YVariant, typename... Args>
 inline
 auto
-inner_visit(Visitor&& v, const char* x, const YVariant& y, Args&&... args)
+inner_visit(Visitor&& v, const void* x, const YVariant& y, Args&&... args)
 -> decltype(auto)
 {
-  return inner_visit_impl<>( std::forward<Visitor>(v), *reinterpret_cast<const X*>(x)
+  return inner_visit_impl<>( std::forward<Visitor>(v), *static_cast<const X*>(x)
                            , y, std::forward<Args>(args)...);
 }
 
@@ -204,13 +201,12 @@ apply_binary_visitor(Visitor&& v, const variant<Xs...>& x, const variant<Ys...>&
   using first_y_type = util::nth<0, Ys...>;
   using result_type = std::result_of_t<Visitor(first_x_type, first_y_type, Args&&...)>;
 
-  using fun_ptr_type = result_type (*) (Visitor&&, const char*, const variant<Ys...>&, Args&&...);
+  using fun_ptr_type = result_type (*) (Visitor&&, const void*, const variant<Ys...>&, Args&&...);
  
   static constexpr fun_ptr_type table[]
     = {&inner_visit<Visitor&&, Xs, variant<Ys...>, Args&&...>...};
  
-  return table[x.index]( std::forward<Visitor>(v), reinterpret_cast<const char*>(x.storage()), y
-                       , std::forward<Args>(args)...);
+  return table[x.index](std::forward<Visitor>(v), x.storage(), y, std::forward<Args>(args)...);
 }
 
 /*------------------------------------------------------------------------------------------------*/
