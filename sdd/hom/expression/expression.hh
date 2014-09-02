@@ -80,8 +80,6 @@ expression_post( yield_type<C>& yield, expression_post_visitor<C>& v, const SDD<
 template <typename C>
 struct expression_post_visitor
 {
-  using result_type = void;
-
   evaluator_base<C>& eval;
   typename C::Values& valuation;
   const order_position_type target;
@@ -229,9 +227,6 @@ expression_post( yield_type<C>& yield, expression_post_visitor<C>& v, const SDD<
 template <typename C>
 struct expression_pre
 {
-  /// @brief Needed by mem::variant.
-  using result_type = SDD<C>;
-
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 

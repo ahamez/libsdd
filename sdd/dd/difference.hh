@@ -25,9 +25,6 @@ namespace dd {
 template <typename C>
 struct difference_visitor
 {
-  /// @brief Indicate to mem::variant what is the type of the result.
-  using result_type = SDD<C>;
-
   /// @brief The evaluation context.
   context<C>& cxt_;
 

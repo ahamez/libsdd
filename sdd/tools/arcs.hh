@@ -21,33 +21,29 @@ using arcs_frequency_type
 template <typename C>
 struct arcs_visitor
 {
-  /// @brief Required by mem::variant visitor mechanism.
-  using result_type = void;
-
   /// @brief A cache is necessary to to know if a node has already been encountered.
   ///
   /// We use the addresses of nodes as key. It's legit because nodes are unified and immutable.
-  mutable std::unordered_set<const char*> visited_;
+  std::unordered_set<const char*> visited_;
 
   /// @brief Stores the frequency of apparition of a number of arcs.
-  mutable arcs_frequency_type map_;
+  arcs_frequency_type map_;
 
   /// @brief |0|.
-  result_type
+  void
   operator()(const zero_terminal<C>&)
   const
   {}
 
   /// @brief |1|.
-  result_type
+  void
   operator()(const one_terminal<C>&)
   const
   {}
 
   /// @brief Flat SDD.
-  result_type
+  void
   operator()(const flat_node<C>& n)
-  const
   {
     if (visited_.emplace(reinterpret_cast<const char*>(&n)).second)
     {
@@ -60,9 +56,8 @@ struct arcs_visitor
   }
 
   /// @brief Hierarchical SDD.
-  result_type
+  void
   operator()(const hierarchical_node<C>& n)
-  const
   {
     if (visited_.emplace(reinterpret_cast<const char*>(&n)).second)
     {

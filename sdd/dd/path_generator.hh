@@ -14,7 +14,6 @@ namespace sdd { namespace dd {
 template <typename C>
 struct paths_visitor
 {
-  using result_type = void;
   path_push_type<C>& yield;
 
   paths_visitor(path_push_type<C>& y)

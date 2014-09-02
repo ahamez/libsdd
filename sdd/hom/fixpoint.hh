@@ -87,8 +87,6 @@ struct _fixpoint
 template <typename C>
 struct fixpoint_builder_helper
 {
-  using result_type = homomorphism<C>;
-
   homomorphism<C>
   operator()(const _identity<C>&, const homomorphism<C>& h)
   const noexcept

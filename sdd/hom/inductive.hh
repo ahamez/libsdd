@@ -243,8 +243,6 @@ struct _inductive
   /// @brief Dispatch the inductive homomorphism evaluation.
   struct evaluation
   {
-    using result_type = SDD<C>;
-
     context<C>& cxt_;
     const order<C>& order_;
     const SDD<C> sdd_;

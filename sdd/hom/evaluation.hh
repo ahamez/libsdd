@@ -16,9 +16,6 @@ namespace sdd { namespace hom {
 template <typename C>
 struct evaluation
 {
-  /// @brief Used by util::variant.
-  using result_type = SDD<C>;
-
   /// @brief Terminal |0| case.
   ///
   /// It shall never be called as the |0| case is handled by the evaluation of

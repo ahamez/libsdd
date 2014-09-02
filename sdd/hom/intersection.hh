@@ -125,7 +125,6 @@ struct _intersection
 template <typename C>
 struct intersection_builder_helper
 {
-  using result_type   = void;
   using operands_type = typename _intersection<C>::operands_type;
   using hom_list_type = std::deque<homomorphism<C>> ;
   using locals_type   = std::unordered_map<order_position_type, hom_list_type>;

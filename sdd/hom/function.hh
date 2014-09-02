@@ -218,8 +218,6 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   /// @brief Dispatch the Values homomorphism evaluation.
   struct helper
   {
-    using result_type = SDD<C>;
-
     /// @brief |0| case, should never happen.
     SDD<C>
     operator()(const zero_terminal<C>&, const function_base<C>&, context<C>&, const order<C>&)

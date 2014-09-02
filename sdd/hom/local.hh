@@ -33,9 +33,6 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
   /// @brief Local's evaluation implementation.
   struct evaluation
   {
-    /// @brief Used by variant.
-    using result_type = SDD<C>;
-
     context<C>& cxt_;
     const order<C>& order_;
     const homomorphism<C> h_;

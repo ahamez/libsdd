@@ -13,13 +13,10 @@ namespace sdd { namespace tools {
 template <typename C>
 struct to_dot_visitor
 {
-  /// @brief Required by mem::variant visitor mechanism.
-  using result_type = std::string;
-
   /// @brief A cache is necessary to to know if a node has already been encountered.
   ///
   /// We use the addresses of nodes as key. It's legit because nodes are unified and immutable.
-  mutable std::unordered_set<std::size_t> visited_;
+  std::unordered_set<std::size_t> visited_;
 
   /// @brief The stream to export to.
   std::ostream& os_;
@@ -30,9 +27,8 @@ struct to_dot_visitor
   {}
 
   /// @brief |0|.
-  result_type
+  auto
   operator()(const zero_terminal<C>& n, const order<C>&, unsigned int)
-  const
   {
     const auto addr = reinterpret_cast<std::size_t>(&n);
     const auto search = visited_.find(addr);
@@ -46,9 +42,8 @@ struct to_dot_visitor
   }
 
   /// @brief |1|.
-  result_type
+  auto
   operator()(const one_terminal<C>& n, const order<C>&, unsigned int)
-  const
   {
     const auto addr = reinterpret_cast<std::size_t>(&n);
     const auto search = visited_.find(addr);
@@ -62,9 +57,8 @@ struct to_dot_visitor
   }
 
   /// @brief Flat SDD.
-  result_type
+  auto
   operator()(const flat_node<C>& n, const order<C>& o, unsigned int depth)
-  const
   {
     const auto addr = reinterpret_cast<std::size_t>(&n);
     const auto search = visited_.find(addr);
@@ -83,9 +77,8 @@ struct to_dot_visitor
   }
 
   /// @brief Hierarchical SDD.
-  result_type
+  auto
   operator()(const hierarchical_node<C>& n, const order<C>& o, unsigned int depth)
-  const
   {
     const auto addr = reinterpret_cast<std::size_t>(&n);
     const auto search = visited_.find(addr);

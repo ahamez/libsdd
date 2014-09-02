@@ -15,28 +15,25 @@ namespace sdd { namespace dd {
 template <typename C>
 struct count_combinations_visitor
 {
-  /// @brief Required by mem::variant visitor mechanism.
-  using result_type = boost::multiprecision::cpp_int;
-
   /// @brief A cache is used to speed up the computation.
   ///
   /// We use the addresses of nodes as key. It's legit because nodes are unified and immutable.
-  mutable std::unordered_map<const char*, result_type> cache_;
+  std::unordered_map<const char*, boost::multiprecision::cpp_int> cache_;
 
   /// @brief Error case.
   ///
   /// We should not encounter any |0| as all SDD leading to |0| are reduced to |0| and as
   /// the |0| alone is treated in count_combinations.
-  result_type
+  boost::multiprecision::cpp_int
   operator()(const zero_terminal<C>&)
-  const noexcept
+  noexcept
   {
     assert(false && "Encountered the |0| terminal when counting paths.");
     __builtin_unreachable();
   }
 
   /// @brief Terminal case of the recursion.
-  result_type
+  boost::multiprecision::cpp_int
   operator()(const one_terminal<C>&)
   const noexcept
   {
@@ -44,9 +41,8 @@ struct count_combinations_visitor
   }
 
   /// @brief The number of paths for a flat SDD.
-  result_type
+  boost::multiprecision::cpp_int
   operator()(const flat_node<C>& n)
-  const
   {
     const auto insertion = cache_.emplace(reinterpret_cast<const char*>(&n), 0);
     if (insertion.second)
@@ -60,9 +56,8 @@ struct count_combinations_visitor
   }
 
   /// @brief The number of paths for a hierarchical SDD.
-  result_type
+  boost::multiprecision::cpp_int
   operator()(const hierarchical_node<C>& n)
-  const
   {
     const auto insertion = cache_.emplace(reinterpret_cast<const char*>(&n), 0);
     if (insertion.second)

@@ -20,9 +20,6 @@ namespace sdd { namespace hom { namespace expr {
 template <typename C>
 struct simple
 {
-  /// @brief Needed by mem::variant.
-  using result_type = SDD<C>;
-
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 

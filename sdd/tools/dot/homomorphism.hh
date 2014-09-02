@@ -12,9 +12,6 @@ namespace sdd { namespace tools {
 template <typename C>
 struct hom_to_dot_visitor
 {
-  /// @brief Required by mem::variant visitor mechanism.
-  using result_type = std::string;
-
   /// @brief A cache is necessary to to know if a node has already been encountered.
   ///
   /// We use the addresses of nodes as key. It's legit because nodes are unified and immutable.
@@ -28,7 +25,7 @@ struct hom_to_dot_visitor
     : visited_(), os_(os)
   {}
 
-  result_type
+  std::string
   operator()(const hom::_composition<C>& h)
   const
   {
@@ -43,7 +40,7 @@ struct hom_to_dot_visitor
     return node("h", &h);
   }
 
-  result_type
+  std::string
   operator()(const hom::_fixpoint<C>& h)
   const
   {
@@ -56,7 +53,7 @@ struct hom_to_dot_visitor
     return node("h", &h);
   }
 
-  result_type
+  std::string
   operator()(const hom::_function<C>& h)
   const
   {
@@ -67,7 +64,7 @@ struct hom_to_dot_visitor
     return node("h", &h);
   }
 
-  result_type
+  std::string
   operator()(const hom::_identity<C>&)
   const
   {
@@ -76,7 +73,7 @@ struct hom_to_dot_visitor
     return "id" + std::to_string(i++);
   }
 
-  result_type
+  std::string
   operator()(const hom::_local<C>& h)
   const
   {
@@ -84,12 +81,11 @@ struct hom_to_dot_visitor
     {
       os_ << node("h", &h) << " [label=\"@\"];\n";
       const auto n = visit(*this, h.h);
-;
     }
     return node("h", &h);
   }
 
-  result_type
+  std::string
   operator()(const hom::_saturation_fixpoint<C>& h)
   const
   {
@@ -115,7 +111,7 @@ struct hom_to_dot_visitor
     return node("h", &h);
   }
 
-  result_type
+  std::string
   operator()(const hom::_sum<C>& h)
   const
   {
@@ -131,7 +127,7 @@ struct hom_to_dot_visitor
     return node("h", &h);
   }
 
-  result_type
+  std::string
   operator()(const hom::_if_then_else<C>& h)
   const
   {
@@ -152,7 +148,7 @@ struct hom_to_dot_visitor
   }
 
   template <typename T>
-  result_type
+  std::string
   operator()(const T& x)
   const
   {

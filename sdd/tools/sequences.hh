@@ -21,30 +21,26 @@ using sequences_frequency_type
 template <typename C>
 struct parents_visitor
 {
-  /// @brief Required by mem::variant visitor mechanism.
-  using result_type = void;
-
   /// @brief The number of parents for a node.
-  mutable std::unordered_map<const char*, unsigned int> parents;
+  std::unordered_map<const char*, unsigned int> parents;
 
   /// @brief |0|.
-  result_type
+  void
   operator()(const zero_terminal<C>&)
-  const noexcept
+  noexcept
   {
     assert(false);
   }
 
   /// @brief |1|.
-  result_type
+  void
   operator()(const one_terminal<C>&)
   const
   {}
 
   /// @brief Flat SDD.
-  result_type
+  void
   operator()(const flat_node<C>& n)
-  const
   {
     auto insertion = parents.emplace(reinterpret_cast<const char*>(&n), 1);
     if (insertion.second)
@@ -61,7 +57,7 @@ struct parents_visitor
   }
 
   /// @brief Hierarchical SDD.
-  result_type
+  void
   operator()(const hierarchical_node<C>&)
   const
   {
@@ -75,14 +71,11 @@ struct parents_visitor
 template <typename C>
 struct sequences_visitor
 {
-  /// @brief Required by mem::variant visitor mechanism.
-  using result_type = void;
-
   /// @brief Tells if a node has already been encoutered.
-  mutable std::unordered_set<const char*> visited;
+  std::unordered_set<const char*> visited;
 
   /// @brief Stores the result.
-  mutable sequences_frequency_type map;
+  sequences_frequency_type map;
 
   /// @brief The number of parents for a node.
   const std::unordered_map<const char*, unsigned int>& parents;
@@ -92,7 +85,7 @@ struct sequences_visitor
   {}
 
   /// @brief |0|.
-  result_type
+  void
   operator()(const zero_terminal<C>&, unsigned int)
   const noexcept
   {
@@ -100,17 +93,16 @@ struct sequences_visitor
   }
 
   /// @brief |1|.
-  result_type
+  void
   operator()(const one_terminal<C>&, unsigned int depth)
-  const noexcept
+  noexcept
   {
     map[depth] += 1;
   }
 
   /// @brief Flat SDD.
-  result_type
+  void
   operator()(const flat_node<C>& n, unsigned int depth)
-  const
   {
     const auto addr = reinterpret_cast<const char*>(&n);
     if (visited.emplace(addr).second)
@@ -142,9 +134,9 @@ struct sequences_visitor
   }
 
   /// @brief Hierarchical SDD.
-  result_type
+  void
   operator()(const hierarchical_node<C>&, unsigned int)
-  const
+  const noexcept
   {
     assert(false);
   }

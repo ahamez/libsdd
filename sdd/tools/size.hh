@@ -14,18 +14,14 @@ namespace sdd { namespace tools {
 template <typename C>
 struct size_visitor
 {
-  /// @brief Required by mem::variant visitor mechanism.
-  using result_type = std::size_t;
-
   /// @brief A cache is necessary to to know if a node has already been encountered.
   ///
   /// We use the addresses of nodes as key. It's legit because nodes are unified and immutable.
-  mutable std::unordered_set<const char*> visited_;
+  std::unordered_set<const char*> visited_;
 
   /// @brief |0|.
-  result_type
+  std::size_t
   operator()(const zero_terminal<C>& n)
-  const
   {
     if (visited_.emplace(reinterpret_cast<const char*>(&n)).second)
     {
@@ -38,9 +34,8 @@ struct size_visitor
   }
 
   /// @brief |1|.
-  result_type
+  std::size_t
   operator()(const one_terminal<C>& n)
-  const
   {
     if (visited_.emplace(reinterpret_cast<const char*>(&n)).second)
     {
@@ -53,9 +48,8 @@ struct size_visitor
   }
 
   /// @brief Flat SDD.
-  result_type
+  std::size_t
   operator()(const flat_node<C>& n)
-  const
   {
     if (visited_.emplace(reinterpret_cast<const char*>(&n)).second)
     {
@@ -74,9 +68,8 @@ struct size_visitor
   }
 
   /// @brief Hierarchical SDD.
-  result_type
+  std::size_t
   operator()(const hierarchical_node<C>& n)
-  const
   {
     if (visited_.emplace(reinterpret_cast<const char*>(&n)).second)
     {

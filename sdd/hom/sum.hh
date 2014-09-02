@@ -149,9 +149,6 @@ private:
 template <typename C>
 struct sum_builder_helper
 {
-  /// @brief Used by mem::variant.
-  using result_type = void;
-
   /// @brief The type of th flat sorted set of operands.
   using operands_type = boost::container::flat_set<homomorphism<C>>;
 

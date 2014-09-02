@@ -45,10 +45,7 @@ struct rewriter
   /// @brief Tell if an homomorphism is local.
   struct is_local
   {
-    /// @brief Needed by mem::variant.
-    using result_type = bool;
-
-    constexpr bool
+    bool
     operator()(const _local<C>&)
     const noexcept
     {
@@ -56,7 +53,7 @@ struct rewriter
     }
 
     template <typename T>
-    constexpr bool
+    bool
     operator()(const T&)
     const noexcept
     {
@@ -68,9 +65,7 @@ struct rewriter
   /// @brief Tell if an homomorphism is sum.
   struct is_sum
   {
-    using result_type = bool;
-
-    constexpr bool
+    bool
     operator()(const _sum<C>&)
     const noexcept
     {
@@ -78,7 +73,7 @@ struct rewriter
     }
 
     template <typename T>
-    constexpr bool
+    bool
     operator()(const T&)
     const noexcept
     {

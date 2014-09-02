@@ -76,11 +76,8 @@ struct _composition
 template <typename C>
 struct composition_builder_helper
 {
-  /// @brief Used by mem::variant.
-  using result_type = homomorphism<C>;
-
   /// @brief Regroup locals.
-  result_type
+  homomorphism<C>
   operator()( const hom::_local<C>& l, const hom:: _local<C>& r
             , const homomorphism<C>& lorig, const homomorphism<C>& rorig)
   const
@@ -96,7 +93,7 @@ struct composition_builder_helper
   }
 
   template <typename T, typename U>
-  result_type
+  homomorphism<C>
   operator()(const T&, const U&, const homomorphism<C>& left, const homomorphism<C>& right)
   const
   {
