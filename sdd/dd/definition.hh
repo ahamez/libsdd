@@ -349,7 +349,7 @@ public:
   index()
   const noexcept
   {
-    return ptr_->data().index();
+    return ptr_->data().index;
   }
 
   /// @brief Get the number of combinations stored in this SDD.

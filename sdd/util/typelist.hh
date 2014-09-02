@@ -5,20 +5,6 @@ namespace sdd { namespace util {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Represent the empty type.
-///
-/// Used by nth to indicate that a type was not found.
-struct nil {};
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-template <typename... Types>
-struct typelist {};
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
 template <typename T, typename... Types>
 struct index_of;
 
@@ -37,23 +23,24 @@ struct index_of<T, Head, Types...>
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-template <std::size_t Index, typename... Types>
-struct nth
-{
-  using type = nil;
-};
+template <std::size_t, typename...>
+struct nth_impl;
 
-template <typename Head, typename... Tail>
-struct nth<0, Head, Tail...>
+template <typename T, typename... Ts>
+struct nth_impl<0, T, Ts...>
 {
-  using type = Head;
+  using type = T;
 };
   
-template <std::size_t Index, typename Head, typename... Tail>
-struct nth<Index, Head, Tail...>
+template <std::size_t Index, typename T, typename... Ts>
+struct nth_impl<Index, T, Ts...>
 {
-  using type = typename nth<Index - 1, Tail...>::type;
-};  
+  static_assert(Index < sizeof...(Ts) + 1 /* + 1 for T */, "Index too large for nth");
+  using type = typename nth_impl<Index - 1, Ts...>::type;
+}; 
+
+template <std::size_t Index, typename... Ts>
+using nth = typename nth_impl<Index, Ts...>::type;
 
 /*------------------------------------------------------------------------------------------------*/  
 

@@ -1,9 +1,5 @@
 #pragma once
 
-#ifndef LIBSDD_VARIANT_SIZE
-#define LIBSDD_VARIANT_SIZE 17
-#endif
-
 #include <cstdint>     // uint8_t
 #include <functional>  // hash
 #include <iosfwd>
@@ -21,43 +17,24 @@ namespace sdd { namespace mem {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @page Variant
-///
-/// The sdd::mem::variant class is at the heart of the library. Indeed, sdd::SDD and
-/// sdd::homomorphism definitions rely on it.
-///
-/// Its purpose is to emulate a union, but with much more possibilities. It's completely inspired
-/// from boost::variant.
-/// http://www.boost.org/doc/libs/release/doc/html/variant.html
-///
-/// The visit mechanism uses 'computed goto', a GCC extension, also supported by clang.
-/// Note that a 'switch' statement will also do the job.
-/// http://gcc.gnu.org/onlinedocs/gcc-4.7.2/gcc/Labels-as-Values.html
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
 /// @brief Helper struct to determine the type to be constructed in place.
 template <typename T>
 struct construct {};
 
 /*------------------------------------------------------------------------------------------------*/
 
-// Forward declaration for destructor.
-template <typename Visitor, typename Variant, typename... Args>
-typename Visitor::result_type
-apply_visitor(const Visitor&, const Variant&, Args&&...);
-
-/*------------------------------------------------------------------------------------------------*/
-
 /// @internal
-/// @brief  A union-like structure.
+/// @brief A type-safe discriminated union.
 /// @tparam Types The list of possible types.
 ///
 /// This type is meant to be stored in a unique_table, wrapped in a ref_counted.
 /// Once constructed, it can never be assigned an other data.
+/// It is at the heart of the library: sdd::SDD and sdd::homomorphism definitions rely on it.
+///
+/// Its purpose is to emulate a union, but with much more possibilities. It's completely inspired
+/// from boost::variant: http://www.boost.org/doc/libs/release/doc/html/variant.html
 template <typename... Types>
-class LIBSDD_ATTRIBUTE_PACKED variant
+struct LIBSDD_ATTRIBUTE_PACKED variant
 {
   // Can't copy a variant.
   const variant& operator=(const variant&) = delete;
@@ -67,25 +44,22 @@ class LIBSDD_ATTRIBUTE_PACKED variant
   variant& operator=(variant&&) = delete;
   variant(variant&&) = delete;
 
-private:
-
   static_assert( sizeof...(Types) >= 1
                , "A variant should contain at least one type.");
 
   static_assert( sizeof...(Types) <= std::numeric_limits<unsigned char>::max()
                , "A variant can't hold more than UCHAR_MAX types.");
 
-  static_assert( sizeof...(Types) <= LIBSDD_VARIANT_SIZE
-               , "LIBSDD_VARIANT_SIZE is too small for the required number of types.");
-
   /// @brief Index of the held type in the list of all possible types.
-  const uint8_t index_;
+  const uint8_t index;
 
   /// @brief A type large enough to contain all variant's types, with the correct alignement.
   using storage_type = typename union_storage<0, Types...>::type;
 
+private:
+
   /// @brief Memory storage suitable for all Types.
-  const storage_type storage_;
+  storage_type storage_;
 
 public:
 
@@ -96,43 +70,16 @@ public:
   template <typename T, typename... Args>
   variant(construct<T>, Args&&... args)
   noexcept(std::is_nothrow_constructible<T, Args...>::value)
-    : index_(util::index_of<const T, const Types...>::value)
+    : index(util::index_of<const T, const Types...>::value)
   	, storage_()
   {
-    new (const_cast<storage_type*>(&storage_)) T(std::forward<Args>(args)...);
+    new (&storage_) T(std::forward<Args>(args)...);
   }
 
   /// @brief Destructor.
   ~variant()
   {
     apply_visitor(dtor_visitor(), *this);
-  }
-
-  /// @brief Get as type T.
-  ///
-  /// No verifications are done.
-  template <typename T>
-  const T&
-  get()
-  const noexcept
-  {
-    return *reinterpret_cast<const T*>(&storage_);
-  }
-
-  /// @brief Return the position of the currently held type in the list of all possible types.
-  uint8_t
-  index()
-  const noexcept
-  {
-    return index_;
-  }
-
-  /// @brief Return the raw storage.
-  const storage_type&
-  storage()
-  const noexcept
-  {
-    return storage_;
   }
 
   /// @brief Return the index for a type contained in Types
@@ -144,47 +91,31 @@ public:
   {
     return util::index_of<T, Types...>::value;
   }
+
+  const storage_type*
+  storage()
+  const noexcept
+  {
+    return &storage_;
+  }
+
+  friend
+  std::ostream&
+  operator<<(std::ostream& os, const variant& v)
+  {
+    return apply_visitor([&](const auto& x) -> std::ostream& {return os << x;}, v);
+  }
+
+  friend
+  bool
+  operator==(const variant& lhs, const variant& rhs)
+  noexcept
+  {
+    return lhs.index == rhs.index and apply_binary_visitor(eq_visitor(), lhs, rhs);
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related variant
-template <typename Visitor, typename... Types, typename... Args>
-inline
-typename Visitor::result_type
-apply_visitor(const Visitor& v, const variant<Types...>& x, Args&&... args)
-{
-  return dispatch( v
-                 , x.storage(), util::typelist<Types...>(), x.index()
-                 , std::forward<Args>(args)...);
-}
-
-/// @internal
-/// @related variant
-template < typename Visitor, typename... Types1, typename... Types2, typename... Args>
-inline
-typename Visitor::result_type
-apply_binary_visitor( const Visitor& v
-                    , const variant<Types1...>& x, const variant<Types2...>& y
-                    , Args&&... args)
-{
-  return binary_dispatch( v
-                        , x.storage(), util::typelist<Types1...>(), x.index()
-                        , y.storage(), util::typelist<Types2...>(), y.index()
-                        , std::forward<Args>(args)...);
-}
-
-/// @internal
-/// @related variant
-template <typename... Types>
-inline
-bool
-operator==(const variant<Types...>& lhs, const variant<Types...>& rhs)
-noexcept
-{
-  return lhs.index() == rhs.index() and apply_binary_visitor(eq_visitor(), lhs, rhs);
-}
 
 /// @internal
 /// @related variant
@@ -194,18 +125,7 @@ const T&
 variant_cast(const variant<Types...>& v)
 noexcept
 {
-  return v.template get<T>();
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related variant
-template <typename... Types>
-std::ostream&
-operator<<(std::ostream& os, const variant<Types...>& v)
-{
-  return apply_visitor(ostream_visitor(os), v);
+  return *reinterpret_cast<const T*>(v.storage());
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -218,10 +138,11 @@ operator<<(std::ostream& os, const variant<Types...>& v)
 /// @related mem::variant
 template <typename Visitor, typename X, typename... Args>
 inline
-typename Visitor::result_type
-visit(const Visitor& v, const X& x, Args&&... args)
+auto
+visit(Visitor&& v, const X& x, Args&&... args)
+-> decltype(auto)
 {
-  return apply_visitor(v, *x, std::forward<Args>(args)...);
+  return apply_visitor(std::forward<Visitor>(v), *x, std::forward<Args>(args)...);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -230,10 +151,11 @@ visit(const Visitor& v, const X& x, Args&&... args)
 /// @related mem::variant
 template <typename Visitor, typename X, typename Y, typename... Args>
 inline
-typename Visitor::result_type
-binary_visit(const Visitor& v, const X& x, const Y& y, Args&&... args)
+auto
+binary_visit(Visitor&& v, const X& x, const Y& y, Args&&... args)
+-> decltype(auto)
 {
-  return apply_binary_visitor(v, *x, *y, std::forward<Args>(args)...);
+  return apply_binary_visitor(std::forward<Visitor>(v), *x, *y, std::forward<Args>(args)...);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -251,10 +173,10 @@ struct hash<sdd::mem::variant<Types...>>
 {
   std::size_t
   operator()(const sdd::mem::variant<Types...>& x)
-  const noexcept(noexcept(sdd::mem::apply_visitor(sdd::mem::hash_visitor(), x)))
+  const
   {
     using namespace sdd::hash;
-    return seed(sdd::mem::apply_visitor(sdd::mem::hash_visitor(), x)) (val(x.index()));
+    return seed(apply_visitor(sdd::mem::hash_visitor{}, x)) (val(x.index));
   }
 };
 

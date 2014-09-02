@@ -4,24 +4,12 @@
 #include <cstdint>     // uint8_t
 #include <functional>  // hash
 #include <iosfwd>
-#include <type_traits> // enable_if, forward, is_same, aligned_storage, alignment_of
+#include <type_traits> // aligned_storage, alignment_of
 #include <utility>     // forward
-
-#include <boost/preprocessor/arithmetic/inc.hpp>
-#include <boost/preprocessor/iteration/local.hpp>
-#include <boost/preprocessor/repetition.hpp>
-#include <boost/preprocessor/repetition/repeat.hpp>
-#include <boost/preprocessor/repetition/enum_params.hpp>
-#include <boost/preprocessor/cat.hpp>
 
 #include "sdd/util/typelist.hh"
 
 namespace sdd { namespace mem {
-
-/*------------------------------------------------------------------------------------------------*/
-
-using std::is_same;
-using util::nil;
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -84,29 +72,19 @@ struct union_storage
 /// @brief Dispatch the destructor to the contained type in the visited variant.
 struct dtor_visitor
 {
-  using result_type = void;
-
   template <typename T>
-  result_type
+  void
   operator()(const T& x)
-  const noexcept // A destructor should never throw
+  const
   {
     x.~T();
   }
 };
 
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Dispatch the hash function to the contained type in the visited variant.
-///
-/// It uses the standard (C++11) way of hashing an object.
 struct hash_visitor
 {
-  using result_type = std::size_t;
-
   template <typename T>
-  result_type
+  std::size_t
   operator()(const T& x)
   const noexcept(noexcept(std::hash<T>()(x)))
   {
@@ -117,36 +95,11 @@ struct hash_visitor
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// Dispatch the ostream export to the contained type in the visited variant.
-struct ostream_visitor
-{
-  using result_type = std::ostream&;
-
-  std::ostream& os_;
-
-  ostream_visitor(std::ostream& os)
-	  : os_(os)
-  {}
-
-  template <typename T>
-  result_type
-  operator()(const T& x)
-  const
-  {
-    return os_ << x;
-  }
-};
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
 /// @brief Dispatch the equality operator to the contained type in the visited variant.
 struct eq_visitor
 {
-  using result_type = bool;
-
   template <typename T>
-  result_type
+  bool
   operator()(const T& lhs, const T& rhs)
   const noexcept(noexcept(lhs == rhs))
   {
@@ -154,7 +107,7 @@ struct eq_visitor
   }
 
   template <typename T, typename U>
-  result_type
+  bool
   operator()(const T&, const U&)
   const noexcept
   {
@@ -165,158 +118,100 @@ struct eq_visitor
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @internal
-/// @brief Out of bounds case.
-///
-/// Used by dispatch* to narrow down the possible invocations of visitor only to the types
-/// held by the visited variant. It thus avoid to apply the visitor on the nil type which is
-/// returned by util::nth when the provided index does not match any held type. It is
-/// necessary as the preprocessor will generate instantations of such invocations.
-template <typename Visitor, typename T, typename... Args>
-inline
-std::enable_if_t<is_same<T, nil>::value, typename Visitor::result_type>
-invoke(const Visitor&, const T&, Args&&...)
-noexcept
-{
-  assert(false);
-  __builtin_unreachable();
-}
+template <typename... Types>
+struct variant;
 
-/// @internal
-/// @brief Invoke user's visitor for deduced type.
-template <typename Visitor, typename T, typename... Args>
+/*------------------------------------------------------------------------------------------------*/
+
+template <typename Visitor, typename X, typename... Args>
 inline
-std::enable_if_t<not is_same<T, nil>::value, typename Visitor::result_type>
-invoke(const Visitor& v, const T& x, Args&&... args)
-noexcept(noexcept(v(x, std::forward<Args>(args)...)))
+auto
+call(Visitor&& v, const char* x, Args&&... args)
+noexcept(noexcept(v(*reinterpret_cast<const X*>(x), std::forward<Args>(args)...)))
+-> decltype(auto)
 {
-  return v(x, std::forward<Args>(args)...);
+  return v(*reinterpret_cast<const X*>(x), std::forward<Args>(args)...);
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @internal
-/// @brief Dispatch of the visitor on the held type.
-template < typename Visitor
-         , typename Storage, typename... Types, template <typename...> class Tuple
-         , typename... Args
-         >
-typename Visitor::result_type
-dispatch( const Visitor& v
-        , const Storage& storage, const Tuple<Types...>&, const uint8_t index
-        , Args&&... args)
-{
-  static void* table[LIBSDD_VARIANT_SIZE] = {BOOST_PP_ENUM_PARAMS(LIBSDD_VARIANT_SIZE, &&lab)};
-  goto *table[index];
-
-# define BOOST_PP_LOCAL_MACRO(n)                        \
-  BOOST_PP_CAT(lab,n):                                  \
-  {                                                     \
-    using T = typename util::nth<n, Types...>::type;    \
-    const T& x = *reinterpret_cast<const T*>(&storage); \
-    return invoke(v, x, std::forward<Args>(args)...);   \
-  }                                                     \
-
-# define BOOST_PP_LOCAL_LIMITS (0, LIBSDD_VARIANT_SIZE - 1)
-# include BOOST_PP_LOCAL_ITERATE()
-
-  assert(false);
-  __builtin_unreachable();
-}
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @brief Invokation out-of-bounds case.
-///
-/// Used by dispatch* to narrow down the possible invocations of visitor only to the types
-/// held by the visited variant. It thus avoid to apply the visitor on the nil type which is
-/// returned by util::nth when the provided index does not match any held type. It is
-/// necessary as the preprocessor will generate instantations of such invocations.
-template <typename Visitor, typename T, typename U, typename... Args>
+template <typename Visitor, typename... Xs, typename... Args>
 inline
-std::enable_if_t< is_same<T, nil>::value or is_same<U, nil>::value, typename Visitor::result_type>
-binary_invoke(const Visitor&, const T&, const U&, Args&&...)
-noexcept
+std::result_of_t<Visitor(util::nth<0, Xs...>, Args&&...)>
+apply_visitor(Visitor&& v, const variant<Xs...>& x, Args&&... args)
 {
-  assert(false);
-  __builtin_unreachable();
+  using first_type = util::nth<0, Xs...>;
+  using result_type = std::result_of_t<Visitor(first_type, Args&&...)>;
+
+  using fun_ptr_type = result_type (*) (Visitor&&, const char*, Args&&...);
+
+  static constexpr fun_ptr_type table[] = {&call<Visitor, Xs, Args&&...>...};
+
+  return table[x.index]( std::forward<Visitor>(v)
+                       , reinterpret_cast<const char*>(x.storage())
+                       , std::forward<Args>(args)...);
 }
 
-/// @internal
-/// @brief Invoke user's visitor for deduced type.
-template <typename Visitor, typename T, typename U, typename... Args>
+/*------------------------------------------------------------------------------------------------*/
+
+template <typename Visitor, typename X, typename Y, typename... Args>
 inline
-std::enable_if_t< not (is_same<T, nil>::value or is_same<U, nil>::value)
-                , typename Visitor::result_type>
-binary_invoke(const Visitor& v, const T& x, const U& y, Args&&... args)
-noexcept(noexcept(v(x, y, std::forward<Args>(args)...)))
+auto
+binary_call(Visitor&& v, const X& x, const char* y, Args&&... args)
+noexcept(noexcept(v(x, *reinterpret_cast<const Y*>(y), std::forward<Args>(args)...)))
+-> decltype(auto)
 {
-  return v(x, y, std::forward<Args>(args)...);
+  return v(x, *reinterpret_cast<const Y*>(y), std::forward<Args>(args)...);
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @internal
-/// @brief Dispatch a binary visitor on the second visitable.
-template < typename Visitor, typename T, typename Storage
-         , typename... Types, template <typename...> class Tuple
-         , typename... Args>
-typename Visitor::result_type
-inner_dispatch( const Visitor& v
-              , const T& x
-              , const Storage& storage, const Tuple<Types...>&, const uint8_t index
-              , Args&&... args)
+template <typename Visitor, typename X, typename... Ys, typename... Args>
+inline
+auto
+inner_visit_impl(Visitor&& v, const X& x, const variant<Ys...>& y, Args&&... args)
+-> decltype(auto)
 {
-  static void* table[LIBSDD_VARIANT_SIZE] = {BOOST_PP_ENUM_PARAMS(LIBSDD_VARIANT_SIZE, &&lab)};
-  goto *table[index];
+  using first_y_type = util::nth<0, Ys...>;
+  using result_type = std::result_of_t<Visitor(X, first_y_type, Args&&...)>;
 
-# define BOOST_PP_LOCAL_MACRO(n)                                \
-  BOOST_PP_CAT(lab,n):                                          \
-  {                                                             \
-    using U = typename util::nth<n, Types...>::type;            \
-    const U& y = *reinterpret_cast<const U*>(&storage);         \
-    return binary_invoke(v, x, y, std::forward<Args>(args)...); \
-  }                                                             \
+  using fun_ptr_type = result_type (*) (Visitor&&, const X&, const char*, Args&&...);
 
-# define BOOST_PP_LOCAL_LIMITS (0, LIBSDD_VARIANT_SIZE - 1)
-# include BOOST_PP_LOCAL_ITERATE()
+  static constexpr fun_ptr_type table[] = {&binary_call<Visitor, X, Ys, Args&&...>...};
 
-  assert(false);
-  __builtin_unreachable();
+  return table[y.index]( std::forward<Visitor>(v), x, reinterpret_cast<const char*>(y.storage())
+                       , std::forward<Args>(args)...);
+}
+
+template <typename Visitor, typename X, typename YVariant, typename... Args>
+inline
+auto
+inner_visit(Visitor&& v, const char* x, const YVariant& y, Args&&... args)
+-> decltype(auto)
+{
+  return inner_visit_impl<>( std::forward<Visitor>(v), *reinterpret_cast<const X*>(x)
+                           , y, std::forward<Args>(args)...);
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @internal
-/// @brief Dispatch a binary visitor on the first visitable.
-template < typename Visitor, typename Storage1, typename Storage2
-         , typename... Types1, template <typename...> class Tuple1
-         , typename... Types2, template <typename...> class Tuple2
-         , typename... Args>
-typename Visitor::result_type
-binary_dispatch( const Visitor& v
-               , const Storage1& storage1, const Tuple1<Types1...>&, const uint8_t index1
-               , const Storage2& storage2, const Tuple2<Types2...>& tuple2, const uint8_t index2
-               , Args&&... args)
+template <typename Visitor, typename... Xs, typename... Ys, typename... Args>
+inline
+std::result_of_t<Visitor(util::nth<0, Xs...>, util::nth<0, Ys...>, Args&&...)>
+apply_binary_visitor(Visitor&& v, const variant<Xs...>& x, const variant<Ys...>& y, Args&&... args)
 {
-  static void* table[LIBSDD_VARIANT_SIZE] = {BOOST_PP_ENUM_PARAMS(LIBSDD_VARIANT_SIZE, &&lab)};
-  goto *table[index1];
+  using first_x_type = util::nth<0, Xs...>;
+  using first_y_type = util::nth<0, Ys...>;
+  using result_type = std::result_of_t<Visitor(first_x_type, first_y_type, Args&&...)>;
 
-# define BOOST_PP_LOCAL_MACRO(n)                                                        \
-  BOOST_PP_CAT(lab,n):                                                                  \
-  {                                                                                     \
-    using T = typename util::nth<n, Types1...>::type;                                   \
-    const T& x = *reinterpret_cast<const T*>(&storage1);                                \
-    return inner_dispatch(v, x, storage2, tuple2, index2, std::forward<Args>(args)...); \
-  }                                                                                     \
-
-# define BOOST_PP_LOCAL_LIMITS (0, LIBSDD_VARIANT_SIZE - 1)
-# include BOOST_PP_LOCAL_ITERATE()
-
-  assert(false);
-  __builtin_unreachable();
-};
+  using fun_ptr_type = result_type (*) (Visitor&&, const char*, const variant<Ys...>&, Args&&...);
+ 
+  static constexpr fun_ptr_type table[]
+    = {&inner_visit<Visitor&&, Xs, variant<Ys...>, Args&&...>...};
+ 
+  return table[x.index]( std::forward<Visitor>(v), reinterpret_cast<const char*>(x.storage()), y
+                       , std::forward<Args>(args)...);
+}
 
 /*------------------------------------------------------------------------------------------------*/
 
