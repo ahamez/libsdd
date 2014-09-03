@@ -41,46 +41,6 @@ struct rewriter
   /// @brief The type of a list of homomorphisms.
   using hom_list_type = std::deque<homomorphism<C>>;
 
-  /// @internal
-  /// @brief Tell if an homomorphism is local.
-  struct is_local
-  {
-    bool
-    operator()(const _local<C>&)
-    const noexcept
-    {
-      return true;
-    }
-
-    template <typename T>
-    bool
-    operator()(const T&)
-    const noexcept
-    {
-      return false;
-    }
-  };
-
-  /// @internal
-  /// @brief Tell if an homomorphism is sum.
-  struct is_sum
-  {
-    bool
-    operator()(const _sum<C>&)
-    const noexcept
-    {
-      return true;
-    }
-
-    template <typename T>
-    bool
-    operator()(const T&)
-    const noexcept
-    {
-      return false;
-    }
-  };
-
   /// @brief Get the F, G and L parts of a set of homomorphisms.
   template <typename InputIterator>
   static
@@ -101,7 +61,7 @@ struct rewriter
       {
         F.push_back(*begin);
       }
-      else if (visit(is_local{}, *begin))
+      else if (mem::is<_local<C>>(*begin))
       {
         const _local<C>& l = mem::variant_cast<const _local<C>>(**begin);
         L.push_back(l.h);
@@ -186,7 +146,7 @@ struct rewriter
   operator()(const _fixpoint<C>& f, const homomorphism<C>& h, const order<C>& o)
   const
   {
-    if (not visit(is_sum{}, f.h))
+    if (not mem::is<_sum<C>>(f.h))
     {
       return h;
     }

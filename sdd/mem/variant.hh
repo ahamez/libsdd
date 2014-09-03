@@ -128,6 +128,28 @@ noexcept
   return *reinterpret_cast<const T*>(v.storage());
 }
 
+/// @internal
+/// @related variant
+template <typename T, typename... Types>
+inline
+auto
+is(const variant<Types...>& v)
+noexcept
+{
+  return v.index == util::index_of<T, Types...>::value;
+}
+
+/// @internal
+/// @related variant
+template <typename T, typename VariantProxy>
+inline
+auto
+is(const VariantProxy& v)
+noexcept
+{
+  return is<T>(*v);
+}
+
 /*------------------------------------------------------------------------------------------------*/
 
 } // namespace mem
