@@ -30,9 +30,6 @@ struct construct {};
 /// This type is meant to be stored in a unique_table, wrapped in a ref_counted.
 /// Once constructed, it can never be assigned an other data.
 /// It is at the heart of the library: sdd::SDD and sdd::homomorphism definitions rely on it.
-///
-/// Its purpose is to emulate a union, but with much more possibilities. It's completely inspired
-/// from boost::variant: http://www.boost.org/doc/libs/release/doc/html/variant.html
 template <typename... Types>
 struct LIBSDD_ATTRIBUTE_PACKED variant
 {
@@ -47,7 +44,7 @@ struct LIBSDD_ATTRIBUTE_PACKED variant
   static_assert( sizeof...(Types) >= 1
                , "A variant should contain at least one type.");
 
-  static_assert( sizeof...(Types) <= std::numeric_limits<unsigned char>::max()
+  static_assert( sizeof...(Types) <= std::numeric_limits<uint8_t>::max()
                , "A variant can't hold more than UCHAR_MAX types.");
 
   /// @brief Index of the held type in the list of all possible types.
@@ -56,12 +53,8 @@ struct LIBSDD_ATTRIBUTE_PACKED variant
   /// @brief A type large enough to contain all variant's types, with the correct alignement.
   using storage_type = typename union_storage<0, Types...>::type;
 
-private:
-
   /// @brief Memory storage suitable for all Types.
-  storage_type storage_;
-
-public:
+  const storage_type storage;
 
   /// @brief In place construction of an held type.
   ///
@@ -70,33 +63,16 @@ public:
   template <typename T, typename... Args>
   variant(construct<T>, Args&&... args)
   noexcept(std::is_nothrow_constructible<T, Args...>::value)
-    : index(util::index_of<const T, const Types...>::value)
-  	, storage_()
+    : index(util::index_of<T, Types...>::value)
+  	, storage()
   {
-    new (&storage_) T(std::forward<Args>(args)...);
+    new (const_cast<storage_type*>(&storage)) T(std::forward<Args>(args)...);
   }
 
   /// @brief Destructor.
   ~variant()
   {
     apply_visitor(dtor_visitor(), *this);
-  }
-
-  /// @brief Return the index for a type contained in Types
-  template <typename T>
-  static constexpr
-  std::size_t
-  index_for_type()
-  noexcept
-  {
-    return util::index_of<T, Types...>::value;
-  }
-
-  const storage_type*
-  storage()
-  const noexcept
-  {
-    return &storage_;
   }
 
   friend
@@ -125,7 +101,7 @@ const T&
 variant_cast(const variant<Types...>& v)
 noexcept
 {
-  return *reinterpret_cast<const T*>(v.storage());
+  return *reinterpret_cast<const T*>(&v.storage);
 }
 
 /// @internal

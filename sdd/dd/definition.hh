@@ -50,22 +50,6 @@ private:
 public:
 
   /// @internal
-  static constexpr std::size_t zero_terminal_index
-    = data_type::template index_for_type<zero_terminal<C>>();
-
-  /// @internal
-  static constexpr std::size_t one_terminal_index
-    = data_type::template index_for_type<one_terminal<C>>();
-
-  /// @internal
-  static constexpr std::size_t flat_node_index
-    = data_type::template index_for_type<flat_node<C>>();
-
-  /// @internal
-  static constexpr std::size_t hierarchical_node_index
-    = data_type::template index_for_type<hierarchical_node<C>>();
-
-  /// @internal
   /// @brief A unified and canonized SDD, meant to be stored in a unique table.
   ///
   /// It is automatically erased when there is no more reference to it.
@@ -344,14 +328,6 @@ public:
     return global<C>().one;
   }
 
-  /// @internal
-  std::size_t
-  index()
-  const noexcept
-  {
-    return ptr_->data().index;
-  }
-
   /// @brief Get the number of combinations stored in this SDD.
   boost::multiprecision::cpp_int
   size()
@@ -520,39 +496,54 @@ noexcept
 /// @internal
 /// @related SDD
 template <typename C>
-std::size_t
+struct check_compatibility_visitor
+{
+  // Can't have different types of SDD.
+  template <typename T, typename U>
+  void
+  operator()(const T&, const U&, const SDD<C>& lhs_orig, const SDD<C>& rhs_orig)
+  const
+  {
+    throw top<C>(lhs_orig, rhs_orig);
+  }
+
+  // Same terminals is OK.
+  template <typename T>
+  void
+  operator()(const T&, const T&, const SDD<C>&, const SDD<C>&)
+  const
+  {}
+
+  void
+  operator()( const flat_node<C>& lhs, const flat_node<C>& rhs
+            , const SDD<C>& lhs_orig, const SDD<C>& rhs_orig)
+  const
+  {
+    if (lhs.variable() != rhs.variable())
+    {
+      throw top<C>(lhs_orig, rhs_orig);
+    }
+  }
+
+  void
+  operator()( const hierarchical_node<C>& lhs, const hierarchical_node<C>& rhs
+            , const SDD<C>& lhs_orig, const SDD<C>& rhs_orig)
+  const
+  {
+    if (lhs.variable() != rhs.variable())
+    {
+      throw top<C>(lhs_orig, rhs_orig);
+    }
+  }
+};
+
+/// @internal
+/// @related SDD
+template <typename C>
+void
 check_compatibility(const SDD<C>& lhs, const SDD<C>& rhs)
 {
-  const auto lhs_index = lhs.index();
-  const auto rhs_index = rhs.index();
-
-  if (lhs_index != rhs_index)
-  {
-    // different type of nodes
-    throw top<C>(lhs, rhs);
-  }
-
-  typename SDD<C>::variable_type lhs_variable;
-  typename SDD<C>::variable_type rhs_variable;
-
-  // we must convert to the right type before comparing variables
-  if (lhs_index == SDD<C>::flat_node_index)
-  {
-    lhs_variable = mem::variant_cast<flat_node<C>>(*lhs).variable();
-    rhs_variable = mem::variant_cast<flat_node<C>>(*rhs).variable();
-  }
-  else
-  {
-    lhs_variable = mem::variant_cast<hierarchical_node<C>>(*lhs).variable();
-    rhs_variable = mem::variant_cast<hierarchical_node<C>>(*rhs).variable();
-  }
-
-  if (lhs_variable != rhs_variable)
-  {
-    throw top<C>(lhs, rhs);
-  }
-
-  return lhs_index;
+  binary_visit(check_compatibility_visitor<C>{}, lhs, rhs, lhs, rhs);
 }
 
 /*------------------------------------------------------------------------------------------------*/

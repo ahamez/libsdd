@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cassert>
-#include <cstdint>     // uint8_t
 #include <functional>  // hash
 #include <iosfwd>
 #include <type_traits> // aligned_storage, alignment_of
@@ -75,12 +74,15 @@ struct dtor_visitor
   template <typename T>
   void
   operator()(const T& x)
-  const
+  const noexcept(noexcept(x.~T()))
   {
     x.~T();
   }
 };
 
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
 struct hash_visitor
 {
   template <typename T>
@@ -147,7 +149,7 @@ apply_visitor(Visitor&& v, const variant<Xs...>& x, Args&&... args)
 
   static constexpr fun_ptr_type table[] = {&call<Visitor, Xs, Args&&...>...};
 
-  return table[x.index](std::forward<Visitor>(v), x.storage(), std::forward<Args>(args)...);
+  return table[x.index](std::forward<Visitor>(v), &x.storage, std::forward<Args>(args)...);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -177,7 +179,7 @@ inner_visit_impl(Visitor&& v, const X& x, const variant<Ys...>& y, Args&&... arg
 
   static constexpr fun_ptr_type table[] = {&binary_call<Visitor, X, Ys, Args&&...>...};
 
-  return table[y.index](std::forward<Visitor>(v), x, y.storage(), std::forward<Args>(args)...);
+  return table[y.index](std::forward<Visitor>(v), x, &y.storage, std::forward<Args>(args)...);
 }
 
 template <typename Visitor, typename X, typename YVariant, typename... Args>
@@ -206,7 +208,7 @@ apply_binary_visitor(Visitor&& v, const variant<Xs...>& x, const variant<Ys...>&
   static constexpr fun_ptr_type table[]
     = {&inner_visit<Visitor&&, Xs, variant<Ys...>, Args&&...>...};
  
-  return table[x.index](std::forward<Visitor>(v), x.storage(), y, std::forward<Args>(args)...);
+  return table[x.index](std::forward<Visitor>(v), &x.storage, y, std::forward<Args>(args)...);
 }
 
 /*------------------------------------------------------------------------------------------------*/
