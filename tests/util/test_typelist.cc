@@ -42,20 +42,20 @@ TEST(typelist_test, index_of)
 
 TEST(typelist_test, nth)
 {
-  ASSERT_TRUE((is_same<foo, nth<0, foo, bar, baz>>::value));
-  ASSERT_TRUE((is_same<bar, nth<1, foo, bar, baz>>::value));
-  ASSERT_TRUE((is_same<baz, nth<2, foo, bar, baz>>::value));
-  ASSERT_TRUE((is_same<int, nth<2, foo, bar, int>>::value));
+  ASSERT_TRUE((is_same<foo, nth_t<0, foo, bar, baz>>::value));
+  ASSERT_TRUE((is_same<bar, nth_t<1, foo, bar, baz>>::value));
+  ASSERT_TRUE((is_same<baz, nth_t<2, foo, bar, baz>>::value));
+  ASSERT_TRUE((is_same<int, nth_t<2, foo, bar, int>>::value));
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
 TEST(typelist_test, index_of_nth)
 {
-  ASSERT_TRUE((is_same<foo, nth<index_of<foo, foo, bar, baz>::value, foo, bar, baz>>::value));
-  ASSERT_TRUE((is_same<bar, nth<index_of<bar, foo, bar, baz>::value, foo, bar, baz>>::value));
-  ASSERT_TRUE((is_same<baz, nth<index_of<baz, foo, bar, baz>::value, foo, bar, baz>>::value));
-  ASSERT_TRUE((is_same<int, nth<index_of<int, foo, bar, int>::value, foo, bar, int>>::value));
+  ASSERT_TRUE((is_same<foo, nth_t<index_of<foo, foo, bar, baz>::value, foo, bar, baz>>::value));
+  ASSERT_TRUE((is_same<bar, nth_t<index_of<bar, foo, bar, baz>::value, foo, bar, baz>>::value));
+  ASSERT_TRUE((is_same<baz, nth_t<index_of<baz, foo, bar, baz>::value, foo, bar, baz>>::value));
+  ASSERT_TRUE((is_same<int, nth_t<index_of<int, foo, bar, int>::value, foo, bar, int>>::value));
 }
 
 /*------------------------------------------------------------------------------------------------*/

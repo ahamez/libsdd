@@ -24,24 +24,78 @@ struct index_of<T, Head, Types...>
 
 /// @internal
 template <std::size_t, typename...>
-struct nth_impl;
+struct nth;
 
 template <typename T, typename... Ts>
-struct nth_impl<0, T, Ts...>
+struct nth<0, T, Ts...>
 {
   using type = T;
 };
   
 template <std::size_t Index, typename T, typename... Ts>
-struct nth_impl<Index, T, Ts...>
+struct nth<Index, T, Ts...>
 {
   static_assert(Index < sizeof...(Ts) + 1 /* + 1 for T */, "Index too large for nth");
-  using type = typename nth_impl<Index - 1, Ts...>::type;
+  using type = typename nth<Index - 1, Ts...>::type;
 }; 
 
+/// @internal
 template <std::size_t Index, typename... Ts>
-using nth = typename nth_impl<Index, Ts...>::type;
+using nth_t = typename nth<Index, Ts...>::type;
 
 /*------------------------------------------------------------------------------------------------*/  
+
+/// @internal
+template <typename X, typename Y>
+struct pair {};
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+template <typename... Xs>
+struct list {};
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+template <typename X, typename... Ys>
+using mul = list<pair<X, Ys>...>;
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+template <typename...>
+struct cat;
+
+template <typename X>
+struct cat<X>
+{
+  using type = X;
+};
+
+template<typename X, typename Y, typename... Zs>
+struct cat<X, Y, Zs...>
+{
+  using type = typename cat<typename cat<X, Y>::type, Zs...>::type;
+};
+
+template <typename... Xs, typename... Ys>
+struct cat<list<Xs...>, list<Ys...>>
+{
+  using type = list<Xs..., Ys...>;
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+template <typename...>
+struct join {};
+
+template <typename... Xs, typename... Ys>
+struct join<list<Xs...>, list<Ys...>>
+{
+  using type = typename cat<mul<Xs, Ys...>...>::type;
+};
+
+/*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::util

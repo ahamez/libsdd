@@ -97,7 +97,6 @@ struct hash_visitor
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Dispatch the equality operator to the contained type in the visited variant.
 struct eq_visitor
 {
   template <typename T>
@@ -125,6 +124,7 @@ struct variant;
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <typename Visitor, typename X, typename... Args>
 inline
 auto
@@ -137,15 +137,15 @@ noexcept(noexcept(v(*static_cast<const X*>(x), std::forward<Args>(args)...)))
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <typename Visitor, typename... Xs, typename... Args>
 inline
-std::result_of_t<Visitor(util::nth<0, Xs...>, Args&&...)>
+std::result_of_t<Visitor(util::nth_t<0, Xs...>, Args&&...)>
 apply_visitor(Visitor&& v, const variant<Xs...>& x, Args&&... args)
 {
-  using first_type = util::nth<0, Xs...>;
-  using result_type = std::result_of_t<Visitor(first_type, Args&&...)>;
-
-  using fun_ptr_type = result_type (*) (Visitor&&, const void*, Args&&...);
+  using fun_ptr_type
+    = std::result_of_t<Visitor(util::nth_t<0, Xs...>, Args&&...)>
+      (*) (Visitor&&, const void*, Args&&...);
 
   static constexpr fun_ptr_type table[] = {&call<Visitor, Xs, Args&&...>...};
 
@@ -154,61 +154,47 @@ apply_visitor(Visitor&& v, const variant<Xs...>& x, Args&&... args)
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <typename Visitor, typename X, typename Y, typename... Args>
 inline
 auto
-binary_call(Visitor&& v, const X& x, const void* y, Args&&... args)
-noexcept(noexcept(v(x, *static_cast<const Y*>(y), std::forward<Args>(args)...)))
+binary_call(Visitor&& v, const void* x, const void* y, Args&&... args)
 -> decltype(auto)
 {
-  return v(x, *static_cast<const Y*>(y), std::forward<Args>(args)...);
+  return v(*static_cast<const X*>(x), *static_cast<const Y*>(y), std::forward<Args>(args)...);
 }
 
 /*------------------------------------------------------------------------------------------------*/
 
-template <typename Visitor, typename X, typename... Ys, typename... Args>
-inline
-auto
-inner_visit_impl(Visitor&& v, const X& x, const variant<Ys...>& y, Args&&... args)
--> decltype(auto)
+/// @internal
+/// @brief Expands a list of pairs of types into pointers to binary_call.
+template<typename Visitor, typename T, std::size_t N, typename... Args>
+struct binary_jump_table
 {
-  using first_y_type = util::nth<0, Ys...>;
-  using result_type = std::result_of_t<Visitor(X, first_y_type, Args&&...)>;
+    template<class... Xs, class... Ys>
+    constexpr binary_jump_table(util::list<util::pair<Xs, Ys>...>)
+      : table{&binary_call<Visitor, Xs, Ys, Args...>...}
+    {}
 
-  using fun_ptr_type = result_type (*) (Visitor&&, const X&, const void*, Args&&...);
-
-  static constexpr fun_ptr_type table[] = {&binary_call<Visitor, X, Ys, Args&&...>...};
-
-  return table[y.index](std::forward<Visitor>(v), x, &y.storage, std::forward<Args>(args)...);
-}
-
-template <typename Visitor, typename X, typename YVariant, typename... Args>
-inline
-auto
-inner_visit(Visitor&& v, const void* x, const YVariant& y, Args&&... args)
--> decltype(auto)
-{
-  return inner_visit_impl<>( std::forward<Visitor>(v), *static_cast<const X*>(x)
-                           , y, std::forward<Args>(args)...);
-}
+    T table[N];
+};
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @internal
 template <typename Visitor, typename... Xs, typename... Ys, typename... Args>
-inline
-std::result_of_t<Visitor(util::nth<0, Xs...>, util::nth<0, Ys...>, Args&&...)>
+std::result_of_t<Visitor(util::nth_t<0, Xs...>, util::nth_t<0, Ys...>, Args&&...)>
 apply_binary_visitor(Visitor&& v, const variant<Xs...>& x, const variant<Ys...>& y, Args&&... args)
 {
-  using first_x_type = util::nth<0, Xs...>;
-  using first_y_type = util::nth<0, Ys...>;
-  using result_type = std::result_of_t<Visitor(first_x_type, first_y_type, Args&&...)>;
+  using fun_ptr_type
+    = std::result_of_t<Visitor(util::nth_t<0, Xs...>, util::nth_t<0, Ys...>, Args&&...)>
+      (*) (Visitor&&, const void*, const void*, Args&&...);
 
-  using fun_ptr_type = result_type (*) (Visitor&&, const void*, const variant<Ys...>&, Args&&...);
- 
-  static constexpr fun_ptr_type table[]
-    = {&inner_visit<Visitor&&, Xs, variant<Ys...>, Args&&...>...};
- 
-  return table[x.index](std::forward<Visitor>(v), &x.storage, y, std::forward<Args>(args)...);
+  static constexpr binary_jump_table<Visitor, fun_ptr_type, sizeof...(Xs) * sizeof...(Ys), Args...>
+    table = {typename util::join<util::list<Xs...>, util::list<Ys...>>::type()};
+
+  return table.table[x.index * sizeof...(Ys) + y.index]
+    (std::forward<Visitor>(v), &x.storage, &y.storage, std::forward<Args>(args)...);
 }
 
 /*------------------------------------------------------------------------------------------------*/
