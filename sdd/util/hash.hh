@@ -38,7 +38,7 @@ hash_combine(std::size_t& seed, InputIterator cit, InputIterator cend)
 /// @internal
 struct seed
 {
-  std::size_t seed_;
+  const std::size_t seed_;
 
   seed(std::size_t s = 0)
   noexcept
