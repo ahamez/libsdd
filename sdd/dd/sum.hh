@@ -257,6 +257,8 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
       }
     }
 
+    // The following is almost like the square union except that we use a values_builder to
+    // efficiently create the valuation of an arc (rather than using a union).
     boost::container::flat_map< SDD<C>, values_builder, std::less<SDD<C>>
                               , mem::linear_alloc<std::pair<SDD<C>, values_builder>>>
       succ_to_value( std::less<SDD<C>>()
