@@ -103,9 +103,6 @@ public:
     --ref_count_;
   }
 
-  // hash_table_iterator needs to access the hook.
-  template <typename, typename> friend class hash_table_iterator;
-
   // hash_table needs to access the hook.
   template <typename, bool> friend class hash_table;
 };
