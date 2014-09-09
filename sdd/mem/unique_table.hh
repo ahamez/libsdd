@@ -64,12 +64,15 @@ private:
   /// @brief The statistics of this unique_table.
   mutable unique_table_statistics stats_;
 
+  char* cache_;
+  std::size_t cache_size_;
+
 public:
 
   /// @brief Constructor.
   /// @param initial_size Initial capacity of the container.
   unique_table(std::size_t initial_size)
-    : set_(initial_size), stats_()
+    : set_(initial_size), stats_(), cache_(nullptr), cache_size_(0)
   {}
 
   /// @brief Unify a data.
@@ -86,7 +89,19 @@ public:
     {
       ++stats_.hits;
       ptr->~Unique();
-      delete[] reinterpret_cast<const char*>(ptr);  // match new char[] of allocate().
+      if ((sizeof(Unique) + extra_bytes) > cache_size_)
+      {
+        if (cache_ != nullptr)
+        {
+          delete[] cache_;
+        }
+        cache_ = reinterpret_cast<char*>(ptr);
+        cache_size_ = sizeof(Unique) + extra_bytes;
+      }
+      else
+      {
+        delete[] reinterpret_cast<char*>(ptr);  // match new char[] of allocate().
+      }
     }
     else
     {
@@ -100,7 +115,17 @@ public:
   char*
   allocate(std::size_t extra_bytes)
   {
-    return new char[sizeof(Unique) + extra_bytes];
+    if (cache_ != nullptr and cache_size_ >= (sizeof(Unique) + extra_bytes))
+    {
+      auto res = cache_;
+      cache_ = nullptr;
+      cache_size_ = 0;
+      return res;
+    }
+    else
+    {
+      return new char[sizeof(Unique) + extra_bytes];
+    }
   }
 
   /// @brief Erase the given unified data.
@@ -113,7 +138,7 @@ public:
     assert(x.is_not_referenced() && "Unique still referenced");
     set_.erase(x);
     x.~Unique();
-    delete[] reinterpret_cast<const char*>(&x); // match new char[] of allocate().
+    delete[] reinterpret_cast<char*>(&x); // match new char[] of allocate().
   }
 
   /// @brief Get the statistics of this unique_table.

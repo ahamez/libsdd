@@ -459,7 +459,7 @@ private:
     char* addr = ut.allocate(builder.size_to_allocate());
     unique_type* u =
       new (addr) unique_type(mem::construct<node<C, Valuation>>(), var, builder);
-    return ut(u);
+    return ut(u, builder.size_to_allocate());
   }
 };
 

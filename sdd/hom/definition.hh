@@ -206,7 +206,7 @@ public:
     auto& ut = global<C>().hom_unique_table;
     char* addr = ut.allocate(0 /*extra_bytes*/);
     unique_type* u = new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
-    return {ptr_type(ut(u))};
+    return {ptr_type(ut(u, 0))};
   }
 
   /// @internal
@@ -219,7 +219,7 @@ public:
     auto& ut = global<C>().hom_unique_table;
     char* addr = ut.allocate(extra_bytes);
     unique_type* u = new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
-    return {ptr_type(ut(u))};
+    return {ptr_type(ut(u, extra_bytes))};
   }
 
   /// @brief Equality.

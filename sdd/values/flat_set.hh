@@ -301,7 +301,7 @@ private:
     auto& ut = global_values<flat_set<Value>>().state.unique_table;
     char* addr = ut.allocate(0 /*extra bytes*/);
     unique_type* u = new (addr) unique_type(std::move(x));
-    return ut(u);
+    return ut(u, 0);
   }
 };
 
@@ -364,7 +364,7 @@ private:
   {
     char* addr = unique_table.allocate(0 /*extra bytes*/);
     unique_type* u = new (addr) unique_type;
-    return ptr_type(unique_table(u));
+    return ptr_type(unique_table(u, 0));
   }
 };
 
