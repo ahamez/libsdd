@@ -326,7 +326,7 @@ struct flat_set_manager
   {
     ptr_handler(mem::unique_table<unique_type>& ut)
     {
-      mem::set_deletion_handler<unique_type>([&](const unique_type& u){ut.erase(u);});
+      mem::set_deletion_handler<unique_type>([&](const unique_type* u){ut.erase(u);});
     }
 
     ~ptr_handler()

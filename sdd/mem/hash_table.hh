@@ -109,7 +109,7 @@ public:
 
   /// @brief
   void
-  insert_commit(Data& x, const insert_commit_data& commit_data)
+  insert_commit(Data* x, const insert_commit_data& commit_data)
   noexcept(Rehash == false)
   {
     const std::size_t pos = commit_data.hash & (nb_buckets_ - 1);
@@ -119,7 +119,7 @@ public:
 
     while (current != nullptr)
     {
-      if (x == *current)
+      if (*x == *current)
       {
         return;
       }
@@ -129,11 +129,11 @@ public:
 
     if (previous != nullptr)
     {
-      previous->hook.next = &x;
+      previous->hook.next = x;
     }
     else
     {
-      buckets_[pos] = &x;
+      buckets_[pos] = x;
     }
 
     ++size_;
@@ -143,9 +143,9 @@ public:
 
   /// @brief Insert an element.
   std::pair<Data*, bool>
-  insert(Data& x)
+  insert(Data* x)
   {
-    auto res = insert_impl(&x, buckets_, nb_buckets_);
+    auto res = insert_impl(x, buckets_, nb_buckets_);
     rehash<Rehash>();
     return res;
   }
@@ -168,15 +168,15 @@ public:
 
   /// @brief Remove an element given its value.
   void
-  erase(const Data& x)
+  erase(const Data* x)
   noexcept
   {
-    const std::size_t pos = std::hash<Data>()(x) & (nb_buckets_ - 1);
+    const std::size_t pos = std::hash<Data>()(*x) & (nb_buckets_ - 1);
     Data* previous = nullptr;
     Data* current = buckets_[pos];
     while (current != nullptr)
     {
-      if (x == *current)
+      if (*x == *current)
       {
         if (previous == nullptr) // first element in bucket
         {

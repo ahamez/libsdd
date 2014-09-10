@@ -192,7 +192,7 @@ public:
     while (set_.size() > max_size_)
     {
       auto oldest = lru_list_.front();
-      set_.erase(*oldest);
+      set_.erase(oldest);
       delete oldest;
       lru_list_.pop_front();
       ++stats_.discarded;
@@ -202,7 +202,7 @@ public:
     entry->lru_cit_ = lru_list_.insert(lru_list_.end(), entry);
 
     // Finally, set the result associated to op.
-    set_.insert_commit(*entry, commit_data); // doesn't throw
+    set_.insert_commit(entry, commit_data); // doesn't throw
 
     return entry->result;
   }

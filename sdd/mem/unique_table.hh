@@ -80,11 +80,11 @@ public:
   /// allocate().
   /// @return A reference to the unified data.
   Unique&
-  operator()(Unique* ptr)
+  operator()(Unique* ptr, std::size_t extra_bytes)
   {
     ++stats_.access;
 
-    auto insertion = set_.insert(*ptr);
+    auto insertion = set_.insert(ptr);
     if (not insertion.second)
     {
       ++stats_.hits;
@@ -132,13 +132,13 @@ public:
   ///
   /// All subsequent uses of the erased data are invalid.
   void
-  erase(const Unique& x)
+  erase(const Unique* x)
   noexcept
   {
-    assert(x.is_not_referenced() && "Unique still referenced");
+    assert(x->is_not_referenced() && "Unique still referenced");
     set_.erase(x);
-    x.~Unique();
-    delete[] reinterpret_cast<char*>(&x); // match new char[] of allocate().
+    x->~Unique();
+    delete[] reinterpret_cast<const char*>(x); // match new char[] of allocate().
   }
 
   /// @brief Get the statistics of this unique_table.

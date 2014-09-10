@@ -47,8 +47,8 @@ struct internal_manager
     ptr_handlers( mem::unique_table<sdd_unique_type>& sdd_ut
                 , mem::unique_table<hom_unique_type>& hom_ut)
     {
-      mem::set_deletion_handler<sdd_unique_type>([&](const sdd_unique_type& u){sdd_ut.erase(u);});
-      mem::set_deletion_handler<hom_unique_type>([&](const hom_unique_type& u){hom_ut.erase(u);});
+      mem::set_deletion_handler<sdd_unique_type>([&](const sdd_unique_type* u){sdd_ut.erase(u);});
+      mem::set_deletion_handler<hom_unique_type>([&](const hom_unique_type* u){hom_ut.erase(u);});
     }
 
     ~ptr_handlers()

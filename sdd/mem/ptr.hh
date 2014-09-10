@@ -16,7 +16,7 @@ namespace sdd { namespace mem {
 ///
 /// A deletion handler is called by ptr whenever a data is no longer referenced.
 template <typename Unique>
-using handler_type = std::function<void (const Unique&)>;
+using handler_type = std::function<void (const Unique*)>;
 
 /// @internal
 /// @brief Get the deletion handler for a given Unique type.
@@ -24,7 +24,7 @@ template <typename Unique>
 handler_type<Unique>&
 deletion_handler()
 {
-  static handler_type<Unique> handler = [](const Unique&){assert(false && "Unset handler");};
+  static handler_type<Unique> handler = [](const Unique*){assert(false && "Unset handler");};
   return handler;
 }
 
@@ -34,7 +34,7 @@ template <typename Unique>
 void
 reset_deletion_handler()
 {
-  deletion_handler<Unique>() = [](const Unique&){assert(false && "Reset handler");};
+  deletion_handler<Unique>() = [](const Unique*){assert(false && "Reset handler");};
 }
 
 
@@ -96,7 +96,7 @@ public:
       x_->decrement_reference_counter();
       if (x_->is_not_referenced())
       {
-        deletion_handler<Unique>()(*x_);
+        deletion_handler<Unique>()(x_);
       }
     }
     x_ = other.x_;
@@ -122,7 +122,7 @@ public:
       x_->decrement_reference_counter();
       if (x_->is_not_referenced())
       {
-        deletion_handler<Unique>()(*x_);
+        deletion_handler<Unique>()(x_);
       }
     }
     x_ = other.x_;
@@ -138,7 +138,7 @@ public:
       x_->decrement_reference_counter();
       if (x_->is_not_referenced())
       {
-        deletion_handler<Unique>()(*x_);
+        deletion_handler<Unique>()(x_);
       }
     }
   }
