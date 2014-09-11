@@ -163,7 +163,7 @@ public:
   /// @brief Get the real smart pointer of the unified data.
   ///
   /// O(1).
-  ptr_type
+  const ptr_type&
   ptr()
   const noexcept
   {
