@@ -66,7 +66,7 @@ struct difference_visitor
     // For each valuation of lhs, remove the quantity rhs_union.
     for (auto& lhs_arc : lhs)
     {
-      auto tmp = difference(cxt_, lhs_arc.valuation(), std::move(rhs_union));
+      auto tmp = difference(cxt_, lhs_arc.valuation(), rhs_union);
       if (not values::empty_values(tmp))
       {
         su.add(lhs_arc.successor(), std::move(tmp));
