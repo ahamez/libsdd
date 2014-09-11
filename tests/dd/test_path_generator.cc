@@ -136,6 +136,7 @@ TYPED_TEST(path_generator_test, hierarchical)
     const auto z = SDD(100, SDD(10, x, one), SDD(11, x, one));
     auto gen = z.paths();
     std::vector<sdd::path<conf>> v(std::begin(gen), std::end(gen));
+    std::sort(v.begin(), v.end());
 
     ASSERT_EQ(4u, v.size());
     std::vector<sdd::path<conf>> r { sdd::path<conf>{{0}, {0}, {0}, {0}}
