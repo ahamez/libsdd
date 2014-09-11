@@ -11,6 +11,7 @@
 #include "sdd/util/packed.hh"
 #include "sdd/order/carrier.hh"
 #include "sdd/order/order.hh"
+#include "sdd/order/order_node.hh"
 
 namespace sdd { namespace hom {
 
@@ -210,7 +211,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   using values_type = typename C::Values;
 
   /// @brief The identifier on which the user function is applied.
-  const order_position_type target;
+  const order_node<C>& o_node;
 
   /// @brief Ownership of the user's values function.
   const std::unique_ptr<const function_base<C>> fun_ptr;
@@ -278,8 +279,8 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   };
 
   /// @brief Constructor.
-  _function(order_position_type pos, std::unique_ptr<const function_base<C>> f)
-    : target(pos), fun_ptr(std::move(f))
+  _function(const order_node<C>& n, std::unique_ptr<const function_base<C>> f)
+    : o_node(n), fun_ptr(std::move(f))
   {}
 
   /// @brief Skip variable predicate.
@@ -287,7 +288,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   skip(const order<C>& o)
   const noexcept
   {
-    return target != o.position();
+    return o_node.variable() != o.variable();
   }
 
   /// @brief Selector predicate
@@ -311,14 +312,14 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   operator==(const _function& lhs, const _function& rhs)
   noexcept
   {
-    return lhs.target == rhs.target and *lhs.fun_ptr == *rhs.fun_ptr;
+    return lhs.o_node.variable() == rhs.o_node.variable() and *lhs.fun_ptr == *rhs.fun_ptr;
   }
 
   friend
   std::ostream&
   operator<<(std::ostream& os, const _function& x)
   {
-    os << "fun(" << x.target << ", ";
+    os << "fun(" << x.o_node.identifier() << ", ";
     x.fun_ptr->print(os);
     return os << ")";
   }
@@ -335,10 +336,10 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-function(order_position_type pos, const User& u)
+function(const order_node<C>& n, const User& u)
 {
   return homomorphism<C>::create( mem::construct<hom::_function<C>>()
-                                , pos, std::make_unique<hom::function_derived<C, User>>(u));
+                                , n, std::make_unique<hom::function_derived<C, User>>(u));
 }
 
 /// @brief Create the Function homomorphism.
@@ -352,7 +353,7 @@ homomorphism<C>
 function(const order<C>& o, const typename C::Identifier& id, const User& u)
 {
   /// @todo Check that id is a flat identifier.
-  return carrier(o, id, function<C>(o.node(id).position(), u));
+  return carrier(o, id, function<C>(o.node(id), u));
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -373,7 +374,7 @@ struct hash<sdd::hom::_function<C>>
   const noexcept
   {
     using namespace sdd::hash;
-    return seed(x.fun_ptr->hash()) (val(x.target));
+    return seed(x.fun_ptr->hash()) (val(x.o_node.variable()));
   }
 };
 
