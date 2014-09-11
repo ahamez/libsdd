@@ -123,22 +123,22 @@ TEST(hash_table, simple_insertion)
   foo f2{42};
   foo f3{43};
 
-  auto insertion = ht.insert(f1);
+  auto insertion = ht.insert(&f1);
   ASSERT_EQ(1u, ht.size());
   ASSERT_TRUE(insertion.second);
   ASSERT_EQ(f1, *insertion.first);
 
-  insertion = ht.insert(f1);
+  insertion = ht.insert(&f1);
   ASSERT_EQ(1u, ht.size());
   ASSERT_FALSE(insertion.second);
   ASSERT_EQ(f1, *insertion.first);
 
-  insertion = ht.insert(f2);
+  insertion = ht.insert(&f2);
   ASSERT_EQ(1u, ht.size());
   ASSERT_FALSE(insertion.second);
   ASSERT_EQ(f1, *insertion.first);
 
-  insertion = ht.insert(f3);
+  insertion = ht.insert(&f3);
   ASSERT_EQ(2u, ht.size());
   ASSERT_TRUE(insertion.second);
   ASSERT_EQ(f3, *insertion.first);
@@ -153,12 +153,12 @@ TEST(hash_table, insert_collision)
     bar b1{0, 7};
     bar b2{1, 7};
 
-    auto insertion1 = ht.insert(b1);
+    auto insertion1 = ht.insert(&b1);
     ASSERT_EQ(1u, ht.size());
     ASSERT_TRUE(insertion1.second);
     ASSERT_EQ(b1, *insertion1.first);
 
-    auto insertion2 = ht.insert(b2);
+    auto insertion2 = ht.insert(&b2);
     ASSERT_EQ(2u, ht.size());
     ASSERT_TRUE(insertion2.second);
     ASSERT_EQ(b2, *insertion2.first);
@@ -176,7 +176,7 @@ TEST(hash_table, insert_collision)
     bar_hash_table  ht{16};
     for (auto& b : vec)
     {
-      ht.insert(b);
+      ht.insert(&b);
     }
 
     ASSERT_EQ(100u, ht.size());
@@ -189,7 +189,7 @@ TEST(hash_table, insert_check_miss)
 {
   foo_hash_table ht{10};
   foo f1{33};
-  ht.insert(f1);
+  ht.insert(&f1);
 
   foo_hash_table::insert_commit_data commit_data;
   const auto insertion = ht.insert_check( 42
@@ -202,7 +202,7 @@ TEST(hash_table, insert_check_miss)
   ASSERT_EQ(1u, ht.size());
 
   foo f2{42};
-  ht.insert_commit(f2, commit_data);
+  ht.insert_commit(&f2, commit_data);
 
   ASSERT_EQ(2u, ht.size());
 }
@@ -213,7 +213,7 @@ TEST(hash_table, insert_check_hit)
 {
   foo_hash_table ht{10};
   foo f1{33};
-  ht.insert(f1);
+  ht.insert(&f1);
 
   foo_hash_table::insert_commit_data commit_data;
   const auto insertion = ht.insert_check( 33
@@ -232,9 +232,9 @@ TEST(hash_table, erase)
   {
     foo_hash_table ht{10};
     foo f1{42};
-    ht.insert(f1);
+    ht.insert(&f1);
     ASSERT_EQ(1u, ht.size());
-    ht.erase(f1);
+    ht.erase(&f1);
     ASSERT_EQ(0u, ht.size());
   }
   {
@@ -242,14 +242,14 @@ TEST(hash_table, erase)
     bar b1{42, 0};
     bar b2{43, 0};
 
-    ht.insert(b1);
-    ht.insert(b2);
+    ht.insert(&b1);
+    ht.insert(&b2);
     ASSERT_EQ(2u, ht.size());
 
-    ht.erase(b1);
+    ht.erase(&b1);
     ASSERT_EQ(1u, ht.size());
 
-    ht.erase(b2);
+    ht.erase(&b2);
     ASSERT_EQ(0u, ht.size());
 
   }
@@ -258,14 +258,14 @@ TEST(hash_table, erase)
     bar b1{42, 0};
     bar b2{43, 0};
 
-    ht.insert(b1);
-    ht.insert(b2);
+    ht.insert(&b1);
+    ht.insert(&b2);
     ASSERT_EQ(2u, ht.size());
 
-    ht.erase(b2);
+    ht.erase(&b2);
     ASSERT_EQ(1u, ht.size());
 
-    ht.erase(b1);
+    ht.erase(&b1);
     ASSERT_EQ(0u, ht.size());
   }
 }
@@ -284,7 +284,7 @@ TEST(hash_table, clear_and_dispose)
   foo_hash_table ht{8};
   for (auto& f : vec)
   {
-    ht.insert(f);
+    ht.insert(&f);
   }
 
   std::size_t cpt = 0;

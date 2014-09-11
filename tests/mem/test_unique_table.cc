@@ -65,31 +65,31 @@ TEST(unique_table_test, insertion)
 
     char* addr1 = ut.allocate(0);
     foo* i1_ptr = new (addr1) foo(42);
-    const foo& i1 = ut(i1_ptr);
+    const foo& i1 = ut(i1_ptr, 0);
 
     char* addr2 = ut.allocate(0);
     foo* i2_ptr = new (addr2) foo(42);
-    const foo& i2 = ut(i2_ptr);
+    const foo& i2 = ut(i2_ptr, 0);
 
     ASSERT_EQ(&i1, &i2);
-    ut.erase(const_cast<foo&>(i1));
+    ut.erase(&i1);
   }
   {
     sdd::mem::unique_table<foo> ut(100);
 
     char* addr1 = ut.allocate(0);
     foo* i1_ptr = new (addr1) foo(42);
-    const foo& i1 = ut(i1_ptr);
+    const foo& i1 = ut(i1_ptr, 0);
 
     char* addr2 = ut.allocate(0);
     foo* i2_ptr = new (addr2) foo(43);
-    const foo& i2 = ut(i2_ptr);
+    const foo& i2 = ut(i2_ptr, 0);
 
     ASSERT_NE(&i1, &i2);
     ASSERT_EQ(2ul, ut.stats().peak);
-    ut.erase(const_cast<foo&>(i1));
+    ut.erase(&i1);
     ASSERT_EQ(2ul, ut.stats().peak);
-    ut.erase(const_cast<foo&>(i2));
+    ut.erase(&i2);
     ASSERT_EQ(2ul, ut.stats().peak);
   }
 }

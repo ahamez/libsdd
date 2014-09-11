@@ -59,7 +59,7 @@ struct unique_table<unique>
   }
 
   void
-  erase(const unique&)
+  erase(const unique*)
   {
     ++nb_deletions_;
   }
@@ -88,7 +88,7 @@ struct ptr_test
     : table_()
   {
     table_.reset();
-    sdd::mem::set_deletion_handler<unique>([&](const unique& u){table_.erase(u);});
+    sdd::mem::set_deletion_handler<unique>([&](const unique* u){table_.erase(u);});
   }
 
   ~ptr_test()
