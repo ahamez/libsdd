@@ -18,14 +18,14 @@ namespace sdd { namespace hom {
 template <typename C>
 struct LIBSDD_ATTRIBUTE_PACKED _local
 {
-  /// @brief The target of this homomorphism.
-  const order_position_type target;
+  /// @brief The identifier on which the user function is applied.
+  const order_node<C>& target;
 
   /// @brief The nested homomorphism to apply in a nested level.
   const homomorphism<C> h;
 
   /// @brief Constructor.
-  _local(order_position_type t, const homomorphism<C>& hm)
+  _local(const order_node<C>& t, const homomorphism<C>& hm)
     : target(t), h(hm)
   {}
 
@@ -97,7 +97,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
   skip(const order<C>& o)
   const noexcept
   {
-    return o.position() != target;
+    return o.variable() != target.variable();
   }
 
   /// @brief Selector predicate
@@ -113,14 +113,14 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
   operator==(const _local& lhs, const _local& rhs)
   noexcept
   {
-    return lhs.target == rhs.target and lhs.h == rhs.h;
+    return lhs.target.variable() == rhs.target.variable() and lhs.h == rhs.h;
   }
 
   friend
   std::ostream&
   operator<<(std::ostream& os, const _local& l)
   {
-    return os << "@(" << l.target << ", " << l.h << ")";
+    return os << "@(" << l.target.identifier() << ", " << l.h << ")";
   }
 };
 
@@ -134,7 +134,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-local(order_position_type pos, const homomorphism<C>& h)
+local(const order_node<C>& n, const homomorphism<C>& h)
 {
   if (h == id<C>())
   {
@@ -142,7 +142,7 @@ local(order_position_type pos, const homomorphism<C>& h)
   }
   else
   {
-    return homomorphism<C>::create(mem::construct<hom::_local<C>>(), pos, h);
+    return homomorphism<C>::create(mem::construct<hom::_local<C>>(), n, h);
   }
 }
 
@@ -153,7 +153,7 @@ homomorphism<C>
 local(const typename C::Identifier& id, const order<C>& o, const homomorphism<C>& h)
 {
   /// @todo Check that id is a hierarchical identifier.
-  return local(o.node(id).position(), h);
+  return local(o.node(id), h);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -174,7 +174,7 @@ struct hash<sdd::hom::_local<C>>
   const
   {
     using namespace sdd::hash;
-    return seed(l.target) (val(l.h));
+    return seed(l.target.variable()) (val(l.h));
   }
 };
 

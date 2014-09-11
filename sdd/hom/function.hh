@@ -211,7 +211,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   using values_type = typename C::Values;
 
   /// @brief The identifier on which the user function is applied.
-  const order_node<C>& o_node;
+  const order_node<C>& target;
 
   /// @brief Ownership of the user's values function.
   const std::unique_ptr<const function_base<C>> fun_ptr;
@@ -251,7 +251,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
               , const order<C>& o)
     const
     {
-      if (fun.selector() or fun.shifter())
+      if (fun.selector() /*or fun.shifter()*/)
       {
         dd::alpha_builder<C, values_type> alpha_builder(cxt.sdd_context());
         alpha_builder.reserve(node.size());
@@ -279,8 +279,8 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   };
 
   /// @brief Constructor.
-  _function(const order_node<C>& n, std::unique_ptr<const function_base<C>> f)
-    : o_node(n), fun_ptr(std::move(f))
+  _function(const order_node<C>& t, std::unique_ptr<const function_base<C>> f)
+    : target(t), fun_ptr(std::move(f))
   {}
 
   /// @brief Skip variable predicate.
@@ -288,7 +288,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   skip(const order<C>& o)
   const noexcept
   {
-    return o_node.variable() != o.variable();
+    return target.variable() != o.variable();
   }
 
   /// @brief Selector predicate
@@ -312,14 +312,14 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   operator==(const _function& lhs, const _function& rhs)
   noexcept
   {
-    return lhs.o_node.variable() == rhs.o_node.variable() and *lhs.fun_ptr == *rhs.fun_ptr;
+    return lhs.target.variable() == rhs.target.variable() and *lhs.fun_ptr == *rhs.fun_ptr;
   }
 
   friend
   std::ostream&
   operator<<(std::ostream& os, const _function& x)
   {
-    os << "fun(" << x.o_node.identifier() << ", ";
+    os << "fun(" << x.target.identifier() << ", ";
     x.fun_ptr->print(os);
     return os << ")";
   }
@@ -374,7 +374,7 @@ struct hash<sdd::hom::_function<C>>
   const noexcept
   {
     using namespace sdd::hash;
-    return seed(x.fun_ptr->hash()) (val(x.o_node.variable()));
+    return seed(x.fun_ptr->hash()) (val(x.target.variable()));
   }
 };
 
