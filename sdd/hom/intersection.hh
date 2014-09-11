@@ -127,7 +127,8 @@ struct intersection_builder_helper
 {
   using operands_type = typename _intersection<C>::operands_type;
   using hom_list_type = std::deque<homomorphism<C>> ;
-  using locals_type   = std::unordered_map<order_position_type, hom_list_type>;
+  using locals_type = std::unordered_map< typename C::variable_type
+                                        , std::pair<hom_list_type, const order_node<C>*>>;
 
   operands_type& operands_;
   locals_type& locals_;
@@ -154,8 +155,9 @@ struct intersection_builder_helper
   operator()(const _local<C>& l, const homomorphism<C>&)
   const
   {
-    auto insertion = locals_.emplace(l.target, hom_list_type());
-    insertion.first->second.emplace_back(l.h);
+    auto insertion = locals_.emplace( l.target.variable()
+                                    , std::make_pair(hom_list_type(), &l.target));
+    insertion.first->second.first.emplace_back(l.h);
   }
 
   /// @brief Insert normally all other operands.
@@ -198,7 +200,8 @@ intersection(const order<C>& o, InputIterator begin, InputIterator end)
   // insert remaining locals
   for (const auto& l : locals)
   {
-    operands.insert(local<C>(l.first, intersection(o, l.second.begin(), l.second.end())));
+    operands.insert( local<C>(*l.second.second
+                   , intersection(o, l.second.first.begin(), l.second.first.end())));
   }
 
   if (operands.size() == 1)

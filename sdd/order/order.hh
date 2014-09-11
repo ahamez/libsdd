@@ -175,6 +175,22 @@ public:
     }
   }
 
+  /// @internal
+  const order_node<C>&
+  node_from_position(order_position_type pos)
+  const noexcept
+  {
+    return (*nodes_ptr_)[pos];
+  }
+
+  /// @internal
+  const order_node<C>&
+  head()
+  const noexcept
+  {
+    return *head_;
+  }
+
   /// @brief Equality.
   friend
   bool

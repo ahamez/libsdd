@@ -82,7 +82,7 @@ struct composition_builder_helper
             , const homomorphism<C>& lorig, const homomorphism<C>& rorig)
   const
   {
-    if (l.target == r.target)
+    if (l.target.variable() == r.target.variable())
     {
       return local(l.target, composition(l.h, r.h));
     }

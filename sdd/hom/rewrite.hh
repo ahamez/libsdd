@@ -99,7 +99,7 @@ struct rewriter
                          , F.size() > 0 ? rewrite(o.next(), sum(o.next(), F.begin(), F.end()))
                                         : optional_homomorphism<C>()
                          , G.begin(), G.end()
-                         , L.size() > 0 ? local( o.position()
+                         , L.size() > 0 ? local( o.head()
                                                , rewrite( o.nested()
                                                         , sum(o.nested(), L.begin(), L.end())
                                                         ))
@@ -133,7 +133,7 @@ struct rewriter
                                                    , intersection(o.next(), F.begin(), F.end()))
                                           : optional_homomorphism<C>()
                            , G.begin(), G.end()
-                           , L.size() > 0 ? local( o.position()
+                           , L.size() > 0 ? local( o.head()
                                                  , rewrite( o.nested()
                                                           , intersection( o.nested(), L.begin()
                                                                         , L.end())))
@@ -178,7 +178,7 @@ struct rewriter
       // Don't forget to add id to L!.
       L.push_back(id<C>());
       rewritten_L
-        = local(o.position(), rewrite(o.nested(), fixpoint(sum(o.nested(), L.begin(), L.end()))));
+        = local(o.head(), rewrite(o.nested(), fixpoint(sum(o.nested(), L.begin(), L.end()))));
     }
 
     // Put selectors in front. It might help cut paths sooner in the Saturation Fixpoint's
