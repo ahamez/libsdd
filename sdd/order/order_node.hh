@@ -103,7 +103,7 @@ public:
   }
 
   /// @brief Get the successor of this node.
-  const order_node* const
+  const order_node*
   next()
   const noexcept
   {
@@ -111,7 +111,7 @@ public:
   }
 
   /// @brief Get the nested nodes of this node.
-  const order_node* const
+  const order_node*
   nested()
   const noexcept
   {
