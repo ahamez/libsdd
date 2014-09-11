@@ -73,6 +73,7 @@ public:
   noexcept
   	: x_(&p)
   {
+    assert(&p != nullptr);
     x_->increment_reference_counter();
   }
 

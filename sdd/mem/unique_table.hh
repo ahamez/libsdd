@@ -82,6 +82,7 @@ public:
   Unique&
   operator()(Unique* ptr, std::size_t extra_bytes)
   {
+    assert(ptr != nullptr);
     ++stats_.access;
 
     auto insertion = set_.insert(ptr);
@@ -135,6 +136,7 @@ public:
   erase(const Unique* x)
   noexcept
   {
+    assert(x != nullptr);
     assert(x->is_not_referenced() && "Unique still referenced");
     set_.erase(x);
     x->~Unique();

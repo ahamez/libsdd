@@ -112,6 +112,7 @@ public:
   insert_commit(Data* x, const insert_commit_data& commit_data)
   noexcept(Rehash == false)
   {
+    assert(x != nullptr);
     const std::size_t pos = commit_data.hash & (nb_buckets_ - 1);
 
     Data* previous = nullptr;
