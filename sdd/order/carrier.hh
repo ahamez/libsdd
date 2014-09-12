@@ -8,7 +8,6 @@ namespace sdd {
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @internal
 /// @brief Get the succession of local that apply h on target.
 /// @param o The actual order.
 /// @param target Must belong to o.
@@ -20,7 +19,7 @@ carrier(const order<C>& o, const typename C::Identifier& target, homomorphism<C>
   const auto& path = o.node(target).path();
   for (auto cit = path.rbegin(); cit != path.rend(); ++cit)
   {
-    h = local(o.node_from_position(*cit), h);
+    h = local(o.node_from_position(*cit).variable(), h);
   }
   return h;
 }

@@ -19,13 +19,13 @@ template <typename C>
 struct LIBSDD_ATTRIBUTE_PACKED _local
 {
   /// @brief The identifier on which the user function is applied.
-  const order_node<C>& target;
+  const typename C::variable_type target;
 
   /// @brief The nested homomorphism to apply in a nested level.
   const homomorphism<C> h;
 
   /// @brief Constructor.
-  _local(const order_node<C>& t, const homomorphism<C>& hm)
+  _local(typename C::variable_type t, const homomorphism<C>& hm)
     : target(t), h(hm)
   {}
 
@@ -97,7 +97,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
   skip(const order<C>& o)
   const noexcept
   {
-    return o.variable() != target.variable();
+    return o.variable() != target;
   }
 
   /// @brief Selector predicate
@@ -113,14 +113,14 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
   operator==(const _local& lhs, const _local& rhs)
   noexcept
   {
-    return lhs.target.variable() == rhs.target.variable() and lhs.h == rhs.h;
+    return lhs.target == rhs.target and lhs.h == rhs.h;
   }
 
   friend
   std::ostream&
   operator<<(std::ostream& os, const _local& l)
   {
-    return os << "@(" << l.target.identifier() << ", " << l.h << ")";
+    return os << "@(" << l.target << ", " << l.h << ")";
   }
 };
 
@@ -134,7 +134,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
 /// @related homomorphism
 template <typename C>
 homomorphism<C>
-local(const order_node<C>& n, const homomorphism<C>& h)
+local(typename C::variable_type var, const homomorphism<C>& h)
 {
   if (h == id<C>())
   {
@@ -142,18 +142,21 @@ local(const order_node<C>& n, const homomorphism<C>& h)
   }
   else
   {
-    return homomorphism<C>::create(mem::construct<hom::_local<C>>(), n, h);
+    return homomorphism<C>::create(mem::construct<hom::_local<C>>(), var, h);
   }
 }
 
 /// @brief Create the local homomorphism.
 /// @related homomorphism
+///
+/// One should not directly use this function, but preferably the carrier function. Also, note that
+/// function automatically creates the succession of local necessary to apply on its target.
 template <typename C>
 homomorphism<C>
 local(const typename C::Identifier& id, const order<C>& o, const homomorphism<C>& h)
 {
   /// @todo Check that id is a hierarchical identifier.
-  return local(o.node(id), h);
+  return local(o.node(id).variable(), h);
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -174,7 +177,7 @@ struct hash<sdd::hom::_local<C>>
   const
   {
     using namespace sdd::hash;
-    return seed(l.target.variable()) (val(l.h));
+    return seed(l.target) (val(l.h));
   }
 };
 

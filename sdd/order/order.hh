@@ -183,14 +183,6 @@ public:
     return (*nodes_ptr_)[pos];
   }
 
-  /// @internal
-  const order_node<C>&
-  head()
-  const noexcept
-  {
-    return *head_;
-  }
-
   /// @brief Equality.
   friend
   bool

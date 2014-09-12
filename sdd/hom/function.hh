@@ -211,7 +211,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   using values_type = typename C::Values;
 
   /// @brief The identifier on which the user function is applied.
-  const order_node<C>& target;
+  const typename C::variable_type target;
 
   /// @brief Ownership of the user's values function.
   const std::unique_ptr<const function_base<C>> fun_ptr;
@@ -279,7 +279,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   };
 
   /// @brief Constructor.
-  _function(const order_node<C>& t, std::unique_ptr<const function_base<C>> f)
+  _function(typename C::variable_type t, std::unique_ptr<const function_base<C>> f)
     : target(t), fun_ptr(std::move(f))
   {}
 
@@ -288,7 +288,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   skip(const order<C>& o)
   const noexcept
   {
-    return target.variable() != o.variable();
+    return target != o.variable();
   }
 
   /// @brief Selector predicate
@@ -312,14 +312,14 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   operator==(const _function& lhs, const _function& rhs)
   noexcept
   {
-    return lhs.target.variable() == rhs.target.variable() and *lhs.fun_ptr == *rhs.fun_ptr;
+    return lhs.target == rhs.target and *lhs.fun_ptr == *rhs.fun_ptr;
   }
 
   friend
   std::ostream&
   operator<<(std::ostream& os, const _function& x)
   {
-    os << "fun(" << x.target.identifier() << ", ";
+    os << "fun(" << x.target << ", ";
     x.fun_ptr->print(os);
     return os << ")";
   }
@@ -336,10 +336,10 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
 /// @related homomorphism
 template <typename C, typename User>
 homomorphism<C>
-function(const order_node<C>& n, const User& u)
+function(typename C::variable_type var, const User& u)
 {
   return homomorphism<C>::create( mem::construct<hom::_function<C>>()
-                                , n, std::make_unique<hom::function_derived<C, User>>(u));
+                                , var, std::make_unique<hom::function_derived<C, User>>(u));
 }
 
 /// @brief Create the Function homomorphism.
@@ -353,7 +353,7 @@ homomorphism<C>
 function(const order<C>& o, const typename C::Identifier& id, const User& u)
 {
   /// @todo Check that id is a flat identifier.
-  return carrier(o, id, function<C>(o.node(id), u));
+  return carrier(o, id, function<C>(o.node(id).variable(), u));
 }
 
 /*------------------------------------------------------------------------------------------------*/
@@ -374,7 +374,7 @@ struct hash<sdd::hom::_function<C>>
   const noexcept
   {
     using namespace sdd::hash;
-    return seed(x.fun_ptr->hash()) (val(x.target.variable()));
+    return seed(x.fun_ptr->hash()) (val(x.target));
   }
 };
 
