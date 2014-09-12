@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <memory> // unique_ptr
 
 #include "sdd/mem/hash_table.hh"
 
@@ -64,7 +65,7 @@ private:
   /// @brief The statistics of this unique_table.
   mutable unique_table_statistics stats_;
 
-  char* cache_;
+  std::unique_ptr<char[]> cache_;
   std::size_t cache_size_;
 
 public:
@@ -92,11 +93,7 @@ public:
       ptr->~Unique();
       if ((sizeof(Unique) + extra_bytes) > cache_size_)
       {
-        if (cache_ != nullptr)
-        {
-          delete[] cache_;
-        }
-        cache_ = reinterpret_cast<char*>(ptr);
+        cache_.reset(reinterpret_cast<char*>(ptr));
         cache_size_ = sizeof(Unique) + extra_bytes;
       }
       else
@@ -116,10 +113,10 @@ public:
   char*
   allocate(std::size_t extra_bytes)
   {
-    if (cache_ != nullptr and cache_size_ >= (sizeof(Unique) + extra_bytes))
+    if (cache_ and cache_size_ >= (sizeof(Unique) + extra_bytes))
     {
-      auto res = cache_;
-      cache_ = nullptr;
+      auto res = cache_.get();
+      cache_.release();
       cache_size_ = 0;
       return res;
     }
