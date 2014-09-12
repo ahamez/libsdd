@@ -251,7 +251,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
               , const order<C>& o)
     const
     {
-      if (fun.selector() /*or fun.shifter()*/)
+      if (fun.selector() or fun.shifter())
       {
         dd::alpha_builder<C, values_type> alpha_builder(cxt.sdd_context());
         alpha_builder.reserve(node.size());
