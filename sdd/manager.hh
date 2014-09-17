@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdexcept> // runtime_error
-
 #include "sdd/internal_manager.hh"
 #include "sdd/values_manager.hh"
 
@@ -33,19 +31,9 @@ init(const C& configuration = C())
   if (*global_ptr<C>() == nullptr and *global_ptr<values_type>() == nullptr)
   {
     values_manager<values_type>* v = new values_manager<values_type>(configuration);
-    if (not v)
-    {
-      throw std::runtime_error("Can't allocate values manager.");
-    }
-
     *global_values_ptr<values_type>() = v;
 
     internal_manager<C>* g = new internal_manager<C>(configuration);
-    if (not g)
-    {
-      delete v;
-      throw std::runtime_error("Can't allocate internal manager.");
-    }
     *global_ptr<C>() = g;
 
     return manager<C>(std::make_shared<manager_impl<C>>(configuration, v, g));
