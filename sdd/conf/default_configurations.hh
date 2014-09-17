@@ -49,12 +49,6 @@ struct default_configuration
   /// @brief Tell if FPU registers shoud be preserved when using Expressions.
   static constexpr bool expression_preserve_fpu_registers = false;
 
-  /// @brief Tell if the library should clean all memory when the manager is destroyed.
-  ///
-  /// Useful if you have only one instance of the library and that you don't want to wait for its
-  /// cleanup at your program's exit.
-  bool final_cleanup;
-
   /// @brief Default constructor.
   ///
   /// Initialize all parameters to their default values.
@@ -66,7 +60,6 @@ struct default_configuration
     , sdd_arena_size(1024*1024*16)
     , hom_unique_table_size(1'000'000)
     , hom_cache_size(1'000'000)
-    , final_cleanup(true)
   {}
 };
 

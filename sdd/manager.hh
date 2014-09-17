@@ -36,11 +36,11 @@ init(const C& configuration = C())
     internal_manager<C>* g = new internal_manager<C>(configuration);
     *global_ptr<C>() = g;
 
-    return manager<C>(std::make_shared<manager_impl<C>>(configuration, v, g));
+    return std::make_shared<manager_impl<C>>(configuration, v, g);
   }
   else
   {
-    throw std::runtime_error("Library already initialized.");
+    throw std::runtime_error("SDD library already initialized.");
   }
 }
 
@@ -172,22 +172,10 @@ public:
   /// @brief Destructor.
   ~manager_impl()
   {
-    if (m_)
-    {
-      *global_ptr<C>() = nullptr;
-      if (conf_.final_cleanup)
-      {
-        delete m_;
-      }
-    }
-    if (values_)
-    {
-      *global_values_ptr<values_type>() = nullptr;
-      if (conf_.final_cleanup)
-      {
-        delete values_;
-      }
-    }
+    *global_ptr<C>() = nullptr;
+    delete m_;
+    *global_values_ptr<values_type>() = nullptr;
+    delete values_;
   }
 
   /// @brief Reset homomorphisms evaluation cache.
