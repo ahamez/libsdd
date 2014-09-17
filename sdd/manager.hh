@@ -48,8 +48,12 @@ init(const C& configuration = C())
 
 /*------------------------------------------------------------------------------------------------*/
 
+/// @brief Global context of the libsdd.
+///
+/// As long as a copy of this manager (returned by init()) exists, then it's safe to use the
+/// library.
 template <typename C>
-class manager
+class manager final
 {
 private:
 
@@ -156,6 +160,8 @@ private:
   using values_type = typename C::Values;
 
   /// @brief The manager of Values.
+  ///
+  /// It must be before m_ as this one can reference data in values_.
   std::unique_ptr<values_manager<values_type>> values_;
 
   /// @brief The manager of SDD and homomorphisms.
@@ -163,13 +169,11 @@ private:
 
 public:
 
-  /// @brief Construct a manager with internal managers.
   manager_impl( std::unique_ptr<values_manager<values_type>>&& vm_ptr
               , std::unique_ptr<internal_manager<C>>&& im_ptr)
     : values_(std::move(vm_ptr)), m_(std::move(im_ptr))
   {}
 
-  /// @brief Destructor.
   ~manager_impl()
   {
     *global_ptr<C>() = nullptr;
@@ -241,7 +245,6 @@ public:
   auto
   values_stats()
   const noexcept
-  -> decltype(values_->statistics())
   {
     return values_->statistics();
   }
