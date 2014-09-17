@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "sdd/internal_manager.hh"
 #include "sdd/values_manager.hh"
 
@@ -30,13 +32,13 @@ init(const C& configuration = C())
   using values_type = typename C::Values;
   if (*global_ptr<C>() == nullptr and *global_ptr<values_type>() == nullptr)
   {
-    values_manager<values_type>* v = new values_manager<values_type>(configuration);
-    *global_values_ptr<values_type>() = v;
+    auto vm_ptr = std::make_unique<values_manager<values_type>>(configuration);
+    *global_values_ptr<values_type>() = vm_ptr.get();
 
-    internal_manager<C>* g = new internal_manager<C>(configuration);
-    *global_ptr<C>() = g;
+    auto im_ptr = std::make_unique<internal_manager<C>>(configuration);
+    *global_ptr<C>() = im_ptr.get();
 
-    return std::make_shared<manager_impl<C>>(configuration, v, g);
+    return std::make_shared<manager_impl<C>>(configuration, std::move(vm_ptr), std::move(im_ptr));
   }
   else
   {
@@ -157,25 +159,24 @@ private:
   const C conf_;
 
   /// @brief The manager of Values.
-  values_manager<values_type>* values_;
+  std::unique_ptr<values_manager<values_type>> values_;
 
   /// @brief The manager of SDD and homomorphisms.
-  internal_manager<C>* m_;
+  std::unique_ptr<internal_manager<C>> m_;
 
 public:
 
   /// @brief Construct a manager with internal managers.
-  manager_impl(const C& conf, values_manager<values_type>* v, internal_manager<C>* m)
-    : conf_(conf), values_(v), m_(m)
+  manager_impl( const C& conf, std::unique_ptr<values_manager<values_type>>&& vm_ptr
+              , std::unique_ptr<internal_manager<C>>&& im_ptr)
+    : conf_(conf), values_(std::move(vm_ptr)), m_(std::move(im_ptr))
   {}
 
   /// @brief Destructor.
   ~manager_impl()
   {
     *global_ptr<C>() = nullptr;
-    delete m_;
     *global_values_ptr<values_type>() = nullptr;
-    delete values_;
   }
 
   /// @brief Reset homomorphisms evaluation cache.
