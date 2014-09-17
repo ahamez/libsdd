@@ -38,7 +38,7 @@ init(const C& configuration = C())
     auto im_ptr = std::make_unique<internal_manager<C>>(configuration);
     *global_ptr<C>() = im_ptr.get();
 
-    return std::make_shared<manager_impl<C>>(configuration, std::move(vm_ptr), std::move(im_ptr));
+    return std::make_shared<manager_impl<C>>(std::move(vm_ptr), std::move(im_ptr));
   }
   else
   {
@@ -155,9 +155,6 @@ private:
   /// @brief The type of a set of values.
   using values_type = typename C::Values;
 
-  /// @brief Keep the configuration.
-  const C conf_;
-
   /// @brief The manager of Values.
   std::unique_ptr<values_manager<values_type>> values_;
 
@@ -167,9 +164,9 @@ private:
 public:
 
   /// @brief Construct a manager with internal managers.
-  manager_impl( const C& conf, std::unique_ptr<values_manager<values_type>>&& vm_ptr
+  manager_impl( std::unique_ptr<values_manager<values_type>>&& vm_ptr
               , std::unique_ptr<internal_manager<C>>&& im_ptr)
-    : conf_(conf), values_(std::move(vm_ptr)), m_(std::move(im_ptr))
+    : values_(std::move(vm_ptr)), m_(std::move(im_ptr))
   {}
 
   /// @brief Destructor.
