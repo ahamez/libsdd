@@ -107,9 +107,13 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_op
     {
       return Operation::template work<const_iterator, flat_node<C>>(begin(), end(), cxt);
     }
-    else
+    else if (mem::is<hierarchical_node<C>>(*begin()))
     {
       return Operation::template work<const_iterator, hierarchical_node<C>>(begin(), end(), cxt);
+    }
+    else
+    {
+      throw top<C>(*begin(), *(begin() + 1));
     }
   }
 
