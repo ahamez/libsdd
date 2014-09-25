@@ -97,22 +97,11 @@ struct LIBSDD_ATTRIBUTE_PACKED variant
 /// @related variant
 template <typename T, typename... Types>
 inline
-const T&
-variant_cast(const variant<Types...>& v)
-noexcept
-{
-  return *reinterpret_cast<const T*>(&v.storage);
-}
-
-/// @internal
-/// @related variant
-template <typename T, typename... Types>
-inline
 auto
 is(const variant<Types...>& v)
 noexcept
 {
-  return v.index == util::index_of<T, Types...>::value;
+  return v.index == util::index_of<typename std::decay<T>::type, Types...>::value;
 }
 
 /// @internal
@@ -124,6 +113,18 @@ is(const VariantProxy& v)
 noexcept
 {
   return is<T>(*v);
+}
+
+/// @internal
+/// @related variant
+template <typename T, typename... Types>
+inline
+const T&
+variant_cast(const variant<Types...>& v)
+noexcept
+{
+  assert(is<T>(v));
+  return *reinterpret_cast<const T*>(&v.storage);
 }
 
 /*------------------------------------------------------------------------------------------------*/
