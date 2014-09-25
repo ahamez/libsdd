@@ -51,6 +51,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_op
     : operands(new char[builder.size_to_allocate()])
     , size(static_cast<typename C::operands_size_type>(builder.size()))
   {
+    assert(size > 1);
     // Will place (with a placement new combined with a move) operands in the raw storage.
     builder.consolidate(operands);
   }
