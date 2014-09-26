@@ -100,7 +100,8 @@ struct hom_to_dot_visitor
       unsigned int i = 0;
       for (auto&& g : h)
       {
-        os_ << node("h", &h) << " -> " << visit(*this, g)<< " [label=\"g" << i << "\"];\n";
+        const auto sub_g = visit(*this, g);
+        os_ << node("h", &h) << " -> " << sub_g << " [label=\"g" << i++ << "\"];\n";
       }
       if (h.L != id<C>())
       {
