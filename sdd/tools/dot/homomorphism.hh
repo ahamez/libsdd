@@ -59,7 +59,7 @@ struct hom_to_dot_visitor
   {
     if (not visited(h))
     {
-      os_ << node("h", &h) << "[label=\"" << h << "\"];\n";
+      os_ << node("h", &h) << " [label=\"" << h << "\"];\n";
     }
     return node("h", &h);
   }
@@ -81,6 +81,7 @@ struct hom_to_dot_visitor
     {
       os_ << node("h", &h) << " [label=\"@\"];\n";
       const auto n = visit(*this, h.h);
+      os_ << node("h", &h) << " -> " << n << " [label=\"" << h.target << "\"]\n";
     }
     return node("h", &h);
   }
