@@ -81,14 +81,8 @@ public:
     {
       s1 = s2;
 
-      if (F != id<C>())
-      {
-        s2 = F(cxt, o, s2); // apply (F + Id)*
-      }
-      if (L != id<C>())
-      {
-        s2 = L(cxt, o, s2); // apply (L + Id)*
-      }
+      s2 = F(cxt, o, s2); // apply (F + Id)*
+      s2 = L(cxt, o, s2); // apply (L + Id)*
 
       for (auto cit = begin(); cit != end(); ++cit)
       {
