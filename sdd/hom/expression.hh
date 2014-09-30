@@ -223,14 +223,14 @@ expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIte
   const auto last_position = positions.back();
   if (target_pos < last_position)
   {
-    return homomorphism<C>::create( mem::construct<hom::_expression<C>>()
-                                  , std::move(evaluator_ptr), std::move(positions), target_pos);
+    return hom::make<C, hom::_expression<C>>
+      (std::move(evaluator_ptr), std::move(positions), target_pos);
   }
   else
   {
     // The target is below all operands, it's a much simpler case to handle
-    return homomorphism<C>::create( mem::construct<hom::_simple_expression<C>>()
-                                  , std::move(evaluator_ptr), std::move(positions), target_pos);
+    return hom::make<C, hom::_simple_expression<C>>
+      (std::move(evaluator_ptr), std::move(positions), target_pos);
   }
 }
 

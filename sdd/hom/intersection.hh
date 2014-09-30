@@ -208,7 +208,7 @@ intersection(const order<C>& o, InputIterator begin, InputIterator end)
   else
   {
     operands.shrink_to_fit();
-    return homomorphism<C>::create(mem::construct<hom::_intersection<C>>(), std::move(operands));
+    return hom::make<C, hom::_intersection<C>>(std::move(operands));
   }
 }
 

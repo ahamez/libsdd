@@ -88,7 +88,7 @@ struct composition_builder_helper
     }
     else
     {
-      return homomorphism<C>::create(mem::construct<hom::_composition<C>>(), lorig, rorig);
+      return hom::make<C, hom::_composition<C>>(lorig, rorig);
     }
   }
 
@@ -107,7 +107,7 @@ struct composition_builder_helper
     }
     else
     {
-      return homomorphism<C>::create(mem::construct<hom::_composition<C>>(), left, right);
+      return make<C, _composition<C>>(left, right);
     }
   }
 };

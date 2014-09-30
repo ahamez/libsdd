@@ -120,8 +120,7 @@ if_then_else( const homomorphism<C>& h_if, const homomorphism<C>& h_then
     return h_then;
   }
 
-  return homomorphism<C>::create( mem::construct<hom::_if_then_else<C>>()
-                                , h_if, h_then, h_else);
+  return hom::make<C, hom::_if_then_else<C>>(h_if, h_then, h_else);
 }
 
 /*------------------------------------------------------------------------------------------------*/

@@ -94,7 +94,7 @@ template <typename C, typename Valuation>
 homomorphism<C>
 cons(const order<C> o, const Valuation& val, const homomorphism<C>& h)
 {
-  return homomorphism<C>::create(mem::construct<hom::_cons<C, Valuation>>(), o, val, h);
+  return hom::make<C, hom::_cons<C, Valuation>>(o, val, h);
 }
 
 /*------------------------------------------------------------------------------------------------*/

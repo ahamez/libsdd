@@ -338,8 +338,7 @@ template <typename C, typename User>
 homomorphism<C>
 function(typename C::variable_type var, const User& u)
 {
-  return homomorphism<C>::create( mem::construct<hom::_function<C>>()
-                                , var, std::make_unique<hom::function_derived<C, User>>(u));
+  return hom::make<C, hom::_function<C>>(var, std::make_unique<hom::function_derived<C, User>>(u));
 }
 
 /// @brief Create the Function homomorphism.

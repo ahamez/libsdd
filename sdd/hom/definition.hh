@@ -194,32 +194,6 @@ public:
     return cxt.cache()(hom::cached_homomorphism<C>(o, *this, std::forward<SDD_>(x)));
   }
 
-  /// @internal
-  /// @brief Create an homomorphism from a concrete type of fixed size (e.g. Id, cons, etc.).
-  template<typename T, typename... Args>
-  static
-  homomorphism
-  create(mem::construct<T>, Args&&... args)
-  {
-    auto& ut = global<C>().hom_unique_table;
-    char* addr = ut.allocate(0 /*extra_bytes*/);
-    unique_type* u = new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
-    return {ptr_type(ut(u, 0))};
-  }
-
-  /// @internal
-  /// @brief Create an homomorphism from a concrete type of variable size (e.g. sum).
-  template<typename T, typename... Args>
-  static
-  homomorphism
-  create_variable_size(mem::construct<T>, std::size_t extra_bytes, Args&&... args)
-  {
-    auto& ut = global<C>().hom_unique_table;
-    char* addr = ut.allocate(extra_bytes);
-    unique_type* u = new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
-    return {ptr_type(ut(u, extra_bytes))};
-  }
-
   /// @brief Equality.
   ///
   /// O(1)
@@ -264,7 +238,36 @@ public:
 
 /*------------------------------------------------------------------------------------------------*/
 
-} // namespace sdd
+namespace hom {
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+/// @brief Create an homomorphism from a concrete type of fixed size (e.g. Id, cons, etc.).
+template<typename C, typename T, typename... Args>
+homomorphism<C>
+make(Args&&... args)
+{
+  return make_variable_size<C, T>(0, std::forward<Args>(args)...);
+}
+
+/// @internal
+/// @brief Create an homomorphism from a concrete type of variable size (e.g. sum).
+template<typename C, typename T, typename... Args>
+homomorphism<C>
+make_variable_size(std::size_t extra_bytes, Args&&... args)
+{
+  using unique_type = typename homomorphism<C>::unique_type;
+  using ptr_type = typename homomorphism<C>::ptr_type;
+  auto& ut = global<C>().hom_unique_table;
+  char* addr = ut.allocate(extra_bytes);
+  unique_type* u = new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
+  return {ptr_type(ut(u, extra_bytes))};
+}
+
+/*------------------------------------------------------------------------------------------------*/
+
+}} // namespace sdd::hom
 
 namespace std {
 

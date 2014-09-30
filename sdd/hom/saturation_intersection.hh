@@ -147,11 +147,8 @@ saturation_intersection( typename C::variable_type var
     }
   }
 
-  return homomorphism<C>::create( mem::construct<_saturation_intersection<C>>()
-                                , var
-                                , std::move(f)
-                                , homomorphism_set<C>(gbegin, gend)
-                                , std::move(l));
+  return hom::make<C, _saturation_intersection<C>>
+    (var, std::move(f), homomorphism_set<C>(gbegin, gend), std::move(l));
 }
 
 /*------------------------------------------------------------------------------------------------*/

@@ -144,11 +144,8 @@ saturation_sum( typename C::variable_type var, optional_homomorphism<C>&& f
     }
   }
 
-  return homomorphism<C>::create( mem::construct<_saturation_sum<C>>()
-                                , var
-                                , std::move(f)
-                                , homomorphism_set<C>(gbegin, gend)
-                                , std::move(l));
+  return hom::make<C, _saturation_sum<C>>
+    (var, std::move(f), homomorphism_set<C>(gbegin, gend), std::move(l));
 }
 
 /*------------------------------------------------------------------------------------------------*/

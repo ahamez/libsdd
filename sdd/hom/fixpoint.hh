@@ -106,7 +106,7 @@ struct fixpoint_builder_helper
   operator()(const T&, const homomorphism<C>& h)
   const noexcept
   {
-    return homomorphism<C>::create(mem::construct<_fixpoint<C>>(), h);
+    return hom::make<C, _fixpoint<C>>(h);
   }
 };
 

@@ -209,8 +209,7 @@ saturation_fixpoint( typename C::variable_type var
   g.clear();
   g.insert(gbegin, gend);
   const std::size_t extra_bytes = g.size() * sizeof(homomorphism<C>);
-  return homomorphism<C>::create_variable_size( mem::construct<_saturation_fixpoint<C>>()
-                                              , extra_bytes, var, f, g, l);
+  return hom::make_variable_size<C, _saturation_fixpoint<C>>(extra_bytes, var, f, g, l);
 }
 
 /*------------------------------------------------------------------------------------------------*/

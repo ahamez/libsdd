@@ -136,14 +136,7 @@ template <typename C>
 homomorphism<C>
 local(typename C::variable_type var, const homomorphism<C>& h)
 {
-  if (h == id<C>())
-  {
-    return h;
-  }
-  else
-  {
-    return homomorphism<C>::create(mem::construct<hom::_local<C>>(), var, h);
-  }
+  return h == id<C>() ? h : hom::make<C, hom::_local<C>>(var, h);
 }
 
 /// @brief Create the local homomorphism.

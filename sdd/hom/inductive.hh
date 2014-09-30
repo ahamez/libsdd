@@ -341,8 +341,7 @@ template <typename C, typename User>
 homomorphism<C>
 inductive(const User& u)
 {
-  return homomorphism<C>::create( mem::construct<hom::_inductive<C>>()
-                                , std::make_unique<hom::inductive_derived<C, User>>(u));
+  return hom::make<C, hom::_inductive<C>>(std::make_unique<hom::inductive_derived<C, User>>(u));
 }
 
 /*------------------------------------------------------------------------------------------------*/
