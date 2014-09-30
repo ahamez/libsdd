@@ -159,7 +159,7 @@ struct rewriter
     auto& L = std::get<2>(p);
     const bool has_id = std::get<3>(p);
 
-    if ((not has_id))
+    if (not has_id)
     {
       return h;
     }

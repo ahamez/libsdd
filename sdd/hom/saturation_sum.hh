@@ -132,9 +132,7 @@ homomorphism<C>
 saturation_sum( typename C::variable_type var, optional_homomorphism<C>&& f
               , InputIterator gbegin, InputIterator gend, optional_homomorphism<C>&& l)
 {
-  const std::size_t g_size = std::distance(gbegin, gend);
-
-  if (g_size == 0)
+  if (std::distance(gbegin, gend) == 0)
   {
     if (f and not l)
     {
