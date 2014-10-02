@@ -326,16 +326,6 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
 
 /*------------------------------------------------------------------------------------------------*/
 
-/// @internal
-/// @brief Create the Function homomorphism.
-/// @related homomorphism
-template <typename C, typename User>
-homomorphism<C>
-function(typename C::variable_type var, const User& u)
-{
-  return hom::make<C, hom::_function<C>>(var, std::make_unique<hom::function_derived<C, User>>(u));
-}
-
 /// @brief Create the Function homomorphism.
 /// @param i The target identifier, must belong to o.
 /// @related homomorphism
@@ -344,10 +334,13 @@ function(typename C::variable_type var, const User& u)
 /// created.
 template <typename C, typename User>
 homomorphism<C>
-function(const order<C>& o, const typename C::Identifier& id, const User& u)
+function(const order<C>& o, const typename C::Identifier& id, User&& u)
 {
   /// @todo Check that id is a flat identifier.
-  return carrier(o, id, function<C>(o.node(id).variable(), u));
+  const auto var = o.node(id).variable();
+  const auto f = hom::make<C, hom::_function<C>>
+    (var, std::make_unique<hom::function_derived<C, User>>(std::forward<User>(u)));
+  return carrier(o, id, std::move(f));
 }
 
 /*------------------------------------------------------------------------------------------------*/
