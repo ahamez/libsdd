@@ -186,10 +186,6 @@ struct hom_to_dot
 {
   const homomorphism<C> h_;
 
-  hom_to_dot(const homomorphism<C>& h)
-    : h_(h)
-  {}
-
   friend
   std::ostream&
   operator<<(std::ostream& out, const hom_to_dot& manip)
@@ -207,7 +203,7 @@ template <typename C>
 hom_to_dot<C>
 dot(const homomorphism<C>& h)
 {
-  return hom_to_dot<C>(h);
+  return {h};
 }
 
 /*------------------------------------------------------------------------------------------------*/

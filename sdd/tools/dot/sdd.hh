@@ -124,10 +124,6 @@ struct to_dot
   const SDD<C> x_;
   const order<C>& o_;
 
-  to_dot(const SDD<C>& x, const order<C>& o)
-    : x_(x), o_(o)
-  {}
-
   friend
   std::ostream&
   operator<<(std::ostream& out, const to_dot& manip)
@@ -147,7 +143,7 @@ template <typename C>
 to_dot<C>
 dot(const SDD<C>& x, const order<C>& o)
 {
-  return to_dot<C>(x, o);
+  return {x, o};
 }
 
 /*------------------------------------------------------------------------------------------------*/
