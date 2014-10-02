@@ -84,10 +84,6 @@ struct expression_post_visitor
   typename C::Values& valuation;
   const order_position_type target;
 
-  expression_post_visitor(evaluator_base<C>& e, typename C::Values& v, order_position_type t)
-    : eval(e), valuation(v), target(t)
-  {}
-
   void
   operator()( const hierarchical_node<C>& n
             , yield_type<C>& yield
@@ -304,7 +300,7 @@ struct expression_pre
         const auto local_res = std::make_shared<sdd_stack<C>>(arc.successor(), nullptr);
         const auto local_app = std::make_shared<app_stack<C>>(arc.successor(), o.next(), nullptr);
         coro<C> gen( std::bind( expression_post<C>, ph::_1
-                              , expression_post_visitor<C>(eval_, valuation_, target_)
+                              , expression_post_visitor<C>{eval_, valuation_, target_}
                               , arc.valuation(), o.nested(), local_app, local_res, cit, end)
                    , bcoro::attributes(coro_fpu<C::expression_preserve_fpu_registers>::value));
         while(gen)
@@ -348,7 +344,7 @@ struct expression_pre
         }
 
         coro<C> gen( std::bind( expression_post<C>, ph::_1
-                              , expression_post_visitor<C>(eval_, valuation_, target_)
+                              , expression_post_visitor<C>{eval_, valuation_, target_}
                               , arc.successor(), o.next(), nullptr, nullptr, cit, end)
                    , bcoro::attributes(coro_fpu<C::expression_preserve_fpu_registers>::value));
 
