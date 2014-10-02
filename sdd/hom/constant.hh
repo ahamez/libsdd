@@ -58,7 +58,6 @@ struct _constant
   {
     return os << "const(" << c.operand << ")";
   }
-
 };
 
 /*------------------------------------------------------------------------------------------------*/
@@ -83,7 +82,7 @@ template <typename C>
 homomorphism<C>
 constant(const SDD<C>& s)
 {
-  return homomorphism<C>::create(mem::construct<hom::_constant<C>>(), s);
+  return hom::make<C, hom::_constant<C>>(s);
 }
 
 /*------------------------------------------------------------------------------------------------*/
