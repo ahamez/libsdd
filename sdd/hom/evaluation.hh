@@ -99,12 +99,6 @@ struct cached_homomorphism
   /// @brief The homomorphism's operand.
   const SDD<C> sdd;
 
-  /// @brief Constructor.
-  template <typename SDD_>
-  cached_homomorphism(const order<C>& o, const homomorphism<C>& h, SDD_&& s)
-    : ord(o), hom(h), sdd(std::forward<SDD_>(s))
-  {}
-
   /// @brief Launch the evaluation.
   ///
   /// Called by the cache.
@@ -112,32 +106,17 @@ struct cached_homomorphism
   operator()(context<C>& cxt)
   const
   {
-    return binary_visit(evaluation<C>(), hom, sdd, hom, sdd, cxt, ord);
+    return binary_visit(evaluation<C>{}, hom, sdd, hom, sdd, cxt, ord);
+  }
+
+  friend
+  bool
+  operator==(const cached_homomorphism& lhs, const cached_homomorphism& rhs)
+  noexcept
+  {
+    return lhs.hom == rhs.hom and lhs.sdd == rhs.sdd;
   }
 };
-
-/*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @related cached_homomorphism
-/// We don't need to compare orders as the SDD operands bring the same information.
-template <typename C>
-inline
-bool
-operator==(const cached_homomorphism<C>& lhs, const cached_homomorphism<C>& rhs)
-noexcept
-{
-  return lhs.hom == rhs.hom and lhs.sdd == rhs.sdd;
-}
-
-/// @internal
-/// @related cached_homomorphism
-template <typename C>
-std::ostream&
-operator<<(std::ostream& os, const cached_homomorphism<C>& ch)
-{
-  return os << ch.hom;
-}
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -146,9 +125,6 @@ operator<<(std::ostream& os, const cached_homomorphism<C>& ch)
 template <typename C>
 struct should_cache
 {
-  /// @brief Needed by mem::variant.
-  using result_type = bool;
-
   /// @brief Dispatch to each homomorphism's trait.
   template <typename T>
   constexpr bool
