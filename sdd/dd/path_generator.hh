@@ -16,10 +16,6 @@ struct paths_visitor
 {
   path_push_type<C>& yield;
 
-  paths_visitor(path_push_type<C>& y)
-    : yield(y)
-  {}
-
   void
   operator()( const hierarchical_node<C>& n
             , std::shared_ptr<path<C>> path, std::shared_ptr<sdd_stack<C>> stack)
@@ -78,7 +74,7 @@ paths(path_push_type<C>& yield, const SDD<C>& sdd)
 {
   path<C> tmp;
   tmp.reserve(512);
-  visit(paths_visitor<C>(yield), sdd, std::make_shared<path<C>>(std::move(tmp)), nullptr);
+  visit(paths_visitor<C>{yield}, sdd, std::make_shared<path<C>>(std::move(tmp)), nullptr);
 }
 /*------------------------------------------------------------------------------------------------*/
 

@@ -191,7 +191,7 @@ public:
     {
       return x;
     }
-    return cxt.cache()(hom::cached_homomorphism<C>(o, *this, std::forward<SDD_>(x)));
+    return cxt.cache()({o, *this, std::forward<SDD_>(x)});
   }
 
   /// @brief Equality.

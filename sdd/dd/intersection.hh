@@ -104,12 +104,7 @@ struct LIBSDD_ATTRIBUTE_PACKED intersection_op_impl
 struct intersection_builder_policy
 {
   /// @brief Tell if a zero is contained in this set of operands.
-  bool has_zero;
-
-  /// @brief Constructor.
-  intersection_builder_policy()
-    : has_zero(false)
-  {}
+  bool has_zero = false;
 
   /// @brief Add an rvalue operand.
   template <typename Container, typename Valuation>
@@ -147,7 +142,7 @@ intersection(context<C>& cxt, intersection_builder<C, SDD<C>>&& builder)
   {
     return *builder.begin();
   }
-  return cxt.intersection_cache()(intersection_op<C>(builder));
+  return cxt.intersection_cache()({builder});
 }
 
 /*------------------------------------------------------------------------------------------------*/

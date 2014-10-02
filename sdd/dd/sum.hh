@@ -326,7 +326,7 @@ sum(context<C>& cxt, sum_builder<C, SDD<C>>&& builder)
   {
     return *builder.begin();
   }
-  return cxt.sum_cache()(sum_op<C>(builder));
+  return cxt.sum_cache()({builder});
 }
 
 /*------------------------------------------------------------------------------------------------*/

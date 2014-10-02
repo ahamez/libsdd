@@ -38,12 +38,6 @@ struct _expression
   /// @brief The target of the assignment.
   const order_position_type target;
 
-  /// @brief Constructor.
-  _expression( std::unique_ptr<expr::evaluator_base<C>>&& e, order_positions_type&& pos
-             , order_position_type t)
-    : eval_ptr(std::move(e)), positions(std::move(pos)), target(t)
-  {}
-
   /// @brief Skip variable predicate.
   bool
   skip(const order<C>& o)
@@ -119,12 +113,6 @@ struct _simple_expression
 
   /// @brief The target of the assignment.
   const order_position_type target;
-
-  /// @brief Constructor.
-  _simple_expression( std::unique_ptr<expr::evaluator_base<C>>&& e
-                    , order_positions_type&& pos, order_position_type t)
-    : eval_ptr(std::move(e)), positions(std::move(pos)), target(t)
-  {}
 
   /// @brief Skip variable predicate.
   bool

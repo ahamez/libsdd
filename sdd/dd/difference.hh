@@ -28,11 +28,6 @@ struct difference_visitor
   /// @brief The evaluation context.
   context<C>& cxt_;
 
-  difference_visitor(context<C>& cxt)
-  noexcept
-  	: cxt_(cxt)
-  {}
-
   /// @brief Perform the difference operation.
   template <typename Valuation>
   SDD<C>
@@ -143,11 +138,6 @@ struct difference_op
   /// @brief The right operand of this difference operation.
   const SDD<C> right;
 
-  /// @brief Constructor.
-  difference_op(SDD<C>&& l, SDD<C>&& r)
-  	: left(std::move(l)), right(std::move(r))
-  {}
-
   /// @brief Apply this operation.
   ///
   /// Called by the cache.
@@ -155,7 +145,7 @@ struct difference_op
   operator()(context<C>& cxt)
   const
   {
-    return binary_visit(difference_visitor<C>(cxt), left, right, left, right);
+    return binary_visit(difference_visitor<C>{cxt}, left, right, left, right);
   }
 
   friend
@@ -196,7 +186,7 @@ difference(context<C>& cxt, SDD<C> lhs, SDD<C> rhs)
   {
     return lhs;
   }
-  return cxt.difference_cache()(difference_op<C>(std::move(lhs), std::move(rhs)));
+  return cxt.difference_cache()({std::move(lhs), std::move(rhs)});
 }
 
 /*------------------------------------------------------------------------------------------------*/
