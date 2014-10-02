@@ -24,11 +24,6 @@ struct _composition
   /// @brief The right homomorphism to apply.
   const homomorphism<C> right;
 
-  /// @brief Constructor.
-  _composition(const homomorphism<C>& l, const homomorphism<C>& r)
-    : left(l), right(r)
-  {}
-
   /// @brief Evaluation.
   SDD<C>
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
@@ -74,7 +69,7 @@ struct _composition
 /// @internal
 /// @brief Help optimize a composition' operands.
 template <typename C>
-struct composition_builder_helper
+struct composition_builder
 {
   /// @brief Regroup locals.
   homomorphism<C>
@@ -124,7 +119,7 @@ template <typename C>
 homomorphism<C>
 composition(const homomorphism<C>& left, const homomorphism<C>& right)
 {
-  return binary_visit(hom::composition_builder_helper<C>(), left, right, left, right);
+  return binary_visit(hom::composition_builder<C>(), left, right, left, right);
 }
 
 /*------------------------------------------------------------------------------------------------*/

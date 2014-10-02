@@ -26,11 +26,6 @@ struct _cons
   /// @brief The homomorphism to apply on successors.
   const homomorphism<C> next;
 
-  /// @brief Constructor.
-  _cons(const order<C>& ord, const Valuation& val, const homomorphism<C>& h)
-    : o(ord), valuation(val), next(h)
-  {}
-
   /// @brief Evaluation.
   SDD<C>
   operator()(context<C>& cxt, const order<C>&, const SDD<C>& x)

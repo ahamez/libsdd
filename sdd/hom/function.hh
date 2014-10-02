@@ -217,7 +217,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   const std::unique_ptr<const function_base<C>> fun_ptr;
 
   /// @brief Dispatch the Values homomorphism evaluation.
-  struct helper
+  struct evaluation
   {
     /// @brief |0| case, should never happen.
     SDD<C>
@@ -278,11 +278,6 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
     }
   };
 
-  /// @brief Constructor.
-  _function(typename C::variable_type t, std::unique_ptr<const function_base<C>> f)
-    : target(t), fun_ptr(std::move(f))
-  {}
-
   /// @brief Skip variable predicate.
   bool
   skip(const order<C>& o)
@@ -304,7 +299,7 @@ struct LIBSDD_ATTRIBUTE_PACKED _function
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
   const
   {
-    return visit(helper(), x, *fun_ptr, cxt, o);
+    return visit(evaluation(), x, *fun_ptr, cxt, o);
   }
 
   friend

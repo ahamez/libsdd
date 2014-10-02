@@ -123,7 +123,7 @@ struct _intersection
 /// @internal
 /// @brief Help optimize an intersection's operands.
 template <typename C>
-struct intersection_builder_helper
+struct intersection_builder
 {
   using operands_type = typename _intersection<C>::operands_type;
   using hom_list_type = std::deque<homomorphism<C>> ;
@@ -131,12 +131,6 @@ struct intersection_builder_helper
 
   operands_type& operands_;
   locals_type& locals_;
-
-  intersection_builder_helper(operands_type& operands, locals_type& locals)
-  noexcept
-    : operands_(operands)
-    , locals_(locals)
-  {}
 
   /// @brief Flatten nested intersections.
   void
@@ -188,8 +182,8 @@ intersection(const order<C>& o, InputIterator begin, InputIterator end)
   typename hom::_intersection<C>::operands_type operands;
   operands.reserve(size);
 
-  typename hom::intersection_builder_helper<C>::locals_type locals;
-  hom::intersection_builder_helper<C> ib {operands, locals};
+  typename hom::intersection_builder<C>::locals_type locals;
+  hom::intersection_builder<C> ib {operands, locals};
   for (; begin != end; ++begin)
   {
     visit(ib, *begin, *begin);

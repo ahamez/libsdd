@@ -23,11 +23,8 @@ namespace sdd { namespace hom {
 template <typename C>
 struct LIBSDD_ATTRIBUTE_PACKED _saturation_intersection
 {
-  /// @brief The variable type.
-  using variable_type = typename C::variable_type;
-
   /// @brief The variable on which this intersection works.
-  const variable_type variable;
+  const typename C::variable_type variable;
 
   /// @brief The homomorphism's F part.
   const optional_homomorphism<C> F;
@@ -37,12 +34,6 @@ struct LIBSDD_ATTRIBUTE_PACKED _saturation_intersection
 
   /// @brief The homomorphism's L part.
   const optional_homomorphism<C> L;
-
-  /// @brief Constructor.
-  _saturation_intersection( variable_type var, optional_homomorphism<C>&& f, homomorphism_set<C>&& g
-                          , optional_homomorphism<C>&& l)
-    : variable(var), F(std::move(f)), G(std::move(g)), L(std::move(l))
-  {}
 
   /// @brief Evaluation.
   SDD<C>

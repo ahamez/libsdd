@@ -66,7 +66,7 @@ struct LIBSDD_ATTRIBUTE_PACKED variant
     : index(util::index_of<T, Types...>::value)
   	, storage()
   {
-    new (const_cast<storage_type*>(&storage)) T(std::forward<Args>(args)...);
+    new (const_cast<storage_type*>(&storage)) T{std::forward<Args>(args)...};
   }
 
   /// @brief Destructor.

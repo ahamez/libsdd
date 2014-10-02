@@ -28,11 +28,6 @@ struct _fixpoint
   /// @brief The homomorphism to apply until a fixpoint is reached.
   const homomorphism<C> h;
 
-  /// @brief Constructor.
-  _fixpoint(const homomorphism<C>& op)
-    : h(op)
-  {}
-
   /// @brief Evaluation.
   SDD<C>
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)

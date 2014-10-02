@@ -24,11 +24,6 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
   /// @brief The nested homomorphism to apply in a nested level.
   const homomorphism<C> h;
 
-  /// @brief Constructor.
-  _local(typename C::variable_type t, const homomorphism<C>& hm)
-    : target(t), h(hm)
-  {}
-
   /// @internal
   /// @brief Local's evaluation implementation.
   struct evaluation
@@ -36,10 +31,6 @@ struct LIBSDD_ATTRIBUTE_PACKED _local
     context<C>& cxt_;
     const order<C>& order_;
     const homomorphism<C> h_;
-
-    evaluation(context<C>& cxt, const order<C>& o, const homomorphism<C>& op)
-      : cxt_(cxt), order_(o), h_(op)
-    {}
 
     /// @brief Hierarchical nodes case.
     SDD<C>

@@ -20,11 +20,6 @@ struct _constant
   /// @brief The SDD to return.
   const SDD<C> operand;
 
-  /// @brief Constructor.
-  _constant(const SDD<C>& s)
-    : operand(s)
-  {}
-
   /// @brief Evaluation.
   SDD<C>
   operator()(context<C>&, const order<C>&, const SDD<C>&)

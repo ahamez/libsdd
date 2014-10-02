@@ -247,11 +247,6 @@ struct _inductive
     const order<C>& order_;
     const SDD<C> sdd_;
 
-    evaluation(context<C>& c, const order<C>& o, const SDD<C>& s)
-    noexcept
-      : cxt_(c), order_(o), sdd_(s)
-    {}
-
     SDD<C>
     operator()(const zero_terminal<C>&, const inductive_base<C>&)
     const noexcept
@@ -282,11 +277,6 @@ struct _inductive
       return dd::sum(cxt_.sdd_context(), std::move(sum_operands));
     }
   };
-
-  /// @brief Constructor.
-  _inductive(std::unique_ptr<const inductive_base<C>> ptr)
-    : hom_ptr(std::move(ptr))
-  {}
 
   /// @brief Evaluation.
   SDD<C>

@@ -27,12 +27,6 @@ struct _if_then_else
   /// @brief The false branch (works on the rejected part).
   const homomorphism<C> h_else;
 
-  /// @brief Constructor.
-  _if_then_else( const homomorphism<C>& if_op, const homomorphism<C>& then_op
-               , const homomorphism<C>& else_op)
-    : h_if(if_op), h_then(then_op), h_else(else_op)
-  {}
-
   /// @brief Evaluation.
   SDD<C>
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& s)
