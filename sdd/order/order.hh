@@ -324,7 +324,7 @@ operator<<(std::ostream& os, const order<C>& ord)
     if (not o.empty())
     {
       const std::string spaces(indent, ' ');
-      os << spaces << o.identifier() << std::endl;
+      os << spaces << o.identifier() << " (" << o.variable() << ")\n";
       if (not o.nested().empty())
       {
         helper(o.nested(), indent + 2);
