@@ -28,9 +28,6 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_op
   nary_op(const nary_op&) = delete;
   nary_op& operator=(const nary_op&) = delete;
 
-  /// @brief Used by the cache to know the type of the result.
-  using result_type = SDD<C>;
-
   /// @brief Define an iterator on operands.
   using const_iterator = const SDD<C>*;
 

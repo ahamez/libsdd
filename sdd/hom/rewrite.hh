@@ -35,9 +35,6 @@ namespace hom {
 template <typename C>
 struct rewriter
 {
-  /// @brief Needed by mem::variant.
-  using result_type = homomorphism<C>;
-
   /// @brief The type of a list of homomorphisms.
   using hom_list_type = std::deque<homomorphism<C>>;
 

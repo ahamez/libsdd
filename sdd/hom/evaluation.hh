@@ -87,9 +87,6 @@ struct evaluation
 template <typename C>
 struct cached_homomorphism
 {
-  /// @brief Needed by the cache.
-  using result_type = SDD<C>;
-
   /// @brief The current order position.
   const order<C> ord;
 

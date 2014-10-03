@@ -129,9 +129,6 @@ struct difference_visitor
 template <typename C>
 struct difference_op
 {
-  /// @brief Needed by the cache to know the result of this operation.
-  using result_type = SDD<C>;
-
   /// @brief The left operand of this difference operation.
   const SDD<C> left;
 

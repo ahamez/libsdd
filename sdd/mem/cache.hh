@@ -107,7 +107,7 @@ private:
   using context_type = Context;
 
   /// @brief The type of the result of an operation stored in the cache.
-  using result_type = typename Operation::result_type;
+  using result_type = std::result_of_t<Operation(context_type&)>;
 
   /// @brief The of an entry that stores an operation and its result.
   using cache_entry_type = cache_entry<Operation, result_type>;
