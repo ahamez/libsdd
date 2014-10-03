@@ -18,7 +18,7 @@ noexcept
   while (it != end)
   {
     // A placement new is required to initialize memory.
-    new(base++) value_type(std::move(*it++));
+    new (base++) value_type(std::move(*it++));
   }
 }
 

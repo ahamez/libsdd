@@ -3,7 +3,7 @@
 #include <cassert>
 #include <functional>  // hash
 #include <iosfwd>
-#include <type_traits> // aligned_storage, alignment_of
+#include <type_traits> // aligned_storage, alignment_of, result_of
 #include <utility>     // forward
 
 #include "sdd/util/typelist.hh"

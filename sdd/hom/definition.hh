@@ -187,11 +187,9 @@ public:
     // hard-wired cases:
     // - if the current homomorphism is Id, then directly return the operand
     // - if the current operand is |0|, then directly return it
-    if (*this == id<C>() or x.empty())
-    {
-      return x;
-    }
-    return cxt.cache()({o, *this, std::forward<SDD_>(x)});
+    return *this == id<C>() or x.empty()
+         ? x
+         : cxt.cache()({o, *this, std::forward<SDD_>(x)});
   }
 
   /// @brief Equality.
@@ -243,15 +241,6 @@ namespace hom {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
-/// @brief Create an homomorphism from a concrete type of fixed size (e.g. Id, cons, etc.).
-template<typename C, typename T, typename... Args>
-homomorphism<C>
-make(Args&&... args)
-{
-  return make_variable_size<C, T>(0, std::forward<Args>(args)...);
-}
-
-/// @internal
 /// @brief Create an homomorphism from a concrete type of variable size (e.g. sum).
 template<typename C, typename T, typename... Args>
 homomorphism<C>
@@ -263,6 +252,15 @@ make_variable_size(std::size_t extra_bytes, Args&&... args)
   char* addr = ut.allocate(extra_bytes);
   unique_type* u = new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
   return {ptr_type(ut(u, extra_bytes))};
+}
+
+/// @internal
+/// @brief Create an homomorphism from a concrete type of fixed size (e.g. Id, cons, etc.).
+template<typename C, typename T, typename... Args>
+homomorphism<C>
+make(Args&&... args)
+{
+  return make_variable_size<C, T>(0, std::forward<Args>(args)...);
 }
 
 /*------------------------------------------------------------------------------------------------*/

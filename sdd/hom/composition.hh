@@ -77,14 +77,9 @@ struct composition_builder
             , const homomorphism<C>& lorig, const homomorphism<C>& rorig)
   const
   {
-    if (l.target == r.target)
-    {
-      return local(l.target, composition(l.h, r.h));
-    }
-    else
-    {
-      return hom::make<C, hom::_composition<C>>(lorig, rorig);
-    }
+    return l.target == r.target
+         ? local(l.target, composition(l.h, r.h))
+         : hom::make<C, hom::_composition<C>>(lorig, rorig);
   }
 
   template <typename T, typename U>
@@ -92,18 +87,9 @@ struct composition_builder
   operator()(const T&, const U&, const homomorphism<C>& left, const homomorphism<C>& right)
   const
   {
-    if (left == id<C>())
-    {
-      return right;
-    }
-    else if (right == id<C>())
-    {
-      return left;
-    }
-    else
-    {
-      return make<C, _composition<C>>(left, right);
-    }
+    if      (left == id<C>())  return right;
+    else if (right == id<C>()) return left;
+    else                       return make<C, _composition<C>>(left, right);
   }
 };
 

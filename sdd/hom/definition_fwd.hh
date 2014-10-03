@@ -15,11 +15,11 @@ namespace hom {
 
 template<typename C, typename T, typename... Args>
 homomorphism<C>
-make(Args&&...);
+make_variable_size(std::size_t, Args&&...);
 
 template<typename C, typename T, typename... Args>
 homomorphism<C>
-make_variable_size(std::size_t, Args&&...);
+make(Args&&...);
 
 /*------------------------------------------------------------------------------------------------*/
   
