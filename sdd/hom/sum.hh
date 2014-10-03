@@ -147,7 +147,7 @@ private:
 /// @internal
 /// @brief Help optimize an union's operands.
 template <typename C>
-struct sum_builder_helper
+struct sum_builder
 {
   /// @brief The type of th flat sorted set of operands.
   using operands_type = boost::container::flat_set<homomorphism<C>>;
@@ -163,11 +163,6 @@ struct sum_builder_helper
 
   /// @brief Store all other operands.
   operands_type& operands_;
-
-  /// @brief Constructor.
-  sum_builder_helper(locals_type& locals, operands_type& operands)
-    : locals_(locals), operands_(operands)
-  {}
 
   /// @brief Flatten nested sums.
   void
@@ -218,8 +213,8 @@ sum(const order<C>& o, InputIterator begin, InputIterator end)
 
   boost::container::flat_set<homomorphism<C>> operands;
   operands.reserve(size);
-  typename hom::sum_builder_helper<C>::locals_type locals;
-  hom::sum_builder_helper<C> sbv{locals, operands};
+  typename hom::sum_builder<C>::locals_type locals;
+  hom::sum_builder<C> sbv{locals, operands};
   for (; begin != end; ++begin)
   {
     visit(sbv, *begin, *begin);

@@ -160,7 +160,7 @@ private:
   const noexcept
   {
     return buffer_.get() <= p and p <= buffer_.get() + size_;
-    }
+  }
 };
 
 /*------------------------------------------------------------------------------------------------*/
@@ -230,6 +230,7 @@ public:
   using value_type = T;
 
 private:
+
   arena& a_;
 
 public:

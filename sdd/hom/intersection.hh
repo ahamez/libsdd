@@ -35,11 +35,6 @@ struct _intersection
   /// @brief The homomorphism operands' set.
   const operands_type operands;
 
-  /// @brief Constructor.
-  _intersection(operands_type&& ops)
-    : operands(std::move(ops))
-  {}
-
   /// @brief Evaluation.
   SDD<C>
   operator()(context<C>& cxt, const order<C>& o, const SDD<C>& x)
@@ -67,7 +62,6 @@ struct _intersection
     return std::all_of( operands.begin(), operands.end()
                       , [&o](const homomorphism<C>& h){return h.skip(o);});
   }
-
 
   /// @brief Selector predicate
   bool

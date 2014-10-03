@@ -26,9 +26,6 @@ namespace sdd { namespace hom {
 template <typename C>
 struct _expression
 {
-  /// @brief The type of a set of values.
-  using values_type = typename C::Values;
-
   /// @brief Pointer to the evaluator provided by the user.
   const std::unique_ptr<expr::evaluator_base<C>> eval_ptr;
 
@@ -102,9 +99,6 @@ struct _expression
 template <typename C>
 struct _simple_expression
 {
-  /// @brief The type of a set of values.
-  using values_type = typename C::Values;
-
   /// @brief Pointer to the evaluator provided by the user.
   const std::unique_ptr<expr::evaluator_base<C>> eval_ptr;
 

@@ -80,7 +80,7 @@ struct _fixpoint
 /// @internal
 /// @brief Concrete creation of Fixpoint.
 template <typename C>
-struct fixpoint_builder_helper
+struct fixpoint_builder
 {
   homomorphism<C>
   operator()(const _identity<C>&, const homomorphism<C>& h)
@@ -115,7 +115,7 @@ template <typename C>
 homomorphism<C>
 fixpoint(const homomorphism<C>& h)
 {
-  return visit(hom::fixpoint_builder_helper<C>(), h, h);
+  return visit(hom::fixpoint_builder<C>{}, h, h);
 }
 
 /*------------------------------------------------------------------------------------------------*/

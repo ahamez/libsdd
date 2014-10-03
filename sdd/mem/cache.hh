@@ -160,7 +160,7 @@ public:
   result_type
   operator()(Operation&& op)
   {
-    // Check if the current operation should not be cached.
+    // Check if the current operation should be cached or not.
     if (not apply_filters<Operation, Filters...>()(op))
     {
       ++stats_.filtered;
@@ -170,8 +170,7 @@ public:
     // Lookup for op.
     typename set_type::insert_commit_data commit_data;
     auto insertion = set_.insert_check( op
-                                      , [](const Operation& lhs, const cache_entry_type& rhs)
-                                          {return lhs == rhs.operation;}
+                                      , [](auto&& lhs, auto&& rhs){return lhs == rhs.operation;}
                                       , commit_data);
 
     // Check if op has already been computed.

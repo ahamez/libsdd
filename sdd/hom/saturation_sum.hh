@@ -125,14 +125,8 @@ saturation_sum( typename C::variable_type var, optional_homomorphism<C>&& f
 {
   if (std::distance(gbegin, gend) == 0)
   {
-    if (f and not l)
-    {
-      return *f;
-    }
-    if (not f and l)
-    {
-      return *l;
-    }
+    if (f and not l) return *f;
+    if (not f and l)return *l;
   }
 
   return hom::make<C, _saturation_sum<C>>

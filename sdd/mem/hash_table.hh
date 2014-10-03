@@ -20,12 +20,7 @@ template <typename Data>
 struct intrusive_member_hook
 {
   /// @brief Store the next data in a bucket.
-  mutable Data* next;
-
-  /// @brief Default constructor.
-  intrusive_member_hook()
-    : next(nullptr)
-  {}
+  mutable Data* next = nullptr;
 };
 
 /*------------------------------------------------------------------------------------------------*/
@@ -248,11 +243,11 @@ public:
         ++nb;
         current = current->hook.next;
       }
-      if (nb == 0) ++empty;
-      else if (nb == 1) ++ alone;
-      else if (nb > 1) ++col;
+      if      (nb == 0) ++empty;
+      else if (nb == 1) ++alone;
+      else if (nb > 1)  ++col;
     }
-    return std::make_tuple(col, alone, empty);
+    return {col, alone, empty};
   }
 
 private:
@@ -261,7 +256,7 @@ private:
   std::enable_if_t<DoRehash, void>
   rehash()
   {
-    if ((load_factor() < max_load_factor_))
+    if (load_factor() < max_load_factor_) // no need to rehash
     {
       return;
     }
@@ -306,7 +301,7 @@ private:
     {
       if (*x == *current)
       {
-        return std::make_pair(current, false /* no insertion */);
+        return {current, false /* no insertion */};
       }
       current = current->hook.next;
     }
@@ -317,11 +312,9 @@ private:
 
     current = x;
     ++size_;
-    return std::make_pair(current, true /* insertion */);
+    return {current, true /* insertion */};
   }
 };
-
-
 
 /*------------------------------------------------------------------------------------------------*/
 

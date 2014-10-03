@@ -301,9 +301,7 @@ private:
     {
       identifier_to_node_ptr->reserve(nodes_ptr->size());
       std::for_each( nodes_ptr->begin(), nodes_ptr_->end()
-                   , [&](const order_node<C>& n)
-                        {identifier_to_node_ptr->emplace(n.identifier(), &n);}
-                   );
+                   , [&](auto&& n){identifier_to_node_ptr->emplace(n.identifier(), &n);});
     }
     return identifier_to_node_ptr;
   }

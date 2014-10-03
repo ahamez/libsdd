@@ -102,8 +102,9 @@ struct eq_visitor
   template <typename T>
   bool
   operator()(const T& lhs, const T& rhs)
-  const noexcept(noexcept(lhs == rhs))
+  const noexcept
   {
+    static_assert(noexcept(lhs == rhs), "Comparison should be noexcept");
     return lhs == rhs;
   }
 

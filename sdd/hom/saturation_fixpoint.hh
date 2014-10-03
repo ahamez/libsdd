@@ -188,14 +188,8 @@ saturation_fixpoint( typename C::variable_type var
 
   if (gsize == 0)
   {
-    if (f != id<C>() and l == id<C>())
-    {
-      return f;
-    }
-    if (f == id<C>() and l != id<C>())
-    {
-      return l;
-    }
+    if (f != id<C>() and l == id<C>()) return f;
+    if (f == id<C>() and l != id<C>()) return l;
   }
 
   // A global flat_set to avoid reallocating a new set of operands each time.
