@@ -8,18 +8,11 @@ namespace sdd { namespace tools {
 
 /*------------------------------------------------------------------------------------------------*/
 
-
-/*------------------------------------------------------------------------------------------------*/
-
 /// @internal
 template <typename C>
 struct force_hypergraph_to_dot
 {
   const force::hypergraph<C>& g_;
-
-  force_hypergraph_to_dot(const force::hypergraph<C>& g)
-    : g_(g)
-  {}
 
   friend
   std::ostream&
@@ -49,7 +42,7 @@ template <typename C>
 force_hypergraph_to_dot<C>
 dot(const force::hypergraph<C>& g)
 {
-  return force_hypergraph_to_dot<C>(g);
+  return {g};
 }
 
 /*------------------------------------------------------------------------------------------------*/
