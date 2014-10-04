@@ -247,7 +247,7 @@ public:
       else if (nb == 1) ++alone;
       else if (nb > 1)  ++col;
     }
-    return {col, alone, empty};
+    return std::make_tuple(col, alone, empty);
   }
 
 private:
