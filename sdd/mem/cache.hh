@@ -137,7 +137,7 @@ public:
 
   /// @brief Construct a cache.
   /// @param context This cache's context.
-  /// @param size tells how many cache entries are keeped in the cache.
+  /// @param size How many cache entries are kept, should be greater than the order height.
   ///
   /// When the maximal size is reached, a cleanup is launched: half of the cache is removed,
   /// using a LRU strategy. This cache will never perform a rehash, therefore it allocates
@@ -188,7 +188,7 @@ public:
     entry = new cache_entry_type(std::move(op), op(cxt_)); // evaluation may throw
 
     // Clean up the cache, if necessary.
-    while (set_.size() > max_size_)
+    if (set_.size() > max_size_)
     {
       auto oldest = lru_list_.front();
       set_.erase(oldest);
