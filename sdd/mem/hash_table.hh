@@ -133,8 +133,9 @@ public:
   std::pair<Data*, bool>
   insert(Data* x)
   {
+    static_assert(Rehash, "Use with variable-size hash table only");
     auto res = insert_impl(x, buckets_, nb_buckets_);
-    rehash<Rehash>();
+    rehash();
     return res;
   }
 
@@ -244,8 +245,7 @@ public:
 
 private:
 
-  template<bool DoRehash>
-  std::enable_if_t<DoRehash, void>
+  void
   rehash()
   {
     if (load_factor() < max_load_factor_) // no need to rehash
@@ -273,12 +273,6 @@ private:
     std::swap(new_nb_buckets, nb_buckets_);
     delete[] new_buckets;
   }
-
-  template<bool DoRehash>
-  std::enable_if_t<not DoRehash, void>
-  rehash()
-  noexcept
-  {}
 
   /// @brief Insert an element.
   std::pair<Data*, bool>
