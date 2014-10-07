@@ -302,9 +302,8 @@ private:
     x->hook.next = buckets[pos];
     buckets[pos] = x;
 
-    current = x;
     ++size_;
-    return {current, true /* insertion */};
+    return {x, true /* insertion */};
   }
 };
 
