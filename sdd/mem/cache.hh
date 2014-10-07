@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory> // unique_ptr
 #include <tuple>
 
 #include "sdd/mem/cache_entry.hh"
@@ -133,6 +134,49 @@ private:
   /// @brief The statistics of this cache.
   mutable cache_statistics stats_;
 
+  /// @brief Fixed-size pool allocator for cache entries.
+  struct pool
+  {
+    union node
+    {
+      node* next;
+      unsigned char data[sizeof(cache_entry_type)];
+    };
+
+    std::unique_ptr<node> head;
+    node* free_list;
+
+    pool(std::size_t size)
+      : head(new node[size]), free_list(head.get())
+    {
+      for (std::size_t i = 0; i < size - 1; ++i)
+      {
+        free_list[i].next = &free_list[i+1];
+      }
+      free_list[size - 1].next = nullptr;
+    }
+
+    void*
+    allocate()
+    noexcept
+    {
+      assert(free_list != nullptr);
+      void* p = free_list;
+      free_list = free_list->next;
+      return p;
+    }
+
+    void
+    deallocate(void* ptr)
+    noexcept
+    {
+      assert(ptr != nullptr);
+      node* p = static_cast<node*>(ptr);
+      p->next = free_list;
+      free_list = p;
+    }
+  } pool_;
+
 public:
 
   /// @brief Construct a cache.
@@ -148,6 +192,7 @@ public:
     , lru_list_()
     , max_size_(set_.bucket_count() * max_load_factor)
     , stats_()
+    , pool_(max_size_)
   {}
 
   /// @brief Destructor.
@@ -185,17 +230,20 @@ public:
     ++stats_.misses;
 
     cache_entry_type* entry;
-    entry = new cache_entry_type(std::move(op), op(cxt_)); // evaluation may throw
+    auto res = op(cxt_); // evaluation may throw
 
     // Clean up the cache, if necessary.
-    if (set_.size() > max_size_)
+    if (set_.size() == max_size_)
     {
       auto oldest = lru_list_.front();
       set_.erase(oldest);
-      delete oldest;
+      oldest->~cache_entry_type();
+      pool_.deallocate(oldest);
       lru_list_.pop_front();
       ++stats_.discarded;
     }
+
+    entry = new (pool_.allocate()) cache_entry_type(std::move(op), std::move(res));
 
     // Add the new cache entry to the end of the LRU list.
     entry->lru_cit_ = lru_list_.insert(lru_list_.end(), entry);
@@ -211,7 +259,11 @@ public:
   clear()
   noexcept
   {
-    set_.clear_and_dispose([](cache_entry_type* x){delete x;});
+    set_.clear_and_dispose([&](cache_entry_type* x)
+                              {
+                                x->~cache_entry_type();
+                                pool_.deallocate(x);
+                              });
   }
 
   /// @brief Get the number of cached operations.
