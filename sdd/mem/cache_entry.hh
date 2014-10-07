@@ -4,7 +4,6 @@
 #include <list>
 #include <utility>    // forward
 
-#include "sdd/mem/cache_entry_fwd.hh"
 #include "sdd/mem/hash_table.hh"
 #include "sdd/mem/lru_list.hh"
 #include "sdd/util/hash.hh"
@@ -34,7 +33,7 @@ struct cache_entry
   const Result result;
 
   /// @brief Where this cache entry is stored in the LRU list.
-  typename lru_list<Operation, Result>::const_iterator lru_cit_;
+  typename lru_list<cache_entry>::lru_entry_access lru_access;
 
   /// @brief Constructor.
   template <typename... Args>
@@ -42,7 +41,7 @@ struct cache_entry
     : hook()
     , operation(std::move(op))
     , result(std::forward<Args>(args)...)
-    , lru_cit_()
+    , lru_access()
   {}
 
   /// @brief Cache entries are only compared using their operations.

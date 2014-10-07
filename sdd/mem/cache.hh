@@ -124,11 +124,11 @@ private:
   /// @brief The actual storage of caches entries.
   set_type set_;
 
-  /// @brief The the container that sorts cache entries by last access date.
-  lru_list<Operation, result_type> lru_list_;
-
   /// @brief The maximum size this cache is authorized to grow to.
   std::size_t max_size_;
+
+  /// @brief The the container that sorts cache entries by last access date.
+  lru_list<cache_entry_type> lru_list_;
 
   /// @brief The statistics of this cache.
   mutable cache_statistics stats_;
@@ -145,8 +145,8 @@ public:
   cache(context_type& context, std::size_t size)
     : cxt_(context)
     , set_(size, max_load_factor)
-    , lru_list_()
     , max_size_(set_.bucket_count() * max_load_factor)
+    , lru_list_(max_size_)
     , stats_()
   {}
 
@@ -178,7 +178,7 @@ public:
     {
       ++stats_.hits;
       // Move cache entry to the end of the LRU list.
-      lru_list_.splice(lru_list_.end(), lru_list_, insertion.first->lru_cit_);
+      lru_list_.touch(insertion.first->lru_access);
       return insertion.first->result;
     }
 
@@ -188,17 +188,16 @@ public:
     entry = new cache_entry_type(std::move(op), op(cxt_)); // evaluation may throw
 
     // Clean up the cache, if necessary.
-    if (set_.size() > max_size_)
+    if (set_.size() == max_size_)
     {
-      auto oldest = lru_list_.front();
+      auto oldest = lru_list_.pop();
       set_.erase(oldest);
       delete oldest;
-      lru_list_.pop_front();
       ++stats_.discarded;
     }
 
     // Add the new cache entry to the end of the LRU list.
-    entry->lru_cit_ = lru_list_.insert(lru_list_.end(), entry);
+    entry->lru_access = lru_list_.push(entry);
 
     // Finally, set the result associated to op.
     set_.insert_commit(entry, commit_data); // doesn't throw
