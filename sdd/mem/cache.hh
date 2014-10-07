@@ -125,7 +125,7 @@ private:
   set_type set_;
 
   /// @brief The the container that sorts cache entries by last access date.
-  lru_list<Operation, result_type> lru_list_;
+  lru_list<cache_entry_type> lru_list_;
 
   /// @brief The maximum size this cache is authorized to grow to.
   std::size_t max_size_;
