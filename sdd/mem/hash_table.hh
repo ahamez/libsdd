@@ -38,7 +38,7 @@ public:
   /// @brief Used by insert_check
   struct insert_commit_data
   {
-    std::size_t hash;
+    Data** bucket;
   };
 
 private:
@@ -60,7 +60,6 @@ private:
 
 public:
 
-  /// @brief Constructor
   hash_table(std::size_t size, double max_load_factor = 0.75)
     : nb_buckets_(util::next_power_of_2(size))
     , size_(0)
@@ -71,54 +70,49 @@ public:
     std::fill(buckets_, buckets_ + nb_buckets_, nullptr);
   }
 
-  /// @brief Destructor
   ~hash_table()
   {
     delete[] buckets_;
   }
 
-  /// @brief
   template <typename T, typename EqT>
   std::pair<Data*, bool>
   insert_check(const T& x, EqT eq, insert_commit_data& commit_data)
   const noexcept(noexcept(std::hash<T>()(x)))
   {
-    commit_data.hash = std::hash<T>()(x);
-    // same as commit_data.h % nb_buckets_, but much more efficient (works only with powers of 2)
-    const std::size_t pos = commit_data.hash & (nb_buckets_ - 1);
+    static_assert(not Rehash, "Use with fixed-size hash table only");
+
+    const std::size_t pos = std::hash<T>()(x) & (nb_buckets_ - 1);
 
     Data* current = buckets_[pos];
-    bool insertion = true;
+    commit_data.bucket = buckets_ + pos;
+
     while (current != nullptr)
     {
       if (eq(x, *current))
       {
-        insertion = false;
-        break;
+        return {current, false};
       }
       current = current->hook.next;
     }
 
-    return std::make_pair(current, insertion);
+    return {current, true};
   }
 
-  /// @brief
   void
-  insert_commit(Data* x, const insert_commit_data& commit_data)
-  noexcept(Rehash == false)
+  insert_commit(Data* x, insert_commit_data& commit_data)
+  noexcept
   {
+    static_assert(not Rehash, "Use with fixed-size hash table only");
     assert(x != nullptr);
-    const std::size_t pos = commit_data.hash & (nb_buckets_ - 1);
 
     Data* previous = nullptr;
-    Data* current = buckets_[pos];
+    Data* current = *commit_data.bucket;
 
+    // We append x at the end of the bucket, it seems to be faster than appending it directly
+    // in front.
     while (current != nullptr)
     {
-      if (*x == *current)
-      {
-        return;
-      }
       previous = current;
       current = current->hook.next;
     }
@@ -129,12 +123,10 @@ public:
     }
     else
     {
-      buckets_[pos] = x;
+      *commit_data.bucket = x;
     }
 
     ++size_;
-
-    rehash<Rehash>();
   }
 
   /// @brief Insert an element.
