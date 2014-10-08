@@ -422,7 +422,11 @@ std::enable_if_t<std::is_integral<Value>::value, std::ostream&>
 operator<<(std::ostream& os, const flat_set<Value>& fs)
 {
   os << "{";
-  if (not fs.empty())
+  if (fs.size() == 1)
+  {
+    os << *std::begin(fs);
+  }
+  else if (not (fs.size() > 1))
   {
     auto cit = fs.cbegin();
     while (cit != fs.cend())
