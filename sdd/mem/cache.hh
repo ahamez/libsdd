@@ -143,11 +143,11 @@ private:
       unsigned char data[sizeof(cache_entry_type)];
     };
 
-    std::unique_ptr<node> head;
+    std::unique_ptr<node[]> head;
     node* free_list;
 
     pool(std::size_t size)
-      : head(new node[size]), free_list(head.get())
+      : head(std::make_unique<node[]>(size)), free_list(head.get())
     {
       for (std::size_t i = 0; i < size - 1; ++i)
       {

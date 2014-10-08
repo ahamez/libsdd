@@ -3,6 +3,7 @@
 #include <algorithm>   // fill
 #include <cassert>
 #include <functional>  // hash
+#include <memory>      // unique_ptr
 #include <tuple>
 #include <type_traits> // enable_if
 #include <utility>     // make_pair, pair
@@ -50,7 +51,7 @@ private:
   std::size_t size_;
 
   /// @brief
-  Data** buckets_;
+  std::unique_ptr<Data*[]> buckets_;
 
   /// @brief The maximal allowed load factor.
   const double max_load_factor_;
@@ -63,16 +64,11 @@ public:
   hash_table(std::size_t size, double max_load_factor = 0.75)
     : nb_buckets_(util::next_power_of_2(size))
     , size_(0)
-    , buckets_(new Data*[nb_buckets_])
+    , buckets_(std::make_unique<Data*[]>(nb_buckets_))
     , max_load_factor_(max_load_factor)
     , nb_rehash_(0)
   {
-    std::fill(buckets_, buckets_ + nb_buckets_, nullptr);
-  }
-
-  ~hash_table()
-  {
-    delete[] buckets_;
+    std::fill(buckets_.get(), buckets_.get() + nb_buckets_, nullptr);
   }
 
   template <typename T, typename EqT>
@@ -85,7 +81,7 @@ public:
     const std::size_t pos = std::hash<T>()(x) & (nb_buckets_ - 1);
 
     Data* current = buckets_[pos];
-    commit_data.bucket = buckets_ + pos;
+    commit_data.bucket = buckets_.get() + pos;
 
     while (current != nullptr)
     {
@@ -134,7 +130,7 @@ public:
   insert(Data* x)
   {
     static_assert(Rehash, "Use with variable-size hash table only");
-    auto res = insert_impl(x, buckets_, nb_buckets_);
+    auto res = insert_impl(x, buckets_.get(), nb_buckets_);
     rehash();
     return res;
   }
@@ -269,9 +265,8 @@ private:
       }
       // else empty bucket
     }
-    std::swap(new_buckets, buckets_);
-    std::swap(new_nb_buckets, nb_buckets_);
-    delete[] new_buckets;
+    buckets_.reset(new_buckets);
+    nb_buckets_ = new_nb_buckets;
   }
 
   /// @brief Insert an element.
