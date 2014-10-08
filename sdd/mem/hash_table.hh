@@ -129,7 +129,6 @@ public:
   std::pair<Data*, bool>
   insert(Data* x)
   {
-    static_assert(Rehash, "Use with variable-size hash table only");
     auto res = insert_impl(x, buckets_.get(), nb_buckets_);
     rehash();
     return res;

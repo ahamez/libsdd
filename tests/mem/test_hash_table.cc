@@ -102,8 +102,9 @@ struct hash<bar>
 
 } // namespace std
 
-typedef hash_table<foo> foo_hash_table;
-typedef hash_table<bar> bar_hash_table;
+using foo_hash_table = hash_table<foo>;
+using foo_fixed_hash_table = hash_table<foo, false>;
+using bar_hash_table = hash_table<bar>;
 
 /*------------------------------------------------------------------------------------------------*/
 
@@ -187,11 +188,11 @@ TEST(hash_table, insert_collision)
 
 TEST(hash_table, insert_check_miss)
 {
-  foo_hash_table ht{10};
+  foo_fixed_hash_table ht{10};
   foo f1{33};
   ht.insert(&f1);
 
-  foo_hash_table::insert_commit_data commit_data;
+  foo_fixed_hash_table::insert_commit_data commit_data;
   const auto insertion = ht.insert_check( 42
                                         , [](unsigned int lhs, const foo& rhs)
                                             {
@@ -211,11 +212,11 @@ TEST(hash_table, insert_check_miss)
 
 TEST(hash_table, insert_check_hit)
 {
-  foo_hash_table ht{10};
+  foo_fixed_hash_table ht{10};
   foo f1{33};
   ht.insert(&f1);
 
-  foo_hash_table::insert_commit_data commit_data;
+  foo_fixed_hash_table::insert_commit_data commit_data;
   const auto insertion = ht.insert_check( 33
                                         , [](unsigned int lhs, const foo& rhs)
                                             {
