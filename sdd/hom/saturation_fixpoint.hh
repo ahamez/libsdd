@@ -84,9 +84,8 @@ public:
       s2 = F(cxt, o, s2); // apply (F + Id)*
       s2 = L(cxt, o, s2); // apply (L + Id)*
 
-      for (auto cit = begin(); cit != end(); ++cit)
+      for (const auto& g : *this)
       {
-        const auto& g = *cit;
         // chain applications of G
         s2 = dd::sum(sdd_context, dd::sum_builder<C, SDD<C>>(sdd_context, {s2, g(cxt, o, s2)}));
       }
