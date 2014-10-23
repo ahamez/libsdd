@@ -73,13 +73,39 @@ struct composition_builder
 {
   /// @brief Regroup locals.
   homomorphism<C>
-  operator()( const hom::_local<C>& l, const hom:: _local<C>& r
+  operator()( const _local<C>& l, const _local<C>& r
             , const homomorphism<C>& lorig, const homomorphism<C>& rorig)
   const
   {
     return l.target == r.target
          ? local(l.target, composition(l.h, r.h))
-         : hom::make<C, hom::_composition<C>>(lorig, rorig);
+         : hom::make<C, _composition<C>>(lorig, rorig);
+  }
+
+  homomorphism<C>
+  operator()( const _composition<C>& l, const _local<C>&
+            , const homomorphism<C>&, const homomorphism<C>& rorig)
+  const
+  {
+    return hom::make<C, _composition<C>>(l.left, composition(l.right, rorig));
+  }
+
+  homomorphism<C>
+  operator()( const _local<C>&, const _composition<C>& r
+            , const homomorphism<C>& lorig, const homomorphism<C>&)
+  const
+  {
+    return hom::make<C, _composition<C>>(composition(lorig, r.left), r.right);
+  }
+
+  homomorphism<C>
+  operator()( const _composition<C>&l , const _composition<C>& r
+            , const homomorphism<C>&, const homomorphism<C>&)
+  const
+  {
+    return hom::make<C, _composition<C>>( l.left
+                                        , hom::make<C, _composition<C>>( composition(l.right, r.left)
+                                                                       , r.right));
   }
 
   template <typename T, typename U>
