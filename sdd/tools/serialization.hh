@@ -3,7 +3,6 @@
 #include <iosfwd>
 #include <tuple>
 
-#include <cereal/types/forward_list.hpp>
 #include <cereal/types/map.hpp>
 #include <cereal/types/unordered_map.hpp>
 #include <cereal/types/utility.hpp>

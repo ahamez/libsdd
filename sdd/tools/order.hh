@@ -9,7 +9,6 @@
 
 #include <cereal/external/rapidjson/document.h>
 #include <cereal/external/rapidjson/filestream.h>
-#include <cereal/external/rapidjson/prettywriter.h>
 
 #include "sdd/order/order.hh"
 #include "sdd/order/order_builder.hh"
