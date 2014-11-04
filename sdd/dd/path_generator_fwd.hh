@@ -53,6 +53,10 @@ struct sdd_stack
 {
   const SDD<C> sdd;
   std::shared_ptr<sdd_stack> next;
+
+  sdd_stack(const SDD<C>& s, const std::shared_ptr<sdd_stack>& n)
+    : sdd(s), next(n)
+  {}
 };
 
 /// @internal
