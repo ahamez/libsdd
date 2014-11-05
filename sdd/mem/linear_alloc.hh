@@ -221,7 +221,7 @@ public:
 /// Memory is allocated by moving a pointer in the buffer. Only the memory which was the last
 /// one thas was allocated can be deallocated. Thus, this allocator would mostly benefit to
 /// recursive algorithms which need a stack. 
-/// It's an adaptation of http://home.roadrunner.com/~hinnant/stack_alloc.html .
+/// It's an adaptation of http://howardhinnant.github.io/stack_alloc.html .
 template <typename T>
 class linear_alloc
 {
