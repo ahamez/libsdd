@@ -90,6 +90,7 @@ arcs(const SDD<C>& x)
 
 /// @internal
 /// @brief Get the total number of arcs from an arc frequency map.
+inline
 std::pair<unsigned int /* flat arcs */, unsigned int /* hierarchical arcs */>
 number_of_arcs(const arcs_frequency_type& freq)
 noexcept
