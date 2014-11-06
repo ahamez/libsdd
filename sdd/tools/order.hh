@@ -88,17 +88,13 @@ load_order_impl(const rapidjson::Value& v)
 
 /// @brief Load an order from JSON.
 template <typename C>
-order_builder<C>
+boost::optional<order_builder<C>>
 load_order(std::istream& in)
 {
-  std::string buffer;
-  buffer.reserve(16384);
+  std::string buffer(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>{});
+  if (buffer.empty())
   {
-    std::string line;
-    while(std::getline(in,line))
-    {
-      buffer += line;
-    }
+    return {};
   }
 
   rapidjson::Document doc;
