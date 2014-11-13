@@ -70,12 +70,13 @@ struct paths_visitor
 /// @internal
 template <typename C>
 void
-paths(path_push_type<C>& yield, const SDD<C>& sdd)
+paths(path_push_type<C>& yield, const SDD<C>& s)
 {
   path<C> tmp;
   tmp.reserve(512);
-  visit(paths_visitor<C>{yield}, sdd, std::make_shared<path<C>>(std::move(tmp)), nullptr);
+  visit(paths_visitor<C>{yield}, s, std::make_shared<path<C>>(std::move(tmp)), nullptr);
 }
+
 /*------------------------------------------------------------------------------------------------*/
 
 }} // namespace sdd::dd

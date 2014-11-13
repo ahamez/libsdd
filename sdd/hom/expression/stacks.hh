@@ -3,6 +3,7 @@
 #include <memory> // shared_ptr
 
 #include "sdd/dd/context_fwd.hh"
+#include "sdd/dd/sdd_stack.hh"
 #include "sdd/order/order.hh"
 
 namespace sdd { namespace hom { namespace expr {
@@ -36,18 +37,8 @@ struct res_stack
 };
 
 /// @internal
-/// @brief The type of stack of successors of hierarchical nodes.
 template <typename C>
-struct sdd_stack
-{
-  SDD<C> sdd;
-  std::shared_ptr<sdd_stack> next;
-
-  sdd_stack(const SDD<C>& x, const std::shared_ptr<sdd_stack>& n)
-    : sdd(x), next(n)
-  {}
-};
-
+using sdd_stack = dd::sdd_stack<C>;
 
 /*------------------------------------------------------------------------------------------------*/
 

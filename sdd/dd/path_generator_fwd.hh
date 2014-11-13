@@ -11,6 +11,7 @@
 #endif
 
 #include "sdd/dd/definition_fwd.hh"
+#include "sdd/dd/sdd_stack.hh"
 
 namespace sdd {
 
@@ -23,8 +24,6 @@ template <typename C>
 using path = std::vector<typename C::Values>;
 
 /// @brief An on-the-fly generator of all paths contained in an SDD.
-///
-/// Usable in C++11 range-based for loop.
 template <typename C>
 #if BOOST_VERSION >= 105600
 using path_generator = typename boost::coroutines::asymmetric_coroutine<path<C>>::pull_type;
@@ -45,19 +44,6 @@ using path_push_type = typename boost::coroutines::coroutine<path<C>>::push_type
 namespace dd {
 
 /*------------------------------------------------------------------------------------------------*/
-
-/// @internal
-/// @todo Extract in its own file as it also used by Expression.
-template <typename C>
-struct sdd_stack
-{
-  const SDD<C> sdd;
-  std::shared_ptr<sdd_stack> next;
-
-  sdd_stack(const SDD<C>& s, const std::shared_ptr<sdd_stack>& n)
-    : sdd(s), next(n)
-  {}
-};
 
 /// @internal
 template <typename C>
