@@ -1,13 +1,25 @@
-//
-//  sdd_stack.hh
-//  libsdd
-//
-//  Created by Alexandre Hamez on 13/11/14.
-//
-//
+#pragma once
 
-#ifndef libsdd_sdd_stack_hh
-#define libsdd_sdd_stack_hh
+#include <memory> // shared_ptr
 
+#include "sdd/dd/definition_fwd.hh"
 
-#endif
+namespace sdd { namespace dd {
+
+/*------------------------------------------------------------------------------------------------*/
+
+/// @internal
+template <typename C>
+struct sdd_stack
+{
+  SDD<C> sdd;
+  std::shared_ptr<sdd_stack> next;
+
+  sdd_stack(const SDD<C>& s, const std::shared_ptr<sdd_stack>& n)
+    : sdd(s), next(n)
+  {}
+};
+
+/*------------------------------------------------------------------------------------------------*/
+
+}} // namespace sdd::dd
