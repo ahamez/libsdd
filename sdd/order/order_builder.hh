@@ -179,14 +179,12 @@ public:
     return push(id, nested.ptr_);
   }
 
-  /// @brief Concatenate this order with another one.
-  ///
-  /// Returns a copy.
+  /// @brief Appends an order to this one.
   order_builder
   operator<<(const order_builder& next)
-  const&
   {
-    return order_builder(concat(ptr_, next.ptr_));
+    ptr_ = concat(ptr_, next.ptr_);
+    return *this;
   }
 
   /// @brief Get the number of identifiers.
