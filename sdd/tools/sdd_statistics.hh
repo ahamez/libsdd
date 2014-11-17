@@ -12,21 +12,31 @@ namespace sdd { namespace tools {
 /*------------------------------------------------------------------------------------------------*/
 
 template <typename C>
-struct sdd_statistics
+class sdd_statistics
 {
-  const std::size_t bytes;
-  const arcs_frequency_type arcs_frequency;
-  const std::pair<unsigned int, unsigned int> all_nodes;
-  const std::pair<unsigned int, unsigned int> all_arcs;
-  const sequences_frequency_type sequences_frequency;
+private:
+
+  std::size_t bytes_;
+  arcs_frequency_type arcs_frequency_;
+  std::pair<unsigned int, unsigned int> all_nodes_;
+  std::pair<unsigned int, unsigned int> all_arcs_;
+  sequences_frequency_type sequences_;
+
+public:
 
   sdd_statistics(const SDD<C>& x)
-    : bytes(size(x))
-    , arcs_frequency(arcs(x))
-    , all_nodes(nodes(x))
-    , all_arcs(number_of_arcs(arcs_frequency))
-    , sequences_frequency(sequences(x))
+    : bytes_(size(x))
+    , arcs_frequency_(arcs(x))
+    , all_nodes_(nodes(x))
+    , all_arcs_(number_of_arcs(arcs_frequency_))
+    , sequences_(sequences(x))
   {}
+
+  std::size_t bytes()                                   const noexcept {return bytes_;}
+  const arcs_frequency_type& arcs_frequency()           const noexcept {return arcs_frequency_;}
+  std::pair<unsigned int, unsigned int> all_nodes()     const noexcept {return all_nodes_;}
+  std::pair<unsigned int, unsigned int> all_arcs()      const noexcept {return all_arcs_;}
+  const sequences_frequency_type& sequences_frequency() const noexcept {return sequences_;}
 };
 
 /*------------------------------------------------------------------------------------------------*/

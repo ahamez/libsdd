@@ -57,37 +57,36 @@ save(Archive& archive, const cache_statistics& c)
 
 } // namespace mem
 
+namespace tools {
+
 /*------------------------------------------------------------------------------------------------*/
 
 template<typename C, typename Archive>
 void
-save(Archive& archive, const manager<C>& m)
+save(Archive& archive, const manager_statistics<C>& m)
 {
-  archive( cereal::make_nvp("SDD unique table", m.sdd_stats())
-         , cereal::make_nvp("SDD differences cache", m.sdd_difference_cache_stats())
-         , cereal::make_nvp("SDD intersections cache", m.sdd_intersection_cache_stats())
-         , cereal::make_nvp("SDD sums cache", m.sdd_sum_cache_stats())
-         , cereal::make_nvp("hom unique table", m.hom_stats())
-         , cereal::make_nvp("hom cache", m.hom_cache_stats())
-         , cereal::make_nvp("values", m.values_stats()));
+  archive( cereal::make_nvp("SDD unique table", m.sdd_ut())
+         , cereal::make_nvp("SDD differences cache", m.diff_cache())
+         , cereal::make_nvp("SDD intersections cache", m.inter_cache())
+         , cereal::make_nvp("SDD sums cache", m.sum_cache())
+         , cereal::make_nvp("hom unique table", m.hom_ut())
+         , cereal::make_nvp("hom cache", m.hom_cache())
+         , cereal::make_nvp("values", m.values_ut()));
 }
 
 /*------------------------------------------------------------------------------------------------*/
-
-namespace tools {
-
 
 template<typename C, typename Archive>
 void
 save(Archive& archive, const sdd_statistics<C>& stats)
 {
-  archive( cereal::make_nvp("bytes", stats.bytes)
-         , cereal::make_nvp("flat nodes", stats.all_nodes.first)
-         , cereal::make_nvp("hierarchical nodes", stats.all_nodes.second)
-         , cereal::make_nvp("flat arcs", stats.all_arcs.first)
-         , cereal::make_nvp("hierarchical arcs", stats.all_arcs.second)
-         , cereal::make_nvp("arcs frequency", stats.arcs_frequency)
-         , cereal::make_nvp("sequences frequency", stats.sequences_frequency));
+  archive( cereal::make_nvp("bytes", stats.bytes())
+         , cereal::make_nvp("flat nodes", stats.all_nodes().first)
+         , cereal::make_nvp("hierarchical nodes", stats.all_nodes().second)
+         , cereal::make_nvp("flat arcs", stats.all_arcs().first)
+         , cereal::make_nvp("hierarchical arcs", stats.all_arcs().second)
+         , cereal::make_nvp("arcs frequency", stats.arcs_frequency())
+         , cereal::make_nvp("sequences frequency", stats.sequences_frequency()));
 }
 
 /*------------------------------------------------------------------------------------------------*/
