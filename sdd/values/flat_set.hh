@@ -426,7 +426,7 @@ operator<<(std::ostream& os, const flat_set<Value>& fs)
   {
     os << *std::begin(fs);
   }
-  else if (not (fs.size() > 1))
+  else if ((fs.size() > 1))
   {
     auto cit = fs.cbegin();
     while (cit != fs.cend())
