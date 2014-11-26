@@ -220,6 +220,16 @@ public:
     return ptr_ == zero_ptr();
   }
 
+  /// @brief True if the SDD is not |0|.
+  ///
+  /// O(1).
+  explicit
+  operator bool()
+  const noexcept
+  {
+    return not empty();
+  }
+
   /// @brief Swap two SDD.
   ///
   /// O(1).
