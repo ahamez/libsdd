@@ -134,7 +134,7 @@ struct inductive_derived
   const noexcept override
   {
     return typeid(*this) == typeid(other)
-         ? h == reinterpret_cast<const inductive_derived&>(other).h
+         ? h == static_cast<const inductive_derived&>(other).h
          : false;
   }
 

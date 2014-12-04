@@ -17,7 +17,7 @@ struct nb_nodes_visitor
   /// @brief A cache is necessary to to know if a node has already been encountered.
   ///
   /// We use the addresses of nodes as key. It's legit because nodes are unified and immutable.
-  std::unordered_set<const char*> visited_;
+  std::unordered_set<const void*> visited_;
 
   /// @brief |0|.
   result_type
@@ -39,7 +39,7 @@ struct nb_nodes_visitor
   result_type
   operator()(const flat_node<C>& n)
   {
-    if (visited_.emplace(reinterpret_cast<const char*>(&n)).second)
+    if (visited_.emplace(&n).second)
     {
       result_type res {1, 0};
       for (const auto& arc : n)
@@ -58,7 +58,7 @@ struct nb_nodes_visitor
   result_type
   operator()(const hierarchical_node<C>& n)
   {
-    if (visited_.emplace(reinterpret_cast<const char*>(&n)).second)
+    if (visited_.emplace(&n).second)
     {
       result_type res {0, 1};
       for (const auto& arc : n)

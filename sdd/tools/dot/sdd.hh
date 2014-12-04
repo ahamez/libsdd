@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include <unordered_set>
 
 #include "sdd/dd/definition.hh"
@@ -16,7 +17,7 @@ struct to_dot_visitor
   /// @brief A cache is necessary to to know if a node has already been encountered.
   ///
   /// We use the addresses of nodes as key. It's legit because nodes are unified and immutable.
-  std::unordered_set<std::size_t> visited_;
+  std::unordered_set<const void*> visited_;
 
   /// @brief The stream to export to.
   std::ostream& os_;
@@ -30,13 +31,12 @@ struct to_dot_visitor
   auto
   operator()(const zero_terminal<C>& n, const order<C>&, unsigned int)
   {
-    const auto addr = reinterpret_cast<std::size_t>(&n);
-    const auto search = visited_.find(addr);
-    const auto node = node_string(addr);
+    const auto search = visited_.find(&n);
+    const auto node = node_string(&n);
     if (search == visited_.end())
     {
       os_ << node << " [shape=square,label=\"0\"];\n";
-      visited_.emplace_hint(search, addr);
+      visited_.emplace_hint(search, &n);
     }
     return node;
   }
@@ -45,13 +45,12 @@ struct to_dot_visitor
   auto
   operator()(const one_terminal<C>& n, const order<C>&, unsigned int)
   {
-    const auto addr = reinterpret_cast<std::size_t>(&n);
-    const auto search = visited_.find(addr);
-    const auto node = node_string(addr);
+    const auto search = visited_.find(&n);
+    const auto node = node_string(&n);
     if (search == visited_.end())
     {
       os_ << node << " [shape=square,label=\"1\"];\n";
-      visited_.emplace_hint(search, addr);
+      visited_.emplace_hint(search, &n);
     }
     return node;
   }
@@ -60,9 +59,8 @@ struct to_dot_visitor
   auto
   operator()(const flat_node<C>& n, const order<C>& o, unsigned int depth)
   {
-    const auto addr = reinterpret_cast<std::size_t>(&n);
-    const auto search = visited_.find(addr);
-    const auto node = node_string(addr);
+    const auto search = visited_.find(&n);
+    const auto node = node_string(&n);
     if (search == visited_.end())
     {
       os_ << node << " [label=\"" << o.identifier() << "\"];\n";
@@ -71,7 +69,7 @@ struct to_dot_visitor
         const auto succ = visit(*this, arc.successor(), o.next(), depth);
         os_ << node << " -> " << succ << " [label=\"" << arc.valuation() << "\"];\n";
       }
-      visited_.emplace_hint(search, addr);
+      visited_.emplace_hint(search, &n);
     }
     return node;
   }
@@ -80,9 +78,8 @@ struct to_dot_visitor
   auto
   operator()(const hierarchical_node<C>& n, const order<C>& o, unsigned int depth)
   {
-    const auto addr = reinterpret_cast<std::size_t>(&n);
-    const auto search = visited_.find(addr);
-    const auto node = node_string(addr);
+    const auto search = visited_.find(&n);
+    const auto node = node_string(&n);
     if (search == visited_.end())
     {
       os_ << node << " [label=\"" << o.identifier() << "\"];\n";
@@ -90,7 +87,7 @@ struct to_dot_visitor
       {
         const auto succ = visit(*this, arc.successor(), o.next(), depth);
         const auto hier = visit(*this, arc.valuation(), o.nested(), depth + 1);
-        const auto ghost = "g" + std::to_string(reinterpret_cast<std::size_t>(addr)) + succ;
+        const auto ghost = ghost_string(&n, succ);
 
         os_ << ghost << " [shape=point,label=\"\",height=0,width=0];\n";
 
@@ -99,7 +96,7 @@ struct to_dot_visitor
             << ghost << " -> " << hier << " [style=dotted];\n";
 
       }
-      visited_.emplace_hint(search, addr);
+      visited_.emplace_hint(search, &n);
     }
 
     return node;
@@ -109,9 +106,20 @@ private:
 
   static
   std::string
-  node_string(std::size_t x)
+  node_string(const void* addr)
   {
-    return "n" + std::to_string(x);
+    std::ostringstream oss;
+    oss << "n" << addr;
+    return oss.str();
+  }
+
+  static
+  std::string
+  ghost_string(const void* addr, const std::string& suffix)
+  {
+    std::ostringstream oss;
+    oss << "g" << addr << suffix;
+    return oss.str();
   }
 };
 

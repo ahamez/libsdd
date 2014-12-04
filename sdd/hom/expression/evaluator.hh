@@ -99,7 +99,7 @@ public:
   const noexcept override
   {
     return typeid(*this) == typeid(other)
-         ? eval_ == reinterpret_cast<const evaluator_derived&>(other).eval_
+         ? eval_ == static_cast<const evaluator_derived&>(other).eval_
          : false;
   }
 

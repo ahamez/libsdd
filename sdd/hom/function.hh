@@ -108,7 +108,7 @@ struct function_derived
   const noexcept override
   {
     return typeid(*this) == typeid(other)
-         ? fun == reinterpret_cast<const function_derived&>(other).fun
+         ? fun == static_cast<const function_derived&>(other).fun
          : false;
   }
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include <unordered_set>
 
 #include "sdd/hom/definition.hh"
@@ -164,8 +165,7 @@ private:
   visited(const H& h)
   const
   {
-    const auto addr = reinterpret_cast<const void*>(&h);
-    const auto insertion = visited_.emplace(addr);
+    const auto insertion = visited_.emplace(&h);
     return not insertion.second;
   }
 
@@ -174,7 +174,9 @@ private:
   node(const std::string& prefix, const void* addr)
   noexcept
   {
-    return prefix + std::to_string(reinterpret_cast<std::size_t>(addr));
+    std::ostringstream oss;
+    oss << prefix << addr;
+    return oss.str();
   }
 };
 

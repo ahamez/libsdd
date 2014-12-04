@@ -17,13 +17,13 @@ struct size_visitor
   /// @brief A cache is necessary to to know if a node has already been encountered.
   ///
   /// We use the addresses of nodes as key. It's legit because nodes are unified and immutable.
-  std::unordered_set<const char*> visited_;
+  std::unordered_set<const void*> visited_;
 
   /// @brief |0|.
   std::size_t
   operator()(const zero_terminal<C>& n)
   {
-    if (visited_.emplace(reinterpret_cast<const char*>(&n)).second)
+    if (visited_.emplace(&n).second)
     {
       return sizeof(zero_terminal<C>);
     }
@@ -37,7 +37,7 @@ struct size_visitor
   std::size_t
   operator()(const one_terminal<C>& n)
   {
-    if (visited_.emplace(reinterpret_cast<const char*>(&n)).second)
+    if (visited_.emplace(&n).second)
     {
       return sizeof(one_terminal<C>);
     }
@@ -51,7 +51,7 @@ struct size_visitor
   std::size_t
   operator()(const flat_node<C>& n)
   {
-    if (visited_.emplace(reinterpret_cast<const char*>(&n)).second)
+    if (visited_.emplace(&n).second)
     {
       std::size_t res = sizeof(typename SDD<C>::unique_type) // size of a ref_counted
                       + n.size() * sizeof(typename flat_node<C>::arc_type); // arcs
@@ -71,7 +71,7 @@ struct size_visitor
   std::size_t
   operator()(const hierarchical_node<C>& n)
   {
-    if (visited_.emplace(reinterpret_cast<const char*>(&n)).second)
+    if (visited_.emplace(&n).second)
     {
       std::size_t res = sizeof(typename SDD<C>::unique_type) // size of a ref_counted
                       + n.size() * sizeof(typename hierarchical_node<C>::arc_type); // arcs

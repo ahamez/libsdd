@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <stdexcept>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -22,7 +23,7 @@ template <typename C>
 struct parents_visitor
 {
   /// @brief The number of parents for a node.
-  std::unordered_map<const char*, unsigned int> parents;
+  std::unordered_map<const void*, unsigned int> parents;
 
   /// @brief |0|.
   void
@@ -42,7 +43,7 @@ struct parents_visitor
   void
   operator()(const flat_node<C>& n)
   {
-    auto insertion = parents.emplace(reinterpret_cast<const char*>(&n), 1);
+    auto insertion = parents.emplace(&n, 1);
     if (insertion.second)
     {
       for (auto&& arc : n)
@@ -61,7 +62,8 @@ struct parents_visitor
   operator()(const hierarchical_node<C>&)
   const
   {
-    assert(false);
+    using namespace std::string_literals;
+    throw std::runtime_error(__PRETTY_FUNCTION__ + ": TODO"s);
   }
 };
 
@@ -72,15 +74,15 @@ template <typename C>
 struct sequences_visitor
 {
   /// @brief Tells if a node has already been encoutered.
-  std::unordered_set<const char*> visited;
+  std::unordered_set<const void*> visited;
 
   /// @brief Stores the result.
   sequences_frequency_type map;
 
   /// @brief The number of parents for a node.
-  const std::unordered_map<const char*, unsigned int>& parents;
+  const std::unordered_map<const void*, unsigned int>& parents;
 
-  sequences_visitor(const std::unordered_map<const char*, unsigned int>& par)
+  sequences_visitor(const std::unordered_map<const void*, unsigned int>& par)
     : parents(par)
   {}
 
@@ -104,7 +106,7 @@ struct sequences_visitor
   void
   operator()(const flat_node<C>& n, unsigned int depth)
   {
-    const auto addr = reinterpret_cast<const char*>(&n);
+    const auto addr = &n;
     if (visited.emplace(addr).second)
     {
       assert(parents.find(addr) != parents.cend());
@@ -138,7 +140,8 @@ struct sequences_visitor
   operator()(const hierarchical_node<C>&, unsigned int)
   const noexcept
   {
-    assert(false);
+    using namespace std::string_literals;
+    throw std::runtime_error(__PRETTY_FUNCTION__ + ": TODO"s);
   }
 };
 

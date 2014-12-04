@@ -18,7 +18,7 @@ struct count_combinations_visitor
   /// @brief A cache is used to speed up the computation.
   ///
   /// We use the addresses of nodes as key. It's legit because nodes are unified and immutable.
-  std::unordered_map<const char*, boost::multiprecision::cpp_int> cache_;
+  std::unordered_map<const void*, boost::multiprecision::cpp_int> cache_;
 
   /// @brief Error case.
   ///
@@ -44,7 +44,7 @@ struct count_combinations_visitor
   boost::multiprecision::cpp_int
   operator()(const flat_node<C>& n)
   {
-    const auto insertion = cache_.emplace(reinterpret_cast<const char*>(&n), 0);
+    const auto insertion = cache_.emplace(&n, 0);
     if (insertion.second)
     {
       for (const auto& arc : n)
@@ -59,7 +59,7 @@ struct count_combinations_visitor
   boost::multiprecision::cpp_int
   operator()(const hierarchical_node<C>& n)
   {
-    const auto insertion = cache_.emplace(reinterpret_cast<const char*>(&n), 0);
+    const auto insertion = cache_.emplace(&n, 0);
     if (insertion.second)
     {
       for (const auto& arc : n)
