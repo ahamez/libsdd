@@ -65,7 +65,10 @@ private:
   /// @brief The statistics of this unique_table.
   mutable unique_table_statistics stats_;
 
+  /// @brief Keep the memory of an insertion that was a hit.
   std::unique_ptr<char[]> cache_;
+
+  /// @brief The number of bytes of the cached memory.
   std::size_t cache_size_;
 
 public:
@@ -79,6 +82,8 @@ public:
   /// @brief Unify a data.
   /// @param ptr A pointer to a data constructed with a placement new into the storage returned by
   /// allocate().
+  /// @param extra_bytes ptr might have been allocated with more bytes than sizeof(Unique); this
+  /// parameter indicates this extra number of bytes.
   /// @return A reference to the unified data.
   Unique&
   operator()(Unique* ptr, std::size_t extra_bytes)
@@ -87,12 +92,14 @@ public:
     ++stats_.access;
 
     auto insertion = set_.insert(ptr);
-    if (not insertion.second)
+    if (not insertion.second) // ptr already exists
     {
       ++stats_.hits;
       ptr->~Unique();
       if ((sizeof(Unique) + extra_bytes) > cache_size_)
       {
+        // The inserted ptr's memory to cache is bigger than the previously held cache. Thus it
+        // might fit better allocations request by allocate().
         cache_.reset(reinterpret_cast<char*>(ptr));
         cache_size_ = sizeof(Unique) + extra_bytes;
       }
@@ -115,6 +122,7 @@ public:
   {
     if (cache_ and cache_size_ >= (sizeof(Unique) + extra_bytes))
     {
+      // re-use cached allocation
       auto res = cache_.get();
       cache_.release();
       cache_size_ = 0;
@@ -122,6 +130,7 @@ public:
     }
     else
     {
+      // no cached allocation or it was too small
       return new char[sizeof(Unique) + extra_bytes];
     }
   }
