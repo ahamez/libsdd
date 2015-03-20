@@ -432,7 +432,7 @@ operator<<(std::ostream& os, const flat_set<Value>& fs)
     while (cit != fs.cend())
     {
       auto first = cit;
-      while ((*cit + 1) == (*std::next(cit))) // consecutive values
+      while (std::next(cit) != fs.cend() and (*cit + 1) == (*std::next(cit))) // consecutive values
       {
         ++cit;
       }
