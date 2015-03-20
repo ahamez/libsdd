@@ -332,14 +332,6 @@ struct hash<indexed_ast<C>>
     }
 
     std::size_t
-    hash_op(enum binop op)
-    const noexcept
-    {
-      using type = std::underlying_type<enum binop>::type;
-      return std::hash<type>()(static_cast<type>(op));
-    }
-
-    std::size_t
     operator()(const binary_operation<C>& op)
     const noexcept
     {
@@ -366,6 +358,18 @@ struct hash<evaluator<C>>
   const noexcept
   {
     return std::hash<indexed_ast<C>>()(*e.ast_ptr_);
+  }
+};
+
+template <>
+struct hash<enum binop>
+{
+  std::size_t
+  operator()(const enum binop& op)
+  const noexcept
+  {
+    using type = std::underlying_type<enum binop>::type;
+    return std::hash<type>()(static_cast<type>(op));
   }
 };
 
