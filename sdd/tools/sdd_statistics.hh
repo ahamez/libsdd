@@ -4,7 +4,6 @@
 
 #include "sdd/tools/arcs.hh"
 #include "sdd/tools/nodes.hh"
-#include "sdd/tools/sequences.hh"
 #include "sdd/tools/size.hh"
 
 namespace sdd { namespace tools {
@@ -20,7 +19,6 @@ private:
   arcs_frequency_type arcs_frequency_;
   std::pair<unsigned int, unsigned int> all_nodes_;
   std::pair<unsigned int, unsigned int> all_arcs_;
-  sequences_frequency_type sequences_;
 
 public:
 
@@ -29,14 +27,12 @@ public:
     , arcs_frequency_(arcs(x))
     , all_nodes_(nodes(x))
     , all_arcs_(number_of_arcs(arcs_frequency_))
-    , sequences_(sequences(x))
   {}
 
   std::size_t bytes()                                   const noexcept {return bytes_;}
   const arcs_frequency_type& arcs_frequency()           const noexcept {return arcs_frequency_;}
   std::pair<unsigned int, unsigned int> all_nodes()     const noexcept {return all_nodes_;}
   std::pair<unsigned int, unsigned int> all_arcs()      const noexcept {return all_arcs_;}
-  const sequences_frequency_type& sequences_frequency() const noexcept {return sequences_;}
 };
 
 /*------------------------------------------------------------------------------------------------*/

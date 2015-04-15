@@ -86,7 +86,7 @@ save(Archive& archive, const sdd_statistics<C>& stats)
          , cereal::make_nvp("flat arcs", stats.all_arcs().first)
          , cereal::make_nvp("hierarchical arcs", stats.all_arcs().second)
          , cereal::make_nvp("arcs frequency", stats.arcs_frequency())
-         , cereal::make_nvp("sequences frequency", stats.sequences_frequency()));
+         );
 }
 
 /*------------------------------------------------------------------------------------------------*/

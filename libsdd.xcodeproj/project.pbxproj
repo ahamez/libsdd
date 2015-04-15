@@ -223,7 +223,6 @@
 		2BDE1E2A18DCBE6200717177 /* test_flat_set.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_flat_set.cc; sourceTree = "<group>"; };
 		2BDE1E6C18DCBF8100717177 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest.a; path = "../../Library/Developer/Xcode/DerivedData/sdd-hcbvsdjphalepfdirawbmimwxcth/Build/Products/Debug/libgtest.a"; sourceTree = "<group>"; };
 		2BDE1E6E18DCBF8100717177 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
-		2BF70EE619A73951008027E0 /* sequences.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = sequences.hh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -412,7 +411,6 @@
 				2BCC12DC1A1A895B00E7E3E1 /* manager_statistics.hh */,
 				2BDE1DDF18DCBE6200717177 /* sdd_statistics.hh */,
 				2BDE1DE018DCBE6200717177 /* serialization.hh */,
-				2BF70EE619A73951008027E0 /* sequences.hh */,
 				2BDE1DE118DCBE6200717177 /* size.hh */,
 				2B9CA0CE19F9488100EF0845 /* js.hh */,
 			);

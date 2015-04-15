@@ -2,7 +2,6 @@
 
 #include "sdd/tools/arcs.hh"
 #include "sdd/tools/nodes.hh"
-#include "sdd/tools/sequences.hh"
 #include "sdd/tools/size.hh"
 
 namespace sdd { namespace tools {
