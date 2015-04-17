@@ -169,6 +169,7 @@ binary_call(Visitor&& v, const void* x, const void* y, Args&&... args)
 
 /// @internal
 /// @brief Expands a list of pairs of types into pointers to binary_call.
+/// @see http://stackoverflow.com/a/25661431/21584
 template<typename Visitor, typename T, std::size_t N, typename... Args>
 struct binary_jump_table
 {
