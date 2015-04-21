@@ -69,9 +69,9 @@ public:
 
   /// @brief Constructor with a unified data.
   explicit
-  ptr(Unique& p)
+  ptr(Unique* p)
   noexcept
-  	: x_(&p)
+  	: x_(p)
   {
     x_->increment_reference_counter();
   }

@@ -251,7 +251,7 @@ make_variable_size(std::size_t extra_bytes, Args&&... args)
   auto& ut = global<C>().hom_unique_table;
   char* addr = ut.allocate(extra_bytes);
   unique_type* u = new (addr) unique_type(mem::construct<T>(), std::forward<Args>(args)...);
-  return {ptr_type(ut(u, extra_bytes))};
+  return {ptr_type(&ut(u, extra_bytes))};
 }
 
 /// @internal

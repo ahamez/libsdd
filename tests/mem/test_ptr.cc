@@ -105,10 +105,10 @@ TEST_F(ptr_test, object_life)
   ASSERT_EQ(0u, u.ref_counter_);
 
   {
-    ptr_type a(table_(u));
+    ptr_type a(&table_(u));
     ASSERT_EQ(1u, u.ref_counter_);
 
-    ptr_type b(table_(u));
+    ptr_type b(&table_(u));
     ASSERT_EQ(2u, u.ref_counter_);
 
     ASSERT_EQ(a, b);
@@ -119,7 +119,7 @@ TEST_F(ptr_test, object_life)
   table_.reset();
   // copy
   {
-    ptr_type a(table_(u));
+    ptr_type a(&table_(u));
     ASSERT_EQ(1u, u.ref_counter_);
     {
       ptr_type b(a);
@@ -133,12 +133,12 @@ TEST_F(ptr_test, object_life)
   table_.reset();
   // copy operator
   {
-    ptr_type a(table_(u));
+    ptr_type a(&table_(u));
     ASSERT_EQ(1u, u.ref_counter_);
 
     unique v(43);
     ASSERT_EQ(0u, v.ref_counter_);
-    ptr_type b(table_(v));
+    ptr_type b(&table_(v));
     ASSERT_EQ(1u, v.ref_counter_);
 
     a = b;
@@ -151,7 +151,7 @@ TEST_F(ptr_test, object_life)
   table_.reset();
   // move
   {
-    ptr_type a(table_(u));
+    ptr_type a(&table_(u));
     ASSERT_EQ(1u, u.ref_counter_);
     {
       ptr_type b(std::move(a));
@@ -165,12 +165,12 @@ TEST_F(ptr_test, object_life)
   table_.reset();
   // move operator
   {
-    ptr_type a(table_(u));
+    ptr_type a(&table_(u));
     ASSERT_EQ(1u, u.ref_counter_);
 
     unique v(43);
     ASSERT_EQ(0u, v.ref_counter_);
-    ptr_type b(table_(v));
+    ptr_type b(&table_(v));
     ASSERT_EQ(1u, v.ref_counter_);
 
     a = std::move(b);
@@ -186,13 +186,13 @@ TEST_F(ptr_test, object_life)
     unique v(43);
     ASSERT_EQ(0u, v.ref_counter_);
 
-    ptr_type pu1(table_(u));
+    ptr_type pu1(&table_(u));
     ASSERT_EQ(1u, u.ref_counter_);
 
-    ptr_type pu2(table_(u));
+    ptr_type pu2(&table_(u));
     ASSERT_EQ(2u, u.ref_counter_);
     
-    ptr_type pv(table_(v));
+    ptr_type pv(&table_(v));
     ASSERT_EQ(1u, v.ref_counter_);
 
     using std::swap;

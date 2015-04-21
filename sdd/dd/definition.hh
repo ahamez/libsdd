@@ -408,7 +408,7 @@ private:
     {
       dd::alpha_builder<C, Valuation> builder(cxt);
       builder.add(std::move(val), succ);
-      return ptr_type(unify_node<Valuation>(var, std::move(builder)));
+      return ptr_type(&unify_node<Valuation>(var, std::move(builder)));
     }
   }
 
@@ -429,7 +429,7 @@ private:
     {
       dd::alpha_builder<C, Valuation> builder(cxt);
       builder.add(val, succ);
-      return ptr_type(unify_node<Valuation>(var, std::move(builder)));
+      return ptr_type(&unify_node<Valuation>(var, std::move(builder)));
     }
   }
 
@@ -448,7 +448,7 @@ private:
     }
     else
     {
-      return ptr_type(unify_node<Valuation>(var, std::move(builder)));
+      return ptr_type(&unify_node<Valuation>(var, std::move(builder)));
     }
   }
 

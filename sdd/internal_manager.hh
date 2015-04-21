@@ -107,7 +107,7 @@ private:
   {
     char* addr = sdd_unique_table.allocate(0 /*extra bytes*/);
     sdd_unique_type* u = new (addr) sdd_unique_type(mem::construct<T>());
-    return sdd_ptr_type(sdd_unique_table(u, 0));
+    return sdd_ptr_type(&sdd_unique_table(u, 0));
   }
 
   /// @brief Helper to construct Id.
@@ -116,7 +116,7 @@ private:
   {
     char* addr = hom_unique_table.allocate(0 /*extra bytes*/);
     hom_unique_type* u = new (addr) hom_unique_type(mem::construct<hom::_identity<C>>());
-    return hom_ptr_type(hom_unique_table(u, 0));
+    return hom_ptr_type(&hom_unique_table(u, 0));
   }
 };
 

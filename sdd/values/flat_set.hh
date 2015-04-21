@@ -274,7 +274,7 @@ private:
     }
     else
     {
-      return ptr_type(unify(data_type(begin, end)));
+      return ptr_type(&unify(data_type(begin, end)));
     }
   }
 
@@ -289,7 +289,7 @@ private:
     }
     else
     {
-      return ptr_type(unify(std::move(x)));
+      return ptr_type(&unify(std::move(x)));
     }
   }
 
@@ -364,7 +364,7 @@ private:
   {
     char* addr = unique_table.allocate(0 /*extra bytes*/);
     unique_type* u = new (addr) unique_type;
-    return ptr_type(unique_table(u, 0));
+    return ptr_type(&unique_table(u, 0));
   }
 };
 
