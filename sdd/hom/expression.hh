@@ -174,8 +174,7 @@ struct _simple_expression
 /// @brief Create the expression homomorphism.
 /// @related homomorphism
 /// @todo How to handle the dumb case where there is only one identifier, which is also the target?
-///
-/// Elements of [begin, end) must be unique.
+/// @attention Elements of [begin, end) must be unique.
 template <typename C, typename Evaluator, typename InputIterator>
 homomorphism<C>
 expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIterator end
@@ -218,8 +217,7 @@ expression( const order<C>& o, const Evaluator& u, InputIterator begin, InputIte
 
 /// @brief Create the expression homomorphism.
 /// @related homomorphism
-///
-/// Elements of ids must be unique.
+/// @attention Elements of ids must be unique.
 template <typename C, typename Evaluator>
 homomorphism<C>
 expression( const order<C>& o, const Evaluator& u, std::initializer_list<typename C::Identifier> ids
