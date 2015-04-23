@@ -220,7 +220,8 @@ struct hash<sdd::mem::ptr<Unique>>
   operator()(const sdd::mem::ptr<Unique>& x)
   const noexcept
   {
-    return sdd::hash::seed(x.operator->());
+    using namespace sdd::hash;
+    return seed{} (val(x.operator->()));
   }
 };
 

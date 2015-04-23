@@ -336,8 +336,8 @@ struct hash<indexed_ast<C>>
     const noexcept
     {
       using namespace sdd::hash;
-      return seed(op.operation) (val(apply_visitor(*this, *op.lhs)))
-                                (val(apply_visitor(*this, *op.rhs)));
+      return seed{} (val(op.operation)) (val(apply_visitor(*this, *op.lhs)))
+                    (val(apply_visitor(*this, *op.rhs)));
     }
   };
 

@@ -355,7 +355,7 @@ struct hash<sdd::order<C>>
   const noexcept
   {
     using namespace sdd::hash;
-    return seed(o.nodes_ptr_.get()) (val(o.head_));
+    return seed{} (val(o.nodes_ptr_.get())) (val(o.head_));
   }
 };
 

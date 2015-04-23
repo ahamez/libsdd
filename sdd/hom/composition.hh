@@ -152,7 +152,7 @@ struct hash<sdd::hom::_composition<C>>
   const
   {
     using namespace sdd::hash;
-    return seed(c.left) (val(c.right));
+    return seed{} (val(c.left)) (val(c.right));
   }
 };
 

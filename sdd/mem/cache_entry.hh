@@ -72,7 +72,7 @@ struct hash<sdd::mem::cache_entry<Operation, Result>>
     using namespace sdd::hash;
     // A cache entry must have the same hash as its contained operation. Otherwise, cache::erase()
     // and cache::insert_check()/cache::insert_commit() won't use the same position in buckets.
-    return seed(x.operation);
+    return seed{} (val(x.operation));
   }
 };
 

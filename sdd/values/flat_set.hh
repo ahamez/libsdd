@@ -532,7 +532,8 @@ struct hash<sdd::values::flat_set<Value>>
   operator()(const sdd::values::flat_set<Value>& fs)
   const noexcept
   {
-    return sdd::hash::seed(fs.ptr());
+    using namespace sdd::hash;
+    return sdd::hash::seed{} (val(fs.ptr()));
   }
 };
 

@@ -172,7 +172,7 @@ struct hash<sdd::arc<C, Valuation>>
   const
   {
     using namespace sdd::hash;
-    return seed(arc.valuation()) (val(arc.successor()));
+    return seed{} (val(arc.valuation())) (val(arc.successor()));
   }
 };
 
