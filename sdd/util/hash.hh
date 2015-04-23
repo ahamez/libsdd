@@ -45,6 +45,12 @@ struct seed
     : seed_(s)
   {}
 
+  template <typename T>
+  seed(const T& x)
+  noexcept(noexcept(std::hash<T>()(x)))
+    : seed_(std::hash<T>()(x))
+  {}
+
   template <typename Cont>
   auto
   operator()(const Cont& cont)

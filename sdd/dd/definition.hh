@@ -575,8 +575,7 @@ struct hash<sdd::SDD<C>>
   const noexcept
   {
     // Hash pointer.
-    using namespace sdd::hash;
-    return seed{} (val(x.ptr()));
+    return sdd::hash::seed(x.ptr());
   }
 };
 

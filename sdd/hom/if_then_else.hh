@@ -135,7 +135,7 @@ struct hash<sdd::hom::_if_then_else<C>>
   const
   {
     using namespace sdd::hash;
-    return seed{} (val(ite.h_if)) (val(ite.h_then)) (val(ite.h_else));
+    return seed(ite.h_if) (val(ite.h_then)) (val(ite.h_else));
   }
 };
 

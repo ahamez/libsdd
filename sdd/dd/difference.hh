@@ -242,7 +242,7 @@ struct hash<sdd::dd::difference_op<C>>
   const
   {
     using namespace sdd::hash;
-    return seed{} (val(op.left)) (val(op.right));
+    return seed(op.left) (val(op.right));
   }
 };
 

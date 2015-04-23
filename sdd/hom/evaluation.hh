@@ -160,7 +160,7 @@ struct hash<sdd::hom::cached_homomorphism<C>>
   const
   {
     using namespace sdd::hash;
-    return seed{} (val(ch.hom)) (val(ch.sdd));
+    return seed(ch.hom) (val(ch.sdd));
   }
 };
 
