@@ -223,7 +223,7 @@ homomorphism<C>
 expression( const order<C>& o, const Evaluator& u, std::initializer_list<typename C::Identifier> ids
           , const typename C::Identifier& target)
 {
-  return expression(o, u, ids.cbegin(), ids.cend(), target);
+  return expression(o, u, begin(ids), end(ids), target);
 }
 
 /*------------------------------------------------------------------------------------------------*/
