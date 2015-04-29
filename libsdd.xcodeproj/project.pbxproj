@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2B8A939C1ABCB7AB00D8A6B5 /* test_definition.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BDE1DF718DCBE6200717177 /* test_definition.cc */; };
 		2BA0604218F44A6A006EC05F /* tests.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BDE1E2118DCBE6200717177 /* tests.cc */; };
 		2BA0604A18F44A6A006EC05F /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BDE1E6C18DCBF8100717177 /* libgtest.a */; };
 		2BB72F60197D5A0C0046D019 /* test_hom_if_then_else.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BB72F5E197D5A0C0046D019 /* test_hom_if_then_else.cc */; };
@@ -49,6 +48,7 @@
 		2BDE1E6A18DCBEEA00717177 /* test_bitset.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BDE1E2918DCBE6200717177 /* test_bitset.cc */; };
 		2BDE1E6B18DCBEEA00717177 /* test_flat_set.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BDE1E2A18DCBE6200717177 /* test_flat_set.cc */; };
 		2BDE1E6D18DCBF8100717177 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BDE1E6C18DCBF8100717177 /* libgtest.a */; };
+		2BE716521AEE76D700E6F577 /* test_hom_expression.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2BDE1E0818DCBE6200717177 /* test_hom_expression.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -76,8 +76,6 @@
 		2B12726218FC4AE700B6822F /* homomorphism.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = homomorphism.hh; sourceTree = "<group>"; };
 		2B2060A41903DE76009BBE7C /* order.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = order.hh; sourceTree = "<group>"; };
 		2B23B1C719122DC900931751 /* order_error.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = order_error.hh; sourceTree = "<group>"; };
-		2B44997319D470D8001A1E06 /* test_hom_commutativity.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_hom_commutativity.cc; sourceTree = "<group>"; };
-		2B44997619D473C1001A1E06 /* common_functions.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = common_functions.hh; sourceTree = "<group>"; };
 		2B55C3F81A14C0C9002A8815 /* sdd_stack.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = sdd_stack.hh; sourceTree = "<group>"; };
 		2B69074D197D4974006FAEE1 /* if_then_else.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = if_then_else.hh; sourceTree = "<group>"; };
 		2B75B2DE19333E2800089CF6 /* unique.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = unique.hh; sourceTree = "<group>"; };
@@ -486,11 +484,9 @@
 			isa = PBXGroup;
 			children = (
 				2BDE1E0318DCBE6200717177 /* common.hh */,
-				2B44997619D473C1001A1E06 /* common_functions.hh */,
 				2BDE1E0418DCBE6200717177 /* common_inductives.hh */,
 				2BDE1E0518DCBE6200717177 /* expression.hh */,
 				2BDE1E0618DCBE6200717177 /* test_hom_composition.cc */,
-				2B44997319D470D8001A1E06 /* test_hom_commutativity.cc */,
 				2BDE1E0718DCBE6200717177 /* test_hom_cons.cc */,
 				2BDE1E0818DCBE6200717177 /* test_hom_expression.cc */,
 				2BDE1E0918DCBE6200717177 /* test_hom_fixpoint.cc */,
@@ -645,7 +641,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2B8A939C1ABCB7AB00D8A6B5 /* test_definition.cc in Sources */,
+				2BE716521AEE76D700E6F577 /* test_hom_expression.cc in Sources */,
 				2BA0604218F44A6A006EC05F /* tests.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

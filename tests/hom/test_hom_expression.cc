@@ -172,6 +172,15 @@ TYPED_TEST(hom_expression_test, flat)
                   + SDD(3, {9}, SDD(2, {3}, SDD(1, {3}, SDD(0, {3}, one))));
     ASSERT_EQ(s1, h(o, s0));
   }
+  {
+    order o(order_builder {"c", "a", "b"});
+    const auto h = expression<conf>(o, evaluator<conf>(ast1), l.begin(), l.end(), "c");
+    const auto s0 = SDD(2, {_}, SDD(1, {1}, SDD(0, {3}, one)))
+                  + SDD(2, {_}, SDD(1, {2}, SDD(0, {3}, one)));
+    const auto s1 = SDD(2, {4}, SDD(1, {1}, SDD(0, {3}, one)))
+                  + SDD(2, {5}, SDD(1, {2}, SDD(0, {3}, one)));
+    ASSERT_EQ(s1, h(o, s0));
+  }
 }
 
 /*------------------------------------------------------------------------------------------------*/
