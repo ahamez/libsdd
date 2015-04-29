@@ -46,9 +46,6 @@ struct default_configuration
   /// @brief The size of the cache of homomorphism applications.
   std::size_t hom_cache_size;
 
-  /// @brief Tell if FPU registers shoud be preserved when using Expressions.
-  static constexpr bool expression_preserve_fpu_registers = false;
-
   /// @brief Default constructor.
   ///
   /// Initialize all parameters to their default values.

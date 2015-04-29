@@ -10,7 +10,6 @@
 #include "sdd/hom/constant.hh"
 #include "sdd/hom/definition_fwd.hh"
 #include "sdd/hom/evaluation.hh"
-#include "sdd/hom/expression.hh"
 #include "sdd/hom/fixpoint.hh"
 #include "sdd/hom/function.hh"
 #include "sdd/hom/identity.hh"
@@ -41,7 +40,6 @@ private:
                                  , hom::_cons<C, SDD<C>>
                                  , hom::_cons<C, typename C::Values>
                                  , hom::_constant<C>
-                                 , hom::_expression<C>
                                  , hom::_fixpoint<C>
                                  , hom::_function<C>
                                  , hom::_identity<C>
@@ -52,7 +50,6 @@ private:
                                  , hom::_saturation_fixpoint<C>
                                  , hom::_saturation_intersection<C>
                                  , hom::_saturation_sum<C>
-                                 , hom::_simple_expression<C>
                                  , hom::_sum<C>>;
 
 public:

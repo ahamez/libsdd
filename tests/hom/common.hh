@@ -7,7 +7,6 @@
 
 using sdd::composition;
 using sdd::cons;
-using sdd::expression;
 using sdd::fixpoint;
 using sdd::inductive;
 using sdd::intersection;
