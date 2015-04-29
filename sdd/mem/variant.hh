@@ -139,7 +139,7 @@ template <typename Visitor, typename X, typename... Args>
 inline
 auto
 visit(Visitor&& v, const X& x, Args&&... args)
--> decltype(auto)
+-> decltype(apply_visitor(std::forward<Visitor>(v), *x, std::forward<Args>(args)...))
 {
   return apply_visitor(std::forward<Visitor>(v), *x, std::forward<Args>(args)...);
 }
@@ -152,7 +152,7 @@ template <typename Visitor, typename X, typename Y, typename... Args>
 inline
 auto
 binary_visit(Visitor&& v, const X& x, const Y& y, Args&&... args)
--> decltype(auto)
+-> decltype(apply_binary_visitor(std::forward<Visitor>(v), *x, *y, std::forward<Args>(args)...))
 {
   return apply_binary_visitor(std::forward<Visitor>(v), *x, *y, std::forward<Args>(args)...);
 }
