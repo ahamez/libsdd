@@ -181,6 +181,15 @@ public:
     return ptr_->data().find(x);
   }
 
+
+  /// @brief Returns the number of elements with key @p x
+  std::size_t
+  count(const Value& x)
+  const noexcept
+  {
+    return ptr_->data().count(x);
+  }
+
   /// @brief Erase a value.
   std::size_t
   erase(const Value& x)
