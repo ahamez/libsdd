@@ -97,7 +97,7 @@ struct LIBSDD_ATTRIBUTE_PACKED variant
 /// @related variant
 template <typename T, typename... Types>
 inline
-auto
+bool
 is(const variant<Types...>& v)
 noexcept
 {
@@ -108,7 +108,7 @@ noexcept
 /// @related variant
 template <typename T, typename VariantProxy>
 inline
-auto
+bool
 is(const VariantProxy& v)
 noexcept
 {
