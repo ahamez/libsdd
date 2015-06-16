@@ -64,8 +64,10 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
 
     /// @todo Use intrusive hash map to save on memory allocations?
     // List all the successors for each valuation in the final alpha.
-    std::unordered_map< valuation_type, sum_builder_type
-                      , std::hash<valuation_type>, std::equal_to<valuation_type>
+    std::unordered_map< valuation_type
+                      , sum_builder_type
+                      , std::hash<valuation_type>
+                      , std::equal_to<valuation_type>
                       , mem::linear_alloc<std::pair<const valuation_type, sum_builder_type>>
                       >
       res( head.size(), std::hash<valuation_type>(), std::equal_to<valuation_type>()

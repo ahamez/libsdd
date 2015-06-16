@@ -374,8 +374,9 @@ public:
   }
 
   /// @brief Less than comparison.
+  /// @note The order is arbitrary and can change at each run.
   ///
-  /// O(1). The order is arbitrary and can change at each run.
+  /// O(1).
   friend
   bool
   operator<(const SDD& lhs, const SDD& rhs)
@@ -385,8 +386,7 @@ public:
   }
 
   /// @brief Export the textual representation of an SDD to a stream.
-  ///
-  /// Use only with small SDD, output can be huge.
+  /// @attention Use only with small SDD, output can be huge.
   friend
   std::ostream&
   operator<<(std::ostream& os, const SDD& x)
