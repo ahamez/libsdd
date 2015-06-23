@@ -137,6 +137,7 @@ public:
   next()
   const noexcept
   {
+    assert(head_ != nullptr);
     return order(nodes_ptr_, id_to_node_ptr_, head_->next());
   }
 
@@ -145,6 +146,7 @@ public:
   nested()
   const noexcept
   {
+    assert(head_ != nullptr);
     return order(nodes_ptr_, id_to_node_ptr_, head_->nested());
   }
 
