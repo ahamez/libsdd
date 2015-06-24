@@ -678,10 +678,10 @@
 					/usr/local/include,
 				);
 				OTHER_LDFLAGS = (
-					"$(BOOST_LIB)/libboost_context.a",
-					"$(BOOST_LIB)/libboost_coroutine.a",
-					"$(BOOST_LIB)/libboost_system.a",
-					"$(BOOST_LIB)/libboost_thread.a",
+					"$(BOOST_LIB)/libboost_context-mt.a",
+					"$(BOOST_LIB)/libboost_coroutine-mt.a",
+					"$(BOOST_LIB)/libboost_system-mt.a",
+					"$(BOOST_LIB)/libboost_thread-mt.a",
 				);
 			};
 			name = Debug;
@@ -698,10 +698,10 @@
 					/usr/local/include,
 				);
 				OTHER_LDFLAGS = (
-					"$(BOOST_LIB)/libboost_context.a",
-					"$(BOOST_LIB)/libboost_coroutine.a",
-					"$(BOOST_LIB)/libboost_system.a",
-					"$(BOOST_LIB)/libboost_thread.a",
+					"$(BOOST_LIB)/libboost_context-mt.a",
+					"$(BOOST_LIB)/libboost_coroutine-mt.a",
+					"$(BOOST_LIB)/libboost_system-mt.a",
+					"$(BOOST_LIB)/libboost_thread-mt.a",
 				);
 			};
 			name = Release;
