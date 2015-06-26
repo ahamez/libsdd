@@ -6,7 +6,8 @@
 #pragma once
 
 #include <algorithm> // for_each
-#include <cassert>
+#include <iterator>  // iterator_traits
+#include <utility>   // declval
 
 #include <boost/optional.hpp>
 
@@ -34,6 +35,9 @@ template <typename InputIterator>
 inline
 void
 hash_combine(std::size_t& seed, InputIterator cit, InputIterator cend)
+noexcept(noexcept(
+  hash_combine(seed, std::declval<typename std::iterator_traits<InputIterator>::value_type>())
+))
 {
   std::for_each(cit, cend, [&](const auto& v){hash_combine(seed, v);});
 }
