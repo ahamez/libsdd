@@ -126,9 +126,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
           {
             save.emplace_back(res_val, std::move(res_succs));
             save.back().second.add(std::move(current_succ));
-            const auto to_erase = res_cit;
-            ++res_cit;
-            res.erase(to_erase);
+            res_cit = res.erase(res_cit);
             // Avoid useless insertion or temporary variables.
             goto equality;
           }
@@ -157,9 +155,7 @@ struct LIBSDD_ATTRIBUTE_PACKED sum_op_impl
             // We won't need the current arc of res for the current val, we already have the
             // common part. Now, the current valuation has to be tested against the next arcs
             // of res.
-            const auto to_erase = res_cit;
-            ++res_cit;
-            res.erase(to_erase);
+            res_cit = res.erase(res_cit);
 
             // (G). The current valuation is completely included in the current arc of res.
             if (current_val == inter)
