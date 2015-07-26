@@ -87,7 +87,7 @@ public:
                , [](vertex_type& lhs, vertex_type& rhs){return lhs.location() < rhs.location();});
 
       // Assign integer indices to the vertices.
-      unsigned int pos = 0;;
+      unsigned int pos = 0;
       std::for_each( sorted_vertices.begin(), sorted_vertices.end()
                    , [&pos](vertex_type& v){v.location() = pos++;});
 
