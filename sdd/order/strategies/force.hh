@@ -20,6 +20,8 @@ namespace sdd { namespace force {
 /*------------------------------------------------------------------------------------------------*/
 
 /// @internal
+/// @brief An implementation of the FORCE ordering strategy
+/// @see https://web.eecs.umich.edu/~karem/papers/Aloul-GLSVLSI03.pdf
 template <typename C>
 class worker
 {
