@@ -52,7 +52,7 @@ public:
 
   /// @brief Effectively apply the FORCE ordering strategy.
   order_builder<C>
-  operator()(unsigned int iterations = 200)
+  operator()(unsigned int iterations)
   {
     std::vector<std::reference_wrapper<vertex_type>>
       sorted_vertices(vertices_.begin(), vertices_.end());
