@@ -452,13 +452,11 @@ operator<<(std::ostream& os, const flat_set<Value>& fs)
       }
       if (first == cit)
       {
-        display_value<Value>()(os, *cit);
+        os << *cit;
       }
       else
       {
-        display_value<Value>()(os, *first);
-        os << "..";
-        display_value<Value>()(os, *cit);
+        os << *first << ".." << *cit;
       }
       if (std::next(cit) != fs.cend())
       {
