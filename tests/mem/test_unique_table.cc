@@ -9,8 +9,6 @@ namespace {
 
 struct foo
 {
-//  typedef boost::intrusive::link_mode<boost::intrusive::normal_link> link_mode;
-//  boost::intrusive::unordered_set_member_hook<link_mode> member_hook_;
   sdd::mem::intrusive_member_hook<foo> hook;
   int i_;
 
