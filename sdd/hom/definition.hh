@@ -174,7 +174,16 @@ public:
   /// @brief Construct an homomorphism from a ptr.
   ///
   /// O(1).
-  homomorphism(ptr_type ptr)
+  homomorphism(const ptr_type& ptr)
+  noexcept
+    : ptr_{ptr}
+  {}
+
+  /// @internal
+  /// @brief Construct an homomorphism from a ptr.
+  ///
+  /// O(1).
+  homomorphism(ptr_type&& ptr)
   noexcept
     : ptr_{std::move(ptr)}
   {}

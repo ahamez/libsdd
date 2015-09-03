@@ -270,7 +270,16 @@ public:
   /// @brief Construct an SDD from a ptr.
   ///
   /// O(1).
-  SDD(ptr_type ptr)
+  SDD(const ptr_type& ptr)
+  noexcept
+    : ptr_{ptr}
+  {}
+
+  /// @internal
+  /// @brief Construct an SDD from a ptr.
+  ///
+  /// O(1).
+  SDD(ptr_type&& ptr)
   noexcept
     : ptr_{std::move(ptr)}
   {}
