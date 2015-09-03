@@ -2,7 +2,7 @@ include_directories("${PROJECT_SOURCE_DIR}/tests/gtest/include")
 
 # we need to compile googletest with the same flags
 # we should check for gtest directory presence...
-include_directories("${PROJECT_SOURCE_DIR}/tests/gtest")
+include_directories(SYSTEM "${PROJECT_SOURCE_DIR}/tests/gtest")
 add_library(gtest "${PROJECT_SOURCE_DIR}/tests/gtest/src/gtest-all.cc")
 
 set(SOURCES

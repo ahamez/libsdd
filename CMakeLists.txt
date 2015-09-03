@@ -73,7 +73,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 
 ################################################################################
 
-include_directories("${Boost_INCLUDE_DIRS}")
+include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
 include_directories("${PROJECT_SOURCE_DIR}")
 
 ################################################################################
