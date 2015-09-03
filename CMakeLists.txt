@@ -52,6 +52,7 @@ endif ()
 ################################################################################
 
 add_definitions("-Wall")
+add_definitions("-Wextra")
 add_definitions("-std=c++1y")
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
