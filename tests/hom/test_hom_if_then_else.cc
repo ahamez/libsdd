@@ -90,7 +90,7 @@ struct no_selector
   }
 
   sdd::values::flat_set<unsigned int>
-  operator()(const sdd::values::flat_set<unsigned int>& val)
+  operator()(const sdd::values::flat_set<unsigned int>&)
   const
   {
     throw std::runtime_error("Should't happen");
