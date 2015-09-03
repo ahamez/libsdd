@@ -116,7 +116,7 @@ public:
   ///
   /// O(1).
   SDD(dd::context<C>& cxt, const variable_type& var, values_type&& val, const SDD& succ)
-    : ptr_(create_node(cxt, var, std::move(val), succ))
+    : ptr_{create_node(cxt, var, std::move(val), succ)}
   {}
 
   /// @internal
@@ -127,7 +127,7 @@ public:
   ///
   /// O(1).
   SDD(variable_type var, values_type&& val, const SDD& succ)
-    : SDD(global<C>().sdd_context, var, std::move(val), succ)
+    : SDD{global<C>().sdd_context, var, std::move(val), succ}
   {}
 
   /// @internal
@@ -139,7 +139,7 @@ public:
   ///
   /// O(1).
   SDD(dd::context<C>& cxt, variable_type var, const values_type& val, const SDD& succ)
-    : ptr_(create_node(cxt, var, val, succ))
+    : ptr_{create_node(cxt, var, val, succ)}
   {}
 
   /// @internal
@@ -150,7 +150,7 @@ public:
   ///
   /// O(1).
   SDD(variable_type var, const values_type& val, const SDD& succ)
-    : SDD(global<C>().sdd_context, var, val, succ)
+    : SDD{global<C>().sdd_context, var, val, succ}
   {}
 
   /// @internal
@@ -162,7 +162,7 @@ public:
   ///
   /// O(1).
   SDD(dd::context<C>& cxt, variable_type var, const SDD& val, const SDD& succ)
-    : ptr_(create_node(cxt, var, val, succ))
+    : ptr_{create_node(cxt, var, val, succ)}
   {}
 
   /// @internal
@@ -173,14 +173,14 @@ public:
   ///
   /// O(1).
   SDD(variable_type var, const SDD& val, const SDD& succ)
-    : SDD(global<C>().sdd_context, var, val, succ)
+    : SDD{global<C>().sdd_context, var, val, succ}
   {}
 
   /// @internal
   /// @brief Construct an SDD with an order in a given context.
   template <typename Initializer>
   SDD(dd::context<C>& cxt, const order<C>& o, const Initializer& init)
-    : ptr_(one_ptr())
+    : ptr_{one_ptr()}
   {
     if (o.empty()) // base case of the recursion, ptr_ is defaulted to |1|
     {
@@ -202,7 +202,7 @@ public:
   /// @brief Construct an SDD with an order.
   template <typename Initializer>
   SDD(const order<C>& o, const Initializer& init)
-    : SDD(global<C>().sdd_context, o, init)
+    : SDD{global<C>().sdd_context, o, init}
   {}
 
   /// @brief Return an iterable object which generates all paths of this SDD.

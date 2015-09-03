@@ -65,7 +65,7 @@ public:
 
   /// @brief Default constructor.
   order_builder()
-    : ptr_(nullptr)
+    : ptr_{nullptr}
   {}
 
   /// @brief Constructor from a list of identifiers.
@@ -87,42 +87,42 @@ public:
 
   /// @brief Constructor with a single identifier.
   order_builder(identifier_type&& id)
-    : ptr_(mk_ptr(std::move(id), nullptr, nullptr))
+    : ptr_{mk_ptr(std::move(id), nullptr, nullptr)}
   {}
 
   /// @brief Constructor with a single identifier.
   order_builder(const identifier_type& id)
-    : ptr_(mk_ptr(id, nullptr, nullptr))
+    : ptr_{mk_ptr(id, nullptr, nullptr)}
   {}
 
   /// @brief Constructor with an identifier and its associated nested order.
   order_builder(identifier_type&& id, const order_builder& nested)
-    : ptr_(mk_ptr(std::move(id), nested.ptr_, nullptr))
+    : ptr_{mk_ptr(std::move(id), nested.ptr_, nullptr)}
   {}
 
   /// @brief Constructor with an identifier and its associated nested order.
   order_builder(const identifier_type& id, const order_builder& nested)
-    : ptr_(mk_ptr(id, nested.ptr_, nullptr))
+    : ptr_{mk_ptr(id, nested.ptr_, nullptr)}
   {}
 
   /// @internal
   order_builder(const order_identifier<C>& id, const order_builder& nested)
-    : ptr_(mk_ptr(id, nested.ptr_, nullptr))
+    : ptr_{mk_ptr(id, nested.ptr_, nullptr)}
   {}
 
   /// @internal
   order_builder(order_identifier<C>&& id, const order_builder& nested)
-    : ptr_(mk_ptr(std::move(id), nested.ptr_, nullptr))
+    : ptr_{mk_ptr(std::move(id), nested.ptr_, nullptr)}
   {}
 
   /// @internal
   order_builder(const order_identifier<C>& id)
-    : ptr_(mk_ptr(id, nullptr, nullptr))
+    : ptr_{mk_ptr(id, nullptr, nullptr)}
   {}
 
   /// @internal
   order_builder(order_identifier<C>&& id)
-    : ptr_(mk_ptr(std::move(id), nullptr, nullptr))
+    : ptr_{mk_ptr(std::move(id), nullptr, nullptr)}
   {}
 
   /// @internal
@@ -252,8 +252,8 @@ private:
   }
 
   /// @brief Constructor from an already existing pointer.
-  order_builder(node_ptr  ptr)
-    : ptr_(std::move(ptr))
+  order_builder(node_ptr ptr)
+  : ptr_{std::move(ptr)}
   {}
 
   /// @brief Actual implementation of push.

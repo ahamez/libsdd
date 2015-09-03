@@ -249,7 +249,7 @@ struct LIBSDD_ATTRIBUTE_PACKED nary_builder
     Valuation* base = reinterpret_cast<Valuation*>(addr);
     for (auto& elem : set_)
     {
-      new (base++) Valuation(std::move(elem));
+      new (base++) Valuation{std::move(elem)};
     }
   }
 };
