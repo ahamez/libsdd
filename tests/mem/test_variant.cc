@@ -223,9 +223,9 @@ struct bar
 {
   bar()
   {
-    for (size_t i = 0; i < 8192; ++i)
+    for (auto& elem : raw)
     {
-      raw[i] = 0;
+      elem = 0;
     }
   }
   size_t raw[8192];
@@ -310,9 +310,9 @@ struct visitor4
   operator()(const bar& b)
   const
   {
-    for (size_t i = 0; i < 8192; ++i)
+    for (auto & elem : b.raw)
     {
-      ASSERT_EQ(0u, b.raw[i]);
+      ASSERT_EQ(0u, elem);
     }
   }
 

@@ -54,10 +54,13 @@ struct LIBSDD_ATTRIBUTE_PACKED _saturation_fixpoint
 public:
 
   /// @brief Constructor.
-  _saturation_fixpoint( variable_type var, const homomorphism<C>& f
+  _saturation_fixpoint( variable_type var, homomorphism<C> f
                       , boost::container::flat_set<homomorphism<C>>& g
-                      , const homomorphism<C>& l)
-    : variable(var), F(f), G_size(static_cast<operands_size_type>(g.size())), L(l)
+                      , homomorphism<C> l)
+    : variable{var}
+    , F{std::move(f)}
+    , G_size{static_cast<operands_size_type>(g.size())}
+    , L{std::move(l)}
   {
     // Put all homomorphisms operands right after this sum instance.
     hom::consolidate(G_operands_addr(), g.begin(), g.end());
@@ -66,9 +69,9 @@ public:
   /// @brief Destructor.
   ~_saturation_fixpoint()
   {
-    for (auto it = begin(); it != end(); ++it)
+    for (auto& elem : *this)
     {
-      it->~homomorphism<C>();
+      elem.~homomorphism<C>();
     }
   }
 

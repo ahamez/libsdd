@@ -20,8 +20,8 @@ struct sdd_stack
   SDD<C> sdd;
   std::shared_ptr<sdd_stack> next;
 
-  sdd_stack(const SDD<C>& s, const std::shared_ptr<sdd_stack>& n)
-    : sdd(s), next(n)
+  sdd_stack(SDD<C> s, std::shared_ptr<sdd_stack> n)
+    : sdd(std::move(s)), next(std::move(n))
   {}
 };
 

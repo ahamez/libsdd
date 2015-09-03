@@ -60,10 +60,15 @@ public:
 
   /// @internal
   /// @brief Constructor.
-  order_node( const order_identifier<C>& id, variable_type var, unsigned int pos
+  order_node( order_identifier<C> id, variable_type var, unsigned int pos
             , order_node* nxt, order_node* nst
-            , const std::shared_ptr<path_type>& path)
-    : identifier_(id), variable_(var), position_(pos), next_(nxt), nested_(nst), path_ptr_(path)
+            , std::shared_ptr<path_type> path)
+    : identifier_{std::move(id)}
+    , variable_{var}
+    , position_{pos}
+    , next_{nxt}
+    , nested_{nst}
+    , path_ptr_{std::move(path)}
   {}
 
   /// @brief Default constructor.

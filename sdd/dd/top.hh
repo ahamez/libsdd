@@ -38,8 +38,10 @@ private:
 public:
 
   /// @internal
-  top(const SDD<C>& lhs, const SDD<C>& rhs)
-    : lhs_(lhs), rhs_(rhs), description_()
+  top(SDD<C> lhs, SDD<C> rhs)
+    : lhs_{std::move(lhs)}
+    , rhs_{std::move(rhs)}
+    , description_{}
   {}
 
   ~top()
@@ -49,7 +51,7 @@ public:
   /// @brief Return the textual description of the error.
   const char*
   what()
-  const noexcept
+  const noexcept override
   {
     return description().c_str();
   }

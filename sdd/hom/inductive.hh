@@ -89,8 +89,8 @@ struct inductive_derived
   using values_type = typename C::Values;
 
   /// @brief Constructor.
-  inductive_derived(const User& u)
-    : h(u)
+  inductive_derived(User u)
+    : h{std::move(u)}
   {}
 
   /// @brief Tell if the user's inductive skip the current variable.

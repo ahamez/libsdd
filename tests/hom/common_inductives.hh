@@ -18,8 +18,9 @@ struct targeted_incr
   const std::string var_;
   const unsigned int value_;
 
-  targeted_incr(const std::string& var, unsigned int val)
-    : var_(var), value_(val)
+  targeted_incr(std::string var, unsigned int val)
+    : var_{std::move(var)}
+    , value_{val}
   {}
 
   bool
@@ -171,8 +172,8 @@ struct targeted_noop
 
   const std::string var_;
 
-  targeted_noop(const std::string& v)
-    : var_(v)
+  targeted_noop(std::string v)
+    : var_{std::move(v)}
   {}
 
   bool
@@ -225,8 +226,8 @@ struct ind
 {
   const std::string var_;
 
-  ind(const std::string& v)
-    : var_(v)
+  ind(std::string v)
+    : var_{std::move(v)}
   {}
 
   bool

@@ -51,8 +51,10 @@ private:
     const node_ptr next;
 
     /// @brief Constructor.
-    node(const order_identifier<C>& id, const node_ptr& nst, const node_ptr& nxt)
-      : identifier(id), nested(nst), next(nxt)
+    node(order_identifier<C> id, node_ptr nst, node_ptr nxt)
+      : identifier{std::move(id)}
+      , nested{std::move(nst)}
+      , next{std::move(nxt)}
     {}
   };
 
@@ -250,8 +252,8 @@ private:
   }
 
   /// @brief Constructor from an already existing pointer.
-  order_builder(const node_ptr& ptr)
-    : ptr_(ptr)
+  order_builder(node_ptr  ptr)
+    : ptr_(std::move(ptr))
   {}
 
   /// @brief Actual implementation of push.

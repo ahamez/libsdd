@@ -28,7 +28,7 @@ public:
   /// @brief Return the textual description of the error.
   const char*
   what()
-  const noexcept
+  const noexcept override
   {
     return description().c_str();
   }
@@ -65,8 +65,8 @@ private:
 public:
 
   /// @internal
-  identifier_not_found_error(const identifier_type& id)
-    : identifier_(id)
+  identifier_not_found_error(identifier_type id)
+    : identifier_{std::move(id)}
   {}
 
   ~identifier_not_found_error()
@@ -112,8 +112,8 @@ private:
 public:
 
   /// @internal
-  duplicate_identifier_error(const identifier_type& id)
-    : identifier_(id)
+  duplicate_identifier_error(identifier_type id)
+    : identifier_{std::move(id)}
   {}
 
   ~duplicate_identifier_error()

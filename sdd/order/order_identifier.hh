@@ -41,13 +41,15 @@ public:
   /// @brief Construct an artificial node with a given index.
   /// @param Must be unique for a given artificial identifier.
   order_identifier()
-    : artificial_(next_artificial()), user_()
+    : artificial_{next_artificial()}
+    , user_{}
   {}
 
   /// @internal
   /// @brief Construct with a user's identifier.
-  order_identifier(const identifier_type& id)
-    : artificial_(0), user_(id)
+  order_identifier(identifier_type id)
+    : artificial_{0}
+    , user_{std::move(id)}
   {}
 
   /// @brief Get the identifier as an artificial one.

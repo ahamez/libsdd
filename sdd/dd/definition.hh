@@ -270,9 +270,9 @@ public:
   /// @brief Construct an SDD from a ptr.
   ///
   /// O(1).
-  SDD(const ptr_type& ptr)
+  SDD(ptr_type ptr)
   noexcept
-    : ptr_(ptr)
+    : ptr_{std::move(ptr)}
   {}
 
   /// @internal
@@ -283,7 +283,7 @@ public:
   /// O(n) where n is the number of arcs in the builder.
   template <typename Valuation>
   SDD(variable_type var, dd::alpha_builder<C, Valuation>&& builder)
-    : ptr_(create_node(var, std::move(builder)))
+    : ptr_{create_node(var, std::move(builder))}
   {}
 
   /// @internal

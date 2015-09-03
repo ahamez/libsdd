@@ -174,9 +174,9 @@ public:
   /// @brief Construct an homomorphism from a ptr.
   ///
   /// O(1).
-  homomorphism(const ptr_type& ptr)
+  homomorphism(ptr_type ptr)
   noexcept
-    : ptr_(ptr)
+    : ptr_{std::move(ptr)}
   {}
 
   /// @internal

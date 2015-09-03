@@ -231,9 +231,11 @@ private:
   }
 
   /// @brief Construct with a shallow copy an already existing order.
-  order( const nodes_ptr_type& nodes_ptr, const std::shared_ptr<id_to_node_type>& id_to_node
+  order( nodes_ptr_type nodes_ptr, std::shared_ptr<id_to_node_type> id_to_node
        , const order_node<C>* head)
-    : nodes_ptr_(nodes_ptr), id_to_node_ptr_(id_to_node), head_(head)
+    : nodes_ptr_{std::move(nodes_ptr)}
+    , id_to_node_ptr_{std::move(id_to_node)}
+    , head_{head}
   {}
 
   /// @brief Create the concrete order using an order_builder.

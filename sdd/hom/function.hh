@@ -79,8 +79,8 @@ struct function_derived
   using values_type = typename C::Values;
 
   /// @brief Constructor.
-  function_derived(const User& f)
-    : fun(f)
+  function_derived(User f)
+    : fun{std::move(f)}
   {}
 
   /// @brief Tell if the user's function is a selector.

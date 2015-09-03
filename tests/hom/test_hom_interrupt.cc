@@ -22,8 +22,9 @@ struct interrupt_incr
   const std::string var_;
   const unsigned int value_;
 
-  interrupt_incr(const std::string& var, unsigned int val)
-    : var_(var), value_(val)
+  interrupt_incr(std::string var, unsigned int val)
+    : var_{std::move(var)}
+    , value_{val}
   {}
 
   bool
