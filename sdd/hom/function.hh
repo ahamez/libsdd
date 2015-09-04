@@ -80,7 +80,7 @@ struct function_derived
 
   /// @brief Constructor.
   function_derived(User f)
-    : fun{std::move(f)}
+    : fun(std::move(f))
   {}
 
   /// @brief Tell if the user's function is a selector.
