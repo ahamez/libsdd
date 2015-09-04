@@ -44,10 +44,6 @@ public:
     , description_{}
   {}
 
-  ~top()
-  noexcept
-  {}
-
   /// @brief Return the textual description of the error.
   const char*
   what()

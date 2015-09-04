@@ -22,9 +22,6 @@ class order_error
 {
 public:
 
-  ~order_error()
-  {}
-
   /// @brief Return the textual description of the error.
   const char*
   what()
@@ -69,9 +66,6 @@ public:
     : identifier_{std::move(id)}
   {}
 
-  ~identifier_not_found_error()
-  {}
-
   /// @internal
   /// @brief Return a textual description.
   std::string&
@@ -114,9 +108,6 @@ public:
   /// @internal
   duplicate_identifier_error(identifier_type id)
     : identifier_{std::move(id)}
-  {}
-
-  ~duplicate_identifier_error()
   {}
 
   /// @internal
