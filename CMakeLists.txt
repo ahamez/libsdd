@@ -51,9 +51,6 @@ endif ()
 
 ################################################################################
 
-add_definitions("-Wall")
-add_definitions("-Wextra")
-add_definitions("-std=c++1y")
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   if (COVERAGE)
@@ -70,7 +67,8 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   endif ()
 endif ()
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++1y ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 ${CMAKE_CXX_FLAGS_DEBUG}")
 
 ################################################################################
 
