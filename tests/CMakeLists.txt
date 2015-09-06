@@ -4,6 +4,7 @@ include_directories("${PROJECT_SOURCE_DIR}/tests/gtest/include")
 # we should check for gtest directory presence...
 include_directories(SYSTEM "${PROJECT_SOURCE_DIR}/tests/gtest")
 add_library(gtest "${PROJECT_SOURCE_DIR}/tests/gtest/src/gtest-all.cc")
+set_target_properties(gtest PROPERTIES COMPILE_FLAGS "-w")
 
 set(SOURCES
     tests.cc
