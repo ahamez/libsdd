@@ -1,29 +1,48 @@
-cmake_minimum_required (VERSION 2.8.10)
+cmake_minimum_required (VERSION 3.0)
 
-################################################################################
+#--------------------------------------------------------------------------------------------------#
 
 project (libsdd)
 
-################################################################################
+#--------------------------------------------------------------------------------------------------#
+
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
+#--------------------------------------------------------------------------------------------------#
+
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++1y" COMPILER_SUPPORTS_CXX14)
+if(NOT COMPILER_SUPPORTS_CXX14)
+  message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++14 support.")
+endif ()
+
+#--------------------------------------------------------------------------------------------------#
 
 find_package(Boost 1.59.0 REQUIRED COMPONENTS context coroutine system thread)
 find_package(Doxygen QUIET)
 
-################################################################################
+#--------------------------------------------------------------------------------------------------#
 
 option (PACKED "Pack structures" OFF)
 option (COVERAGE "Code coverage" OFF)
 option (INTERNAL_DOC "Generate internal documentation" OFF)
 
+#--------------------------------------------------------------------------------------------------#
+
 if (PACKED)
   add_definitions("-DLIBSDD_PACKED")
 endif ()
 
+#--------------------------------------------------------------------------------------------------#
+
 if (COVERAGE)
-  add_definitions("--coverage")
+  include(CodeCoverage)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+  setup_target_for_coverage(coverage tests coverage)
 endif ()
 
-################################################################################
+#--------------------------------------------------------------------------------------------------#
 
 if(DOXYGEN_FOUND)
   if (INTERNAL_DOC)
@@ -41,43 +60,19 @@ if(DOXYGEN_FOUND)
                    )
 endif(DOXYGEN_FOUND)
 
-################################################################################
-
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++1y" COMPILER_SUPPORTS_CXX14)
-if(NOT COMPILER_SUPPORTS_CXX14)
-  message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++14 support.")
-endif ()
-
-################################################################################
-
-
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  if (COVERAGE)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lgcov")
-  endif ()
-endif ()
-
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  if (CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
-  endif ()
-  if (COVERAGE)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
-  endif ()
-endif ()
+#--------------------------------------------------------------------------------------------------#
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++1y ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 ${CMAKE_CXX_FLAGS_DEBUG}")
 
-################################################################################
+#--------------------------------------------------------------------------------------------------#
 
 include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
 include_directories("${PROJECT_SOURCE_DIR}")
 
-################################################################################
+#--------------------------------------------------------------------------------------------------#
 
 enable_testing()
 add_subdirectory(tests)
 
-################################################################################
+#--------------------------------------------------------------------------------------------------#
