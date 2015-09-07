@@ -80,6 +80,7 @@ struct seed
 /// @internal
 template <typename T>
 auto val(const T& x)
+noexcept
 {
   return [&](std::size_t s) { hash_combine(s, x); return seed(s); };
 }
