@@ -211,6 +211,7 @@
 		2BDE1E2A18DCBE6200717177 /* test_flat_set.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = test_flat_set.cc; sourceTree = "<group>"; };
 		2BDE1E6C18DCBF8100717177 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest.a; path = "../../Library/Developer/Xcode/DerivedData/sdd-hcbvsdjphalepfdirawbmimwxcth/Build/Products/Debug/libgtest.a"; sourceTree = "<group>"; };
 		2BDE1E6E18DCBF8100717177 /* tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tests; sourceTree = BUILT_PRODUCTS_DIR; };
+		2BF733151B9FE883008965A2 /* check_compatibility.hh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = check_compatibility.hh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -279,6 +280,7 @@
 			isa = PBXGroup;
 			children = (
 				2BDE1D8418DCBE6200717177 /* alpha.hh */,
+				2BF733151B9FE883008965A2 /* check_compatibility.hh */,
 				2BDE1D8518DCBE6200717177 /* context.hh */,
 				2BDE1D8618DCBE6200717177 /* context_fwd.hh */,
 				2BDE1D8818DCBE6200717177 /* count_combinations_fwd.hh */,
@@ -677,11 +679,12 @@
 					"$(SRCROOT)",
 					/usr/local/include,
 				);
+				LIBRARY_SEARCH_PATHS = "$(BOOST_LIB)";
 				OTHER_LDFLAGS = (
-					"$(BOOST_LIB)/libboost_context-mt.a",
-					"$(BOOST_LIB)/libboost_coroutine-mt.a",
-					"$(BOOST_LIB)/libboost_system-mt.a",
-					"$(BOOST_LIB)/libboost_thread-mt.a",
+					"-lboost_context-mt",
+					"-lboost_coroutine-mt",
+					"-lboost_system-mt",
+					"-lboost_thread-mt",
 				);
 			};
 			name = Debug;
@@ -697,11 +700,12 @@
 					"$(SRCROOT)",
 					/usr/local/include,
 				);
+				LIBRARY_SEARCH_PATHS = "$(BOOST_LIB)";
 				OTHER_LDFLAGS = (
-					"$(BOOST_LIB)/libboost_context-mt.a",
-					"$(BOOST_LIB)/libboost_coroutine-mt.a",
-					"$(BOOST_LIB)/libboost_system-mt.a",
-					"$(BOOST_LIB)/libboost_thread-mt.a",
+					"-lboost_context-mt",
+					"-lboost_coroutine-mt",
+					"-lboost_system-mt",
+					"-lboost_thread-mt",
 				);
 			};
 			name = Release;
