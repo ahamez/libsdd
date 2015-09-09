@@ -3,6 +3,7 @@
 #include "gtest/gtest.h"
 
 #include "sdd/conf/default_configurations.hh"
+#include "sdd/dd/check_compatibility.hh"
 #include "sdd/dd/context.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/manager.hh"
@@ -86,6 +87,7 @@ TYPED_TEST(definition_test, print)
 
 TYPED_TEST(definition_test, check_compatibility)
 {
+  using namespace sdd::dd;
   {
     ASSERT_NO_THROW(check_compatibility(zero, zero));
     ASSERT_NO_THROW(check_compatibility(one, one));

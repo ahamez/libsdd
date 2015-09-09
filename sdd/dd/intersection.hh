@@ -3,11 +3,13 @@
 ///            <http://opensource.org/licenses/BSD-2-Clause>,
 ///            Copyright (c) 2012-2015 Alexandre Hamez.
 /// @author Alexandre Hamez
+
 #pragma once
 
 #include <boost/container/flat_set.hpp>
 
 #include "sdd/internal_manager_fwd.hh"
+#include "sdd/dd/check_compatibility.hh"
 #include "sdd/dd/context_fwd.hh"
 #include "sdd/dd/definition.hh"
 #include "sdd/dd/nary.hh"
@@ -17,11 +19,9 @@
 #include "sdd/util/hash.hh"
 #include "sdd/values/empty.hh"
 
-namespace sdd {
+namespace sdd { namespace dd {
 
 /*------------------------------------------------------------------------------------------------*/
-
-namespace dd {
 
 /// @internal
 /// @brief The intersection operation in the cache.
