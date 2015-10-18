@@ -46,5 +46,5 @@ set(SOURCES
     )
 
 add_executable(tests ${SOURCES})
-target_link_libraries(tests gtest ${TCMALLOC_LIBRARY} ${Boost_LIBRARIES})
+target_link_libraries(tests gtest ${TCMALLOC_LIBRARY} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 add_test("UnitTests" tests)

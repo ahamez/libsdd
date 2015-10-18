@@ -12,7 +12,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++1y" COMPILER_SUPPORTS_CXX14)
-if(NOT COMPILER_SUPPORTS_CXX14)
+if (NOT COMPILER_SUPPORTS_CXX14)
   message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++14 support.")
 endif ()
 
@@ -20,12 +20,13 @@ endif ()
 
 find_package(Boost 1.59.0 REQUIRED COMPONENTS context coroutine system thread)
 find_package(Doxygen QUIET)
+find_package(Threads)
 
 #--------------------------------------------------------------------------------------------------#
 
-option (PACKED "Pack structures" OFF)
-option (COVERAGE "Code coverage" OFF)
-option (INTERNAL_DOC "Generate internal documentation" OFF)
+option(PACKED "Pack structures" OFF)
+option(COVERAGE "Code coverage" OFF)
+option(INTERNAL_DOC "Generate internal documentation" OFF)
 
 #--------------------------------------------------------------------------------------------------#
 
@@ -44,7 +45,7 @@ endif ()
 
 #--------------------------------------------------------------------------------------------------#
 
-if(DOXYGEN_FOUND)
+if (DOXYGEN_FOUND)
   if (INTERNAL_DOC)
     set(GEN_INTERNAL_DOC "YES")
   else ()
@@ -58,7 +59,7 @@ if(DOXYGEN_FOUND)
                     COMMENT "Generating API documentation with Doxygen" VERBATIM
                     SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
                    )
-endif(DOXYGEN_FOUND)
+endif ()
 
 #--------------------------------------------------------------------------------------------------#
 
