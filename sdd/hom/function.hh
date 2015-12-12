@@ -114,8 +114,7 @@ struct function_derived
   const noexcept override
   {
     return typeid(*this) == typeid(other)
-         ? fun == static_cast<const function_derived&>(other).fun
-         : false;
+           and fun == static_cast<const function_derived&>(other).fun;
   }
 
   /// @brief Get the user's function hash value.

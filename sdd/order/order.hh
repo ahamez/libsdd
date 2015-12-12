@@ -199,7 +199,7 @@ public:
   {
     if (lhs.empty())
     {
-      return rhs.empty() ? true : false;
+      return rhs.empty();
     }
     else if (rhs.empty())
     {

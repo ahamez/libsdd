@@ -140,8 +140,7 @@ struct inductive_derived
   const noexcept override
   {
     return typeid(*this) == typeid(other)
-         ? h == static_cast<const inductive_derived&>(other).h
-         : false;
+           and h == static_cast<const inductive_derived&>(other).h;
   }
 
   /// @brief Get the user's inductive hash value.

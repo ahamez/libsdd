@@ -8,16 +8,12 @@ using namespace sdd::mem;
 
 /*------------------------------------------------------------------------------------------------*/
 
-struct context
-{
-};
-
+struct context {};
 context cxt;
-
 
 struct operation
 {
-  typedef std::size_t result_type;
+  using result_type = std::size_t;
 
   const std::size_t i_;
 

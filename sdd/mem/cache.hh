@@ -52,7 +52,7 @@ struct apply_filters<T, Filter, Filters...>
   operator()(const T& op)
   const
   {
-    return Filter()(op) ? apply_filters<T, Filters...>()(op) : false;
+    return Filter()(op) and apply_filters<T, Filters...>()(op);
   }
 };
 
