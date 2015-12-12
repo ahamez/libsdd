@@ -2,7 +2,7 @@
 
 #include "sdd/values/bitset.hh"
 
-typedef sdd::values::bitset<64> bitset;
+using bitset = sdd::values::bitset<64>;
 
 /*------------------------------------------------------------------------------------------------*/
 

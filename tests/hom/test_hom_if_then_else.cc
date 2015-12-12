@@ -16,7 +16,7 @@ template <typename C>
 struct hom_if_then_else
   : public testing::Test
 {
-  typedef C configuration_type;
+  using configuration_type = C;
 
   sdd::manager<C> m;
 

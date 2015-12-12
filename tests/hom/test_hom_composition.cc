@@ -16,7 +16,7 @@ template <typename C>
 struct hom_composition_test
   : public testing::Test
 {
-  typedef C configuration_type;
+  using configuration_type = C;
 
   sdd::manager<C> m;
 

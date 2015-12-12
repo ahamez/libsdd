@@ -19,7 +19,7 @@ struct flat_set_test
     }
   };
 
-  typedef sdd::values::flat_set<unsigned int> flat_set;
+  using flat_set = sdd::values::flat_set<unsigned int>;
   sdd::values_manager<flat_set> m_;
 
   flat_set_test()

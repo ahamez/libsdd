@@ -17,7 +17,7 @@ template <typename C>
 struct hom_function_test
   : public testing::Test
 {
-  typedef C configuration_type;
+  using configuration_type = C;
 
   sdd::manager<C> m;
 
@@ -38,7 +38,7 @@ struct hom_function_test
 template <typename C, bool Selector>
 struct threshold_fun
 {
-  typedef sdd::values::bitset<64> bitset;
+  using bitset = sdd::values::bitset<64>;
   const bitset mask_;
   const unsigned int max_;
 

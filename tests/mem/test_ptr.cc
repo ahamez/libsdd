@@ -80,7 +80,7 @@ using namespace sdd::mem;
 struct ptr_test
   : public testing::Test
 {
-  typedef ptr<unique> ptr_type;
+  using ptr_type = ptr<unique>;
 
   sdd::mem::unique_table<unique> table_;
 

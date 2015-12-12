@@ -15,37 +15,35 @@ TEST(variant, unary_visitor)
 
   struct visitor
   {
-    typedef unsigned int result_type;
-    
-    result_type
+    unsigned int
     operator()(const double)
     const
     {
       return 0;
     }
 
-    result_type
+    unsigned int
     operator()(const char)
     const
     {
       return 1;
     }
 
-    result_type
+    unsigned int
     operator()(const int)
     const
     {
       return 2;
     }
 
-    result_type
+    unsigned int
     operator()(const long)
     const
     {
       return 3;
     }
 
-    result_type
+    unsigned int
     operator()(const foo&)
     const
     {
@@ -53,7 +51,7 @@ TEST(variant, unary_visitor)
     }
   };
 
-  typedef mem::variant<double, char, int, long, foo> variant_type;
+  using variant_type = mem::variant<double, char, int, long, foo>;
 
   {
     variant_type v((mem::construct<double>()));
@@ -88,75 +86,71 @@ TEST(variant, binary_visitor)
   
   struct visitor
   {
-    typedef unsigned int result_type;
-    
-    result_type
+    unsigned int
     operator()(const double, const double)
     const
     {
       return 0;
     }
 
-    result_type
+    unsigned int
     operator()(const double, const int)
     const
     {
       return 1;
     }
 
-    result_type
+    unsigned int
     operator()(const double, const foo&)
     const
     {
       return 2;
     }
 
-    result_type
+    unsigned int
     operator()(const int, const int)
     const
     {
       return 3;
     }
 
-    result_type
+    unsigned int
     operator()(const int, const double)
     const
     {
       return 4;
     }
 
-    result_type
+    unsigned int
     operator()(const int, const foo&)
     const
     {
       return 5;
     }
 
-    result_type
+    unsigned int
     operator()(const foo&, const foo&)
     const
     {
       return 6;
     }
 
-    result_type
+    unsigned int
     operator()(const foo&, const int)
     const
     {
       return 7;
     }
 
-    result_type
+    unsigned int
     operator()(const foo&, const double)
     const
     {
       return 8;
     }
-
-
   };
   
-  typedef mem::variant<double, int, foo> variant_type;
+  using variant_type = mem::variant<double, int, foo>;
 
   {
     variant_type v1((mem::construct<double>()));
@@ -234,9 +228,7 @@ struct bar
 
 struct visitor1
 {
-  typedef void result_type;
-
-  result_type
+  void
   operator()(const foo& f)
   const
   {
@@ -247,7 +239,7 @@ struct visitor1
   }
 
   template <typename T>
-  result_type
+  void
   operator()(const T&)
   const
   {
@@ -257,9 +249,7 @@ struct visitor1
 
 struct visitor2
 {
-  typedef void result_type;
-
-  result_type
+  void
   operator()(const foo& f)
   const
   {
@@ -270,7 +260,7 @@ struct visitor2
   }
 
   template <typename T>
-  result_type
+  void
   operator()(const T&)
   const
   {
@@ -280,9 +270,7 @@ struct visitor2
 
 struct visitor3
 {
-  typedef void result_type;
-
-  result_type
+  void
   operator()(const foo& f)
   const
   {
@@ -293,7 +281,7 @@ struct visitor3
   }
 
   template <typename T>
-  result_type
+  void
   operator()(const T&)
   const
   {
@@ -304,9 +292,7 @@ struct visitor3
 
 struct visitor4
 {
-  typedef void result_type;
-
-  result_type
+  void
   operator()(const bar& b)
   const
   {
@@ -317,7 +303,7 @@ struct visitor4
   }
 
   template <typename T>
-  result_type
+  void
   operator()(const T&)
   const
   {
@@ -328,25 +314,25 @@ struct visitor4
 TEST(variant, construction)
 {
   {
-    typedef mem::variant<bar, char, foo> variant_type;
+    using variant_type = mem::variant<bar, char, foo>;
     ASSERT_LE(8192 * sizeof(size_t), sizeof(variant_type));
     variant_type v((mem::construct<foo>()));
     apply_visitor(visitor1(), v);
   }
   {
-    typedef mem::variant<char, bar, foo> variant_type;
+    using variant_type = mem::variant<char, bar, foo>;
     ASSERT_LE(8192 * sizeof(size_t), sizeof(variant_type));
     variant_type v((mem::construct<foo>()));
     apply_visitor(visitor2(), v);
   }
   {
-    typedef mem::variant<foo, char, bar> variant_type;
+    using variant_type = mem::variant<foo, char, bar>;
     ASSERT_LE(8192 * sizeof(size_t), sizeof(variant_type));
     variant_type v((mem::construct<foo>()));
     apply_visitor(visitor3(), v);
   }
   {
-    typedef mem::variant<char, bar, foo> variant_type;
+    using variant_type = mem::variant<char, bar, foo>;
     ASSERT_LE(8192 * sizeof(size_t), sizeof(variant_type));
     variant_type v((mem::construct<bar>()));
     apply_visitor(visitor4(), v);

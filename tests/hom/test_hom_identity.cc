@@ -14,7 +14,7 @@ template <typename C>
 struct hom_id_test
   : public testing::Test
 {
-  typedef C configuration_type;
+  using configuration_type = C;
 
   sdd::manager<C> m;
   sdd::hom::context<C>& cxt;

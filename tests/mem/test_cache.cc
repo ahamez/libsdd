@@ -13,14 +13,11 @@ context cxt;
 
 struct operation
 {
-  using result_type = std::size_t;
-
   const std::size_t i_;
 
   operation(std::size_t i)
   	: i_(i)
-  {
-  }
+  {}
 
   std::size_t
   operator()(context&)
@@ -37,7 +34,7 @@ struct operation
   print()
   const
   {
-    return "";
+    return {};
   }
 
   bool
