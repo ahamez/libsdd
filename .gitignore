@@ -2,7 +2,4 @@
 build*/
 *.xcworkspace/
 xcuserdata/
-profile
-gtest
-examples/dictionary.txt
 .idea

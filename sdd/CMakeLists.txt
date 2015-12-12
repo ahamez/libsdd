@@ -1,0 +1,4 @@
+install(
+  DIRECTORY ${PROJECT_SOURCE_DIR}/sdd DESTINATION include
+  FILES_MATCHING PATTERN "*.hh"
+)

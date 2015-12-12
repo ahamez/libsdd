@@ -1,9 +1,7 @@
 include_directories("${PROJECT_SOURCE_DIR}/tests/gtest/include")
 
-# we need to compile googletest with the same flags
-# we should check for gtest directory presence...
-include_directories(SYSTEM "${PROJECT_SOURCE_DIR}/tests/gtest")
-add_library(gtest "${PROJECT_SOURCE_DIR}/tests/gtest/src/gtest-all.cc")
+include_directories(SYSTEM "${PROJECT_SOURCE_DIR}/tests")
+add_library(gtest "${PROJECT_SOURCE_DIR}/tests/gtest/gtest-all.cc")
 set_target_properties(gtest PROPERTIES COMPILE_FLAGS "-w")
 
 set(SOURCES
@@ -46,5 +44,5 @@ set(SOURCES
     )
 
 add_executable(tests ${SOURCES})
-target_link_libraries(tests gtest ${TCMALLOC_LIBRARY} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(tests gtest ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 add_test("UnitTests" tests)
