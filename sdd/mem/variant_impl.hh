@@ -155,7 +155,6 @@ apply_visitor(Visitor&& v, const variant<Xs...>& x, Args&&... args)
       (*) (Visitor&&, const void*, Args&&...);
 
   static constexpr fun_ptr_type table[] = {&call<Visitor, Xs, Args&&...>...};
-
   return table[x.index](std::forward<Visitor>(v), &x.storage, std::forward<Args>(args)...);
 }
 
