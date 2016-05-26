@@ -55,12 +55,12 @@ public:
   order_builder<C>
   operator()(unsigned int iterations)
   {
-    std::vector<std::reference_wrapper<vertex_type>>
-      sorted_vertices(vertices_.begin(), vertices_.end());
+    auto sorted_vertices
+      = std::vector<std::reference_wrapper<vertex_type>>{vertices_.begin(), vertices_.end()};
 
     // Keep a copy of the order with the smallest span.
-    std::vector<std::reference_wrapper<vertex_type>> best_order(sorted_vertices);
-    double smallest_span = std::numeric_limits<double>::max();
+    auto best_order = std::vector<std::reference_wrapper<vertex_type>>{sorted_vertices};
+    const auto smallest_span = std::numeric_limits<double>::max();
 
     while (iterations-- != 0)
     {
@@ -90,11 +90,11 @@ public:
                , [](vertex_type& lhs, vertex_type& rhs){return lhs.location() < rhs.location();});
 
       // Assign integer indices to the vertices.
-      unsigned int pos = 0;
+      auto pos = 0ul;
       std::for_each( sorted_vertices.begin(), sorted_vertices.end()
                    , [&pos](vertex_type& v){v.location() = pos++;});
 
-      const double span = get_total_span();
+      const auto span = get_total_span();
       spans_.push_back(span);
       if (span < smallest_span)
       {
@@ -103,7 +103,7 @@ public:
       }
     }
 
-    order_builder<C> ob;
+    auto ob = order_builder<C>{};
     if (reverse_)
     {
       for (auto rcit = best_order.rbegin(); rcit != best_order.rend(); ++rcit)
