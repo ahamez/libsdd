@@ -11,11 +11,11 @@
 
 #include "sdd/sdd.hh"
 #include "sdd/tools/dot/sdd.hh"
+#include "sdd/tools/nodes.hh"
 
 #include "ArchModel.hpp"
 #include "Config.hpp"
 #include "Filters.hpp"
-#include "NodeCounter.hpp"
 #include "Schedulers.hpp"
 #include "TaskModel.hpp"
 #include "TaskModelGenerator.hpp"
@@ -130,7 +130,7 @@ int main(int argc, const char * argv[]) {
 
     elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     std::cout << "Time: " << elapsed << "ms" << std::endl;
-    std::cout << "Number of nodes: " << sdd::tools::node_count(schedulings, order) << std::endl;
+    std::cout << "Number of nodes: " << sdd::tools::nodes(schedulings).first << std::endl;
     std::cout << "Number of schedulings: " << schedulings.size() << std::endl;
 
     return 0;
