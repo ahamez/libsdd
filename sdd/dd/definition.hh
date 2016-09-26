@@ -211,8 +211,7 @@ public:
   paths()
   const
   {
-    boost::coroutines::attributes attrs(boost::coroutines::fpu_not_preserved);
-    return path_generator<C>(std::bind(dd::paths<C>, std::placeholders::_1, *this), attrs);
+    return path_generator<C>(std::bind(dd::paths<C>, std::placeholders::_1, *this));
   }
 
   /// @brief Indicate if the SDD is |0|.
