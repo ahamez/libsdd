@@ -57,7 +57,7 @@ public:
     return successor_;
   }
 
-  /// @brief Equality of two arc.
+  /// @brief Equality of two arcs.
   friend
   bool
   operator==(const arc& lhs, const arc& rhs)
