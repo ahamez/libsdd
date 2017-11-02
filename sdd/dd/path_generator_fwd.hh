@@ -11,6 +11,7 @@
 
 #include <boost/version.hpp>
 #if BOOST_VERSION >= 105600
+#define BOOST_COROUTINES_NO_DEPRECATION_WARNING 1
 #include <boost/coroutine/asymmetric_coroutine.hpp>
 #else
 #include <boost/coroutine/all.hpp>
