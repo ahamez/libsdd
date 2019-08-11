@@ -33,7 +33,7 @@ class manager;
 /// It must be the first function called before any other call to the library.
 template <typename C>
 manager<C>
-init(const C& configuration = C())
+init(const C& configuration = C{})
 {
   using values_type = typename C::Values;
   if (*global_ptr<C>() == nullptr and *global_ptr<values_type>() == nullptr)
